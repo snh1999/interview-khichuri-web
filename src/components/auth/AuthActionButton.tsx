@@ -1,0 +1,28 @@
+import type { ComponentProps } from "react";
+import { ActionButton } from "@/components/ui/button/ActionButton.tsx";
+
+export const AuthActionButton = ({
+  action,
+  successMessage,
+  failFallbackMessage,
+  ...props
+}: Omit<ComponentProps<typeof ActionButton>, "action"> & {
+  readonly action: () => Promise<{ error?: null | { message?: string } }>;
+  readonly successMessage: string;
+  readonly failFallbackMessage?: string;
+}) => (
+  <ActionButton
+    {...props}
+    action={async () => {
+      const result = await action();
+      if (result.error) {
+        return {
+          error: true,
+          message: result.error.message ?? failFallbackMessage,
+        };
+      } else {
+        return { error: false, message: successMessage };
+      }
+    }}
+  />
+);

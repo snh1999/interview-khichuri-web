@@ -1,23 +1,23 @@
-import { LoginForm } from "@/components/auth/login/LoginForm.tsx";
+import { RegisterForm } from "@/components/auth/register/RegisterForm.tsx";
 import { AuthLayout } from "@/components/auth/AuthLayout.tsx";
 import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
-import { REGISTER_PAGE } from "@/app.constants";
+import { LOGIN_PAGE } from "@/app.constants";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   return (
     <AuthLayout
       cardTitle="Welcome back"
       cardDescription="Sign in to your account to continue preparing"
       footer={
         <>
-          Don&#39;t have an account?
-          <LinkButton path={REGISTER_PAGE}>Create one</LinkButton>
+          Already have an account?
+          <LinkButton path={LOGIN_PAGE}>Log In</LinkButton>
         </>
       }
     >
-      <LoginForm />
+      <RegisterForm />
     </AuthLayout>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
