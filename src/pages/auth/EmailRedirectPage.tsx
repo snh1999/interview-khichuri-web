@@ -30,7 +30,7 @@ const pageData: Record<TPageContext, TPageData> = {
     hideOauth: false,
     hideFooter: false,
   },
-  forgotPassword: {
+  forgotpass: {
     cardTitle: "Check your email",
     cardDescription: "We sent a the password reset link to your email address.",
     message: "follow the link to set a new password",
