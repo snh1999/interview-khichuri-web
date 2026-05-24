@@ -11,14 +11,19 @@ import { BrowserRouter } from "react-router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { apiClient } from "@/api";
 import { Toaster } from "sonner";
+import { RefetchIndicator } from "@/components/common/RefetchIndicator.tsx";
+import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
       <BrowserRouter>
         <QueryClientProvider client={apiClient}>
-          <App />
+          <AppErrorSuspense>
+            <App />
+          </AppErrorSuspense>
           <Toaster />
+          <RefetchIndicator />
         </QueryClientProvider>
       </BrowserRouter>
     </ThemeProvider>

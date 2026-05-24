@@ -7,3 +7,17 @@ import type { ClassValue } from "clsx";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object") {
+    const errorCast = error as {
+      error?: { message?: string };
+      message?: string;
+    };
+    return (
+      errorCast.error?.message ?? errorCast.message ?? "Failed to add passkey"
+    );
+  }
+  return "Something went wrong";
+};

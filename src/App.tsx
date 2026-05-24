@@ -14,6 +14,8 @@ import {
   RESET_PASSWORD_PAGE,
   LOGIN_PAGE,
   REGISTER_PAGE,
+  HOMEPAGE,
+  PROFILE_PAGE,
 } from "@/app.constants.ts";
 import ForgotPasswordPage from "@/pages/auth/FogotPasswordPage.tsx";
 import { EmptyPage } from "@/pages/EmptyPage.tsx";
@@ -36,7 +38,8 @@ const App = () => {
       </Route>
 
       <Route element={session ? <Outlet /> : <Navigate to="/login" replace />}>
-        <Route path="/" element={<DashboardPage />} />
+        <Route path={HOMEPAGE} element={<DashboardPage />} />
+        <Route path={PROFILE_PAGE} element={<ProfilePage />} />
         <Route path="/*" element={<EmptyPage />} />
       </Route>
     </Routes>
