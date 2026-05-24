@@ -44,7 +44,7 @@ const ErrorFallback = ({
         <CardTitle className="text-destructive">Something went wrong</CardTitle>
         <CardDescription>{getErrorMessage(error)}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex gap-5">
         <Button variant="outline" onClick={resetErrorBoundary}>
           Retry
         </Button>

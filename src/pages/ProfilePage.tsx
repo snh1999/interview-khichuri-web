@@ -1,6 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeftIcon,
+  KeyIcon,
+  LinkIcon,
   ShieldIcon,
   TrashIcon,
   UserIcon,
@@ -9,6 +11,8 @@ import { useSession } from "@/lib/auth/auth-client.ts";
 import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
 import { UpdateProfileForm } from "@/components/profile/update/UpdateProfileForm.tsx";
 import { ProfileTab } from "@/components/profile/security/ProfileSecurity.tsx";
+import { SessionTab } from "@/components/profile/session/SessionTab.tsx";
+import { AccountsTab } from "@/components/profile/linked/LinkedAccounts.tsx";
 import { useSearchParams } from "react-router";
 import { ProfileDangerZone } from "@/components/profile/ProfileDangerZone.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
@@ -78,7 +82,14 @@ const ProfilePage = () => {
             <ShieldIcon />
             <span className="max-sm:hidden">Security</span>
           </TabsTrigger>
-
+          <TabsTrigger value="sessions">
+            <KeyIcon />
+            <span className="max-sm:hidden">Sessions</span>
+          </TabsTrigger>
+          <TabsTrigger value="accounts">
+            <LinkIcon />
+            <span className="max-sm:hidden">Accounts</span>
+          </TabsTrigger>
           <TabsTrigger value="danger">
             <TrashIcon />
             <span className="max-sm:hidden">Danger</span>
@@ -91,6 +102,14 @@ const ProfilePage = () => {
 
         <TabsContent value="security">
           <ProfileTab />
+        </TabsContent>
+
+        <TabsContent value="sessions">
+          <SessionTab />
+        </TabsContent>
+
+        <TabsContent value="accounts">
+          <AccountsTab />
         </TabsContent>
 
         <TabsContent value="danger">
