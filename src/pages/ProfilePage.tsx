@@ -12,7 +12,7 @@ import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
 import { UpdateProfileForm } from "@/components/profile/update/UpdateProfileForm.tsx";
 import { ProfileTab } from "@/components/profile/security/ProfileSecurity.tsx";
 import { SessionTab } from "@/components/profile/session/SessionTab.tsx";
-import { AccountsTab } from "@/components/profile/linked/LinkedAccounts.tsx";
+import { AccountsTab } from "@/components/profile/account/LinkedAccounts.tsx";
 import { useSearchParams } from "react-router";
 import { ProfileDangerZone } from "@/components/profile/ProfileDangerZone.tsx";
 import { Badge } from "@/components/ui/badge.tsx";

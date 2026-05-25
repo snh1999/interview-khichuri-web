@@ -1,4 +1,5 @@
 import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { queryKeys } from "@/api";
 import {
   listAccounts,
@@ -28,10 +29,17 @@ export const useUnlinkAccounts = () =>
       if (account === null) {
         return { error: { message: "Account not found" } };
       }
-      return unlinkAccount({
-        accountId: account.accountId,
-        providerId,
-      });
+      return unlinkAccount(
+        {
+          accountId: account.accountId,
+          providerId,
+        },
+        {
+          onError: (error) => {
+            toast.error(error.error.message);
+          },
+        }
+      );
     },
     meta: { invalidates: queryKeys.auth.accounts },
   });

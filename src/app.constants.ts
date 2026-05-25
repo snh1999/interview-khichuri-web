@@ -1,4 +1,5 @@
 export const HOMEPAGE = "/";
+export const ADMIN_PAGE = "/admin";
 export const LOGIN_PAGE = "/login";
 export const REGISTER_PAGE = "/register";
 export const ACCOUNT_VERIFICATION_PAGE = "/verify-email";

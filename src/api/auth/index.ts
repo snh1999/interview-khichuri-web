@@ -1,11 +1,4 @@
-export {
-  useListAccounts,
-  useLinkAccounts,
-  useUnlinkAccounts,
-} from "@/api/auth/account.ts";
-
-export {
-  useListSessions,
-  useRevokeSession,
-  useRevokeOtherSessions,
-} from "@/api/auth/session.ts";
+/* eslint-disable sonarjs/no-wildcard-import */
+export * from "@/api/auth/account.ts";
+export * from "@/api/auth/admin.ts";
+export * from "@/api/auth/session.ts";

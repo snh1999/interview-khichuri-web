@@ -16,9 +16,12 @@ import {
   REGISTER_PAGE,
   HOMEPAGE,
   PROFILE_PAGE,
+  ADMIN_PAGE,
 } from "@/app.constants.ts";
 import ForgotPasswordPage from "@/pages/auth/FogotPasswordPage.tsx";
 import { EmptyPage } from "@/pages/EmptyPage.tsx";
+import ProfilePage from "@/pages/ProfilePage.tsx";
+import AdminPage from "@/pages/admin/AdminPage.tsx";
 
 const App = () => {
   const { data: session, isPending } = useSession();
@@ -30,16 +33,21 @@ const App = () => {
       <Route path={ACCOUNT_VERIFICATION_PAGE} element={<VerifyEmailPage />} />
       <Route path={RESET_PASSWORD_PAGE} element={<ResetPasswordPage />} />
 
-      <Route element={!session ? <Outlet /> : <Navigate to="/" replace />}>
+      <Route
+        element={!session ? <Outlet /> : <Navigate to={HOMEPAGE} replace />}
+      >
         <Route path={LOGIN_PAGE} element={<LoginPage />} />
         <Route path={REGISTER_PAGE} element={<RegisterPage />} />
         <Route path={EMAIL_REDIRECT_PAGE} element={<EmailRedirectPage />} />
         <Route path={FORGOT_PASSWORD_PAGE} element={<ForgotPasswordPage />} />
       </Route>
 
-      <Route element={session ? <Outlet /> : <Navigate to="/login" replace />}>
+      <Route
+        element={session ? <Outlet /> : <Navigate to={LOGIN_PAGE} replace />}
+      >
         <Route path={HOMEPAGE} element={<DashboardPage />} />
         <Route path={PROFILE_PAGE} element={<ProfilePage />} />
+        <Route path={ADMIN_PAGE} element={<AdminPage />} />
         <Route path="/*" element={<EmptyPage />} />
       </Route>
     </Routes>

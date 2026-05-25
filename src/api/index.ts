@@ -41,7 +41,10 @@ export const queryKeys = {
   },
   admin: {
     all: ["admin"] as const,
-    users: () => [...queryKeys.admin.all, "users"] as const,
+    users: (options?: Record<string, unknown>) =>
+      [...queryKeys.admin.all, "users", options] as const,
+    sessions: (options?: Record<string, unknown>) =>
+      [...queryKeys.admin.all, "sessions", options] as const,
     get permissions() {
       return [...queryKeys.admin.all, "permissions"] as const;
     },

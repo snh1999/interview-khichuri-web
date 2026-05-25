@@ -13,6 +13,7 @@ import { apiClient } from "@/api";
 import { Toaster } from "sonner";
 import { RefetchIndicator } from "@/components/common/RefetchIndicator.tsx";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
+import { ImpersonationIndicator } from "@/components/admin/ImpersonationIndicator.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -22,6 +23,7 @@ createRoot(document.getElementById("root")!).render(
           <AppErrorSuspense>
             <App />
           </AppErrorSuspense>
+          <ImpersonationIndicator />
           <Toaster />
           <RefetchIndicator />
         </QueryClientProvider>
