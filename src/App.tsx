@@ -14,6 +14,7 @@ import {
   RESET_PASSWORD_PAGE,
   LOGIN_PAGE,
   REGISTER_PAGE,
+  CONFIRM_LOGIN_PAGE,
   HOMEPAGE,
   PROFILE_PAGE,
   ADMIN_PAGE,
@@ -22,6 +23,7 @@ import ForgotPasswordPage from "@/pages/auth/FogotPasswordPage.tsx";
 import { EmptyPage } from "@/pages/EmptyPage.tsx";
 import ProfilePage from "@/pages/ProfilePage.tsx";
 import AdminPage from "@/pages/admin/AdminPage.tsx";
+import ConfirmLoginPage from "@/pages/auth/ConfirmLogin.tsx";
 
 const App = () => {
   const { data: session, isPending } = useSession();
@@ -40,6 +42,7 @@ const App = () => {
         <Route path={REGISTER_PAGE} element={<RegisterPage />} />
         <Route path={EMAIL_REDIRECT_PAGE} element={<EmailRedirectPage />} />
         <Route path={FORGOT_PASSWORD_PAGE} element={<ForgotPasswordPage />} />
+        <Route path={CONFIRM_LOGIN_PAGE} element={<ConfirmLoginPage />} />
       </Route>
 
       <Route

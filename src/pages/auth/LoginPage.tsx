@@ -1,6 +1,7 @@
 import { LoginForm } from "@/components/auth/login/LoginForm.tsx";
 import { AuthLayout } from "@/components/auth/AuthLayout.tsx";
 import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
+import { PasskeyButton } from "@/components/auth/PasskeyLoginButton.tsx";
 import { REGISTER_PAGE } from "@/app.constants";
 
 const LoginPage = () => {
@@ -15,7 +16,10 @@ const LoginPage = () => {
         </>
       }
     >
-      <LoginForm />
+      <>
+        <LoginForm />
+        <PasskeyButton />
+      </>
     </AuthLayout>
   );
 };

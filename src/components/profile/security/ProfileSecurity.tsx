@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/card.tsx";
 import { UpdatePasswordForm } from "@/components/profile/security/UpdatePasswordForm.tsx";
 import { useListAccounts } from "@/api/auth";
+import { TwoFactorAuth } from "@/components/profile/security/twofactor/TwofactorAuth.tsx";
+import { PasskeyCard } from "@/components/profile/security/passkey/PasskeyCard.tsx";
 import { requestPasswordReset, useSession } from "@/lib/auth/auth-client.ts";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
@@ -18,6 +20,10 @@ export const ProfileTab = () => {
     <div className="space-y-6">
       <AppErrorSuspense Fallback={ProfileSkeletonCard}>
         <ProfileSecurity />
+      </AppErrorSuspense>
+
+      <AppErrorSuspense>
+        <PasskeyCard />
       </AppErrorSuspense>
     </div>
   );
@@ -69,6 +75,8 @@ export const ProfileSecurity = () => {
           </CardContent>
         </Card>
       )}
+
+      {hasPassword ? <TwoFactorAuth /> : null}
     </div>
   );
 };
@@ -78,6 +86,10 @@ const ProfileSkeletonCard = () => (
     <SkeletonCard>
       <Skeleton className="h-10 w-full" />
       <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+    </SkeletonCard>
+
+    <SkeletonCard compact>
       <Skeleton className="h-10 w-full" />
     </SkeletonCard>
   </div>

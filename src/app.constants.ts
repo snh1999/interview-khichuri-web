@@ -7,6 +7,7 @@ export const FORGOT_PASSWORD_PAGE = "/forgot-password";
 export const RESET_PASSWORD_PAGE = "/reset-password";
 export const EMAIL_REDIRECT_PAGE = "/email-redirect";
 export const PROFILE_PAGE = "/profile";
+export const CONFIRM_LOGIN_PAGE = "/confirm-login";
 
 export const FORGOT_PASSWORD_EMAIL_CONTEXT = "forgotpass";
 export const VERIFY_EMAIL_CONTEXT = "verifyAccount";
