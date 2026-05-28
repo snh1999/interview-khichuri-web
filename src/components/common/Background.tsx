@@ -1,7 +1,9 @@
 import { CodeIcon, TerminalIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 
-export const Background = ({ children }: Readonly<{ children: ReactNode }>) => {
+export const Background = ({
+  children,
+}: Readonly<{ children?: ReactNode }>) => {
   return (
     <div className="bg-background/95 relative flex min-h-screen items-center justify-center overflow-hidden p-4">
       <div

@@ -1,4 +1,5 @@
-import { useTheme } from "next-themes";
+"use client";
+
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 import {
   CheckCircleIcon,
@@ -7,13 +8,14 @@ import {
   XCircleIcon,
   SpinnerIcon,
 } from "@phosphor-icons/react";
+import { useThemeStore } from "@/store/themeStore.ts";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
+  const theme = useThemeStore((state) => state.theme);
 
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme={theme}
       className="toaster group"
       icons={{
         success: <CheckCircleIcon className="size-4" />,

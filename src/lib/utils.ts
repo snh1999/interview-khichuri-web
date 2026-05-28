@@ -2,6 +2,7 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { ClassValue } from "clsx";
+import type { TResolvedTheme } from "@/components/theme/themes.types.ts";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,func-style,sonarjs/declarations-in-global-scope
 export function cn(...inputs: ClassValue[]) {
@@ -20,4 +21,10 @@ export const getErrorMessage = (error: unknown): string => {
     );
   }
   return "Something went wrong";
+};
+
+export const getSystemTheme = (): TResolvedTheme => {
+  if (globalThis.matchMedia("(prefers-color-scheme: dark)").matches)
+    return "dark";
+  return "light";
 };

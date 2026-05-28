@@ -39,7 +39,7 @@ export const AppPagination = ({
 
   const pageOptions = useMemo(
     () =>
-      Array.from({ length: totalPages }, (_, value) => ({
+      Array.from({ length: totalPages }, (__, value) => ({
         value: value + 1,
         label: value + 1,
       })),
