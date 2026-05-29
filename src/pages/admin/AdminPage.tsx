@@ -19,7 +19,7 @@ const AdminPage = () => {
 
   return (
     <div className="container mx-auto my-6 px-4">
-      <LinkButton path="/" className="mb-4">
+      <LinkButton path={HOMEPAGE} className="mb-4">
         <ArrowLeftIcon className="mr-2 size-4" />
         Back to Home
       </LinkButton>

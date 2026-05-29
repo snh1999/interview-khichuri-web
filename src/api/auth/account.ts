@@ -5,6 +5,7 @@ import {
   listAccounts,
   linkSocial,
   unlinkAccount,
+  unwrapBetterAuth,
 } from "@/lib/auth/auth-client.ts";
 
 import type { Account } from "better-auth";
@@ -13,8 +14,7 @@ import type { TOauthProviders } from "@/lib/auth/auth.helpers.tsx";
 export const useListAccounts = () =>
   useSuspenseQuery({
     queryKey: queryKeys.auth.accounts,
-    queryFn: async () => listAccounts(),
-    select: (response) => response.data,
+    queryFn: async () => unwrapBetterAuth(listAccounts()),
   });
 
 export const useUnlinkAccounts = () =>

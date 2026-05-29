@@ -5,6 +5,7 @@ import {
   twoFactorClient,
 } from "better-auth/client/plugins";
 import { passkeyClient } from "@better-auth/passkey/client";
+import { CONFIRM_LOGIN_PAGE } from "@/app.constants.ts";
 import type { TOauthProviders } from "@/lib/auth/auth.helpers.tsx";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -22,7 +23,7 @@ const authClient = createAuthClient({
     passkeyClient(),
     twoFactorClient({
       onTwoFactorRedirect: () => {
-        globalThis.location.href = "/confirm-login";
+        globalThis.location.href = CONFIRM_LOGIN_PAGE;
       },
     }),
   ],
@@ -63,3 +64,12 @@ export const {
   twoFactor: authTwoFactor,
   passkey: authPasskey,
 } = authClient;
+
+export const unwrapBetterAuth = async <T>(
+  call: Promise<{ data: T | null; error: { message?: string } | null }>
+): Promise<T> => {
+  const response = await call;
+  if (response.error || !response.data)
+    throw new Error(response.error?.message);
+  return response.data;
+};

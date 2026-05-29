@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { queryKeys } from "@/api";
-import { authAdmin } from "@/lib/auth/auth-client.ts";
+import { authAdmin, unwrapBetterAuth } from "@/lib/auth/auth-client.ts";
 import { usePagination } from "@/hooks/usePagination.ts";
 
 export type TPermissionOptions = Parameters<typeof authAdmin.hasPermission>[0];
@@ -9,8 +9,7 @@ export type TPermissionOptions = Parameters<typeof authAdmin.hasPermission>[0];
 export const useGetPermission = (options: TPermissionOptions) =>
   useQuery({
     queryKey: queryKeys.admin.permission(options),
-    queryFn: async () => authAdmin.hasPermission(options),
-    select: (response) => response.data,
+    queryFn: async () => unwrapBetterAuth(authAdmin.hasPermission(options)),
   });
 export const useAdminListUsers = ({
   page = 1,
@@ -22,15 +21,16 @@ export const useAdminListUsers = ({
   useSuspenseQuery({
     queryKey: queryKeys.admin.users({ page, limit }),
     queryFn: async () =>
-      authAdmin.listUsers({
-        query: {
-          limit,
-          offset: (page - 1) * limit,
-          sortBy: "createdAt",
-          sortDirection: "desc",
-        },
-      }),
-    select: (response) => response.data,
+      unwrapBetterAuth(
+        authAdmin.listUsers({
+          query: {
+            limit,
+            offset: (page - 1) * limit,
+            sortBy: "createdAt",
+            sortDirection: "desc",
+          },
+        })
+      ),
   });
 
 export const useBanUser = () => {
@@ -102,7 +102,7 @@ export const useRevokeSessionByAdmin = () =>
           onSuccess: () => {
             toast.success("User sessions revoked");
           },
-          meta: { invalidates: queryKeys.admin.sessions() },
         }
       ),
+    meta: { invalidates: queryKeys.admin.sessions() },
   });

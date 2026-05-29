@@ -96,9 +96,9 @@ export const hexToOklch = (hex: string): OklchColor => {
     return { lightness: 0, chroma: 0, hue: 0 };
   }
 
-  const r = linearize(Number.parseInt(hex.slice(1, 3), 16) / 255);
-  const g = linearize(Number.parseInt(hex.slice(3, 5), 16) / 255);
-  const b = linearize(Number.parseInt(hex.slice(5, 7), 16) / 255);
+  const r = linearize(Number.parseInt(normalized.slice(1, 3), 16) / 255);
+  const g = linearize(Number.parseInt(normalized.slice(3, 5), 16) / 255);
+  const b = linearize(Number.parseInt(normalized.slice(5, 7), 16) / 255);
 
   const l = Math.cbrt(
     0.412_221_470_8 * r + 0.536_332_536_3 * g + 0.051_445_992_9 * b

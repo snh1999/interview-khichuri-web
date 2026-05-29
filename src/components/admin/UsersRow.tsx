@@ -31,6 +31,7 @@ import {
   useUnbanUser,
 } from "@/api/auth/admin.ts";
 import { cn } from "@/lib/utils.ts";
+import { HOMEPAGE } from "@/app.constants.ts";
 
 interface IProps {
   user: UserWithRole;
@@ -56,7 +57,7 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
         },
         onSuccess: () => {
           void refetch();
-          navigate("/");
+          navigate(HOMEPAGE);
         },
       }
     );

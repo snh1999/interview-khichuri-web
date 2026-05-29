@@ -49,7 +49,7 @@ export const queryKeys = {
       return [...queryKeys.admin.all, "permissions"] as const;
     },
     permission: (options: TPermissionOptions) => [
-      queryKeys.admin.permissions,
+      ...queryKeys.admin.permissions,
       options,
     ],
   },

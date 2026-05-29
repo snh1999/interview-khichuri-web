@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { signIn } from "@/lib/auth/auth-client.ts";
 import { useEmailResendCooldown } from "@/hooks/useEmailResendCooldown.ts";
-import { EMAIL_REDIRECT_PAGE } from "@/app.constants.ts";
+import { EMAIL_REDIRECT_PAGE, HOMEPAGE } from "@/app.constants.ts";
 import type {
   TFormHook,
   TFormProps,
@@ -57,7 +57,7 @@ export const useLoginForm = ({
           onSuccess: async () => {
             toast.success("Welcome back!");
             onSuccess?.();
-            await navigate("/");
+            await navigate(HOMEPAGE);
           },
         }
       );

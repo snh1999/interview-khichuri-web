@@ -11,6 +11,7 @@ import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { verifyEmail } from "@/lib/auth/auth-client.ts";
 import { AuthLayout } from "@/components/auth/AuthLayout.tsx";
+import { HOMEPAGE, LOGIN_PAGE, REGISTER_PAGE } from "@/app.constants.ts";
 
 type TVerificationState = "pending" | "success" | "error";
 
@@ -79,7 +80,7 @@ const VerifyEmailPage = () => {
 
   useEffect(() => {
     if (state !== "success") return;
-    const timer = setTimeout(() => navigate("/"), 3000);
+    const timer = setTimeout(() => navigate(HOMEPAGE), 3000);
     return () => clearTimeout(timer);
   }, [state, navigate]);
 
@@ -101,12 +102,12 @@ const VerifyEmailPage = () => {
         <CardContent className="mt-4 flex items-center justify-around">
           <LinkButton
             pop
-            path="/login"
+            path={LOGIN_PAGE}
             className="text-muted-foreground hover:text-foreground"
           >
             Back to log in
           </LinkButton>
-          <LinkButton path="/register">Register again</LinkButton>
+          <LinkButton path={REGISTER_PAGE}>Register again</LinkButton>
         </CardContent>
       )}
     </AuthLayout>

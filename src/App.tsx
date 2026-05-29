@@ -51,8 +51,9 @@ const App = () => {
         <Route path={HOMEPAGE} element={<DashboardPage />} />
         <Route path={PROFILE_PAGE} element={<ProfilePage />} />
         <Route path={ADMIN_PAGE} element={<AdminPage />} />
-        <Route path="/*" element={<EmptyPage />} />
       </Route>
+
+      <Route path="/*" element={<EmptyPage />} />
     </Routes>
   );
 };

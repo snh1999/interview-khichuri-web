@@ -1,6 +1,7 @@
 import { AuthLayout } from "@/components/auth/AuthLayout.tsx";
 import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
 import { ForgotPasswordForm } from "@/components/auth/forgot-password/ForgotPasswordForm.tsx";
+import { LOGIN_PAGE } from "@/app.constants.ts";
 
 const ForgotPasswordPage = () => {
   return (
@@ -11,8 +12,8 @@ const ForgotPasswordPage = () => {
       cardDescription="No worries! We will send you a link to your email to reset your password"
       footer={
         <>
-          Rembmer the password?
-          <LinkButton path="/register">Back to login</LinkButton>
+          Remember the password?
+          <LinkButton path={LOGIN_PAGE}>Back to login</LinkButton>
         </>
       }
     >

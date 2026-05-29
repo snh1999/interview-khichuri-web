@@ -2,6 +2,7 @@ import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
 import { authAdmin, useSession } from "@/lib/auth/auth-client.ts";
 import { SignOutIcon } from "@phosphor-icons/react";
 import { useNavigate } from "react-router";
+import { ADMIN_PAGE } from "@/app.constants.ts";
 
 export const ImpersonationIndicator = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export const ImpersonationIndicator = () => {
         action={() =>
           authAdmin.stopImpersonating(undefined, {
             onSuccess: () => {
-              navigate("/admin");
+              navigate(ADMIN_PAGE);
               refetch();
             },
           })

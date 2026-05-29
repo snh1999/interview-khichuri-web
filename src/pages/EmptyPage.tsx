@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/empty";
 import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
 import { Background } from "@/components/common/Background.tsx";
+import { HOMEPAGE } from "@/app.constants.ts";
 
 export const EmptyPage = () => {
   return (
@@ -20,8 +21,8 @@ export const EmptyPage = () => {
         </EmptyHeader>
         <EmptyContent>
           <EmptyDescription>
-            <LinkButton pop replace path="/login">
-              Back to login
+            <LinkButton pop replace path={HOMEPAGE}>
+              Back to home
             </LinkButton>
           </EmptyDescription>
         </EmptyContent>

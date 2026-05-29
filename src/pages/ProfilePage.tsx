@@ -21,6 +21,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
+import { HOMEPAGE } from "@/app.constants.ts";
 
 const ProfilePage = () => {
   const { data: session } = useSession();
@@ -45,7 +46,7 @@ const ProfilePage = () => {
   return (
     <div className="mx-auto my-6 max-w-4xl px-4">
       <div className="mb-8">
-        <LinkButton path="/" className="mb-4">
+        <LinkButton path={HOMEPAGE} className="mb-4">
           <ArrowLeftIcon className="mr-2 size-4" />
           Back to Home
         </LinkButton>

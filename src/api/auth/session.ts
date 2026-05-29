@@ -5,13 +5,13 @@ import {
   listSessions,
   revokeOtherSessions,
   revokeSession,
+  unwrapBetterAuth,
 } from "@/lib/auth/auth-client.ts";
 
 export const useListSessions = () =>
   useSuspenseQuery({
     queryKey: queryKeys.auth.session,
-    queryFn: async () => listSessions(),
-    select: (response) => response.data,
+    queryFn: async () => unwrapBetterAuth(listSessions()),
   });
 
 export const useRevokeOtherSessions = () =>

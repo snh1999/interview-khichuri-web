@@ -1,13 +1,12 @@
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { queryKeys } from "@/api";
-import { authPasskey } from "@/lib/auth/auth-client.ts";
+import { authPasskey, unwrapBetterAuth } from "@/lib/auth/auth-client.ts";
 
 export const useListPasskey = () =>
   useSuspenseQuery({
     queryKey: queryKeys.auth.passkey,
-    queryFn: async () => authPasskey.listUserPasskeys(),
-    select: (response) => response.data ?? [],
+    queryFn: async () => unwrapBetterAuth(authPasskey.listUserPasskeys()),
   });
 
 export const useAddPasskey = () =>

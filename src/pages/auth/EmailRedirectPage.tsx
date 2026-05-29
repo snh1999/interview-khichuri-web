@@ -5,6 +5,7 @@ import { sendVerificationEmail } from "@/lib/auth/auth-client.ts";
 import { useEmailResendCooldown } from "@/hooks/useEmailResendCooldown.ts";
 import {
   FORGOT_PASSWORD_EMAIL_CONTEXT,
+  LOGIN_PAGE,
   VERIFY_EMAIL_CONTEXT,
 } from "@/app.constants.ts";
 import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
@@ -68,7 +69,7 @@ const EmailRedirectPage = () => {
       hideOauth={hideOauth}
       hideFooter={hideFooter}
       footer={
-        <LinkButton className="pl-0" path="/login">
+        <LinkButton className="pl-0" path={LOGIN_PAGE}>
           Back to log in
         </LinkButton>
       }

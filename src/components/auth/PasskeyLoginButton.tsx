@@ -28,7 +28,7 @@ export const PasskeyButton = () => {
         signIn.passkey(undefined, {
           onSuccess() {
             refetch();
-            navigate("/");
+            navigate(HOMEPAGE);
           },
         })
       }

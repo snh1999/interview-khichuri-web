@@ -17,7 +17,7 @@ export const getErrorMessage = (error: unknown): string => {
       message?: string;
     };
     return (
-      errorCast.error?.message ?? errorCast.message ?? "Failed to add passkey"
+      errorCast.error?.message ?? errorCast.message ?? "Something went wrong"
     );
   }
   return "Something went wrong";

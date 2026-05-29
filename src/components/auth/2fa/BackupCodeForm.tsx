@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { authTwoFactor } from "@/lib/auth/auth-client.ts";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
+import { HOMEPAGE } from "@/app.constants.ts";
 
 const backupCodeSchema = z.object({
   code: z.string().min(1),
@@ -33,7 +34,7 @@ export const BackupCodeForm = () => {
         toast.error(error.error.message || "Failed to verify code");
       },
       onSuccess: () => {
-        navigate("/");
+        navigate(HOMEPAGE);
       },
     });
   }
