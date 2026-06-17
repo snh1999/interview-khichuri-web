@@ -1,13 +1,12 @@
+import { TrashIcon } from "@phosphor-icons/react";
+import { useDeletePasskey, useListPasskey } from "@/api/auth";
+import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-
-import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
-import { TrashIcon } from "@phosphor-icons/react";
-import { useListPasskey, useDeletePasskey } from "@/api/auth";
 
 export const PasskeyItems = () => {
   const { data: passkeys } = useListPasskey();
@@ -36,11 +35,11 @@ export const PasskeyItems = () => {
                   </CardDescription>
                 </div>
                 <AuthActionButton
-                  requireConfirmation
-                  variant="destructive"
-                  size="icon"
                   action={() => deletePasskey(passkey.id)}
+                  requireConfirmation
+                  size="icon"
                   successMessage=""
+                  variant="destructive"
                 >
                   <TrashIcon />
                 </AuthActionButton>

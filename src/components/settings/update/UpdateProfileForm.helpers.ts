@@ -1,10 +1,10 @@
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import { toast } from "sonner";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
+import type { IFormHook } from "@/components/common/form/form.types.ts";
 import { changeEmail, updateUser } from "@/lib/auth/auth-client.ts";
-import type { TFormHook } from "@/components/common/form/form.types.ts";
 
 const profileUpdateSchema = z.object({
   name: z.string().min(1),
@@ -15,7 +15,7 @@ type TUpdateProfileForm = z.infer<typeof profileUpdateSchema>;
 
 export const useUpdateProfileForm = (
   user: TUpdateProfileForm
-): TFormHook<TUpdateProfileForm> => {
+): IFormHook<TUpdateProfileForm> => {
   const form = useForm<TUpdateProfileForm>({
     resolver: zodResolver(profileUpdateSchema),
     defaultValues: user,
@@ -23,7 +23,7 @@ export const useUpdateProfileForm = (
 
   useEffect(() => {
     form.reset(user, { keepDirtyValues: true });
-  }, [user]);
+  }, [user, form.reset]);
 
   const onSubmit = form.handleSubmit(async (data: TUpdateProfileForm) => {
     try {

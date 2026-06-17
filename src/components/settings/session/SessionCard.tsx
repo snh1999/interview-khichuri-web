@@ -1,3 +1,8 @@
+import { MonitorIcon, PhoneIcon, TrashIcon } from "@phosphor-icons/react";
+import type { Session } from "better-auth/types";
+import { UAParser } from "ua-parser-js";
+import { useRevokeSession } from "@/api/auth";
+import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import {
   Card,
@@ -5,11 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { MonitorIcon, PhoneIcon, TrashIcon } from "@phosphor-icons/react";
-import { UAParser } from "ua-parser-js";
-import type { Session } from "better-auth/types";
-import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
-import { useRevokeSession } from "@/api/auth";
 
 interface IProps {
   session: Session;
@@ -26,13 +26,19 @@ export const SessionCard = ({
   const userAgentInfo = session.userAgent ? UAParser(session.userAgent) : null;
 
   function getBrowserInformation() {
-    if (userAgentInfo == null) return "Unknown Device";
+    if (userAgentInfo == null) {
+      return "Unknown Device";
+    }
     if (userAgentInfo.browser.name == null && userAgentInfo.os.name == null) {
       return "Unknown Device";
     }
 
-    if (userAgentInfo.browser.name == null) return userAgentInfo.os.name;
-    if (userAgentInfo.os.name == null) return userAgentInfo.browser.name;
+    if (userAgentInfo.browser.name == null) {
+      return userAgentInfo.os.name;
+    }
+    if (userAgentInfo.os.name == null) {
+      return userAgentInfo.browser.name;
+    }
 
     return `${userAgentInfo.browser.name}, ${userAgentInfo.os.name}`;
   }
@@ -69,10 +75,10 @@ export const SessionCard = ({
           </div>
           {!isCurrentSession && (
             <AuthActionButton
-              variant="destructive"
-              size="sm"
               action={() => revokeSession({ token: session.token })}
+              size="sm"
               successMessage="Session revoked"
+              variant="destructive"
             >
               <TrashIcon />
             </AuthActionButton>

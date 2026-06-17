@@ -1,11 +1,11 @@
-import { z } from "zod";
-import { changePassword } from "@/lib/auth/auth-client.ts";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+import { FormCheckbox } from "@/components/common/form/FormCheckbox.tsx";
 import { PasswordInput } from "@/components/common/form/PasswordInput.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
-import { FormCheckbox } from "@/components/common/form/FormCheckbox.tsx";
+import { changePassword } from "@/lib/auth/auth-client.ts";
 
 const updatePasswordSchema = z
   .object({
@@ -55,36 +55,36 @@ export const UpdatePasswordForm = () => {
   const { form, isSubmitting, onSubmit } = useUpdatePasswordForm();
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form className="space-y-4" onSubmit={onSubmit}>
       <PasswordInput
         form={form}
-        name="currentPassword"
         label="Current Password"
+        name="currentPassword"
       />
 
       <PasswordInput
         form={form}
-        name="newPassword"
         label="New Password"
+        name="newPassword"
         showStrength
       />
       <PasswordInput
         form={form}
-        name="confirmPassword"
         label="Re-enter new Password"
+        name="confirmPassword"
       />
 
       <FormCheckbox
-        name="revokeOtherSessions"
         form={form}
         label="Log out of other sessions"
+        name="revokeOtherSessions"
       />
 
       <AsyncButton
-        type="submit"
-        isLoading={isSubmitting}
         className="mt-2 w-full"
+        isLoading={isSubmitting}
         size="lg"
+        type="submit"
       >
         Update Password
       </AsyncButton>

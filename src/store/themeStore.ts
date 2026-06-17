@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/strict-void-return */
-import { shallow } from "zustand/shallow";
+
 import { create } from "zustand";
 import { persist, subscribeWithSelector } from "zustand/middleware";
-import { BUILT_IN_PRESETS } from "@/lib/theme/theme-preset.ts";
-import { injectThemeVariables } from "@/lib/theme/theme-inject.ts";
-import { STORAGE_CURRENT_KEY } from "@/components/theme/themes.types.ts";
-import { getSystemTheme } from "@/lib/utils.ts";
+import { shallow } from "zustand/shallow";
 import type {
   TThemeMode,
   TThemePreset,
 } from "@/components/theme/themes.types.ts";
+import { STORAGE_CURRENT_KEY } from "@/components/theme/themes.types.ts";
+import { injectThemeVariables } from "@/lib/theme/theme-inject.ts";
+import { BUILT_IN_PRESETS } from "@/lib/theme/theme-preset.ts";
+import { getSystemTheme } from "@/lib/utils.ts";
 
-export type ThemeCustomizerHandle = {
+export interface IThemeCustomizerHandle {
   theme: TThemeMode;
   setTheme: (theme: TThemeMode) => void;
 
@@ -35,20 +36,20 @@ export type ThemeCustomizerHandle = {
 
   exportPresets: () => void;
   importPresets: (file: File) => Promise<void>;
-};
+}
 
-type PersistedState = {
+interface IPersistedState {
   theme: TThemeMode;
   light: Record<string, string>;
   dark: Record<string, string>;
   radius: string;
   activePresetId: string | null;
   userPresets: TThemePreset[];
-};
+}
 
 const [DEFAULT] = BUILT_IN_PRESETS;
 
-export const useThemeStore = create<ThemeCustomizerHandle>()(
+export const useThemeStore = create<IThemeCustomizerHandle>()(
   subscribeWithSelector(
     persist(
       (set, get) => ({
@@ -123,11 +124,15 @@ export const useThemeStore = create<ThemeCustomizerHandle>()(
 
         revertToPreset: () => {
           const { activePresetId, builtInPresets, userPresets } = get();
-          if (!activePresetId) return;
+          if (!activePresetId) {
+            return;
+          }
           const preset = [...builtInPresets, ...userPresets].find(
             (oldPreset) => oldPreset.id === activePresetId
           );
-          if (!preset) return;
+          if (!preset) {
+            return;
+          }
           set({
             light: { ...preset.light },
             dark: { ...preset.dark },
@@ -168,7 +173,7 @@ export const useThemeStore = create<ThemeCustomizerHandle>()(
       }),
       {
         name: STORAGE_CURRENT_KEY,
-        partialize: (state): PersistedState => ({
+        partialize: (state): IPersistedState => ({
           light: state.light,
           dark: state.dark,
           radius: state.radius,
@@ -184,7 +189,9 @@ export const useThemeStore = create<ThemeCustomizerHandle>()(
 // without shallow, would trigger unnecessary changes on each array
 useThemeStore.subscribe(
   (state) => [state.light, state.dark, state.radius] as const,
-  ([light, dark, radius]) => injectThemeVariables({ light, dark, radius }),
+  ([light, dark, radius]) => {
+    injectThemeVariables({ light, dark, radius });
+  },
   { equalityFn: shallow }
 );
 

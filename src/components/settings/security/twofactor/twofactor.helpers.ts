@@ -1,11 +1,11 @@
-import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { IFormHook } from "@/components/common/form/form.types.ts";
+import type { ITwoFactorData } from "@/components/settings/security/twofactor/QRCodeVerify.tsx";
 import { authTwoFactor } from "@/lib/auth/auth-client.ts";
-import type { TwoFactorData } from "@/components/profile/security/twofactor/QRCodeVerify.tsx";
-import type { TFormHook } from "@/components/common/form/form.types.ts";
 
 const qrSchema = z.object({
   token: z.string().length(6),
@@ -13,7 +13,7 @@ const qrSchema = z.object({
 
 type QrForm = z.infer<typeof qrSchema>;
 
-export const useQRCodeVerifyForm = (): TFormHook<QrForm> & {
+export const useQRCodeVerifyForm = (): IFormHook<QrForm> & {
   enabled: boolean;
 } => {
   const [enabled, setEnabled] = useState(false);
@@ -47,14 +47,16 @@ type TwoFactorAuthForm = z.infer<typeof twoFactorAuthSchema>;
 
 export const useTwoFactorAuthForm = (
   isEnabled: boolean
-): TFormHook<TwoFactorAuthForm> & {
-  twoFactorData: TwoFactorData | null;
+): IFormHook<TwoFactorAuthForm> & {
+  twoFactorData: ITwoFactorData | null;
   clearTwoFactorData: () => void;
 } => {
-  const [twoFactorData, setTwoFactorData] = useState<TwoFactorData | null>(
+  const [twoFactorData, setTwoFactorData] = useState<ITwoFactorData | null>(
     null
   );
-  const clearTwoFactorData = () => setTwoFactorData(null);
+  const clearTwoFactorData = () => {
+    setTwoFactorData(null);
+  };
   const form = useForm<TwoFactorAuthForm>({
     resolver: zodResolver(twoFactorAuthSchema),
     defaultValues: { password: "" },
@@ -67,7 +69,9 @@ export const useTwoFactorAuthForm = (
         onError: (error) => {
           toast.error(error.error.message);
         },
-        onSuccess: () => form.reset(),
+        onSuccess: () => {
+          form.reset();
+        },
       }
     );
   };
@@ -79,8 +83,10 @@ export const useTwoFactorAuthForm = (
         onError: (result) => {
           toast.error(result.error.message);
         },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-        onSuccess: (result) => setTwoFactorData(result.data as TwoFactorData),
+
+        onSuccess: (result) => {
+          setTwoFactorData(result.data as ITwoFactorData);
+        },
       }
     );
     form.reset();

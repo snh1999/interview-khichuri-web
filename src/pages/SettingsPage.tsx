@@ -1,4 +1,3 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeftIcon,
   KeyIcon,
@@ -7,37 +6,27 @@ import {
   TrashIcon,
   UserIcon,
 } from "@phosphor-icons/react";
-import { useSession } from "@/lib/auth/auth-client.ts";
-import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
-import { UpdateProfileForm } from "@/components/profile/update/UpdateProfileForm.tsx";
-import { ProfileTab } from "@/components/profile/security/ProfileSecurity.tsx";
-import { SessionTab } from "@/components/profile/session/SessionTab.tsx";
-import { AccountsTab } from "@/components/profile/account/LinkedAccounts.tsx";
-import { useSearchParams } from "react-router";
-import { ProfileDangerZone } from "@/components/profile/ProfileDangerZone.tsx";
-import { Badge } from "@/components/ui/badge.tsx";
+import { HOMEPAGE } from "@/app.constants.ts";
+import { AccountsTab } from "@/components/settings/account/LinkedAccounts.tsx";
+import { ProfileDangerZone } from "@/components/settings/ProfileDangerZone.tsx";
+import { ProfileTab } from "@/components/settings/security/ProfileSecurity.tsx";
+import { SessionTab } from "@/components/settings/session/SessionTab.tsx";
+import { UpdateProfileForm } from "@/components/settings/update/UpdateProfileForm.tsx";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import { HOMEPAGE } from "@/app.constants.ts";
+import { Badge } from "@/components/ui/badge.tsx";
+import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTabs } from "@/hooks/useTabs.ts";
+import { useSession } from "@/lib/auth/auth-client.ts";
 
-const ProfilePage = () => {
+const SettingsPage = () => {
   const { data: session } = useSession();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentTab = searchParams.get("tab") ?? "profile";
-
-  const handleTabChange = (value: string) => {
-    setSearchParams(
-      (prev) => {
-        prev.set("tab", value);
-        return prev;
-      },
-      { replace: true }
-    );
-  };
+  const { currentTab, handleTabChange } = useTabs("profile");
 
   if (!session) {
     return null;
@@ -46,7 +35,7 @@ const ProfilePage = () => {
   return (
     <div className="mx-auto my-6 max-w-4xl px-4">
       <div className="mb-8">
-        <LinkButton path={HOMEPAGE} className="mb-4">
+        <LinkButton className="mb-4" path={HOMEPAGE}>
           <ArrowLeftIcon className="mr-2 size-4" />
           Back to Home
         </LinkButton>
@@ -59,7 +48,7 @@ const ProfilePage = () => {
 
           <div className="flex-1">
             <div className="flex items-start justify-between gap-1">
-              <h1 className="text-3xl font-bold">
+              <h1 className="font-bold text-3xl">
                 {session.user.name || "User Profile"}
               </h1>
               <Badge>{session.user.role}</Badge>
@@ -71,10 +60,10 @@ const ProfilePage = () => {
 
       <Tabs
         className="space-y-2"
-        value={currentTab}
         onValueChange={handleTabChange}
+        value={currentTab}
       >
-        <TabsList variant="line" className="w-full">
+        <TabsList className="w-full" variant="line">
           <TabsTrigger value="profile">
             <UserIcon />
             <span className="max-sm:hidden">Profile</span>
@@ -121,4 +110,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default SettingsPage;

@@ -1,20 +1,19 @@
-import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import type { Account } from "better-auth";
 import { toast } from "sonner";
 import { queryKeys } from "@/api";
+import type { TOauthProviders } from "@/lib/auth/auth.helpers.tsx";
 import {
-  listAccounts,
   linkSocial,
+  listAccounts,
   unlinkAccount,
   unwrapBetterAuth,
 } from "@/lib/auth/auth-client.ts";
 
-import type { Account } from "better-auth";
-import type { TOauthProviders } from "@/lib/auth/auth.helpers.tsx";
-
 export const useListAccounts = () =>
   useSuspenseQuery({
     queryKey: queryKeys.auth.accounts,
-    queryFn: async () => unwrapBetterAuth(listAccounts()),
+    queryFn: async () => await unwrapBetterAuth(listAccounts()),
   });
 
 export const useUnlinkAccounts = () =>
@@ -29,7 +28,7 @@ export const useUnlinkAccounts = () =>
       if (account === null) {
         return { error: { message: "Account not found" } };
       }
-      return unlinkAccount(
+      return await unlinkAccount(
         {
           accountId: account.accountId,
           providerId,
@@ -46,6 +45,6 @@ export const useUnlinkAccounts = () =>
 
 export const useLinkAccounts = () =>
   useMutation({
-    mutationFn: async (provider: TOauthProviders) => linkSocial(provider),
+    mutationFn: async (provider: TOauthProviders) => await linkSocial(provider),
     meta: { invalidates: queryKeys.auth.accounts },
   });

@@ -1,11 +1,11 @@
+import { MoonIcon, PaintRollerIcon, SunIcon } from "@phosphor-icons/react";
+import { PresetSelection } from "@/components/theme/customizer/preset/PresetSelections.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover.tsx";
-import { Button } from "@/components/ui/button.tsx";
-import { PresetSelection } from "@/components/theme/customizer/preset/PresetSelections.tsx";
-import { MoonIcon, PaintRollerIcon, SunIcon } from "@phosphor-icons/react";
 import { useThemeStore } from "@/store/themeStore.ts";
 
 export const ThemePicker = () => {
@@ -24,14 +24,14 @@ export const ThemePicker = () => {
         <div className="mt-3 mr-2 flex items-center justify-end">
           <Button
             className="w-max"
-            variant="outline"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            variant="outline"
           >
             {theme === "dark" ? <SunIcon /> : <MoonIcon />}
           </Button>
         </div>
 
-        <PresetSelection />
+        <PresetSelection hideSaved />
       </PopoverContent>
     </Popover>
   );

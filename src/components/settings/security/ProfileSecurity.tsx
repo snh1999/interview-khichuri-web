@@ -1,33 +1,32 @@
+// import { UpdatePasswordForm } from "@/components/settings/security/UpdatePasswordForm.tsx";
+import { useListAccounts } from "@/api/auth";
+import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
+import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
+import { SkeletonCard } from "@/components/common/boundary/SkeletonCard.tsx";
+import { PasskeyCard } from "@/components/settings/security/passkey/PasskeyCard.tsx";
+import { TwoFactorAuth } from "@/components/settings/security/twofactor/TwofactorAuth.tsx";
+import { UpdatePasswordForm } from "@/components/settings/security/UpdatePasswordForm.tsx";
 import {
   Card,
-  CardDescription,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { UpdatePasswordForm } from "@/components/profile/security/UpdatePasswordForm.tsx";
-import { useListAccounts } from "@/api/auth";
-import { TwoFactorAuth } from "@/components/profile/security/twofactor/TwofactorAuth.tsx";
-import { PasskeyCard } from "@/components/profile/security/passkey/PasskeyCard.tsx";
-import { requestPasswordReset, useSession } from "@/lib/auth/auth-client.ts";
-import { SkeletonCard } from "@/components/common/boundary/SkeletonCard.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
-import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
-import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
+import { requestPasswordReset, useSession } from "@/lib/auth/auth-client.ts";
 
-export const ProfileTab = () => {
-  return (
-    <div className="space-y-6">
-      <AppErrorSuspense Fallback={ProfileSkeletonCard}>
-        <ProfileSecurity />
-      </AppErrorSuspense>
+export const ProfileTab = () => (
+  <div className="space-y-6">
+    <AppErrorSuspense fallback={ProfileSkeletonCard}>
+      <ProfileSecurity />
+    </AppErrorSuspense>
 
-      <AppErrorSuspense>
-        <PasskeyCard />
-      </AppErrorSuspense>
-    </div>
-  );
-};
+    <AppErrorSuspense>
+      <PasskeyCard />
+    </AppErrorSuspense>
+  </div>
+);
 
 export const ProfileSecurity = () => {
   const { data: accounts } = useListAccounts();
@@ -66,9 +65,9 @@ export const ProfileSecurity = () => {
           </CardHeader>
           <CardContent>
             <AuthActionButton
-              variant="outline"
-              successMessage="Password reset email sent"
               action={() => requestPasswordReset({ email })}
+              successMessage="Password reset email sent"
+              variant="outline"
             >
               Send Email with Password Reset Link
             </AuthActionButton>

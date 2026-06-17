@@ -1,10 +1,10 @@
-import { createAuthClient } from "better-auth/react";
+import { passkeyClient } from "@better-auth/passkey/client";
 import {
   adminClient,
   lastLoginMethodClient,
   twoFactorClient,
 } from "better-auth/client/plugins";
-import { passkeyClient } from "@better-auth/passkey/client";
+import { createAuthClient } from "better-auth/react";
 import { CONFIRM_LOGIN_PAGE } from "@/app.constants.ts";
 import type { TOauthProviders } from "@/lib/auth/auth.helpers.tsx";
 
@@ -30,13 +30,13 @@ const authClient = createAuthClient({
 });
 
 export const oauthLogin = async (provider: TOauthProviders) =>
-  authClient.signIn.social({
+  await authClient.signIn.social({
     provider,
     callbackURL: globalThis.location.origin,
   });
 
 export const linkSocial = async (provider: TOauthProviders) =>
-  authClient.linkSocial({
+  await authClient.linkSocial({
     provider,
     callbackURL: `${globalThis.location.origin}/profile?tab=accounts`,
   });
@@ -69,7 +69,8 @@ export const unwrapBetterAuth = async <T>(
   call: Promise<{ data: T | null; error: { message?: string } | null }>
 ): Promise<T> => {
   const response = await call;
-  if (response.error || !response.data)
+  if (response.error || !response.data) {
     throw new Error(response.error?.message);
+  }
   return response.data;
 };

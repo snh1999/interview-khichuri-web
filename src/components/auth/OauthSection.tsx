@@ -8,17 +8,17 @@ export const OauthSection = () => {
     <div className="grid w-full grid-cols-3 gap-3">
       {oauthProviders.map((provider) => (
         <AuthActionButton
-          key={provider.id}
-          variant="outline"
-          size="lg"
           action={() => oauthLogin(provider.id)}
-          successMessage={`Redirecting to ${provider.name}`}
           failFallbackMessage={`Failed to connect to ${provider.id}`}
+          key={provider.id}
+          size="lg"
+          successMessage={`Redirecting to ${provider.name}`}
+          variant="outline"
         >
           <provider.icon
             className="h-5 w-5"
-            weight={provider.weight}
             color={provider.color}
+            weight={provider.weight}
           />
           {provider.name}
           {lastMethod === provider.id && (

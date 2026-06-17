@@ -1,11 +1,11 @@
-import { PresetSwatch } from "@/components/theme/customizer/preset/PresetSwatch.tsx";
 import { TrashIcon } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button.tsx";
-import { EditableText } from "@/components/common/EditableText.tsx";
 import { useState } from "react";
-import { useThemeStore } from "@/store/themeStore.ts";
+import { EditableText } from "@/components/common/EditableText.tsx";
+import { PresetSwatch } from "@/components/theme/customizer/preset/PresetSwatch.tsx";
 import type { TThemePreset } from "@/components/theme/themes.types.ts";
+import { Button } from "@/components/ui/button.tsx";
 import { ButtonGroup } from "@/components/ui/button-group.tsx";
+import { useThemeStore } from "@/store/themeStore.ts";
 
 export const PresetRow = ({
   preset,
@@ -23,10 +23,14 @@ export const PresetRow = ({
 
   const onLoad = () => loadPreset(preset);
   const onDelete = () => {
-    if (editable) deleteUserPreset(preset.id);
+    if (editable) {
+      deleteUserPreset(preset.id);
+    }
   };
   const onRename = (name: string) => {
-    if (editable) renameUserPreset(preset.id, name);
+    if (editable) {
+      renameUserPreset(preset.id, name);
+    }
   };
 
   return (
@@ -38,15 +42,15 @@ export const PresetRow = ({
       onMouseLeave={() => setHover(false)}
     >
       <EditableText
+        hideEditButton={!showEdit}
         initialValue={preset.name}
         onSave={onRename}
-        hideEditButton={!showEdit}
       >
         <Button
-          variant="link"
-          size="sm"
-          className="text-muted-foreground flex-1 justify-between hover:no-underline"
+          className="flex-1 justify-between text-muted-foreground hover:no-underline"
           onClick={onLoad}
+          size="sm"
+          variant="link"
         >
           {preset.name}
           {showEdit ? null : <PresetSwatch preset={preset} />}
@@ -54,11 +58,11 @@ export const PresetRow = ({
       </EditableText>
 
       <Button
+        aria-label="Delete preset"
         hidden={!showEdit}
+        onClick={onDelete}
         size="icon-xs"
         variant="ghost"
-        aria-label="Delete preset"
-        onClick={onDelete}
       >
         <TrashIcon size={11} />
       </Button>

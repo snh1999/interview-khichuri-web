@@ -1,6 +1,11 @@
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Suspense, useState } from "react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useAddPasskey } from "@/api/auth";
+import { FormInput } from "@/components/common/form/FormInput.tsx";
+import { PasskeyItems } from "@/components/settings/security/passkey/PasskeyItems.tsx";
+import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
@@ -16,12 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog.tsx";
-import { Suspense, useState } from "react";
-import { FormInput } from "@/components/common/form/FormInput.tsx";
-import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
-import { useAddPasskey } from "@/api/auth";
-import { PasskeyItems } from "@/components/profile/security/passkey/PasskeyItems.tsx";
 
 const passkeySchema = z.object({
   name: z.string().min(1),
@@ -41,7 +41,9 @@ export const PasskeyCard = () => {
 
   const onSubmit = form.handleSubmit(async (data: PasskeyForm) => {
     await addPasskey(data, {
-      onSuccess: () => setIsDialogOpen(false),
+      onSuccess: () => {
+        setIsDialogOpen(false);
+      },
     });
   });
 
@@ -56,11 +58,13 @@ export const PasskeyCard = () => {
         </Suspense>
 
         <Dialog
-          open={isDialogOpen}
           onOpenChange={(open) => {
-            if (open) form.reset();
+            if (open) {
+              form.reset();
+            }
             setIsDialogOpen(open);
           }}
+          open={isDialogOpen}
         >
           <DialogTrigger
             render={<Button className="mt-4">New Passkey</Button>}
@@ -74,11 +78,11 @@ export const PasskeyCard = () => {
             </DialogHeader>
 
             <form className="space-y-4" onSubmit={onSubmit}>
-              <FormInput form={form} name="name" label="Name" />
+              <FormInput form={form} label="Name" name="name" />
               <AsyncButton
-                type="submit"
-                disabled={form.formState.isSubmitting}
                 className="w-full"
+                disabled={form.formState.isSubmitting}
+                type="submit"
               >
                 Add
               </AsyncButton>

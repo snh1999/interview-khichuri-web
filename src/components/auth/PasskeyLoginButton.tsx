@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { signIn, useSession } from "@/lib/auth/auth-client.ts";
-import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
 import { HOMEPAGE } from "@/app.constants";
+import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
+import { signIn, useSession } from "@/lib/auth/auth-client.ts";
 
 export const PasskeyButton = () => {
   const navigate = useNavigate();
@@ -22,8 +22,6 @@ export const PasskeyButton = () => {
 
   return (
     <AuthActionButton
-      variant="outline"
-      className="my-4 w-full"
       action={() =>
         signIn.passkey(undefined, {
           onSuccess() {
@@ -32,7 +30,9 @@ export const PasskeyButton = () => {
           },
         })
       }
+      className="my-4 w-full"
       successMessage=""
+      variant="outline"
     >
       Use Passkey
     </AuthActionButton>

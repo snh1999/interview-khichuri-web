@@ -1,20 +1,21 @@
 // eslint-disable-next-line unicorn/prevent-abbreviations
-export type OklchColor = {
+export interface IOklchColor {
   lightness: number;
   chroma: number;
   hue: number;
   alpha?: number;
-};
+}
 
+const COLOR_STRING_REGEX =
+  /oklch\(\s*(?<lightness>[\d.]+)\s+(?<chroma>[\d.]+)\s+(?<hue>[\d.]+)(?:\s*\/\s*(?<alpha>[\d.]+)(?<alphaUnit>%?))?\s*\)/u;
 // the parsing is not extensive intentionally for theme usecase
 // percentages on L (50%), angle units on H (180deg), none
-export const parseOklch = (colorString: string): OklchColor | null => {
-  const match =
-    /oklch\(\s*(?<lightness>[\d.]+)\s+(?<chroma>[\d.]+)\s+(?<hue>[\d.]+)(?:\s*\/\s*(?<alpha>[\d.]+)(?<alphaUnit>%?))?\s*\)/u.exec(
-      colorString.trim()
-    );
+export const parseOklch = (colorString: string): IOklchColor | null => {
+  const match = COLOR_STRING_REGEX.exec(colorString.trim());
 
-  if (!match?.groups) return null;
+  if (!match?.groups) {
+    return null;
+  }
 
   const { lightness, chroma, hue, alpha, alphaUnit } = match.groups;
 
@@ -40,7 +41,7 @@ export const formatOklch = ({
   chroma,
   hue,
   alpha,
-}: OklchColor): string => {
+}: IOklchColor): string => {
   const base = `oklch(${r4(lightness)} ${r4(chroma)} ${r4(hue)})`;
   if (alpha !== undefined) {
     return `oklch(${r4(lightness)} ${r4(chroma)} ${r4(hue)} / ${Math.round(alpha * 100)}%)`;
@@ -50,19 +51,23 @@ export const formatOklch = ({
 
 const linearize = (color: number): number => {
   const abs = Math.abs(color);
-  if (abs <= 0.040_45) return color / 12.92;
+  if (abs <= 0.040_45) {
+    return color / 12.92;
+  }
   return Math.sign(color) * ((abs + 0.055) / 1.055) ** 2.4;
 };
 
 const delinearize = (color: number): number => {
   const abs = Math.abs(color);
-  if (abs <= 0.003_130_8) return 12.92 * color;
+  if (abs <= 0.003_130_8) {
+    return 12.92 * color;
+  }
   return Math.sign(color) * (1.055 * abs ** (1 / 2.4) - 0.055);
 };
 
 const clamp01 = (value: number): number => Math.max(0, Math.min(1, value));
 
-export const oklchToHex = ({ lightness, chroma, hue }: OklchColor): string => {
+export const oklchToHex = ({ lightness, chroma, hue }: IOklchColor): string => {
   const hRad = (hue * Math.PI) / 180;
   const cos = chroma * Math.cos(hRad);
   const sin = chroma * Math.sin(hRad);
@@ -86,13 +91,15 @@ export const oklchToHex = ({ lightness, chroma, hue }: OklchColor): string => {
   return `#${toHex(rLin)}${toHex(gLin)}${toHex(bLin)}`;
 };
 
-export const hexToOklch = (hex: string): OklchColor => {
+const HEX_STRING_REGEX = /^#(?<r>[\da-f])(?<g>[\da-f])(?<b>[\da-f])$/iu;
+const NORMALIZED_REGEX = /^#[\da-f]{6}$/iu;
+export const hexToOklch = (hex: string): IOklchColor => {
   const normalized = hex.replace(
-    /^#(?<r>[\da-f])(?<g>[\da-f])(?<b>[\da-f])$/iu,
+    HEX_STRING_REGEX,
     (_, r, g, b) => `#${r}${r}${g}${g}${b}${b}`
   );
 
-  if (!/^#[\da-f]{6}$/iu.test(normalized)) {
+  if (!NORMALIZED_REGEX.test(normalized)) {
     return { lightness: 0, chroma: 0, hue: 0 };
   }
 
@@ -117,7 +124,9 @@ export const hexToOklch = (hex: string): OklchColor => {
 
   const chroma = Math.hypot(aValue, bValue);
   let hue = (Math.atan2(bValue, aValue) * 180) / Math.PI;
-  if (hue < 0) hue += 360;
+  if (hue < 0) {
+    hue += 360;
+  }
 
   return { lightness, chroma, hue };
 };
@@ -133,7 +142,9 @@ export const applyHexToOklchString = (
 
 export const oklchStringToHex = (input: string): string => {
   const parsed = parseOklch(input);
-  if (!parsed) return "#000000";
+  if (!parsed) {
+    return "#000000";
+  }
   try {
     return oklchToHex(parsed);
   } catch {

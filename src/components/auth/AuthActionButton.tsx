@@ -20,9 +20,8 @@ export const AuthActionButton = ({
           error: true,
           message: result.error.message ?? failFallbackMessage,
         };
-      } else {
-        return { error: false, message: successMessage };
       }
+      return { error: false, message: successMessage };
     }}
   />
 );

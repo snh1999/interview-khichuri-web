@@ -1,32 +1,34 @@
-/* eslint-disable unicorn/prevent-abbreviations */
-import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import type {
   BaseSyntheticEvent,
   HTMLInputTypeAttribute,
   ReactNode,
 } from "react";
+import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
-export type TBasicFormInputProps<T extends FieldValues> = {
+export interface TBasicFormInputProps<T extends FieldValues> {
   form: UseFormReturn<T>;
   name: Path<T>;
   label: string;
   placeholder?: string;
   description?: string;
   disabled?: boolean;
-};
+}
 
-export type TFormInputProps<T extends FieldValues> = TBasicFormInputProps<T> & {
+export type IFormInputProps<T extends FieldValues> = TBasicFormInputProps<T> & {
   type?: HTMLInputTypeAttribute;
+  // biome-ignore lint/style/useNamingConvention: <component type>
   StartComponent?: ReactNode;
+  // biome-ignore lint/style/useNamingConvention: <component type>
   EndComponent?: ReactNode;
+  textArea?: boolean;
 };
 
-export type TFormHook<T extends FieldValues> = {
+export interface IFormHook<T extends FieldValues> {
   isLoading: boolean;
   onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
   form: UseFormReturn<T>;
-};
+}
 
-export type TFormProps = {
+export interface IFormProps {
   onSuccess?: () => void;
-};
+}

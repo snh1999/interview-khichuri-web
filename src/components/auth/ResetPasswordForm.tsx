@@ -1,12 +1,12 @@
-import { z } from "zod";
-import { useNavigate } from "react-router";
-import { resetPassword } from "@/lib/auth/auth-client.ts";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import { z } from "zod";
+import { HOMEPAGE, RESET_PASSWORD_PAGE } from "@/app.constants.ts";
 import { PasswordInput } from "@/components/common/form/PasswordInput.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
-import { HOMEPAGE, RESET_PASSWORD_PAGE } from "@/app.constants.ts";
+import { resetPassword } from "@/lib/auth/auth-client.ts";
 
 const resetPasswordSchema = z
   .object({
@@ -58,24 +58,24 @@ export const ResetPasswordForm = ({ token }: Readonly<{ token: string }>) => {
   const { form, isSubmitting, onSubmit } = useResetPasswordForm(token);
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form className="space-y-4" onSubmit={onSubmit}>
       <PasswordInput
         form={form}
-        name="password"
         label="Password"
+        name="password"
         showStrength
       />
       <PasswordInput
         form={form}
-        name="confirmPassword"
         label="Re-enter Password"
+        name="confirmPassword"
       />
 
       <AsyncButton
-        type="submit"
-        isLoading={isSubmitting}
         className="mt-2 w-full"
+        isLoading={isSubmitting}
         size="lg"
+        type="submit"
       >
         Update Password
       </AsyncButton>

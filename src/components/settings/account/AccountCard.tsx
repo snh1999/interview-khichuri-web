@@ -1,12 +1,12 @@
+import { PlusIcon, TrashIcon } from "@phosphor-icons/react";
 import type { Account } from "better-auth";
+import { useLinkAccounts, useUnlinkAccounts } from "@/api/auth";
+import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
+import { Card, CardContent } from "@/components/ui/card.tsx";
 import {
   oauthProviders,
   type TOauthProviders,
 } from "@/lib/auth/auth.helpers.tsx";
-import { Card, CardContent } from "@/components/ui/card.tsx";
-import { PlusIcon, TrashIcon } from "@phosphor-icons/react";
-import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
-import { useLinkAccounts, useUnlinkAccounts } from "@/api/auth";
 
 interface IProps {
   provider: TOauthProviders;
@@ -51,26 +51,26 @@ export const AccountCard = ({
           </div>
           {account == null ? (
             <AuthActionButton
-              variant="outline"
-              size="sm"
               action={async () => linkAccounts(provider)}
+              size="sm"
               successMessage={`Redirecting to ${providerDetails.name}`}
+              variant="outline"
             >
               <PlusIcon />
               Link
             </AuthActionButton>
           ) : (
             <AuthActionButton
-              variant="destructive"
-              size="sm"
               action={() =>
                 unlinkAccount({
-                  account: account,
+                  account,
                   providerId: provider,
                 })
               }
-              successMessage={`Removed ${providerDetails.name} account`}
               disabled={disableUnlink}
+              size="sm"
+              successMessage={`Removed ${providerDetails.name} account`}
+              variant="destructive"
             >
               <TrashIcon />
               Unlink

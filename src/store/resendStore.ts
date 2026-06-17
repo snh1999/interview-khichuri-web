@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type IState = {
+interface IState {
   lastSentAt: number | null;
   markSent: () => void;
-};
+}
 
 export const useResendStore = create<IState>()(
   persist(

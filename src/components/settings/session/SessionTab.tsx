@@ -1,25 +1,23 @@
-import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
-import { SessionCard } from "@/components/profile/session/SessionCard.tsx";
 import { useListSessions, useRevokeOtherSessions } from "@/api/auth";
-import { Card, CardContent } from "@/components/ui/card.tsx";
-import { useSession } from "@/lib/auth/auth-client.ts";
+import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
+import { SessionCard } from "@/components/settings/session/SessionCard.tsx";
+import { Card, CardContent } from "@/components/ui/card.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
+import { useSession } from "@/lib/auth/auth-client.ts";
 
-export const SessionTab = () => {
-  return (
-    <AppErrorSuspense Fallback={SessionSkeleton}>
-      <SessionManagement />
-    </AppErrorSuspense>
-  );
-};
+export const SessionTab = () => (
+  <AppErrorSuspense fallback={SessionSkeleton}>
+    <SessionManagement />
+  </AppErrorSuspense>
+);
 const SessionManagement = () => {
   const { data } = useSession();
   const { data: sessions } = useListSessions();
   const { mutateAsync: revokeOtherSessions } = useRevokeOtherSessions();
 
-  if (!data || !sessions) {
+  if (!(data && sessions)) {
     return null;
   }
 
@@ -32,18 +30,18 @@ const SessionManagement = () => {
     <Card className="space-y-6">
       <CardContent>
         {currentSession ? (
-          <SessionCard session={currentSession} isCurrentSession />
+          <SessionCard isCurrentSession session={currentSession} />
         ) : null}
 
         <div className="mt-6 space-y-4">
           {otherSessions.length > 0 && (
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Other Active Sessions</h3>
+              <h3 className="font-medium text-lg">Other Active Sessions</h3>
               <AuthActionButton
-                variant="destructive"
-                size="sm"
                 action={revokeOtherSessions}
+                size="sm"
                 successMessage="Revoked other sessions"
+                variant="destructive"
               >
                 Revoke Other Sessions
               </AuthActionButton>
@@ -51,7 +49,7 @@ const SessionManagement = () => {
           )}
 
           {otherSessions.length === 0 ? (
-            <div className="text-muted-foreground py-8 text-center">
+            <div className="py-8 text-center text-muted-foreground">
               No other active sessions
             </div>
           ) : (

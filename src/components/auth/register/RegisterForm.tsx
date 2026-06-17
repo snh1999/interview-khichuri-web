@@ -1,50 +1,50 @@
 import { EnvelopeIcon, UserIcon } from "@phosphor-icons/react";
 import { useRegisterForm } from "@/components/auth/register/RegisterForm.helpers.ts";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
+import type { IFormProps } from "@/components/common/form/form.types.ts";
 import { PasswordInput } from "@/components/common/form/PasswordInput.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
-import type { TFormProps } from "@/components/common/form/form.types.ts";
 
-export const RegisterForm = (props: TFormProps) => {
+export const RegisterForm = (props: IFormProps) => {
   const { isLoading, form, onSubmit } = useRegisterForm(props);
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form className="space-y-4" onSubmit={onSubmit}>
       <FormInput
         form={form}
-        name="name"
         label="Full Name"
-        type="text"
+        name="name"
         placeholder="John Doe"
         StartComponent={<UserIcon />}
+        type="text"
       />
 
       <FormInput
         form={form}
-        name="email"
         label="Email"
-        type="email"
+        name="email"
         placeholder="dev@example.com"
         StartComponent={<EnvelopeIcon />}
+        type="email"
       />
 
       <PasswordInput
         form={form}
-        name="password"
         label="Password"
+        name="password"
         showStrength
       />
       <PasswordInput
         form={form}
-        name="confirmPassword"
         label="Re-enter Password"
+        name="confirmPassword"
       />
 
       <AsyncButton
-        type="submit"
-        isLoading={isLoading}
         className="mt-2 w-full"
+        isLoading={isLoading}
         size="lg"
+        type="submit"
       >
         Register
       </AsyncButton>

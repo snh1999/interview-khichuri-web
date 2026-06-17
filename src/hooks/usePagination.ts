@@ -1,13 +1,13 @@
 import { useSearchParams } from "react-router";
 
-type TReturnType = {
+interface IReturnType {
   page: number;
   limit: number;
   setPage: (page: number) => void;
   setLimit: (limit: number) => void;
-};
+}
 
-export const usePagination = (limitDefault?: number): TReturnType => {
+export const usePagination = (limitDefault?: number): IReturnType => {
   const [searchParameters, setSearchParameters] = useSearchParams();
   const page = Number(searchParameters.get("page")) || 1;
   const limit = (Number(searchParameters.get("limit")) || limitDefault) ?? 10;

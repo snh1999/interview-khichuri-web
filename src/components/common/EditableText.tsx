@@ -1,15 +1,15 @@
-import { Input } from "@/components/ui/input.tsx";
+import { PencilIcon } from "@phosphor-icons/react";
 import { type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
-import { PencilIcon } from "@phosphor-icons/react";
+import { Input } from "@/components/ui/input.tsx";
 
-type IProps = {
+interface IProps {
   initialValue: string;
   onSave: (value: string) => void;
   saveOnBlur?: boolean;
   hideEditButton?: boolean;
   children: ReactNode;
-};
+}
 
 export const EditableText = ({
   initialValue,
@@ -24,7 +24,9 @@ export const EditableText = ({
 
   const saveText = () => {
     const trimmed = draft.trim();
-    if (trimmed) onSave(trimmed);
+    if (trimmed) {
+      onSave(trimmed);
+    }
     setEditing(false);
   };
 
@@ -40,24 +42,28 @@ export const EditableText = ({
       {editing ? (
         <Input
           autoFocus
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          onBlur={onBlur}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") saveText();
-            if (event.key === "Escape") setEditing(false);
-          }}
           className="text-foreground text-xs"
+          onBlur={onBlur}
+          onChange={(event) => setDraft(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              saveText();
+            }
+            if (event.key === "Escape") {
+              setEditing(false);
+            }
+          }}
+          value={draft}
         />
       ) : (
         children
       )}
       <Button
+        aria-label="Rename preset"
         hidden={hideEditButton}
+        onClick={() => setEditing(true)}
         size="icon-xs"
         variant="ghost"
-        aria-label="Rename preset"
-        onClick={() => setEditing(true)}
       >
         <PencilIcon />
       </Button>

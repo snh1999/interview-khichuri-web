@@ -1,5 +1,7 @@
-import { useSession } from "@/lib/auth/auth-client.ts";
 import { PasswordInput } from "@/components/common/form/PasswordInput.tsx";
+import { QRCodeVerify } from "@/components/settings/security/twofactor/QRCodeVerify.tsx";
+import { useTwoFactorAuthForm } from "@/components/settings/security/twofactor/twofactor.helpers.ts";
+import { Badge } from "@/components/ui/badge.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import {
   Card,
@@ -7,9 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { Badge } from "@/components/ui/badge.tsx";
-import { QRCodeVerify } from "@/components/profile/security/twofactor/QRCodeVerify.tsx";
-import { useTwoFactorAuthForm } from "@/components/profile/security/twofactor/twofactor.helpers.ts";
+import { useSession } from "@/lib/auth/auth-client.ts";
 
 export const TwoFactorAuth = () => {
   const { data } = useSession();
@@ -32,12 +32,12 @@ export const TwoFactorAuth = () => {
       </CardHeader>
       <CardContent>
         <form className="space-y-4" onSubmit={onSubmit}>
-          <PasswordInput form={form} name="password" label="Password" />
+          <PasswordInput form={form} label="Password" name="password" />
 
           <AsyncButton
-            type="submit"
-            disabled={isLoading || !form.formState.isValid}
             className="w-full"
+            disabled={isLoading || !form.formState.isValid}
+            type="submit"
             variant={isEnabled ? "destructive" : "default"}
           >
             {isEnabled ? "Disable 2FA" : "Enable 2FA"}

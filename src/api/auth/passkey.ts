@@ -6,19 +6,20 @@ import { authPasskey, unwrapBetterAuth } from "@/lib/auth/auth-client.ts";
 export const useListPasskey = () =>
   useSuspenseQuery({
     queryKey: queryKeys.auth.passkey,
-    queryFn: async () => unwrapBetterAuth(authPasskey.listUserPasskeys()),
+    queryFn: async () => await unwrapBetterAuth(authPasskey.listUserPasskeys()),
   });
 
 export const useAddPasskey = () =>
   useMutation({
-    mutationFn: async (data: { name: string }) => authPasskey.addPasskey(data),
+    mutationFn: async (data: { name: string }) =>
+      await authPasskey.addPasskey(data),
     meta: { invalidates: queryKeys.auth.passkey },
   });
 
 export const useDeletePasskey = () =>
   useMutation({
     mutationFn: async (id: string) =>
-      authPasskey.deletePasskey(
+      await authPasskey.deletePasskey(
         { id },
         {
           onError: (error) => {

@@ -1,15 +1,14 @@
 import { Controller, type FieldValues } from "react-hook-form";
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-  FieldContent,
-  FieldGroup,
-} from "@/components/ui/field.tsx";
-
 import type { TBasicFormInputProps } from "@/components/common/form/form.types.ts";
 import { Checkbox } from "@/components/ui/checkbox.tsx";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field.tsx";
 
 export const FormCheckbox = <T extends FieldValues>({
   form,
@@ -19,18 +18,18 @@ export const FormCheckbox = <T extends FieldValues>({
   disabled,
 }: Readonly<Omit<TBasicFormInputProps<T>, "placeholder">>) => (
   <Controller
-    name={name}
     control={form.control}
+    name={name}
     render={({ field: { name, value, onChange }, fieldState }) => (
       <div>
         <FieldGroup data-invalid={fieldState.invalid}>
           <Field orientation="horizontal">
             <Checkbox
+              checked={value}
+              disabled={disabled}
               id={name}
               name={name}
-              checked={value}
               onCheckedChange={onChange}
-              disabled={disabled}
             />
             <FieldContent>
               <FieldLabel htmlFor={name}>{label}</FieldLabel>

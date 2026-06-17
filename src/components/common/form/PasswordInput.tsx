@@ -1,17 +1,17 @@
-import type { FieldValues } from "react-hook-form";
-import type { TFormInputProps } from "@/components/common/form/form.types.ts";
-import { FormInput } from "@/components/common/form/FormInput.tsx";
 import { EyeIcon, EyeSlashIcon, LockIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import { InputGroupButton } from "@/components/ui/input-group.tsx";
+import type { FieldValues } from "react-hook-form";
+import { FormInput } from "@/components/common/form/FormInput.tsx";
+import type { IFormInputProps } from "@/components/common/form/form.types.ts";
 import { PasswordStrengthIndicator } from "@/components/common/form/PasswordStrengthIndicator.tsx";
+import { InputGroupButton } from "@/components/ui/input-group.tsx";
 
 export const PasswordInput = <T extends FieldValues>({
   showStrength,
   ...props
 }: Readonly<
   Omit<
-    TFormInputProps<T>,
+    IFormInputProps<T>,
     "type" | "StartComponent" | "EndComponent" | "placeholder"
   > & { showStrength?: boolean }
 >) => {
@@ -24,9 +24,6 @@ export const PasswordInput = <T extends FieldValues>({
     <div>
       <FormInput
         {...props}
-        type={showPassword ? "text" : "password"}
-        placeholder="••••••••"
-        StartComponent={<LockIcon />}
         EndComponent={
           <InputGroupButton onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? (
@@ -36,6 +33,9 @@ export const PasswordInput = <T extends FieldValues>({
             )}
           </InputGroupButton>
         }
+        placeholder="••••••••"
+        StartComponent={<LockIcon />}
+        type={showPassword ? "text" : "password"}
       />
       {showStrength ? <PasswordStrengthIndicator password={password} /> : null}
     </div>
