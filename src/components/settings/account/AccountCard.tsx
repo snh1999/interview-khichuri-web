@@ -2,7 +2,13 @@ import { PlusIcon, TrashIcon } from "@phosphor-icons/react";
 import type { Account } from "better-auth";
 import { useLinkAccounts, useUnlinkAccounts } from "@/api/auth";
 import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
-import { Card, CardContent } from "@/components/ui/card.tsx";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card.tsx";
 import {
   oauthProviders,
   type TOauthProviders,
@@ -31,22 +37,21 @@ export const AccountCard = ({
   }
 
   return (
-    <Card>
+    <Card size="sm">
       <CardContent>
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center">
             <providerDetails.icon className="size-5" />
+            <CardHeader>
+              <CardTitle className="text-xs">{providerDetails.name}</CardTitle>
+              <CardDescription>
+                {account == null
+                  ? `Connect your ${providerDetails.name} account for easier sign-in`
+                  : `Linked on ${new Date(account.createdAt).toLocaleDateString()}`}
+              </CardDescription>
+            </CardHeader>
             <div>
-              <p className="font-medium">{providerDetails.name}</p>
-              {account == null ? (
-                <p className="text-muted-foreground text-sm">
-                  Connect your {providerDetails.name} account for easier sign-in
-                </p>
-              ) : (
-                <p className="text-muted-foreground text-sm">
-                  Linked on {new Date(account.createdAt).toLocaleDateString()}
-                </p>
-              )}
+              <p className="" />
             </div>
           </div>
           {account == null ? (

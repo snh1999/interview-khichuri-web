@@ -1,11 +1,13 @@
 import { MonitorIcon, PhoneIcon, TrashIcon } from "@phosphor-icons/react";
 import type { Session } from "better-auth/types";
+import { format } from "date-fns";
 import { UAParser } from "ua-parser-js";
 import { useRevokeSession } from "@/api/auth";
 import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import {
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -44,46 +46,37 @@ export const SessionCard = ({
   }
 
   function formatDate(date: Date) {
-    return new Intl.DateTimeFormat(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(new Date(date));
+    return `${format(date, "dd MMMM, yyyy")} (${format(date, "h:mm a")})`;
   }
 
   return (
-    <Card>
-      <CardHeader className="flex justify-between">
-        <div className="flex items-center gap-3">
+    <Card size="sm">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-sm">
           {userAgentInfo?.device.type === "mobile" ? (
-            <PhoneIcon size={32} />
+            <PhoneIcon size={25} />
           ) : (
-            <MonitorIcon size={32} />
+            <MonitorIcon size={25} />
           )}
-          <CardTitle>{getBrowserInformation()}</CardTitle>
-        </div>
-        {isCurrentSession ? <Badge>Current Session</Badge> : null}
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col gap-1">
-            <p className="text-muted-foreground text-xs">
-              Created: {formatDate(session.createdAt)}
-            </p>
-            <p className="text-muted-foreground text-xs">
-              Expires: {formatDate(session.expiresAt)}
-            </p>
-          </div>
-          {!isCurrentSession && (
+          {getBrowserInformation()}
+        </CardTitle>
+        <CardAction>
+          {isCurrentSession ? (
+            <Badge>Current Session</Badge>
+          ) : (
             <AuthActionButton
               action={() => revokeSession({ token: session.token })}
-              size="sm"
               successMessage="Session revoked"
               variant="destructive"
             >
               <TrashIcon />
             </AuthActionButton>
           )}
-        </div>
+        </CardAction>
+      </CardHeader>
+      <CardContent className="flex justify-between text-muted-foreground">
+        <p>Created: {formatDate(session.createdAt)}</p>
+        <p>Expires: {formatDate(session.expiresAt)}</p>
       </CardContent>
     </Card>
   );

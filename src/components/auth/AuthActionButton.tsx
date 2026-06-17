@@ -12,6 +12,7 @@ export const AuthActionButton = ({
   readonly failFallbackMessage?: string;
 }) => (
   <ActionButton
+    className="pt-1"
     {...props}
     action={async () => {
       const result = await action();

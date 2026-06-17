@@ -1,15 +1,13 @@
 import {
-  ArrowLeftIcon,
   KeyIcon,
   LinkIcon,
   ShieldIcon,
   TrashIcon,
   UserIcon,
 } from "@phosphor-icons/react";
-import { HOMEPAGE } from "@/app.constants.ts";
 import { AccountsTab } from "@/components/settings/account/LinkedAccounts.tsx";
 import { ProfileDangerZone } from "@/components/settings/ProfileDangerZone.tsx";
-import { ProfileTab } from "@/components/settings/security/ProfileSecurity.tsx";
+import { ProfileSecurityTab } from "@/components/settings/security/ProfileSecurity.tsx";
 import { SessionTab } from "@/components/settings/session/SessionTab.tsx";
 import { UpdateProfileForm } from "@/components/settings/update/UpdateProfileForm.tsx";
 import {
@@ -18,7 +16,12 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
-import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
+import {
+  Card,
+  CardAction,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card.tsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTabs } from "@/hooks/useTabs.ts";
 import { useSession } from "@/lib/auth/auth-client.ts";
@@ -33,30 +36,27 @@ const SettingsPage = () => {
   }
 
   return (
-    <div className="mx-auto my-6 max-w-4xl px-4">
-      <div className="mb-8">
-        <LinkButton className="mb-4" path={HOMEPAGE}>
-          <ArrowLeftIcon className="mr-2 size-4" />
-          Back to Home
-        </LinkButton>
-
-        <div className="flex items-center space-x-4">
+    <div className="my-6 w-full px-4">
+      <Card className="mb-2 bg-background">
+        <CardHeader className="flex items-center space-x-4">
           <Avatar className="size-14">
             <AvatarImage src={session.user.image ?? undefined} />
             <AvatarFallback>{session.user.name[0]}</AvatarFallback>
           </Avatar>
 
           <div className="flex-1">
-            <div className="flex items-start justify-between gap-1">
-              <h1 className="font-bold text-3xl">
-                {session.user.name || "User Profile"}
-              </h1>
-              <Badge>{session.user.role}</Badge>
-            </div>
-            <p className="text-muted-foreground">{session.user.email}</p>
+            <CardHeader className="pl-0 font-bold text-2xl">
+              {session.user.name || "User Profile"}
+            </CardHeader>
+            <CardDescription className="text-muted-foreground">
+              {session.user.email}
+            </CardDescription>
           </div>
-        </div>
-      </div>
+          <CardAction>
+            <Badge variant="secondary">{session.user.role}</Badge>
+          </CardAction>
+        </CardHeader>
+      </Card>
 
       <Tabs
         className="space-y-2"
@@ -91,7 +91,7 @@ const SettingsPage = () => {
         </TabsContent>
 
         <TabsContent value="security">
-          <ProfileTab />
+          <ProfileSecurityTab />
         </TabsContent>
 
         <TabsContent value="sessions">
