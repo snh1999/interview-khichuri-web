@@ -1,59 +1,72 @@
 import { Navigate, Outlet, Route, Routes } from "react-router";
-import { useSession } from "@/lib/auth/auth-client.ts";
-import { Spinner } from "@/components/ui/spinner.tsx";
-import DashboardPage from "@/pages/DashboardPage.tsx";
-import LoginPage from "@/pages/auth/LoginPage";
-import RegisterPage from "@/pages/auth/RegisterPage.tsx";
-import EmailRedirectPage from "@/pages/auth/EmailRedirectPage.tsx";
-import VerifyEmailPage from "@/pages/auth/VerifyEmailpage.tsx";
-import ResetPasswordPage from "@/pages/auth/ResetPasswordPage.tsx";
 import {
   ACCOUNT_VERIFICATION_PAGE,
-  FORGOT_PASSWORD_PAGE,
-  EMAIL_REDIRECT_PAGE,
-  RESET_PASSWORD_PAGE,
-  LOGIN_PAGE,
-  REGISTER_PAGE,
-  CONFIRM_LOGIN_PAGE,
-  HOMEPAGE,
-  PROFILE_PAGE,
+  ADMIN_LOOKUPS_PAGE,
   ADMIN_PAGE,
+  CONFIRM_LOGIN_PAGE,
+  EMAIL_REDIRECT_PAGE,
+  FORGOT_PASSWORD_PAGE,
+  HOMEPAGE,
+  LANDING_PAGE,
+  LOGIN_PAGE,
+  PROFILE_PAGE,
+  REGISTER_PAGE,
+  RESET_PASSWORD_PAGE,
+  SETTINGS_PAGE,
 } from "@/app.constants.ts";
-import ForgotPasswordPage from "@/pages/auth/FogotPasswordPage.tsx";
-import { EmptyPage } from "@/pages/EmptyPage.tsx";
-import ProfilePage from "@/pages/ProfilePage.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
+import { useSession } from "@/lib/auth/auth-client.ts";
 import AdminPage from "@/pages/admin/AdminPage.tsx";
 import ConfirmLoginPage from "@/pages/auth/ConfirmLogin.tsx";
+import EmailRedirectPage from "@/pages/auth/EmailRedirectPage.tsx";
+import ForgotPasswordPage from "@/pages/auth/FogotPasswordPage.tsx";
+import LoginPage from "@/pages/auth/LoginPage";
+import RegisterPage from "@/pages/auth/RegisterPage.tsx";
+import ResetPasswordPage from "@/pages/auth/ResetPasswordPage.tsx";
+import VerifyEmailPage from "@/pages/auth/VerifyEmailpage.tsx";
+import DashboardPage from "@/pages/DashboardPage.tsx";
+import { EmptyPage } from "@/pages/EmptyPage.tsx";
+import JobProfilePage from "@/pages/JobProfilePage.tsx";
+import { LandingPage } from "@/pages/landing/LandingPage.tsx";
+import { SidebarLayout } from "@/pages/layout/SidebarLayout.tsx";
+import SettingsPage from "@/pages/SettingsPage.tsx";
 
 const App = () => {
   const { data: session, isPending } = useSession();
 
-  if (isPending) return <Spinner />;
+  if (isPending) {
+    return <Spinner />;
+  }
 
   return (
     <Routes>
-      <Route path={ACCOUNT_VERIFICATION_PAGE} element={<VerifyEmailPage />} />
-      <Route path={RESET_PASSWORD_PAGE} element={<ResetPasswordPage />} />
+      <Route element={<VerifyEmailPage />} path={ACCOUNT_VERIFICATION_PAGE} />
+      <Route element={<ResetPasswordPage />} path={RESET_PASSWORD_PAGE} />
 
       <Route
-        element={!session ? <Outlet /> : <Navigate to={HOMEPAGE} replace />}
+        element={session ? <Navigate replace to={HOMEPAGE} /> : <Outlet />}
       >
-        <Route path={LOGIN_PAGE} element={<LoginPage />} />
-        <Route path={REGISTER_PAGE} element={<RegisterPage />} />
-        <Route path={EMAIL_REDIRECT_PAGE} element={<EmailRedirectPage />} />
-        <Route path={FORGOT_PASSWORD_PAGE} element={<ForgotPasswordPage />} />
-        <Route path={CONFIRM_LOGIN_PAGE} element={<ConfirmLoginPage />} />
+        <Route element={<LandingPage />} path={LANDING_PAGE} />
+        <Route element={<LoginPage />} path={LOGIN_PAGE} />
+        <Route element={<RegisterPage />} path={REGISTER_PAGE} />
+        <Route element={<EmailRedirectPage />} path={EMAIL_REDIRECT_PAGE} />
+        <Route element={<ForgotPasswordPage />} path={FORGOT_PASSWORD_PAGE} />
+        <Route element={<ConfirmLoginPage />} path={CONFIRM_LOGIN_PAGE} />
       </Route>
 
       <Route
-        element={session ? <Outlet /> : <Navigate to={LOGIN_PAGE} replace />}
+        element={session ? <Outlet /> : <Navigate replace to={LOGIN_PAGE} />}
       >
-        <Route path={HOMEPAGE} element={<DashboardPage />} />
-        <Route path={PROFILE_PAGE} element={<ProfilePage />} />
-        <Route path={ADMIN_PAGE} element={<AdminPage />} />
+        <Route element={<AdminPage />} path={ADMIN_PAGE} />
+
+        <Route element={<SidebarLayout />}>
+          <Route element={<DashboardPage />} path={HOMEPAGE} />
+          <Route element={<JobProfilePage />} path={PROFILE_PAGE} />
+          <Route element={<SettingsPage />} path={SETTINGS_PAGE} />
+        </Route>
       </Route>
 
-      <Route path="/*" element={<EmptyPage />} />
+      <Route element={<EmptyPage />} path="/*" />
     </Routes>
   );
 };

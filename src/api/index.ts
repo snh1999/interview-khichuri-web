@@ -2,6 +2,14 @@ import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { TPermissionOptions } from "@/api/auth/admin.ts";
 
+declare module "@tanstack/react-query" {
+  interface Register {
+    mutationMeta: {
+      invalidates?: readonly unknown[] | unknown[];
+    };
+  }
+}
+
 export const apiClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
@@ -11,8 +19,13 @@ export const apiClient = new QueryClient({
   mutationCache: new MutationCache({
     // eslint-disable-next-line @typescript-eslint/max-params
     onSuccess: async (_data, _variables, _context, mutation) => {
-      if (mutation.meta?.invalidates) {
-        await apiClient.invalidateQueries(mutation.meta.invalidates);
+      const keys = mutation.meta?.invalidates;
+      if (keys) {
+        await Promise.all(
+          keys.map(async (key) => {
+            await apiClient.invalidateQueries({ queryKey: key as never });
+          })
+        );
       }
     },
     onError: (error) => {
@@ -52,5 +65,20 @@ export const queryKeys = {
       ...queryKeys.admin.permissions,
       options,
     ],
+  },
+  profile: {
+    all: ["profile"] as const,
+    resumes: ["profile", "resumes"] as const,
+    resumeView: (id: string) => ["profile", "resumeView", id] as const,
+  },
+  lookups: {
+    roles: ["lookups", "roles"] as const,
+    topics: ["lookups", "topics"] as const,
+    industries: ["lookups", "industries"] as const,
+  },
+  keys: {
+    all: ["keys"] as const,
+    list: (filters?: Record<string, unknown>) =>
+      [...queryKeys.keys.all, "list", filters] as const,
   },
 } as const;

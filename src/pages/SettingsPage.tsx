@@ -1,4 +1,5 @@
 import {
+  DetectiveIcon,
   KeyIcon,
   LinkIcon,
   ShieldIcon,
@@ -6,6 +7,7 @@ import {
   UserIcon,
 } from "@phosphor-icons/react";
 import { AccountsTab } from "@/components/settings/account/LinkedAccounts.tsx";
+import KeysSection from "@/components/settings/keys/KeysSection.tsx";
 import { ProfileDangerZone } from "@/components/settings/ProfileDangerZone.tsx";
 import { ProfileSecurityTab } from "@/components/settings/security/ProfileSecurity.tsx";
 import { SessionTab } from "@/components/settings/session/SessionTab.tsx";
@@ -64,6 +66,10 @@ const SettingsPage = () => {
         value={currentTab}
       >
         <TabsList className="w-full" variant="line">
+          <TabsTrigger value="keys">
+            <DetectiveIcon />
+            <span className="max-sm:hidden">Keys</span>
+          </TabsTrigger>
           <TabsTrigger value="profile">
             <UserIcon />
             <span className="max-sm:hidden">Profile</span>
@@ -85,6 +91,10 @@ const SettingsPage = () => {
             <span className="max-sm:hidden">Danger</span>
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="keys">
+          <KeysSection />
+        </TabsContent>
 
         <TabsContent value="profile">
           <UpdateProfileForm user={session.user} />
