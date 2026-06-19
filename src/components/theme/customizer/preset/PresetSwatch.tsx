@@ -12,9 +12,9 @@ export const PresetSwatch = ({
   const vars = resolvedTheme === "light" ? preset.light : preset.dark;
   const swatchVars = [
     vars["--primary"],
-    vars["--secondary"],
-    vars["--muted-foreground"],
-    vars["--destructive"],
+    vars["--background"],
+    vars["--chart-2"],
+    vars["--chart-3"],
   ];
 
   return (
