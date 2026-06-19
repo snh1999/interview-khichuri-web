@@ -1,9 +1,9 @@
 import { Outlet } from "react-router";
+import { AppSidebar } from "@/components/layout/AppSidebar.tsx";
+import { Footer } from "@/components/layout/Footer.tsx";
+import { Header } from "@/components/layout/header/Header.tsx";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area.tsx";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/pages/layout/AppSidebar.tsx";
-import { Footer } from "@/pages/layout/Footer.tsx";
-import { Header } from "@/pages/layout/Header.tsx";
+import { SidebarProvider } from "@/components/ui/sidebar.tsx";
 
 export const SidebarLayout = () => {
   return (
@@ -17,7 +17,7 @@ export const SidebarLayout = () => {
           <div className="flex min-h-full">
             <AppSidebar />
             <div className="flex flex-1 flex-col">
-              <main className="mx-auto max-w-7xl flex-1 px-4 py-6 sm:px-6">
+              <main className="mx-auto w-full flex-1 px-4 py-6 sm:px-6">
                 <Outlet />
               </main>
               <Footer />

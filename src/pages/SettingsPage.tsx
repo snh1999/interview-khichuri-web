@@ -6,24 +6,14 @@ import {
   TrashIcon,
   UserIcon,
 } from "@phosphor-icons/react";
+import { ProfileCard } from "@/components/common/ProfileCard.tsx";
 import { AccountsTab } from "@/components/settings/account/LinkedAccounts.tsx";
 import KeysSection from "@/components/settings/keys/KeysSection.tsx";
 import { ProfileDangerZone } from "@/components/settings/ProfileDangerZone.tsx";
 import { ProfileSecurityTab } from "@/components/settings/security/ProfileSecurity.tsx";
 import { SessionTab } from "@/components/settings/session/SessionTab.tsx";
 import { UpdateProfileForm } from "@/components/settings/update/UpdateProfileForm.tsx";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar.tsx";
-import { Badge } from "@/components/ui/badge.tsx";
-import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card.tsx";
+import { Card, CardHeader } from "@/components/ui/card.tsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTabs } from "@/hooks/useTabs.ts";
 import { useSession } from "@/lib/auth/auth-client.ts";
@@ -41,22 +31,7 @@ const SettingsPage = () => {
     <div className="my-6 w-full px-4">
       <Card className="mb-2 bg-background">
         <CardHeader className="flex items-center space-x-4">
-          <Avatar className="size-14">
-            <AvatarImage src={session.user.image ?? undefined} />
-            <AvatarFallback>{session.user.name[0]}</AvatarFallback>
-          </Avatar>
-
-          <div className="flex-1">
-            <CardHeader className="pl-0 font-bold text-2xl">
-              {session.user.name || "User Profile"}
-            </CardHeader>
-            <CardDescription className="text-muted-foreground">
-              {session.user.email}
-            </CardDescription>
-          </div>
-          <CardAction>
-            <Badge variant="secondary">{session.user.role}</Badge>
-          </CardAction>
+          <ProfileCard />
         </CardHeader>
       </Card>
 

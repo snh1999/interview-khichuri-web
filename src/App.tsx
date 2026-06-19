@@ -1,15 +1,12 @@
 import { Navigate, Outlet, Route, Routes } from "react-router";
 import {
   ACCOUNT_VERIFICATION_PAGE,
-  ADMIN_LOOKUPS_PAGE,
   ADMIN_PAGE,
   CONFIRM_LOGIN_PAGE,
   EMAIL_REDIRECT_PAGE,
   FORGOT_PASSWORD_PAGE,
   HOMEPAGE,
-  LANDING_PAGE,
   LOGIN_PAGE,
-  PROFILE_PAGE,
   REGISTER_PAGE,
   RESET_PASSWORD_PAGE,
   SETTINGS_PAGE,
@@ -26,10 +23,9 @@ import ResetPasswordPage from "@/pages/auth/ResetPasswordPage.tsx";
 import VerifyEmailPage from "@/pages/auth/VerifyEmailpage.tsx";
 import DashboardPage from "@/pages/DashboardPage.tsx";
 import { EmptyPage } from "@/pages/EmptyPage.tsx";
-import JobProfilePage from "@/pages/JobProfilePage.tsx";
 import { LandingPage } from "@/pages/landing/LandingPage.tsx";
-import { SidebarLayout } from "@/pages/layout/SidebarLayout.tsx";
 import SettingsPage from "@/pages/SettingsPage.tsx";
+import { SidebarLayout } from "@/pages/SidebarLayout.tsx";
 
 const App = () => {
   const { data: session, isPending } = useSession();
@@ -46,7 +42,6 @@ const App = () => {
       <Route
         element={session ? <Navigate replace to={HOMEPAGE} /> : <Outlet />}
       >
-        <Route element={<LandingPage />} path={LANDING_PAGE} />
         <Route element={<LoginPage />} path={LOGIN_PAGE} />
         <Route element={<RegisterPage />} path={REGISTER_PAGE} />
         <Route element={<EmailRedirectPage />} path={EMAIL_REDIRECT_PAGE} />
@@ -61,7 +56,6 @@ const App = () => {
 
         <Route element={<SidebarLayout />}>
           <Route element={<DashboardPage />} path={HOMEPAGE} />
-          <Route element={<JobProfilePage />} path={PROFILE_PAGE} />
           <Route element={<SettingsPage />} path={SETTINGS_PAGE} />
         </Route>
       </Route>
