@@ -1,15 +1,15 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import { z } from "zod";
+import { HOMEPAGE } from "@/app.constants.ts";
+import { FormInput } from "@/components/common/form/FormInput.tsx";
 import { Button } from "@/components/ui/button";
 import { LoadingSwap } from "@/components/ui/loading-swap";
-import { toast } from "sonner";
-import { useNavigate } from "react-router";
 import { authTwoFactor } from "@/lib/auth/auth-client.ts";
-import { FormInput } from "@/components/common/form/FormInput.tsx";
-import { HOMEPAGE } from "@/app.constants.ts";
 
 const backupCodeSchema = z.object({
   code: z.string().min(1),
@@ -44,9 +44,9 @@ export const BackupCodeForm = () => {
       className="space-y-4"
       onSubmit={form.handleSubmit(handleBackupCodeVerification)}
     >
-      <FormInput form={form} name="code" label="Backup Code" />
+      <FormInput form={form} label="Backup Code" name="code" />
 
-      <Button type="submit" disabled={isSubmitting} className="w-full">
+      <Button className="w-full" disabled={isSubmitting} type="submit">
         <LoadingSwap isLoading={isSubmitting}>Verify</LoadingSwap>
       </Button>
     </form>

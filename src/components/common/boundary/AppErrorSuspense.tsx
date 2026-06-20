@@ -1,3 +1,8 @@
+import { useQueryClient } from "@tanstack/react-query";
+import { type ReactNode, Suspense } from "react";
+import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
+import { useNavigate } from "react-router";
+import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
   CardContent,
@@ -5,22 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { Button } from "@/components/ui/button.tsx";
-import { useQueryClient } from "@tanstack/react-query";
-import { type ReactNode, Suspense } from "react";
-import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
-import { getErrorMessage } from "@/lib/utils.ts";
 import { Spinner } from "@/components/ui/spinner.tsx";
-import { useNavigate } from "react-router";
+import { getErrorMessage } from "@/lib/utils.ts";
 
 interface IProps {
   children: ReactNode;
-  Fallback?: (args: any) => ReactNode;
+  fallback?: (args: object) => ReactNode;
 }
 
 export const AppErrorSuspense = ({
   children,
-  Fallback = Spinner,
+  fallback: Fallback = Spinner,
 }: Readonly<IProps>) => {
   const queryClient = useQueryClient();
   return (
@@ -39,13 +39,13 @@ const ErrorFallback = ({
 }: Readonly<FallbackProps>) => {
   const navigate = useNavigate();
   return (
-    <Card className="border-destructive border">
+    <Card className="border border-destructive">
       <CardHeader>
         <CardTitle className="text-destructive">Something went wrong</CardTitle>
         <CardDescription>{getErrorMessage(error)}</CardDescription>
       </CardHeader>
       <CardContent className="flex gap-5">
-        <Button variant="outline" onClick={resetErrorBoundary}>
+        <Button onClick={resetErrorBoundary} variant="outline">
           Retry
         </Button>
 

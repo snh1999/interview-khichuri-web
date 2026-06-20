@@ -27,11 +27,15 @@ export const useEmailResendCooldown = (): {
       id = setInterval(() => {
         const remainingTime = getRemainingCooldown(lastSentAt);
         setCooldown(remainingTime);
-        if (remainingTime <= 0) clearInterval(id);
+        if (remainingTime <= 0) {
+          clearInterval(id);
+        }
       }, 1000);
     }
 
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+    };
   }, [lastSentAt]);
 
   return { cooldown, markSent } as const;

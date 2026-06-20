@@ -79,11 +79,15 @@ interface IProps {
 
 export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
   const result = useMemo(() => {
-    if (!password) return null;
+    if (!password) {
+      return null;
+    }
     return zxcvbn(password);
   }, [password]);
 
-  if (!result || !password) return null;
+  if (!(result && password)) {
+    return null;
+  }
 
   const score = result.score;
   const level = LEVELS[score];
@@ -100,19 +104,19 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
       <div className="flex gap-1">
         {LEVELS.map((level, i) => (
           <div
-            key={level.label}
             className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
               i <= score ? level.className : "bg-muted"
             }`}
+            key={level.label}
           />
         ))}
       </div>
 
       <div className="flex items-center justify-between text-[14px]">
-        <span className="text-foreground font-medium">{level.label}</span>
+        <span className="font-medium text-foreground">{level.label}</span>
         <span className="text-muted-foreground">
           Cracks in{" "}
-          <span className="text-foreground font-medium">{throttled}</span>{" "}
+          <span className="font-medium text-foreground">{throttled}</span>{" "}
           {showFast ? (
             <span className="opacity-60"> (as fast as {noThrottle})</span>
           ) : null}
@@ -120,7 +124,7 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
       </div>
 
       {warning ? (
-        <p className="text-destructive text-[14px]">{warning}</p>
+        <p className="text-[14px] text-destructive">{warning}</p>
       ) : null}
 
       {suggestions && suggestions.length > 0 ? (

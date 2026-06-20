@@ -1,4 +1,5 @@
 import { Controller, type FieldValues } from "react-hook-form";
+import type { IFormInputProps } from "@/components/common/form/form.types.ts";
 import {
   Field,
   FieldDescription,
@@ -9,8 +10,8 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
+  InputGroupTextarea,
 } from "@/components/ui/input-group.tsx";
-import type { TFormInputProps } from "@/components/common/form/form.types.ts";
 
 export const FormInput = <T extends FieldValues>({
   form,
@@ -21,25 +22,35 @@ export const FormInput = <T extends FieldValues>({
   description,
   StartComponent,
   EndComponent,
-}: TFormInputProps<T>) => (
+  textArea,
+}: IFormInputProps<T>) => (
   <Controller
-    name={name}
     control={form.control}
+    name={name}
     render={({ field, fieldState }) => (
       <Field data-invalid={fieldState.invalid}>
         {label ? <FieldLabel htmlFor={field.name}>{label}</FieldLabel> : null}
         <InputGroup>
-          <InputGroupInput
-            {...field}
-            id={field.name}
-            aria-invalid={fieldState.invalid}
-            placeholder={placeholder}
-            type={type}
-          />
+          {textArea ? (
+            <InputGroupTextarea
+              {...field}
+              aria-invalid={fieldState.invalid}
+              id={field.name}
+              placeholder={placeholder}
+            />
+          ) : (
+            <InputGroupInput
+              {...field}
+              aria-invalid={fieldState.invalid}
+              id={field.name}
+              placeholder={placeholder}
+              type={type}
+            />
+          )}
           {StartComponent ? (
             <InputGroupAddon
-              className="text-muted-foreground/50 mx-1"
               align="inline-start"
+              className="mx-1 text-muted-foreground/50"
             >
               {StartComponent}
             </InputGroupAddon>
@@ -47,8 +58,8 @@ export const FormInput = <T extends FieldValues>({
 
           {EndComponent ? (
             <InputGroupAddon
-              className="text-muted-foreground/50"
               align="inline-end"
+              className="text-muted-foreground/50"
             >
               {EndComponent}
             </InputGroupAddon>

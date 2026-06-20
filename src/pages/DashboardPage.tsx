@@ -1,3 +1,3 @@
-export default function DashboardPage(){
-  return <></>;
-}
+const DashboardPage = () => <>test</>;
+
+export default DashboardPage;

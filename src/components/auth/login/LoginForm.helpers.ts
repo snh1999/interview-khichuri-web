@@ -1,15 +1,15 @@
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import { signIn } from "@/lib/auth/auth-client.ts";
-import { useEmailResendCooldown } from "@/hooks/useEmailResendCooldown.ts";
+import { toast } from "sonner";
+import { z } from "zod";
 import { EMAIL_REDIRECT_PAGE, HOMEPAGE } from "@/app.constants.ts";
 import type {
-  TFormHook,
-  TFormProps,
+  IFormHook,
+  IFormProps,
 } from "@/components/common/form/form.types.ts";
+import { useEmailResendCooldown } from "@/hooks/useEmailResendCooldown.ts";
+import { signIn } from "@/lib/auth/auth-client.ts";
 
 const loginSchema = z.object({
   email: z.email("Enter a valid email address"),
@@ -20,7 +20,7 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 
 export const useLoginForm = ({
   onSuccess,
-}: TFormProps): TFormHook<LoginFormData> => {
+}: IFormProps): IFormHook<LoginFormData> => {
   const navigate = useNavigate();
   const { markSent } = useEmailResendCooldown();
 

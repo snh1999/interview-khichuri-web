@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { Field, FieldLabel } from "@/components/ui/field.tsx";
 import {
   Select,
   SelectContent,
@@ -6,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select.tsx";
+import { usePagination } from "@/hooks/usePagination.ts";
 import {
   Pagination,
   PaginationContent,
@@ -13,9 +16,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination.tsx";
-import { usePagination } from "@/hooks/usePagination.ts";
-import { useMemo } from "react";
-import { Field, FieldLabel } from "@/components/ui/field.tsx";
 
 interface IProps {
   total: number;
@@ -47,23 +47,27 @@ export const AppPagination = ({
   );
 
   const onLimitChange = (value: number | null) => {
-    if (!value) return;
+    if (!value) {
+      return;
+    }
     setLimit(value);
   };
 
   const onPageChange = (page: number | null) => {
-    if (!page) return;
+    if (!page) {
+      return;
+    }
     setPage(page);
   };
 
   return (
     <div className="mt-4 flex items-center justify-between gap-4">
-      <Field orientation="horizontal" className="w-fit">
+      <Field className="w-fit" orientation="horizontal">
         <FieldLabel htmlFor="select-rows-per-page">Rows per page</FieldLabel>
         <Select
-          value={limit}
-          onValueChange={onLimitChange}
           items={pageSizeOptions}
+          onValueChange={onLimitChange}
+          value={limit}
         >
           <SelectTrigger className="w-20 border-none">
             <SelectValue placeholder="Theme" />
@@ -85,20 +89,20 @@ export const AppPagination = ({
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  onClick={() => setPage(page - 1)}
                   aria-disabled={!hasPrev}
                   className={
-                    !hasPrev
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
+                    hasPrev
+                      ? "cursor-pointer"
+                      : "pointer-events-none opacity-50"
                   }
+                  onClick={() => setPage(page - 1)}
                 />
               </PaginationItem>
-              <PaginationItem className="text-muted-foreground flex items-center px-2 text-sm">
+              <PaginationItem className="flex items-center px-2 text-muted-foreground text-sm">
                 <Select
-                  value={page}
-                  onValueChange={onPageChange}
                   items={pageOptions}
+                  onValueChange={onPageChange}
+                  value={page}
                 >
                   <SelectTrigger className="mr-2 border-none">
                     <SelectValue placeholder="Theme" />
@@ -117,13 +121,13 @@ export const AppPagination = ({
               </PaginationItem>
               <PaginationItem>
                 <PaginationNext
-                  onClick={() => setPage(page + 1)}
                   aria-disabled={!hasNext}
                   className={
-                    !hasNext
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
+                    hasNext
+                      ? "cursor-pointer"
+                      : "pointer-events-none opacity-50"
                   }
+                  onClick={() => setPage(page + 1)}
                 />
               </PaginationItem>
             </PaginationContent>

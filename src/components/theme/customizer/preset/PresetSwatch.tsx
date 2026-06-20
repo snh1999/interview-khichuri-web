@@ -1,7 +1,7 @@
-import { oklchStringToHex } from "@/lib/theme/color-utils.ts";
 import type { TThemePreset } from "@/components/theme/themes.types.ts";
-import { useThemeStore } from "@/store/themeStore.ts";
+import { oklchStringToHex } from "@/lib/theme/color-utils.ts";
 import { getSystemTheme } from "@/lib/utils.ts";
+import { useThemeStore } from "@/store/themeStore.ts";
 
 export const PresetSwatch = ({
   preset,
@@ -12,17 +12,17 @@ export const PresetSwatch = ({
   const vars = resolvedTheme === "light" ? preset.light : preset.dark;
   const swatchVars = [
     vars["--primary"],
-    vars["--secondary"],
-    vars["--muted-foreground"],
-    vars["--destructive"],
+    vars["--background"],
+    vars["--chart-2"],
+    vars["--chart-3"],
   ];
 
   return (
-    <div className="border-border flex h-3.5 w-16 overflow-hidden">
-      {swatchVars.map((value, index) => (
+    <div className="flex h-3.5 w-16 overflow-hidden border-border">
+      {swatchVars.map((value) => (
         <div
-          key={index}
           className="flex-1"
+          key={value[0]}
           style={{ backgroundColor: oklchStringToHex(value ?? "oklch(0 0 0)") }}
         />
       ))}

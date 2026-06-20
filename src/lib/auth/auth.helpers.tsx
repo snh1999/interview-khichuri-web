@@ -1,22 +1,22 @@
 import {
-  GoogleLogoIcon,
   GithubLogoIcon,
   GitlabLogoSimpleIcon,
+  GoogleLogoIcon,
   type Icon,
   type IconWeight,
 } from "@phosphor-icons/react";
 
 export type TOauthProviders = "google" | "github" | "gitlab";
 
-type TProvider = {
+interface IProvider {
   id: TOauthProviders;
   name: string;
   icon: Icon;
   weight?: IconWeight;
   color?: string;
-};
+}
 
-export const oauthProviders: TProvider[] = [
+export const oauthProviders: IProvider[] = [
   {
     id: "google" as const,
     name: "Google",

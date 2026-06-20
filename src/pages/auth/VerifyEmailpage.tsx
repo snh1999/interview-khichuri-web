@@ -1,43 +1,43 @@
+import { CheckCircleIcon, XCircleIcon } from "@phosphor-icons/react";
 import { type ReactNode, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { CheckCircleIcon, XCircleIcon } from "@phosphor-icons/react";
+import { HOMEPAGE, LOGIN_PAGE, REGISTER_PAGE } from "@/app.constants.ts";
+import { AuthLayout } from "@/components/auth/AuthLayout.tsx";
+import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
 import {
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card.tsx";
-import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { verifyEmail } from "@/lib/auth/auth-client.ts";
-import { AuthLayout } from "@/components/auth/AuthLayout.tsx";
-import { HOMEPAGE, LOGIN_PAGE, REGISTER_PAGE } from "@/app.constants.ts";
 
 type TVerificationState = "pending" | "success" | "error";
 
-type TCardInformation = {
+interface ICardInformation {
   title: string;
   description: string;
-  Icon: ReactNode;
-};
+  icon: ReactNode;
+}
 
-const cardInformation: Record<TVerificationState, TCardInformation> = {
+const cardInformation: Record<TVerificationState, ICardInformation> = {
   pending: {
     title: "Verifying your email",
     description: "Just a moment…",
-    Icon: <Spinner />,
+    icon: <Spinner />,
   },
   success: {
     title: "Email verified",
     description: "Your account is active. Redirecting you to homepage…",
-    Icon: (
+    icon: (
       <CheckCircleIcon className="h-6 w-6 text-emerald-500" weight="fill" />
     ),
   },
   error: {
     title: "Verification failed",
     description: "",
-    Icon: <XCircleIcon className="text-destructive h-6 w-6" weight="fill" />,
+    icon: <XCircleIcon className="h-6 w-6 text-destructive" weight="fill" />,
   },
 } as const;
 
@@ -75,22 +75,24 @@ const VerifyEmailPage = () => {
       }
     };
 
-    void verify();
+    verify();
   }, [token]);
 
   useEffect(() => {
-    if (state !== "success") return;
+    if (state !== "success") {
+      return;
+    }
     const timer = setTimeout(() => navigate(HOMEPAGE), 3000);
     return () => clearTimeout(timer);
   }, [state, navigate]);
 
-  const { title, Icon, description } = cardInformation[state];
+  const { title, icon, description } = cardInformation[state];
 
   return (
-    <AuthLayout hideOauth cardTitle="" cardDescription="">
+    <AuthLayout cardDescription="" cardTitle="" hideOauth>
       <CardHeader className="text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full">
-          {Icon}
+          {icon}
         </div>
         <CardTitle className="text-lg">{title}</CardTitle>
         <CardDescription>
@@ -101,9 +103,9 @@ const VerifyEmailPage = () => {
       {state === "error" && (
         <CardContent className="mt-4 flex items-center justify-around">
           <LinkButton
-            pop
-            path={LOGIN_PAGE}
             className="text-muted-foreground hover:text-foreground"
+            path={LOGIN_PAGE}
+            pop
           >
             Back to log in
           </LinkButton>

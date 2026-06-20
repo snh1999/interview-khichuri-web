@@ -1,3 +1,14 @@
+import { DotsThreeIcon } from "@phosphor-icons/react";
+import type { UserWithRole } from "better-auth/client/plugins";
+import { useNavigate } from "react-router";
+import { toast } from "sonner";
+import {
+  useBanUser,
+  useRemoveUser,
+  useRevokeSessionByAdmin,
+  useUnbanUser,
+} from "@/api/auth/admin.ts";
+import { HOMEPAGE } from "@/app.constants.ts";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,19 +30,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
-import type { UserWithRole } from "better-auth/client/plugins";
-import { toast } from "sonner";
 import { authAdmin, useSession } from "@/lib/auth/auth-client.ts";
-import { useNavigate } from "react-router";
-import { DotsThreeIcon } from "@phosphor-icons/react";
-import {
-  useBanUser,
-  useRemoveUser,
-  useRevokeSessionByAdmin,
-  useUnbanUser,
-} from "@/api/auth/admin.ts";
 import { cn } from "@/lib/utils.ts";
-import { HOMEPAGE } from "@/app.constants.ts";
 
 interface IProps {
   user: UserWithRole;
@@ -55,8 +55,8 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
         onError: (error) => {
           toast.error(error.error.message || "Failed to impersonate");
         },
-        onSuccess: () => {
-          void refetch();
+        onSuccess: async () => {
+          await refetch();
           navigate(HOMEPAGE);
         },
       }
@@ -70,7 +70,7 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
           <div
             className={cn(
               user.banned && "text-destructive",
-              "mb-1 flex items-center gap-5 text-sm font-medium"
+              "mb-1 flex items-center gap-5 font-medium text-sm"
             )}
           >
             {user.name}
@@ -80,7 +80,7 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
         </div>
       </TableCell>
       <TableCell>
-        <div className="flex items-center gap-2 not-empty:mt-2">
+        <div className="not-empty:mt-2 flex items-center gap-2">
           {user.emailVerified ? (
             <Badge variant={user.role === "admin" ? "default" : "secondary"}>
               {user.role}
@@ -99,7 +99,7 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
-                  <Button variant="ghost" size="icon">
+                  <Button size="icon" variant="ghost">
                     <DotsThreeIcon />
                   </Button>
                 }
@@ -144,8 +144,8 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
-                  onClick={() => removeUser(user.id)}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={() => removeUser(user.id)}
                 >
                   Delete
                 </AlertDialogAction>

@@ -1,3 +1,7 @@
+import { UserIcon } from "@phosphor-icons/react";
+import { useAdminListUsers } from "@/api/auth/admin.ts";
+import { UserRow } from "@/components/admin/UsersRow.tsx";
+import { AppPagination } from "@/components/common/AppPagination.tsx";
 import {
   Card,
   CardContent,
@@ -12,11 +16,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { UserIcon } from "@phosphor-icons/react";
-import { UserRow } from "@/components/admin/UsersRow.tsx";
-import { useAdminListUsers } from "@/api/auth/admin.ts";
-
-import { AppPagination } from "@/components/common/AppPagination.tsx";
 import { usePagination } from "@/hooks/usePagination.ts";
 
 const PAGE_SIZE = 5;
@@ -27,7 +26,9 @@ export const UsersList = () => {
   const from = usersData?.total === 0 ? 0 : (page - 1) * limit + 1;
   const to = Math.min(page * limit, usersData?.total ?? 0);
 
-  if (!usersData) return null;
+  if (!usersData) {
+    return null;
+  }
 
   return (
     <Card>
@@ -67,7 +68,7 @@ export const UsersList = () => {
           </Table>
         </div>
 
-        <AppPagination total={usersData.total} defaultPageLimit={PAGE_SIZE} />
+        <AppPagination defaultPageLimit={PAGE_SIZE} total={usersData.total} />
       </CardContent>
     </Card>
   );

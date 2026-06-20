@@ -11,13 +11,13 @@ import {
 export const useListSessions = () =>
   useSuspenseQuery({
     queryKey: queryKeys.auth.session,
-    queryFn: async () => unwrapBetterAuth(listSessions()),
+    queryFn: async () => await unwrapBetterAuth(listSessions()),
   });
 
 export const useRevokeOtherSessions = () =>
   useMutation({
     mutationFn: async () =>
-      revokeOtherSessions(undefined, {
+      await revokeOtherSessions(undefined, {
         onError: (error) => {
           toast.error(error.error.message);
         },
@@ -28,7 +28,7 @@ export const useRevokeOtherSessions = () =>
 export const useRevokeSession = () =>
   useMutation({
     mutationFn: async ({ token }: { token: string }) =>
-      revokeSession(
+      await revokeSession(
         { token },
         {
           onError: (error) => {
