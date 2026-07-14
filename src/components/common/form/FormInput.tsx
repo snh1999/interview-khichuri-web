@@ -35,16 +35,20 @@ export const FormInput = <T extends FieldValues>({
             <InputGroupTextarea
               {...field}
               aria-invalid={fieldState.invalid}
+              className="text-xs"
               id={field.name}
               placeholder={placeholder}
+              value={field.value ?? ""}
             />
           ) : (
             <InputGroupInput
               {...field}
               aria-invalid={fieldState.invalid}
+              className="text-xs"
               id={field.name}
               placeholder={placeholder}
               type={type}
+              value={field.value ?? ""}
             />
           )}
           {StartComponent ? (
@@ -58,7 +62,7 @@ export const FormInput = <T extends FieldValues>({
 
           {EndComponent ? (
             <InputGroupAddon
-              align="inline-end"
+              align={textArea ? "block-end" : "inline-end"}
               className="text-muted-foreground/50"
             >
               {EndComponent}

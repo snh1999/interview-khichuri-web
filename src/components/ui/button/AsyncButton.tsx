@@ -13,9 +13,9 @@ export function AsyncButton(
     <Button
       {...buttonProps}
       disabled={disabled || isLoading}
-      className={`${buttonProps.className || ""} inline-flex items-center justify-center gap-2`}
+      className={`${buttonProps.className || ""}`}
     >
-      <LoadingSwap isLoading={isLoading}> {children}</LoadingSwap>
+      <LoadingSwap className={"inline-flex items-center justify-between gap-2"} isLoading={isLoading}> {children}</LoadingSwap>
     </Button>
   );
 }

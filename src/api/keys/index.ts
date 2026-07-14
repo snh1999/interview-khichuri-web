@@ -2,32 +2,57 @@ import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client.ts";
 
-export type TApiKeyPlatform = "google" | "openai";
+export const ALL_PROVIDERS = [
+  "google",
+  "openai",
+  "groq",
+  "openrouter",
+  "mistral",
+  "cerebras",
+] as const;
+
+export type TApiKeyProvider = (typeof ALL_PROVIDERS)[number];
+
+export const PROVIDER_LABELS: Record<TApiKeyProvider, string> = {
+  google: "Google",
+  openai: "OpenAI",
+  groq: "Groq",
+  openrouter: "OpenRouter",
+  mistral: "Mistral",
+  cerebras: "Cerebras",
+} as const;
 
 export interface IApiKey {
   id: string;
   name: string;
   userId: string | null;
-  platform: TApiKeyPlatform;
+  provider: TApiKeyProvider;
   isActive: boolean | null;
+  model: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface ICreateApiKeyDto {
   name: string;
-  platform: TApiKeyPlatform;
+  provider: TApiKeyProvider;
   key: string;
   isActive?: boolean;
+  model?: string;
 }
 
-export const useApiKeys = (platform?: string, isActive?: boolean) =>
+export interface IUpdateApiKeyDto {
+  name?: string;
+  model?: string | null;
+}
+
+export const useApiKeys = (provider?: string, isActive?: boolean) =>
   useSuspenseQuery({
-    queryKey: queryKeys.keys.list({ platform, isActive }),
+    queryKey: queryKeys.keys.list({ provider, isActive }),
     queryFn: async () => {
       const parameters = new URLSearchParams();
-      if (platform) {
-        parameters.set("platform", platform);
+      if (provider) {
+        parameters.set("provider", provider);
       }
       if (isActive !== undefined) {
         parameters.set("isActive", String(isActive));
@@ -57,5 +82,12 @@ export const useActivateApiKey = () =>
     mutationFn: async (id: string) => {
       await api.patch(`/ai/api-keys/${id}/activate`);
     },
+    meta: { invalidates: queryKeys.keys.all },
+  });
+
+export const useUpdateApiKey = () =>
+  useMutation({
+    mutationFn: async ({ id, ...dto }: IUpdateApiKeyDto & { id: string }) =>
+      await api.patch<IApiKey>(`/ai/api-keys/${id}`, dto),
     meta: { invalidates: queryKeys.keys.all },
   });
