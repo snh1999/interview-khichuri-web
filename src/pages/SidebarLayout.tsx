@@ -20,6 +20,7 @@ export const SidebarLayout = () => {
               <main className="mx-auto w-full flex-1 px-4 py-6 sm:px-6">
                 <Outlet />
               </main>
+
               <Footer />
             </div>
           </div>

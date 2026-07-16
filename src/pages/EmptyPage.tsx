@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { HOMEPAGE } from "@/app.constants.ts";
 import { Background } from "@/components/common/Background.tsx";
 import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
@@ -9,20 +10,34 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 
-export const EmptyPage = () => (
+interface IProps {
+  children?: ReactNode;
+  title?: string;
+  description?: string;
+}
+
+export const EmptyPage = ({
+  children,
+  title,
+  description,
+}: Readonly<IProps>) => (
   <Background>
     <Empty>
       <EmptyHeader>
-        <EmptyTitle className="text-2xl">404 - Not Found</EmptyTitle>
+        <EmptyTitle className="text-2xl">
+          {title ?? "404 - Not Found"}
+        </EmptyTitle>
         <EmptyDescription>
-          The page you&apos;re looking for doesn&apos;t exist.
+          {description ?? "The page you're looking for doesn't exist."}
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <EmptyDescription>
-          <LinkButton path={HOMEPAGE} pop replace>
-            Back to home
-          </LinkButton>
+          {children ?? (
+            <LinkButton path={HOMEPAGE} pop replace>
+              Back to home
+            </LinkButton>
+          )}
         </EmptyDescription>
       </EmptyContent>
     </Empty>

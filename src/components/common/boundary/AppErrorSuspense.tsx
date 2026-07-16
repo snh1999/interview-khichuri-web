@@ -12,20 +12,29 @@ import {
 } from "@/components/ui/card.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { getErrorMessage } from "@/lib/utils.ts";
+import { EmptyPage } from "@/pages/EmptyPage.tsx";
 
 interface IProps {
   children: ReactNode;
   fallback?: (args: object) => ReactNode;
+  errorPage?: boolean;
+  errorFallback?: (args: FallbackProps) => ReactNode;
 }
 
 export const AppErrorSuspense = ({
   children,
+  errorPage,
   fallback: Fallback = Spinner,
+  errorFallback: ErrorFallbackComponent,
 }: Readonly<IProps>) => {
   const queryClient = useQueryClient();
   return (
     <ErrorBoundary
-      FallbackComponent={ErrorFallback}
+      FallbackComponent={
+        (ErrorFallbackComponent ?? errorPage)
+          ? ErrorFallbackPage
+          : ErrorFallbackCard
+      }
       onReset={() => queryClient.resetQueries()}
     >
       <Suspense fallback={<Fallback />}>{children}</Suspense>
@@ -33,7 +42,7 @@ export const AppErrorSuspense = ({
   );
 };
 
-const ErrorFallback = ({
+const ErrorFallbackCard = ({
   error,
   resetErrorBoundary,
 }: Readonly<FallbackProps>) => {
@@ -52,5 +61,23 @@ const ErrorFallback = ({
         <Button onClick={() => navigate(0)}>Refresh</Button>
       </CardContent>
     </Card>
+  );
+};
+
+const ErrorFallbackPage = ({
+  error,
+  resetErrorBoundary,
+}: Readonly<FallbackProps>) => {
+  const navigate = useNavigate();
+  return (
+    <EmptyPage description={getErrorMessage(error)}>
+      <div className="flex justify-between gap-5">
+        <Button onClick={resetErrorBoundary} variant="outline">
+          Retry
+        </Button>
+
+        <Button onClick={() => navigate(0)}>Refresh</Button>
+      </div>
+    </EmptyPage>
   );
 };
