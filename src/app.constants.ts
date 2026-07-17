@@ -9,6 +9,9 @@ export const EMAIL_REDIRECT_PAGE = "/email-redirect";
 export const SETTINGS_PAGE = "/settings";
 export const PROFILE_PAGE = "/profile";
 export const CONFIRM_LOGIN_PAGE = "/confirm-login";
+export const JOBS_PAGE = "/jobs";
+export const JOB_DETAIL_PAGE = "/jobs/:jobId";
+
 
 export const FORGOT_PASSWORD_EMAIL_CONTEXT = "forgotpass";
 export const VERIFY_EMAIL_CONTEXT = "verifyAccount";

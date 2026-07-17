@@ -8,7 +8,12 @@ import {
   ReadCvLogoIcon,
 } from "@phosphor-icons/react";
 import { Link, useLocation } from "react-router";
-import { HOMEPAGE, PROFILE_PAGE, SETTINGS_PAGE } from "@/app.constants.ts";
+import {
+  HOMEPAGE,
+  JOBS_PAGE,
+  PROFILE_PAGE,
+  SETTINGS_PAGE,
+} from "@/app.constants.ts";
 import {
   Sidebar,
   SidebarContent,
@@ -23,7 +28,7 @@ import {
 const SIDEBAR_MENU = [
   { name: "Dashboard", icon: PresentationChartIcon, url: HOMEPAGE },
   { name: "Schedule", icon: CalendarDotsIcon, url: "#" },
-  { name: "Jobs", icon: BriefcaseIcon, url: "#" },
+  { name: "Jobs", icon: BriefcaseIcon, url: JOBS_PAGE },
   { name: "Preparation", icon: LightbulbFilamentIcon, url: "#" },
   { name: "Job Profile", icon: ReadCvLogoIcon, url: PROFILE_PAGE },
   { name: "Settings", icon: GearIcon, url: SETTINGS_PAGE },
