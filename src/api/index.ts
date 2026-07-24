@@ -102,4 +102,11 @@ export const queryKeys = {
     list: (filters?: Record<string, unknown>) =>
       [...queryKeys.keys.all, "list", filters] as const,
   },
+  sessions: {
+    all: ["sessions"] as const,
+    list: (filters?: Record<string, unknown>) =>
+      [...queryKeys.sessions.all, "list", filters] as const,
+    detail: (id: string) => [...queryKeys.sessions.all, "detail", id] as const,
+  },
+
 } as const;

@@ -32,8 +32,9 @@ import { JobDetailPage } from "@/pages/JobDetailPage.tsx";
 import JobProfilePage from "@/pages/JobProfilePage.tsx";
 import { JobsPage } from "@/pages/JobsPage.tsx";
 import { LandingPage } from "@/pages/landing/LandingPage.tsx";
-import { SidebarLayout } from "@/pages/layout/SidebarLayout.tsx";
+import { SessionsPage } from "@/pages/SessionsPage.tsx";
 import SettingsPage from "@/pages/SettingsPage.tsx";
+import { SessionDetailPage } from "./pages/SessionDetailPage";
 
 const App = () => {
   const { data: session, isPending } = useSession();
@@ -67,6 +68,8 @@ const App = () => {
           <Route element={<DashboardPage />} path={HOMEPAGE} />
           <Route element={<JobDetailPage />} path={JOB_DETAIL_PAGE} />
           <Route element={<JobsPage />} path={JOBS_PAGE} />
+          <Route element={<SessionsPage />} path={SESSIONS_PAGE} />
+          <Route element={<SessionDetailPage />} path={SESSION_DETAIL_PAGE} />
           <Route element={<JobProfilePage />} path={PROFILE_PAGE} />
           <Route element={<SettingsPage />} path={SETTINGS_PAGE} />
         </Route>
