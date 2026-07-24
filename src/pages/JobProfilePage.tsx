@@ -20,8 +20,7 @@ import { ProfessionalInformation } from "@/components/job-profile/sections/profe
 import { ResumeCard } from "@/components/job-profile/sections/ResumeCard.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { ScrollableTabs } from "@/components/ui/shadcn-blocks/ScrollableTab.tsx";
-import { useTabs } from "@/hooks/useTabs.ts";
+import { ScrollableTabs } from "@/components/ui/custom/ScrollableTab.tsx";
 
 const TABS: { key: TTabKey; label: string; requiredFieldCount: number }[] = [
   "personal",
@@ -43,33 +42,9 @@ const countFilled = (data: TProfileFormData, tab: TTabKey) =>
   REQUIRED_FIELDS.filter((field) => field.tab === tab && field.isFilled(data))
     .length;
 
-const scrollToSection = (key: TTabKey) => {
-  const element = document.getElementById(getSectionId(key));
-  if (!element) {
-    return;
-  }
-
-  // Using viewport.scrollTo instead of element.scrollIntoView because scrollIntoView
-  // finds the nearest scrollable ancestor, which can be <body> when the ScrollArea
-  // viewport's height doesn't resolve as a scroll container. Scrolling <body> moves
-  // the page header (which lives outside the viewport) out of view.
-  const viewport = element.closest<HTMLElement>(
-    '[data-slot="scroll-area-viewport"]'
-  );
-  if (viewport) {
-    const top =
-      element.getBoundingClientRect().top -
-      viewport.getBoundingClientRect().top +
-      viewport.scrollTop;
-    viewport.scrollTo({ top, behavior: "smooth" });
-  }
-};
-
 const ProfilePage = () => {
   const { data, form, isDirty, isSaving, reset, onSubmit } =
     getUseJobProfileForm();
-
-  const { currentTab, handleTabChange } = useTabs("personal");
 
   const tabs = TABS.map((tab) => {
     const filled = countFilled(data, tab.key);
@@ -88,14 +63,7 @@ const ProfilePage = () => {
     <div className="w-full">
       <ProfileCompletionBanner data={data} />
 
-      <ScrollableTabs
-        activeTab={currentTab}
-        onTabChange={(key) => {
-          scrollToSection(key as TTabKey);
-          handleTabChange(key);
-        }}
-        tabs={tabs}
-      />
+      <ScrollableTabs defaultTab="personal" scrollTracking tabs={tabs} />
 
       <FormProvider {...form}>
         <form onSubmit={onSubmit}>

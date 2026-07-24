@@ -5,22 +5,22 @@ interface IReturn {
   currentTab: string;
 }
 
+const TABS_KEY = "tab";
+
 export const useTabs = (defaultTab: string): IReturn => {
   const [searchParameters, setSearchParameters] = useSearchParams();
-  const currentTab = searchParameters.get("tab") ?? defaultTab;
+
+  const currentTab = searchParameters.get(TABS_KEY) ?? defaultTab;
 
   const handleTabChange = (value: string) => {
     setSearchParameters(
       (previous) => {
-        previous.set("tab", value);
+        previous.set(TABS_KEY, value);
         return previous;
       },
       { replace: true }
     );
   };
 
-  return {
-    handleTabChange,
-    currentTab,
-  };
+  return { handleTabChange, currentTab };
 };

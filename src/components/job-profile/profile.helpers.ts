@@ -111,9 +111,10 @@ export const profileToFormData = (
     professional: {
       ...workOverview,
       title: workOverview?.title ?? "",
-      skills: workOverview?.skills.map((skill) => skill.topicId) ?? [],
-      industries:
-        workOverview?.industries.map((index) => index.industryId) ?? [],
+      skills: (workOverview?.skills ?? []).map((skill) => skill.topicId),
+      industries: (workOverview?.industries ?? []).map(
+        (index) => index.industryId
+      ),
     },
     workExperience: (profile.workExperiences ?? []).map((exp) => ({
       ...exp,
@@ -129,7 +130,7 @@ export const profileToFormData = (
     })),
     preferences: {
       ...jobPreference,
-      titles: jobPreference?.titles.map((title) => title.roleId) ?? [],
+      titles: (jobPreference?.titles ?? []).map((title) => title.roleId),
     },
     links: profile.links ?? [],
   };

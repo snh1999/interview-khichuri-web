@@ -79,8 +79,12 @@ export const queryKeys = {
   },
   profile: {
     all: ["profile"] as const,
-    resumes: ["profile", "resumes"] as const,
-    resumeView: (id: string) => ["profile", "resumeView", id] as const,
+    get resumes() {
+      return [...queryKeys.profile.all, "resumes"] as const;
+    },
+    // using different key to stop user from refetching
+    resumeView: (id: string) =>
+      [...queryKeys.profile.resumes, "resumeView", id] as const,
   },
   lookups: {
     roles: ["lookups", "roles"] as const,

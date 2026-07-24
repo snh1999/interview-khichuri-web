@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CircularProgress } from "@/components/ui/shadcn-blocks/circular-progress.tsx";
+import { CircularProgress } from "@/components/ui/custom/circular-progress.tsx";
 
 interface IProps {
   data: TProfileFormData;

@@ -3,15 +3,15 @@ import { ActionButton } from "@/components/ui/button/ActionButton.tsx";
 
 interface IProps {
   mutationFn: () => Promise<unknown>;
-  successMessage: string;
-  failFallbackMessage?: string;
+  successMessage?: string;
+  errorMessage?: string;
   renderNode?: ReactElement;
 }
 
 export const MutationButton = ({
   mutationFn,
   successMessage,
-  failFallbackMessage = "Something went wrong",
+  errorMessage = "Something went wrong",
   ...props
 }: Omit<ComponentProps<typeof ActionButton>, "action"> & Readonly<IProps>) => (
   <ActionButton
@@ -24,7 +24,7 @@ export const MutationButton = ({
         return {
           error: true,
           message:
-            error instanceof Error ? error.message : failFallbackMessage,
+            error instanceof Error ? error.message : errorMessage,
         };
       }
     }}

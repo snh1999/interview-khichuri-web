@@ -41,36 +41,38 @@ export default jobPostSchema;
 
 export type TJobFormData = z.infer<typeof jobPostSchema>;
 
-export const useJobPostForm = ({
-  initialValues,
-  initialDescription,
-  onSuccess,
-}: {
-  initialValues?: IJob;
+interface IProps {
+  job?: IJob;
   initialDescription?: string;
   onSuccess?: () => void;
-}) => {
+}
+
+export const useJobPostForm = ({
+  job,
+  initialDescription,
+  onSuccess,
+}: IProps) => {
   const createJob = useCreateJob();
   const updateJob = useUpdateJob();
 
   const form = useForm<TJobFormData>({
     resolver: zodResolver(jobPostSchema),
     defaultValues: {
-      ...initialValues,
-      title: initialValues?.title ?? "",
-      companyName: initialValues?.companyName ?? "",
-      description: initialDescription ?? initialValues?.description ?? "",
-      status: initialValues?.status ?? "saved",
-      roleId: initialValues?.roleId ?? null,
-      topicIds: initialValues?.topicIds ?? [],
-      links: initialValues?.links
-        ? initialValues.links
+      ...job,
+      title: job?.title ?? "",
+      companyName: job?.companyName ?? "",
+      description: initialDescription ?? job?.description ?? "",
+      status: job?.status ?? "saved",
+      roleId: job?.roleId ?? null,
+      topicIds: job?.topicIds ?? [],
+      links: job?.links
+        ? job.links
             .split("\n")
             .filter(Boolean)
             .map((v) => ({ value: v }))
         : [],
-      deadline: stringToDate(initialValues?.deadline),
-      interviewDate: stringToDate(initialValues?.interviewDate),
+      deadline: stringToDate(job?.deadline),
+      interviewDate: stringToDate(job?.interviewDate),
     },
   });
 
@@ -87,8 +89,8 @@ export const useJobPostForm = ({
     }) as ICreateJobDto;
 
     try {
-      if (initialValues) {
-        await updateJob.mutateAsync({ id: initialValues.id, ...payload });
+      if (job) {
+        await updateJob.mutateAsync({ id: job.id, ...payload });
         toast.success("Job updated");
       } else {
         await createJob.mutateAsync(payload);
@@ -96,7 +98,7 @@ export const useJobPostForm = ({
       }
       onSuccess?.();
     } catch {
-      toast.error(`Failed to ${initialValues ? "update" : "create"} job`);
+      toast.error(`Failed to ${job ? "update" : "create"} job`);
     }
   });
 

@@ -11,7 +11,7 @@ const STATUS_BADGE: Record<IJob["status"], string> = {
   scheduled: "bg-emerald-100 text-emerald-700",
 };
 
-const formatDeadline = (deadline: string | null) => {
+const formatDeadline = (deadline?: string | null) => {
   if (!deadline) {
     return "No deadline";
   }
@@ -33,7 +33,7 @@ export const JobCardGrid = ({ job }: { job: IJob }) => {
   return (
     <Card
       className="cursor-pointer gap-2 px-4 py-4"
-      onClick={() => navigate(JOB_DETAIL_PAGE.replace(":id", job.id))}
+      onClick={() => navigate(JOB_DETAIL_PAGE.replace(":jobId", job.id))}
       size="sm"
     >
       <div className="flex items-center justify-between gap-2">

@@ -38,11 +38,11 @@ export const JobListRow = ({ job }: { job: IJob }) => {
 
   return (
     <Item
-      className="py-4"
+      className="py-3"
       render={
         <Button
-          onClick={() => navigate(JOB_DETAIL_PAGE.replace(":id", job.id))}
-          size="lg"
+          className="h-auto"
+          onClick={() => navigate(JOB_DETAIL_PAGE.replace(":jobId", job.id))}
           variant="ghost"
         />
       }

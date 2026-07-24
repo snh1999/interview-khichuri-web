@@ -1,9 +1,7 @@
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { useJob } from "@/api/jobs";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
-import { markdownComponents } from "@/components/common/MdComponents.tsx";
+import { MarkdownContent } from "@/components/common/MarkdownContent.tsx";
 import { JobInfoSection } from "@/components/jobs/JobInfoSection.tsx";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,14 +41,7 @@ const JobDetailContent = () => {
             <CardTitle>Description</CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
-            <div className="text-sm">
-              <ReactMarkdown
-                components={markdownComponents}
-                remarkPlugins={[remarkGfm]}
-              >
-                {job.description}
-              </ReactMarkdown>
-            </div>
+            <MarkdownContent content={job.description} />
           </CardContent>
         </Card>
       </div>

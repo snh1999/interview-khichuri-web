@@ -1,13 +1,10 @@
-import {
-  PlusCircleIcon,
-  RowsIcon,
-  SquaresFourIcon,
-} from "@phosphor-icons/react";
+import { PlusCircleIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { type IJob, useJobs } from "@/api/jobs";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
+import { useViewToggle, ViewToggle } from "@/components/common/ViewToggle.tsx";
 import { JobPostForm } from "@/components/jobs/JobPostForm";
 import { JobCardGrid } from "@/components/jobs/view/JobCardGrid.tsx";
 import { JobListRow } from "@/components/jobs/view/JobListRow.tsx";
@@ -20,9 +17,6 @@ import {
 } from "@/components/ui/empty";
 import { ItemGroup } from "@/components/ui/item.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx";
-
-type TViewMode = "grid" | "list";
 
 export const JobsPage = () => (
   <AppErrorSuspense fallback={JobsPageSkeleton}>
@@ -35,7 +29,7 @@ const JobsContent = () => {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [initialDescription, setInitialDescription] = useState("");
-  const [viewMode, setViewMode] = useState<TViewMode>("grid");
+  const { currentView } = useViewToggle("grid");
 
   const openCreate = () => {
     setInitialDescription("");
@@ -84,20 +78,7 @@ const JobsContent = () => {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-semibold text-xl">Jobs</h1>
         <div className="flex items-center gap-2">
-          <ToggleGroup
-            onValueChange={(value) => setViewMode(value[0] as TViewMode)}
-            size="sm"
-            spacing={0}
-            value={[viewMode]}
-            variant="outline"
-          >
-            <ToggleGroupItem aria-label="Grid view" value="grid">
-              <SquaresFourIcon className="size-4" />
-            </ToggleGroupItem>
-            <ToggleGroupItem aria-label="List view" value="list">
-              <RowsIcon className="size-4" />
-            </ToggleGroupItem>
-          </ToggleGroup>
+          <ViewToggle />
           <Button onClick={openCreate} variant="outline">
             <PlusCircleIcon className="size-3" weight="bold" />
             New Job Post
@@ -117,14 +98,14 @@ const JobsContent = () => {
         </Empty>
       ) : null}
 
-      {viewMode === "grid" ? (
+      {currentView === "grid" ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {jobs.map((job: IJob) => (
             <JobCardGrid job={job} key={job.id} />
           ))}
         </div>
       ) : (
-        <ItemGroup className="overflow-hidden bg-card">
+        <ItemGroup className="overflow-hidden rounded-md bg-card">
           {jobs.map((job: IJob) => (
             <JobListRow job={job} key={job.id} />
           ))}

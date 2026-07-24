@@ -1,12 +1,10 @@
 import { SparkleIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import { Link } from "react-router";
 import {
   type IJob,
   type IJobExtractionResult,
   useExtractJob,
 } from "@/api/jobs";
-import { SETTINGS_PAGE } from "@/app.constants.ts";
 import { AiDialog } from "@/components/common/ai/AiDialog";
 import { RolesCombobox } from "@/components/common/form/combobox/RolesCombobox.tsx";
 import { TopicsCombobox } from "@/components/common/form/combobox/TopicsCombobox.tsx";
@@ -50,7 +48,7 @@ export const JobPostForm = ({
   const extractJob = useExtractJob();
 
   const { form, isPending, onSubmit } = useJobPostForm({
-    initialValues: job,
+    job,
     initialDescription,
     onSuccess,
   });
@@ -217,14 +215,6 @@ export const JobPostForm = ({
         onExecute={(provider, model) => handleExtract(provider, model)}
         onOpenChange={setAiDialogOpen}
         open={aiDialogOpen}
-        providersEmptyMessage={
-          <>
-            No AI providers available.{" "}
-            <Link className="underline" to={SETTINGS_PAGE}>
-              Add an API key in Settings
-            </Link>
-          </>
-        }
         title="Extract Job Details"
       />
     </>

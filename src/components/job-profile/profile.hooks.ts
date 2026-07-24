@@ -62,7 +62,7 @@ export const getUseJobProfileForm = () => {
     const data = stripNulls(rawData) as TProfileFormData;
 
     try {
-      const mutations = [];
+      const mutations: unknown[] = [];
 
       if (dirtyFields.personal) {
         mutations.push(updateProfile.mutateAsync(data.personal));
