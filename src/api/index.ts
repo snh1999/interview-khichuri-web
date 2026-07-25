@@ -1,16 +1,11 @@
-import {
-  MutationCache,
-  QueryCache,
-  QueryClient,
-  type QueryKey,
-} from "@tanstack/react-query";
+import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { TPermissionOptions } from "@/api/auth/admin.ts";
 
 declare module "@tanstack/react-query" {
   interface Register {
     mutationMeta: {
-      invalidates?: QueryKey | readonly QueryKey[];
+      invalidates?: readonly unknown[] | unknown[];
     };
   }
 }
@@ -25,18 +20,12 @@ export const apiClient = new QueryClient({
     // eslint-disable-next-line @typescript-eslint/max-params
     onSuccess: async (_data, _variables, _context, mutation) => {
       const keys = mutation.meta?.invalidates;
-      if (!(Array.isArray(keys) && keys) || keys.length === 0) {
-        return;
-      }
-
-      if (Array.isArray(keys[0])) {
+      if (keys) {
         await Promise.all(
           keys.map(async (key) => {
             await apiClient.invalidateQueries({ queryKey: key as never });
           })
         );
-      } else {
-        await apiClient.invalidateQueries({ queryKey: keys });
       }
     },
     onError: (error) => {
@@ -79,12 +68,8 @@ export const queryKeys = {
   },
   profile: {
     all: ["profile"] as const,
-    get resumes() {
-      return [...queryKeys.profile.all, "resumes"] as const;
-    },
-    // using different key to stop user from refetching
-    resumeView: (id: string) =>
-      [...queryKeys.profile.resumes, "resumeView", id] as const,
+    resumes: ["profile", "resumes"] as const,
+    resumeView: (id: string) => ["profile", "resumeView", id] as const,
   },
   lookups: {
     roles: ["lookups", "roles"] as const,
