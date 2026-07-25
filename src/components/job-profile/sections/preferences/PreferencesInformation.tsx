@@ -1,6 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import { useRoles } from "@/api/lookups";
-import { FormCombobox } from "@/components/common/form/FormCombobox.tsx";
+import { FormCombobox } from "@/components/common/form/combobox/FormCombobox.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
 import {

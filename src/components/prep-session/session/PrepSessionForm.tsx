@@ -1,11 +1,16 @@
 import { PencilLineIcon, PlusCircleIcon } from "@phosphor-icons/react";
+import { useEffect, useRef } from "react";
+import type { UseFormReturn } from "react-hook-form";
+import { useJob } from "@/api/jobs";
 import type { IPrepSession } from "@/api/sessions";
+import { JobsCombobox } from "@/components/common/form/combobox/JobsCombobox.tsx";
 import { RolesCombobox } from "@/components/common/form/combobox/RolesCombobox.tsx";
 import { TopicsCombobox } from "@/components/common/form/combobox/TopicsCombobox.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
 import {
   EXPERIENCE_OPTIONS,
+  type TCreateSessionFormData,
   useCreateSessionForm,
 } from "@/components/prep-session/session/session.helpers.ts";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
@@ -29,6 +34,37 @@ interface IProps {
   viewTrigger?: boolean;
 }
 
+const JobPrefillEffect = ({
+  jobId,
+  form,
+}: {
+  jobId: string;
+  form: UseFormReturn<TCreateSessionFormData>;
+}) => {
+  const { data: job } = useJob(jobId);
+  const prefilledJobId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (prefilledJobId.current === jobId || !job) {
+      return;
+    }
+    prefilledJobId.current = jobId;
+
+    const currentTopicIds = (form.getValues("topicIds") as number[]) ?? [];
+    const currentTopicNames = (form.getValues("topicNames") as string[]) ?? [];
+    const hasExistingTopics =
+      currentTopicIds.length > 0 || currentTopicNames.length > 0;
+
+    if (!hasExistingTopics && job.topicIds?.length) {
+      form.setValue("topicIds", job.topicIds, { shouldDirty: true });
+    }
+
+    form.setValue("roleId", job.roleId, { shouldDirty: true });
+  }, [jobId, job, form]);
+
+  return null;
+};
+
 export const PrepSessionForm = ({
   session,
   open,
@@ -36,16 +72,12 @@ export const PrepSessionForm = ({
   onSuccess,
   viewTrigger,
 }: Readonly<IProps>) => {
-  // TODO: add job field (select)
-  // TODO: if job present- keep role and topics empty
-  // TODO: if job is not present- make role and topics mandatory
-  // TODO:
-  // TODO:
-  // TODO: make a reusable topicId and topicNames pattern in backend and fe (types and code)
   const { form, isLoading, onSubmit } = useCreateSessionForm({
     session,
     onSuccess,
   });
+
+  const selectedJobId = form.watch("jobId");
 
   return (
     <DrawLog onOpenChange={onOpenChange} open={open}>
@@ -92,6 +124,15 @@ export const PrepSessionForm = ({
               textArea
             />
 
+            {session ? null : (
+              <JobsCombobox
+                description="You can not update this once session is created"
+                form={form}
+                label="Job"
+                name="jobId"
+              />
+            )}
+
             <FormSelect
               form={form}
               label="Experience Level"
@@ -100,7 +141,13 @@ export const PrepSessionForm = ({
               selectData={EXPERIENCE_OPTIONS}
             />
 
-            <RolesCombobox form={form} label="Target Role" name="roleId" />
+            <RolesCombobox
+              description={selectedJobId ? "Filled from job" : ""}
+              disabled={Boolean(selectedJobId)}
+              form={form}
+              label="Target Role"
+              name="roleId"
+            />
 
             <TopicsCombobox
               form={form}
@@ -121,6 +168,10 @@ export const PrepSessionForm = ({
           </DrawLogFooter>
         </form>
       </DrawLogContent>
+
+      {selectedJobId && !session ? (
+        <JobPrefillEffect form={form} jobId={selectedJobId} />
+      ) : null}
     </DrawLog>
   );
 };

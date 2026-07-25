@@ -1,6 +1,6 @@
 import { PlusIcon, SpinnerGapIcon } from "@phosphor-icons/react";
-import { useState } from "react";
-import { Controller, type FieldValues } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Controller, type FieldValues, useWatch } from "react-hook-form";
 import type { TBasicFormInputProps } from "@/components/common/form/form.types.ts";
 import {
   Combobox,
@@ -28,14 +28,17 @@ export interface IComboboxOption {
   isNew?: boolean;
 }
 
-type Props<T extends FieldValues, D> = TBasicFormInputProps<T> & {
-  data: D[];
-  toOption: (item: D) => IComboboxOption;
+export type TComboboxProps<T extends FieldValues> = TBasicFormInputProps<T> & {
   multiple?: boolean;
   creatable?: boolean;
   onCreateItem?: (label: string) => void | Promise<void>;
   hideChips?: boolean;
   initialValue?: T;
+};
+
+type TProps<T extends FieldValues, D> = TComboboxProps<T> & {
+  data: D[];
+  toOption: (item: D) => IComboboxOption;
 };
 
 export const FormCombobox = <T extends FieldValues, D>({
@@ -50,15 +53,22 @@ export const FormCombobox = <T extends FieldValues, D>({
   creatable,
   onCreateItem,
   hideChips,
-}: Readonly<Props<T, D>>) => {
+  disabled,
+}: Readonly<TProps<T, D>>) => {
   const anchor = useComboboxAnchor();
   const options = data.map(toOption);
   const optionMap = new Map(options.map((o) => [o.value, o]));
+  const valueWatch = useWatch({ control: form.control, name });
   const [inputValue, setInputValue] = useState(() => {
     const val = form.getValues(name);
     return val === null ? "" : (optionMap.get(val)?.label ?? "");
   });
   const [isCreating, setIsCreating] = useState(false);
+
+  useEffect(() => {
+    const opt = optionMap.get(valueWatch);
+    setInputValue(opt?.label ?? "");
+  }, [valueWatch, optionMap]);
 
   const showCreate =
     !isCreating &&
@@ -164,7 +174,7 @@ export const FormCombobox = <T extends FieldValues, D>({
                 </ComboboxChips>
               ) : (
                 <ComboboxInput
-                  disabled={isCreating}
+                  disabled={isCreating || disabled}
                   id={field.name}
                   onBlur={handleBlur}
                   placeholder={isCreating ? "Creating..." : placeholder}

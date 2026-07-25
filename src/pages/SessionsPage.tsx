@@ -1,13 +1,21 @@
 import { PlusCircleIcon } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRoles } from "@/api/lookups";
 import { useSessions } from "@/api/sessions";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
 import { useViewToggle, ViewToggle } from "@/components/common/ViewToggle.tsx";
+import {
+  JobFilter,
+  useJobFilter,
+} from "@/components/prep-session/JobFilter.tsx";
 import { SessionCardGrid } from "@/components/prep-session/SessionCardGrid.tsx";
 import { SessionListRow } from "@/components/prep-session/SessionListRow.tsx";
 import { PrepSessionForm } from "@/components/prep-session/session/PrepSessionForm.tsx";
+import {
+  TopicFilter,
+  useTopicFilter,
+} from "@/components/prep-session/TopicFilter.tsx";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -31,8 +39,31 @@ const SessionsContent = () => {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const { currentView } = useViewToggle("grid");
+  const { jobFilter } = useJobFilter();
+  const { selectedTopicIds } = useTopicFilter();
 
   const roleName = (roleId?: number | null) => rolesMap.get(roleId ?? 0)?.name;
+
+  const filteredSessions = useMemo(
+    () =>
+      sessions.filter((session) => {
+        if (jobFilter && session.jobId !== jobFilter) {
+          return false;
+        }
+        if (selectedTopicIds.length > 0) {
+          const sessionTopicIds =
+            session.sessionTopics?.map((st) => st.topicId) ?? [];
+          const hasOverlap = selectedTopicIds.some((id) =>
+            sessionTopicIds.includes(id)
+          );
+          if (!hasOverlap) {
+            return false;
+          }
+        }
+        return true;
+      }),
+    [sessions, jobFilter, selectedTopicIds]
+  );
 
   return (
     <div className="w-full">
@@ -40,8 +71,8 @@ const SessionsContent = () => {
         <h1 className="font-semibold text-xl">Sessions</h1>
         <div className="flex items-center gap-2">
           <ViewToggle />
-          {/* TODO: add jobs filter */}
-          {/* TODO: add topics filter */}
+          <JobFilter />
+          <TopicFilter />
           <Button onClick={() => setDialogOpen(true)} variant="outline">
             <PlusCircleIcon className="size-3" weight="bold" />
             New Session
@@ -49,7 +80,7 @@ const SessionsContent = () => {
         </div>
       </div>
 
-      {sessions.length === 0 ? (
+      {filteredSessions.length === 0 ? (
         <Empty>
           <EmptyHeader>
             <EmptyTitle>No sessions yet</EmptyTitle>
@@ -61,9 +92,9 @@ const SessionsContent = () => {
         </Empty>
       ) : null}
 
-      {currentView === "grid" && sessions.length ? (
+      {currentView === "grid" && filteredSessions.length ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {sessions.map((session) => (
+          {filteredSessions.map((session) => (
             <SessionCardGrid
               jobLabel={roleName(session.roleId)}
               key={session.id}
@@ -73,7 +104,7 @@ const SessionsContent = () => {
         </div>
       ) : (
         <ItemGroup className="overflow-hidden rounded-md bg-card">
-          {sessions.map((session) => (
+          {filteredSessions.map((session) => (
             <SessionListRow
               jobLabel={roleName(session.roleId)}
               key={session.id}

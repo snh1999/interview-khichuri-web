@@ -1,20 +1,17 @@
-import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
+import type { FieldValues } from "react-hook-form";
 import { useCreateLookup, useRoles } from "@/api/lookups";
-import { FormCombobox } from "@/components/common/form/combobox/FormCombobox.tsx";
-
-interface IProps<T extends FieldValues> {
-  form: UseFormReturn<T>;
-  name: Path<T>;
-  label?: string;
-  placeholder?: string;
-}
+import {
+  FormCombobox,
+  type TComboboxProps,
+} from "@/components/common/form/combobox/FormCombobox.tsx";
 
 export const RolesCombobox = <T extends FieldValues>({
-  form,
   name,
+  form,
   label = "Role",
   placeholder = "Select a role",
-}: Readonly<IProps<T>>) => {
+  ...rest
+}: Readonly<TComboboxProps<T>>) => {
   const roles = useRoles();
   const createRole = useCreateLookup("roles");
 
@@ -33,6 +30,7 @@ export const RolesCombobox = <T extends FieldValues>({
       onCreateItem={handleCreateRole}
       placeholder={placeholder}
       toOption={(item) => ({ value: item.id, label: item.name })}
+      {...rest}
     />
   );
 };

@@ -140,12 +140,17 @@ export const JobPostForm = ({
                 placeholder="e.g. Acme Corp"
               />
 
-              <RolesCombobox form={form} name="roleId" />
+              <RolesCombobox
+                disabled={Boolean(job)}
+                form={form}
+                label="Role"
+                name="roleId"
+              />
 
               <TopicsCombobox
                 form={form}
-                idsName={"topicIds"}
-                names={"topicNames"}
+                idsName="topicIds"
+                names="topicNames"
               />
 
               <FormInput

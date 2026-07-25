@@ -15,12 +15,13 @@ const createSessionSchema = z.object({
   title: z.string().trim().min(1, "Title is required"),
   description: z.string().trim().min(1, "Description is required"),
   experience: z.string().nullish(),
+  jobId: z.uuid().nullish(),
   roleId: z.number().int().positive().nullish(),
   topicIds: z.array(z.number().int().positive()).nullish(),
   topicNames: z.array(z.string().trim().min(1)).nullish(),
 });
 
-type TCreateSessionFormData = z.infer<typeof createSessionSchema>;
+export type TCreateSessionFormData = z.infer<typeof createSessionSchema>;
 
 export interface TFormHook<T extends Record<string, unknown>> {
   isLoading: boolean;
@@ -56,6 +57,7 @@ export const useCreateSessionForm = ({
       ...session,
       title: session?.title ?? "",
       description: session?.description ?? "",
+      jobId: session?.jobId ?? null,
       topicIds: [],
     },
   });

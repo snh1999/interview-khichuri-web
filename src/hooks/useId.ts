@@ -1,13 +1,22 @@
 import { useParams } from "react-router";
 import { z } from "zod";
 
-const jobIdSchema = z.uuid();
+const uuidSchema = z.uuid();
+
+function parseUUID(id?: string) {
+  const result = uuidSchema.safeParse(id);
+  if (!result.success) {
+    throw new Error("Invalid id");
+  }
+  return result.data;
+}
 
 export function useJobId(): string {
   const { jobId } = useParams();
-  const result = jobIdSchema.safeParse(jobId);
-  if (!result.success) {
-    throw new Error("Invalid job id");
-  }
-  return result.data;
+  return parseUUID(jobId);
+}
+
+export function useSessionId(): string {
+  const { sessionId } = useParams();
+  return parseUUID(sessionId);
 }

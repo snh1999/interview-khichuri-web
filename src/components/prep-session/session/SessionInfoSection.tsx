@@ -1,7 +1,11 @@
 import type { ReactNode } from "react";
+import { useNavigate } from "react-router";
+import { useJob } from "@/api/jobs";
 import { useRoles } from "@/api/lookups";
 import type { IPrepSession } from "@/api/sessions";
+import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { Badge } from "@/components/ui/badge.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription } from "@/components/ui/card.tsx";
 import { useLookupMap } from "@/hooks/useLookupMap.ts";
 
@@ -27,6 +31,23 @@ const FieldLabel = ({
   </div>
 );
 
+const LinkedJobField = ({ jobId }: { jobId: string }) => {
+  const navigate = useNavigate();
+  const { data: job } = useJob(jobId);
+
+  return (
+    <FieldLabel title="Linked Job">
+      <Button
+        className="h-auto p-0 text-sm"
+        onClick={() => navigate(JOB_DETAIL_PAGE.replace(":jobId", job.id))}
+        variant="link"
+      >
+        {job.title} @ {job.companyName}
+      </Button>
+    </FieldLabel>
+  );
+};
+
 export const SessionInfoSection = ({ sectionId, session }: IProps) => {
   const { data: roles } = useRoles();
   const rolesMap = useLookupMap(roles);
@@ -42,6 +63,8 @@ export const SessionInfoSection = ({ sectionId, session }: IProps) => {
         <FieldLabel full title="Title">
           {session.title ?? "Not set"}
         </FieldLabel>
+
+        {session.jobId ? <LinkedJobField jobId={session.jobId} /> : null}
 
         <FieldLabel title="Experience Level">
           {session.experience ? (

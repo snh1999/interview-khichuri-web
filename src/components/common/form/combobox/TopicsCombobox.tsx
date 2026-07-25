@@ -1,15 +1,17 @@
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { useTopics } from "@/api/lookups";
-import { FormCombobox } from "@/components/common/form/combobox/FormCombobox.tsx";
+import {
+  FormCombobox,
+  type TComboboxProps,
+} from "@/components/common/form/combobox/FormCombobox.tsx";
 import { Chip } from "@/components/ui/Chip.tsx";
 import { useLookupMap } from "@/hooks/useLookupMap.ts";
 
-interface IProps<T extends FieldValues> {
+interface IProps<T extends FieldValues> extends Partial<TComboboxProps<T>> {
   form: UseFormReturn<T>;
   idsName: Path<T>;
   names: Path<T>;
   label?: string;
-  placeholder?: string;
 }
 
 export const TopicsCombobox = <T extends FieldValues>({
@@ -18,6 +20,7 @@ export const TopicsCombobox = <T extends FieldValues>({
   names,
   label = "Topics / Skills",
   placeholder = "Search or type to add topics",
+  ...rest
 }: Readonly<IProps<T>>) => {
   const topics = useTopics();
   const topicsMap = useLookupMap(topics.data);
@@ -60,6 +63,7 @@ export const TopicsCombobox = <T extends FieldValues>({
         onCreateItem={handleCreateTopic}
         placeholder={placeholder}
         toOption={(item) => ({ value: item.id, label: item.name })}
+        {...rest}
       />
       {topicIds.length > 0 || topicNames.length > 0 ? (
         <div className="flex flex-wrap gap-1">
