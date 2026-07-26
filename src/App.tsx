@@ -14,6 +14,8 @@ import {
   PROFILE_PAGE,
   REGISTER_PAGE,
   RESET_PASSWORD_PAGE,
+  SESSION_DETAIL_PAGE,
+  SESSIONS_PAGE,
   SETTINGS_PAGE,
 } from "@/app.constants.ts";
 import { Spinner } from "@/components/ui/spinner.tsx";
@@ -34,6 +36,7 @@ import { JobsPage } from "@/pages/JobsPage.tsx";
 import { LandingPage } from "@/pages/landing/LandingPage.tsx";
 import { SessionsPage } from "@/pages/SessionsPage.tsx";
 import SettingsPage from "@/pages/SettingsPage.tsx";
+import { SidebarLayout } from "@/pages/SidebarLayout.tsx";
 import { SessionDetailPage } from "./pages/SessionDetailPage";
 
 const App = () => {

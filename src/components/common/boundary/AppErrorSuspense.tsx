@@ -31,9 +31,8 @@ export const AppErrorSuspense = ({
   return (
     <ErrorBoundary
       FallbackComponent={
-        (ErrorFallbackComponent ?? errorPage)
-          ? ErrorFallbackPage
-          : ErrorFallbackCard
+        ErrorFallbackComponent ??
+        (errorPage ? ErrorFallbackPage : ErrorFallbackCard)
       }
       onReset={() => queryClient.resetQueries()}
     >

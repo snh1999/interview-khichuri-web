@@ -57,8 +57,6 @@ export const useCreateSessionForm = ({
       ...session,
       title: session?.title ?? "",
       description: session?.description ?? "",
-      jobId: session?.jobId ?? null,
-      topicIds: [],
     },
   });
 

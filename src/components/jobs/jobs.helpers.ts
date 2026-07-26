@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -52,29 +53,38 @@ export const useJobPostForm = ({
   initialDescription,
   onSuccess,
 }: IProps) => {
+  const defaultValues = {
+    ...job,
+    title: job?.title ?? "",
+    companyName: job?.companyName ?? "",
+    description: initialDescription ?? job?.description ?? "",
+    status: job?.status ?? "saved",
+    roleId: job?.roleId ?? null,
+    topicIds: job?.topicIds ?? [],
+    links: job?.links
+      ? job.links
+          .split("\n")
+          .filter(Boolean)
+          .map((v) => ({ value: v }))
+      : [],
+    deadline: stringToDate(job?.deadline),
+    interviewDate: stringToDate(job?.interviewDate),
+  };
+
   const createJob = useCreateJob();
   const updateJob = useUpdateJob();
 
   const form = useForm<TJobFormData>({
     resolver: zodResolver(jobPostSchema),
-    defaultValues: {
-      ...job,
-      title: job?.title ?? "",
-      companyName: job?.companyName ?? "",
-      description: initialDescription ?? job?.description ?? "",
-      status: job?.status ?? "saved",
-      roleId: job?.roleId ?? null,
-      topicIds: job?.topicIds ?? [],
-      links: job?.links
-        ? job.links
-            .split("\n")
-            .filter(Boolean)
-            .map((v) => ({ value: v }))
-        : [],
-      deadline: stringToDate(job?.deadline),
-      interviewDate: stringToDate(job?.interviewDate),
-    },
+    defaultValues,
   });
+
+  useEffect(() => {
+    form.reset({
+      ...form.getValues(),
+      description: initialDescription ?? job?.description ?? "",
+    });
+  }, [initialDescription, form, job]);
 
   const onSubmit = form.handleSubmit(async (rawData: TJobFormData) => {
     const { links, ...data } = rawData;
