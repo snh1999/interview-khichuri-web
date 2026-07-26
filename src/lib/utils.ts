@@ -32,3 +32,39 @@ export const getSystemTheme = (): TResolvedTheme => {
   }
   return "light";
 };
+
+export const stringToDate = (
+  dateStr: string | null | undefined
+): Date | undefined => {
+  if (!dateStr) {
+    return;
+  }
+  const parsed = new Date(dateStr);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+};
+
+export const stripNulls = (value: unknown): unknown => {
+  if (value === null) {
+    return;
+  }
+
+  if (value instanceof Date) {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(stripNulls);
+  }
+  if (typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [k, stripNulls(v)])
+    );
+  }
+  if (typeof value === "string") {
+    if (value.length === 0) {
+      return;
+    }
+    return value.trim();
+  }
+  return value;
+};

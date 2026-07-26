@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export const Background = ({
   children,
 }: Readonly<{ children?: ReactNode }>) => (
-  <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background/95 p-4">
+  <div className="relative flex h-full min-h-full items-center justify-center overflow-hidden bg-background/95 p-4">
     <div
       className="absolute inset-0 opacity-[0.03]"
       style={{

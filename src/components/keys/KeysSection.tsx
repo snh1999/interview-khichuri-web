@@ -1,7 +1,12 @@
-import { type IApiKey, type TApiKeyPlatform, useApiKeys } from "@/api/keys";
+import {
+  type IApiKey,
+  PROVIDER_LABELS,
+  type TApiKeyProvider,
+  useApiKeys,
+} from "@/api/keys";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
-import { ApiKeyCard } from "@/components/settings/keys/ApiKeyCard.tsx";
-import { KeysFormDialog } from "@/components/settings/keys/KeysFormDialog.tsx";
+import { ApiKeyCard } from "@/components/keys/ApiKeyCard.tsx";
+import { KeysFormDialog } from "@/components/keys/KeysFormDialog.tsx";
 import {
   Card,
   CardAction,
@@ -17,19 +22,14 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty.tsx";
 
-const PLATFORM_LABELS: Record<TApiKeyPlatform, string> = {
-  google: "Google / Gemini",
-  openai: "OpenAI / ChatGPT",
-};
-
-const groupKeysByPlatform = (
+const groupKeysByProvider = (
   keys: IApiKey[]
-): Map<TApiKeyPlatform, IApiKey[]> => {
-  const grouped = new Map<TApiKeyPlatform, IApiKey[]>();
+): Map<TApiKeyProvider, IApiKey[]> => {
+  const grouped = new Map<TApiKeyProvider, IApiKey[]>();
   for (const key of keys) {
-    const existing = grouped.get(key.platform) ?? [];
+    const existing = grouped.get(key.provider) ?? [];
     existing.push(key);
-    grouped.set(key.platform, existing);
+    grouped.set(key.provider, existing);
   }
   return grouped;
 };
@@ -43,7 +43,7 @@ const KeysSection = () => (
 const KeysCard = () => {
   const { data: apiKeys } = useApiKeys();
 
-  const grouped = apiKeys ? groupKeysByPlatform(apiKeys) : new Map();
+  const grouped = apiKeys ? groupKeysByProvider(apiKeys) : new Map();
 
   return (
     <Card>
@@ -59,10 +59,10 @@ const KeysCard = () => {
       <CardContent>
         {apiKeys && apiKeys.length > 0 ? (
           <div className="space-y-6">
-            {Array.from(grouped.entries()).map(([platform, keys]) => (
-              <div className="space-y-3" key={platform}>
+            {Array.from(grouped.entries()).map(([provider, keys]) => (
+              <div className="space-y-3" key={provider}>
                 <CardTitle className="pt-3 text-sm">
-                  {PLATFORM_LABELS[platform as TApiKeyPlatform]}
+                  {PROVIDER_LABELS[provider as TApiKeyProvider]}
                 </CardTitle>
                 {keys.map((key: IApiKey) => (
                   <ApiKeyCard apiKey={key} key={key.id} />

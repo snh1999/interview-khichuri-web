@@ -12,8 +12,8 @@ export function LoadingSwap({
   className?: string;
 }) {
   return (
-    <div className="relative">
-      <div className={cn(isLoading && "invisible", className)}>{children}</div>
+    <div className={cn("relative", className)}>
+      <div className={cn("contents", isLoading && "invisible")}>{children}</div>
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
           <Spinner />

@@ -1,18 +1,11 @@
-import ProfileMenu from "@/components/common/header/ProfileMenu.tsx";
+import { HeaderBreadcrumb } from "@/components/layout/header/HeaderBreadcrumb.tsx";
+import ProfileMenu from "@/components/layout/header/ProfileMenu.tsx";
 import { ThemePicker } from "@/components/theme/ThemePicker.tsx";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar.tsx";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { SidebarTrigger } from "@/components/ui/sidebar.tsx";
@@ -25,21 +18,7 @@ export const Header = () => (
         className="hidden h-4! data-vertical:self-center sm:block"
         orientation="vertical"
       />
-      <Breadcrumb className="hidden sm:block">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="#">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Free</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <HeaderBreadcrumb />
     </div>
     <div className="flex items-center gap-1.5">
       <ThemePicker />

@@ -15,16 +15,16 @@ interface IApiResponse<T> {
   data: T;
 }
 
-interface IError {
+export interface IApiError {
   path: string;
   message: string;
 }
 
-class ApiError extends Error {
+export class ApiError extends Error {
   statusCode: number;
-  errors?: IError[];
+  errors?: IApiError[];
 
-  constructor(statusCode: number, message: string, errors?: IError[]) {
+  constructor(statusCode: number, message: string, errors?: IApiError[]) {
     super(message);
     this.name = "ApiError";
     this.statusCode = statusCode;
@@ -32,14 +32,19 @@ class ApiError extends Error {
   }
 }
 
+interface IRequestOptions extends RequestInit {
+  timeoutMs?: number;
+}
+
 const request = async <T>(
   path: string,
-  options: RequestInit = {}
+  options: IRequestOptions = {}
 ): Promise<T> => {
+  const timeoutMs = options.timeoutMs ?? 60_000;
   const controller = new AbortController();
   const timeout = setTimeout(() => {
     controller.abort();
-  }, 10_000);
+  }, timeoutMs);
 
   const mergedHeaders = new Headers(options.headers);
   const isFormData = options.body instanceof FormData;
@@ -76,7 +81,7 @@ const request = async <T>(
       const errors =
         body !== null && "errors" in body
           ? // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-            (body.errors as IError[])
+            (body.errors as IApiError[])
           : undefined;
       throw new ApiError(response.status, message, errors);
     }
@@ -92,34 +97,54 @@ const request = async <T>(
 };
 
 export const api = {
-  async get<T>(path: string): Promise<T> {
-    return await request<T>(path);
+  async get<T>(path: string, options?: IRequestOptions): Promise<T> {
+    return await request<T>(path, options);
   },
-  async post<T>(path: string, data?: unknown): Promise<T> {
+  async post<T>(
+    path: string,
+    data?: unknown,
+    options?: IRequestOptions
+  ): Promise<T> {
     return await request<T>(path, {
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
+      ...options,
     });
   },
-  async put<T>(path: string, data?: unknown): Promise<T> {
+  async put<T>(
+    path: string,
+    data?: unknown,
+    options?: IRequestOptions
+  ): Promise<T> {
     return await request<T>(path, {
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
+      ...options,
     });
   },
-  async patch<T>(path: string, data?: unknown): Promise<T> {
+  async patch<T>(
+    path: string,
+    data?: unknown,
+    options?: IRequestOptions
+  ): Promise<T> {
     return await request<T>(path, {
       method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
+      ...options,
     });
   },
-  async delete<T>(path: string): Promise<T> {
-    return await request<T>(path, { method: "DELETE" });
+  async delete<T>(path: string, options?: IRequestOptions): Promise<T> {
+    return await request<T>(path, { method: "DELETE", ...options });
   },
-  async upload<T>(path: string, formData: FormData): Promise<T> {
+  async upload<T>(
+    path: string,
+    formData: FormData,
+    options?: IRequestOptions
+  ): Promise<T> {
     return await request<T>(path, {
       method: "POST",
       body: formData,
+      ...options,
     });
   },
 };

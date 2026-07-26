@@ -1,5 +1,5 @@
 import {
-  type ComponentProps,
+  type ComponentProps, type ReactElement,
   type ReactNode,
   useState,
   useTransition,
@@ -18,16 +18,20 @@ import {
   AlertDialogHeader,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog.tsx";
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
+
 
 export function ActionButton({
   action,
   requireConfirmation = false,
   dialogDescription = "This action cannot be undone.",
+  renderNode,
   ...props
 }: ComponentProps<typeof Button> & {
   action: () => Promise<{ error: boolean; message?: string }>;
   requireConfirmation?: boolean;
   dialogDescription?: ReactNode;
+  renderNode?: ReactElement;
 }) {
   const [isLoading, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
@@ -53,7 +57,7 @@ export function ActionButton({
         }}
       >
         <AlertDialogTrigger
-          render={<Button {...props} />}
+          render={renderNode ?? <Button {...props} />}
           onClick={() => setOpen(true)}
         />
         <AlertDialogContent>
@@ -63,12 +67,29 @@ export function ActionButton({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction disabled={isLoading} onClick={performAction}>
-              <LoadingSwap isLoading={isLoading}>Yes</LoadingSwap>
+            <AlertDialogAction variant={props.variant} disabled={isLoading} onClick={performAction}>
+              <LoadingSwap isLoading={isLoading}>Confirm</LoadingSwap>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    );
+  }
+
+  if (renderNode) {
+    return (
+      <ButtonPrimitive
+        render={renderNode}
+        disabled={props.disabled ?? isLoading}
+        onClick={(e) => {
+          performAction();
+          props.onClick?.(e);
+        }}
+      >
+        <LoadingSwap isLoading={isLoading} className="inline-flex items-center gap-2">
+          {props.children}
+        </LoadingSwap>
+      </ButtonPrimitive>
     );
   }
 
@@ -81,10 +102,7 @@ export function ActionButton({
         props.onClick?.(e);
       }}
     >
-      <LoadingSwap
-        isLoading={isLoading}
-        className="inline-flex items-center gap-2"
-      >
+      <LoadingSwap isLoading={isLoading} className="inline-flex items-center gap-2">
         {props.children}
       </LoadingSwap>
     </Button>
