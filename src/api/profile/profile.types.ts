@@ -2,6 +2,7 @@ import type {
   TEducationDto,
   TJobPreferencesDto,
   TProfessionalInfoDto,
+  TProfileFormData,
   TProfileLinkDto,
   TProfilePersonalDto,
   TWorkExperienceDto,
@@ -70,8 +71,12 @@ export interface IResume {
   id: string;
   profileId: string;
   name: string;
-  url: string;
+  url: string | null;
+  content: TProfileFormData | null;
+  template: string | null;
   isPrimary: boolean;
+  isPublic: boolean;
+  slug: string | null;
   createdAt: string;
   updatedAt: string;
 }

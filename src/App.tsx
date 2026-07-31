@@ -51,6 +51,8 @@ const App = () => {
       <Route element={<VerifyEmailPage />} path={ACCOUNT_VERIFICATION_PAGE} />
       <Route element={<ResetPasswordPage />} path={RESET_PASSWORD_PAGE} />
 
+      <Route element={<ResumeEditorWithPreviewPage />} path={PUBLIC_RESUME_EDITOR_PAGE} />
+
       <Route
         element={session ? <Navigate replace to={HOMEPAGE} /> : <Outlet />}
       >

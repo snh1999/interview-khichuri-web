@@ -19,3 +19,5 @@ export const FORGOT_PASSWORD_EMAIL_CONTEXT = "forgotpass";
 export const VERIFY_EMAIL_CONTEXT = "verifyAccount";
 
 export const MAX_RESUMES = 5;
+
+export const PUBLIC_RESUME_EDITOR_PAGE = "/resumes";
