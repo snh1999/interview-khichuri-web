@@ -1,4 +1,5 @@
 import { TrashIcon } from "@phosphor-icons/react";
+import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { FormCheckbox } from "@/components/common/form/FormCheckbox.tsx";
 import { FormDatePicker } from "@/components/common/form/FormDatePicker.tsx";
@@ -24,6 +25,12 @@ export const WorkExperienceCard = ({
 }: IProps) => {
   const form = useFormContext();
   const isCurrent = form.watch(`workExperience.${index}.isCurrent`);
+
+  useEffect(() => {
+    if (isCurrent) {
+      form.setValue(`workExperience.${index}.endDate`, null as never);
+    }
+  }, [form, index, isCurrent]);
 
   return (
     <Card size="sm">

@@ -1,5 +1,7 @@
 import { TrashIcon } from "@phosphor-icons/react";
+import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
+import { FormCheckbox } from "@/components/common/form/FormCheckbox.tsx";
 import { FormDatePicker } from "@/components/common/form/FormDatePicker.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
@@ -21,6 +23,13 @@ interface IProps {
 
 export const EducationCard = ({ index, onRemove }: Readonly<IProps>) => {
   const form = useFormContext<TProfileFormData>();
+  const isCurrent = form.watch(`education.${index}.isCurrent`);
+
+  useEffect(() => {
+    if (isCurrent) {
+      form.setValue(`education.${index}.endDate`, null as never);
+    }
+  }, [form, index, isCurrent]);
   return (
     <Card size="sm">
       <CardHeader>
@@ -62,7 +71,7 @@ export const EducationCard = ({ index, onRemove }: Readonly<IProps>) => {
           <FormInput
             form={form}
             label="Location"
-            name={`education.${index}.country`}
+            name={`education.${index}.location`}
           />
 
           <FormDatePicker
@@ -71,9 +80,17 @@ export const EducationCard = ({ index, onRemove }: Readonly<IProps>) => {
             name={`education.${index}.startDate`}
           />
           <FormDatePicker
+            disabled={isCurrent}
             form={form}
             label="Graduation Date"
-            name={`education.${index}.graduationDate`}
+            name={`education.${index}.endDate`}
+          />
+        </div>
+        <div className="py-4">
+          <FormCheckbox
+            form={form}
+            label="Currently pursuing this degree"
+            name={`education.${index}.isCurrent`}
           />
         </div>
         <FormInput

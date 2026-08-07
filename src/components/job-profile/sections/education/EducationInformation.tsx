@@ -37,6 +37,7 @@ export const EducationInformation = ({ sectionId }: Readonly<IProps>) => {
               appendEducation({
                 degreeName: "",
                 institution: "",
+                isCurrent: false,
               })
             }
             size="icon-sm"

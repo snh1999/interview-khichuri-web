@@ -17,12 +17,12 @@ interface IProps {
 }
 
 const LINK_TYPES = [
-  { value: "github", label: "GitHub" },
-  { value: "gitlab", label: "GitLab" },
-  { value: "linkedin", label: "LinkedIn" },
-  { value: "portfolio", label: "Portfolio" },
-  { value: "blog", label: "Blog" },
-  { value: "other", label: "Other" },
+  { label: "GitHub", value: "github" },
+  { label: "GitLab", value: "gitlab" },
+  { label: "LinkedIn", value: "linkedin" },
+  { label: "Portfolio", value: "portfolio" },
+  { label: "Blog", value: "blog" },
+  { label: "Other", value: "other" },
 ] as const;
 
 export const LinksSection = ({ sectionId }: Readonly<IProps>) => {
@@ -48,7 +48,7 @@ export const LinksSection = ({ sectionId }: Readonly<IProps>) => {
           </Button>
         </CardAction>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         {linkFields.map((field, index) => (
           <div className="flex items-center gap-2" key={field.id}>
             <FormSelect

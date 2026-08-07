@@ -1,7 +1,5 @@
 import { useFormContext } from "react-hook-form";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
-import FormSelect from "@/components/common/form/FormSelect.tsx";
-import { ISO_COUNTRIES } from "@/components/job-profile/profile.data.ts";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import {
   Card,
@@ -37,14 +35,7 @@ export const PersonalInformation = ({ sectionId }: Readonly<IProps>) => {
         />
         <FormInput form={form} label="Phone" name="personal.phone" />
         <FormInput form={form} label="Location" name="personal.location" />
-
-        <FormSelect
-          form={form}
-          label="Country"
-          name="personal.country"
-          placeholder="Select a Country"
-          selectData={ISO_COUNTRIES}
-        />
+        <FormInput form={form} label="Country" name="personal.country" />
       </CardContent>
     </Card>
   );

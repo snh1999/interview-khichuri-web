@@ -35,7 +35,7 @@ export const PreferencesInformation = ({ sectionId }: Readonly<IProps>) => {
           Your career preferences and salary expectations.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <CardContent className="grid grid-cols-1 gap-4">
         <FormCombobox
           data={roles}
           form={form}

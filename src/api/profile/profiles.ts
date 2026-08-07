@@ -2,14 +2,20 @@ import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import type {
   IResume,
+  TExtractionResult,
   TProfilePopulated,
 } from "@/api/profile/profile.types.ts";
 import type {
+  TActivityDto,
   TEducationDto,
   TJobPreferencesDto,
   TProfessionalInfoDto,
+  TProfileFormData,
   TProfileLinkDto,
   TProfilePersonalDto,
+  TProjectDto,
+  TPublicationDto,
+  TReferenceDto,
   TWorkExperienceDto,
 } from "@/components/job-profile/profile.helpers.ts";
 import { api } from "@/lib/api-client.ts";
@@ -77,6 +83,44 @@ export const useUpdateLinks = () =>
     meta: { invalidates: queryKeys.profile.all },
   });
 
+export const useUpdatePublications = () =>
+  useMutation({
+    mutationFn: async (dto: { publications: TPublicationDto[] }) =>
+      await api.put("/profile/publications", dto),
+    meta: { invalidates: queryKeys.profile.all },
+  });
+
+export const useUpdateProjects = () =>
+  useMutation({
+    mutationFn: async (dto: { projects: TProjectDto[] }) =>
+      await api.put("/profile/projects", dto),
+    meta: { invalidates: queryKeys.profile.all },
+  });
+
+export const useUpdateReferences = () =>
+  useMutation({
+    mutationFn: async (dto: { references: TReferenceDto[] }) =>
+      await api.put("/profile/references", dto),
+    meta: { invalidates: queryKeys.profile.all },
+  });
+
+export const useUpdateActivities = () =>
+  useMutation({
+    mutationFn: async (dto: { activities: TActivityDto[] }) =>
+      await api.put("/profile/activities", dto),
+    meta: { invalidates: queryKeys.profile.all },
+  });
+
+export const useExtractResume = () =>
+  useMutation({
+    mutationFn: async ({ id, provider }: { id: string; provider: string }) =>
+      await api.post<TExtractionResult>(
+        `/resume/${id}/extract`,
+        { provider },
+        { timeoutMs: 120_000 }
+      ),
+  });
+
 export const useUploadResume = () =>
   useMutation({
     mutationFn: async ({ file, name }: { file: File; name?: string }) => {
@@ -87,29 +131,20 @@ export const useUploadResume = () =>
       }
       return await api.upload<IUploadResponse>("/resume", formData);
     },
-    meta: {
-      invalidates: queryKeys.profile.resumes,
-    },
+    meta: { invalidates: queryKeys.profile.resumes },
   });
 
 export const useDeleteResume = () =>
   useMutation({
-    mutationFn: async (id: string) => {
-      await api.delete<void>(`/resume/${id}`);
-    },
-    meta: {
-      invalidates: queryKeys.profile.resumes,
-    },
+    mutationFn: async (id: string) => await api.delete<void>(`/resume/${id}`),
+    meta: { invalidates: queryKeys.profile.resumes },
   });
 
 export const useSetPrimaryResume = () =>
   useMutation({
-    mutationFn: async (id: string) => {
-      await api.patch<void>(`/resume/${id}/primary`);
-    },
-    meta: {
-      invalidates: queryKeys.profile.resumes,
-    },
+    mutationFn: async (id: string) =>
+      await api.patch<void>(`/resume/${id}/primary`),
+    meta: { invalidates: queryKeys.profile.resumes },
   });
 
 export const useResumeViewUrl = (resumeId: string | null) =>
