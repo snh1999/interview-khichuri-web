@@ -87,6 +87,7 @@ export const queryKeys = {
       [...queryKeys.profile.resumes, "resumeView", id] as const,
   },
   lookups: {
+    categories: ["lookups", "categories"] as const,
     roles: ["lookups", "roles"] as const,
     topics: ["lookups", "topics"] as const,
     industries: ["lookups", "industries"] as const,

@@ -1,5 +1,5 @@
 import { PlusIcon, SpinnerGapIcon } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, type FieldValues, useWatch } from "react-hook-form";
 import type { TBasicFormInputProps } from "@/components/common/form/form.types.ts";
 import {
@@ -56,8 +56,12 @@ export const FormCombobox = <T extends FieldValues, D>({
   disabled,
 }: Readonly<TProps<T, D>>) => {
   const anchor = useComboboxAnchor();
-  const options = data.map(toOption);
-  const optionMap = new Map(options.map((o) => [o.value, o]));
+  // memorization required to add typing feature
+  const options = useMemo(() => data.map(toOption), [data, toOption]);
+  const optionMap = useMemo(
+    () => new Map(options.map((o) => [o.value, o])),
+    [options]
+  );
   const valueWatch = useWatch({ control: form.control, name });
   const [inputValue, setInputValue] = useState(() => {
     const val = form.getValues(name);

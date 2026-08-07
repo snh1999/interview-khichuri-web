@@ -26,7 +26,6 @@ export interface ICreateJobDto extends ICommonFields {
   companyName: string;
   description: string;
   status: TJobStatus;
-  topicNames?: string[];
   links?: string | null;
   deadline?: Date;
   interviewDate?: Date;
@@ -51,7 +50,6 @@ export interface IJobWithTopics extends IJob {
 
 export const useJobs = (search?: string) =>
   useSuspenseQuery({
-    queryKey: queryKeys.jobs.list({ search }),
     queryFn: async () => {
       const params = new URLSearchParams();
       if (search) {
@@ -60,12 +58,13 @@ export const useJobs = (search?: string) =>
       const qs = params.toString();
       return await api.get<IJob[]>(`/jobs${qs ? `?${qs}` : ""}`);
     },
+    queryKey: queryKeys.jobs.list({ search }),
   });
 
 export const useJob = (id: string) =>
   useSuspenseQuery({
-    queryKey: queryKeys.jobs.detail(id),
     queryFn: async () => await api.get<IJobWithTopics>(`/jobs/${id}`),
+    queryKey: queryKeys.jobs.detail(id),
   });
 
 export const useCreateJob = () =>
