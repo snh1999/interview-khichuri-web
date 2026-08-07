@@ -27,7 +27,8 @@
   "assist": {
     "actions": {
       "source": {
-        "useSortedInterfaceMembers": "off"
+        "useSortedInterfaceMembers": "off",
+        "useSortedKeys": "off"
       }
     }
   },

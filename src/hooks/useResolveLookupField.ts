@@ -1,15 +1,13 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
-import { queryKeys } from "@/api";
-import { batchCreateLookups, type TLookupSchema } from "@/api/lookups";
+import { type TLookupSchema, useBatchCreateLookups } from "@/api/lookups";
 
 export const useResolveLookupField = <T extends FieldValues>(
   form: UseFormReturn<T>,
   schema: TLookupSchema
 ) => {
-  const queryClient = useQueryClient();
+  const batchCreateLookup = useBatchCreateLookups(schema);
 
   return useCallback(
     async (
@@ -20,20 +18,18 @@ export const useResolveLookupField = <T extends FieldValues>(
         | number[]
         | null
         | undefined;
-      const names = (form.getValues(namesName) as string[] | null) ?? [];
+      const names: string[] = form.getValues(namesName) ?? [];
 
       if (names.length === 0) {
         return existingIds;
       }
 
       try {
-        const ids = await batchCreateLookups(schema, names);
+        const ids = await batchCreateLookup.mutateAsync(names);
         const merged = [...new Set([...(existingIds ?? []), ...ids])];
         form.setValue(idsName, merged as never, { shouldDirty: true });
         form.setValue(namesName, [] as never);
-        await queryClient.invalidateQueries({
-          queryKey: queryKeys.lookups[schema],
-        });
+
         return merged;
       } catch {
         toast.error(
@@ -42,6 +38,6 @@ export const useResolveLookupField = <T extends FieldValues>(
         return existingIds;
       }
     },
-    [form, queryClient, schema]
+    [form, batchCreateLookup]
   );
 };

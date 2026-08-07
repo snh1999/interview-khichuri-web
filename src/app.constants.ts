@@ -20,4 +20,9 @@ export const VERIFY_EMAIL_CONTEXT = "verifyAccount";
 
 export const MAX_RESUMES = 5;
 
-export const PUBLIC_RESUME_EDITOR_PAGE = "/resumes";
+export const MAX_TINY_LENGTH = 31;
+export const MAX_SHORT_LENGTH = 80;
+export const MAX_NAME_LENGTH = 127;
+export const MAX_LARGE_LENGTH = 1023;
+export const MAX_URL_LENGTH = 512;
+export const DEFAULT_MAX_STRING_LENGTH = 5000;

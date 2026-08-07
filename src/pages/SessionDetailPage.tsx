@@ -56,7 +56,7 @@ const SessionDetailContent = () => {
         />
         <QuestionsSection
           sectionId={getSectionId("questions")}
-          sessionId={session.id}
+          session={session}
         />
       </div>
     </div>

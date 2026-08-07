@@ -32,7 +32,8 @@ export const LookupCombobox = <T extends FieldValues>({
   const lookupsMap = useLookupMap(lookups.data);
 
   const getIds = (): Set<number> => new Set(form.getValues(idsName));
-  const getNames = (): Set<string> =>  new Set(names? form.getValues(names): []);
+  const getNames = (): Set<string> =>
+    new Set(names ? form.getValues(names) : []);
   const setIds = (v: number[]) =>
     form.setValue(idsName, v as never, { shouldDirty: true });
   const setNames = (v: Set<string>) => {
@@ -52,7 +53,7 @@ export const LookupCombobox = <T extends FieldValues>({
 
   const handleRemoveId = (id: number) => {
     const current = getIds();
-    current.delete(id)
+    current.delete(id);
     setIds([...current]);
   };
 

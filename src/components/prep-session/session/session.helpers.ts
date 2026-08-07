@@ -9,16 +9,26 @@ import {
   useCreateSession,
   useUpdateSession,
 } from "@/api/sessions";
-import { SESSION_DETAIL_PAGE } from "@/app.constants.ts";
+import {
+  DEFAULT_MAX_STRING_LENGTH,
+  MAX_SHORT_LENGTH,
+  MAX_TINY_LENGTH,
+  SESSION_DETAIL_PAGE,
+} from "@/app.constants.ts";
+import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
 
 const createSessionSchema = z.object({
-  title: z.string().trim().min(1, "Title is required"),
-  description: z.string().trim().min(1, "Description is required"),
+  description: z
+    .string()
+    .trim()
+    .min(1, "Description is required")
+    .max(DEFAULT_MAX_STRING_LENGTH),
   experience: z.string().nullish(),
   jobId: z.uuid().nullish(),
   roleId: z.number().int().positive().nullish(),
+  title: z.string().trim().min(1, "Title is required").max(MAX_SHORT_LENGTH),
   topicIds: z.array(z.number().int().positive()).nullish(),
-  topicNames: z.array(z.string().trim().min(1)).nullish(),
+  topicNames: z.array(z.string().trim().min(1).max(MAX_TINY_LENGTH)).nullish(),
 });
 
 export type TCreateSessionFormData = z.infer<typeof createSessionSchema>;
@@ -30,10 +40,10 @@ export interface TFormHook<T extends Record<string, unknown>> {
 }
 
 const EXPERIENCE_OPTIONS = [
-  { value: "junior", label: "Junior" },
-  { value: "mid", label: "Mid-level" },
-  { value: "senior", label: "Senior" },
-  { value: "lead", label: "Lead / Principal" },
+  { label: "Junior", value: "junior" },
+  { label: "Mid-level", value: "mid" },
+  { label: "Senior", value: "senior" },
+  { label: "Lead / Principal", value: "lead" },
 ] as const;
 
 export { EXPERIENCE_OPTIONS };
@@ -52,24 +62,33 @@ export const useCreateSessionForm = ({
   const updateSession = useUpdateSession();
 
   const form = useForm<TCreateSessionFormData>({
-    resolver: zodResolver(createSessionSchema),
     defaultValues: {
       ...session,
       title: session?.title ?? "",
       description: session?.description ?? "",
     },
+    resolver: zodResolver(createSessionSchema),
   });
 
+  const resolveTopics = useResolveLookupField(form, "topics");
+
   const onSubmit = form.handleSubmit(async (data) => {
+    const { topicNames, ...rest } = data;
+    const topicIds = await resolveTopics("topicIds", "topicNames");
+    const payload = {
+      ...rest,
+      ...(topicIds ? { topicIds } : {}),
+    };
+
     try {
       let newSessionId: string;
       if (session) {
         newSessionId = (
-          await updateSession.mutateAsync({ id: session.id, ...data })
+          await updateSession.mutateAsync({ id: session.id, ...payload })
         ).id;
         toast.success("Session updated");
       } else {
-        newSessionId = (await createSession.mutateAsync(data)).id;
+        newSessionId = (await createSession.mutateAsync(payload)).id;
         toast.success("Session created");
       }
 
@@ -80,7 +99,7 @@ export const useCreateSessionForm = ({
     }
   });
 
-  return { form, onSubmit, isLoading: createSession.isPending };
+  return { form, isLoading: createSession.isPending, onSubmit };
 };
 
 export const useNavigateToSessionPage = () => {

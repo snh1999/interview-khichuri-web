@@ -85,7 +85,7 @@ export const FormCombobox = <T extends FieldValues, D>({
   const allItems = showCreate
     ? [
         ...options,
-        { value: inputValue.trim(), label: inputValue.trim(), isNew: true },
+        { isNew: true, label: inputValue.trim(), value: inputValue.trim() },
       ]
     : options;
 

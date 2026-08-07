@@ -9,7 +9,11 @@ import {
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useGenerateQuestions, useQuestions } from "@/api/sessions";
+import {
+  type IPrepSession,
+  useGenerateQuestions,
+  useQuestions,
+} from "@/api/sessions";
 import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
 import { QuestionCard } from "@/components/prep-session/question/QuestionCard.tsx";
 import { QuestionForm } from "@/components/prep-session/question/QuestionForm.tsx";
@@ -31,18 +35,22 @@ import {
 } from "@/components/ui/dropdown-menu.tsx";
 import {
   Empty,
+  EmptyContent,
   EmptyDescription,
   EmptyHeader,
+  EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 
 interface IProps {
-  sessionId: string;
+  session: IPrepSession;
   sectionId: string;
 }
 
-export const QuestionsSection = ({ sessionId, sectionId }: IProps) => {
+export const QuestionsSection = ({ session, sectionId }: IProps) => {
+  const sessionId = session.id;
   const { data: questions } = useQuestions(sessionId);
   const { mutateAsync: generateQuestions, isPending: isQuestionPending } =
     useGenerateQuestions();
@@ -52,6 +60,7 @@ export const QuestionsSection = ({ sessionId, sectionId }: IProps) => {
   const [showNotes, setShowNotes] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
 
+  const [count, setCount] = useState(5);
   const [avoidRepeat, setAvoidRepeat] = useState<boolean>(true);
   const [includeJobDescription, setIncludeJobDescription] =
     useState<boolean>(false);
@@ -62,6 +71,7 @@ export const QuestionsSection = ({ sessionId, sectionId }: IProps) => {
         id: sessionId,
         provider,
         model,
+        count,
         avoidRepeat,
         includeJobDescription,
       });
@@ -161,11 +171,20 @@ export const QuestionsSection = ({ sessionId, sectionId }: IProps) => {
           {questions.length === 0 ? (
             <Empty>
               <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <SparkleIcon />
+                </EmptyMedia>
                 <EmptyTitle>No questions yet</EmptyTitle>
                 <EmptyDescription>
-                  Add your first question to start practicing.
+                  Generate questions with AI or add one manually.
                 </EmptyDescription>
               </EmptyHeader>
+              <EmptyContent>
+                <Button onClick={() => setAiDialogOpen(true)} size="sm">
+                  <SparkleIcon className="size-3" />
+                  Generate Questions
+                </Button>
+              </EmptyContent>
             </Empty>
           ) : (
             <div className="flex flex-col gap-3">
@@ -192,6 +211,19 @@ export const QuestionsSection = ({ sessionId, sectionId }: IProps) => {
         open={aiDialogOpen}
         title="Generate Questions"
       >
+        <div className="space-y-1.5">
+          <Label htmlFor="question-count">Number of questions</Label>
+          <Input
+            disabled={isQuestionPending}
+            id="question-count"
+            max={50}
+            min={1}
+            onChange={(e) => setCount(Number(e.target.value))}
+            type="number"
+            value={count}
+          />
+        </div>
+
         <div className="flex items-center gap-2">
           <Checkbox
             checked={avoidRepeat}
@@ -204,17 +236,19 @@ export const QuestionsSection = ({ sessionId, sectionId }: IProps) => {
           </Label>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Checkbox
-            checked={includeJobDescription}
-            disabled={isQuestionPending}
-            id="include-job-description"
-            onCheckedChange={(val) => setIncludeJobDescription(val)}
-          />
-          <Label htmlFor="include-job-description">
-            Include job description
-          </Label>
-        </div>
+        {session.jobId ? (
+          <div className="flex items-center gap-2">
+            <Checkbox
+              checked={includeJobDescription}
+              disabled={isQuestionPending}
+              id="include-job-description"
+              onCheckedChange={(val) => setIncludeJobDescription(val)}
+            />
+            <Label htmlFor="include-job-description">
+              Include job description
+            </Label>
+          </div>
+        ) : null}
       </AiDialog>
     </>
   );

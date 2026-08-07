@@ -30,20 +30,23 @@ export const useTopics = () => useLookups("topics");
 
 export const useIndustries = () => useLookups("industries");
 
-export const batchCreateLookups = async (
-  schema: TLookupSchema,
-  names: string[]
-) => await api.post<number[]>(`/lookups/${schema}/batch`, { names });
+export const useBatchCreateLookups = (schema: TLookupSchema) =>
+  useMutation({
+    meta: { invalidates: queryKeys.lookups[schema] },
+    mutationFn: (names: string[]) =>
+      api.post<number[]>(`/lookups/${schema}/batch`, { names }),
+  });
 
 export const useCreateLookup = (schema: TLookupSchema) =>
   useMutation({
+    meta: { invalidates: queryKeys.lookups[schema] },
     mutationFn: async (data: { name: string }) =>
       await api.post<ILookupEntry>(`/lookups/${schema}`, data),
-    meta: { invalidates: queryKeys.lookups[schema] },
   });
 
 export const useUpdateLookup = (schema: TLookupSchema) =>
   useMutation({
+    meta: { invalidates: queryKeys.lookups[schema] },
     mutationFn: async ({
       id,
       ...data
@@ -52,7 +55,6 @@ export const useUpdateLookup = (schema: TLookupSchema) =>
       name?: string;
       isApproved?: boolean;
     }) => await api.patch(`/lookups/${schema}/${id}`, data),
-    meta: { invalidates: queryKeys.lookups[schema] },
   });
 
 export const useDeleteLookup = (schema: TLookupSchema) =>

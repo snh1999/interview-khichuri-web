@@ -11,32 +11,47 @@ import {
   useCreateJob,
   useUpdateJob,
 } from "@/api/jobs";
+import {
+  DEFAULT_MAX_STRING_LENGTH,
+  MAX_SHORT_LENGTH,
+  MAX_TINY_LENGTH,
+  MAX_URL_LENGTH,
+} from "@/app.constants.ts";
+import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
 import { stringToDate, stripNulls } from "@/lib/utils.ts";
 
 export const STATUS_OPTIONS: { value: TJobStatus; label: string }[] = [
-  { value: "saved", label: "Saved" },
-  { value: "applied", label: "Applied" },
-  { value: "scheduled", label: "Scheduled" },
+  { label: "Saved", value: "saved" },
+  { label: "Applied", value: "applied" },
+  { label: "Scheduled", value: "scheduled" },
 ] as const;
 
 const jobPostSchema = z.object({
+  companyName: z
+    .string()
+    .trim()
+    .min(1, "Company name is required")
+    .max(MAX_SHORT_LENGTH),
+  deadline: z.date().nullish(),
+  description: z
+    .string()
+    .trim()
+    .min(10, "Description too short")
+    .max(DEFAULT_MAX_STRING_LENGTH),
+  interviewDate: z.date().nullish(),
+  links: z.array(z.object({ value: z.url().max(MAX_URL_LENGTH) })).nullish(),
+  location: z.string().max(MAX_SHORT_LENGTH).nullish(),
+  notes: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
+  roleId: z.number().int().positive().nullish(),
+  source: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
+  status: z.enum(JOB_STATUS),
   title: z
     .string()
     .trim()
     .min(2, "Title too short")
     .max(50, "Keep the title less than 50 characters"),
-  companyName: z.string().trim().min(1, "Company name is required"),
-  description: z.string().trim().min(10, "Description too short"),
-  status: z.enum(JOB_STATUS),
-  roleId: z.number().int().positive().nullish(),
   topicIds: z.array(z.number().int().positive()),
-  topicNames: z.array(z.string().trim().min(1)).optional(),
-  notes: z.string().nullish(),
-  deadline: z.date().nullish(),
-  location: z.string().nullish(),
-  source: z.string().nullish(),
-  interviewDate: z.date().nullish(),
-  links: z.array(z.object({ value: z.url() })).nullish(),
+  topicNames: z.array(z.string().trim().min(1).max(MAX_TINY_LENGTH)).optional(),
 });
 export default jobPostSchema;
 
@@ -55,29 +70,30 @@ export const useJobPostForm = ({
 }: IProps) => {
   const defaultValues = {
     ...job,
-    title: job?.title ?? "",
-    companyName: job?.companyName ?? "",
-    description: initialDescription ?? job?.description ?? "",
-    status: job?.status ?? "saved",
-    roleId: job?.roleId ?? null,
-    topicIds: job?.topicIds ?? [],
+    deadline: stringToDate(job?.deadline),
+    description: initialDescription ?? job?.description,
+    interviewDate: stringToDate(job?.interviewDate),
     links: job?.links
       ? job.links
           .split("\n")
           .filter(Boolean)
           .map((v) => ({ value: v }))
       : [],
-    deadline: stringToDate(job?.deadline),
-    interviewDate: stringToDate(job?.interviewDate),
+    roleId: job?.roleId ?? null,
+    status: job?.status ?? "saved",
+    title: job?.title ?? "",
+    topicIds: job?.topicIds ?? [],
   };
 
   const createJob = useCreateJob();
   const updateJob = useUpdateJob();
 
   const form = useForm<TJobFormData>({
-    resolver: zodResolver(jobPostSchema),
     defaultValues,
+    resolver: zodResolver(jobPostSchema),
   });
+
+  const resolveTopics = useResolveLookupField(form, "topics");
 
   useEffect(() => {
     form.reset({
@@ -87,9 +103,11 @@ export const useJobPostForm = ({
   }, [initialDescription, form, job]);
 
   const onSubmit = form.handleSubmit(async (rawData: TJobFormData) => {
-    const { links, ...data } = rawData;
+    const { links, topicNames, ...data } = rawData;
+    const topicIds = await resolveTopics("topicIds", "topicNames");
     const payload = stripNulls({
       ...data,
+      ...(topicIds ? { topicIds } : {}),
       links: links
         ? links
             .map((l) => l.value)

@@ -29,7 +29,7 @@ export const RolesCombobox = <T extends FieldValues>({
       name={name}
       onCreateItem={handleCreateRole}
       placeholder={placeholder}
-      toOption={(item) => ({ value: item.id, label: item.name })}
+      toOption={(item) => ({ label: item.name, value: item.id })}
       {...rest}
     />
   );
