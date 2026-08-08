@@ -1,4 +1,5 @@
 import { PlusIcon } from "@phosphor-icons/react";
+import { memo } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import { WorkExperienceCard } from "@/components/job-profile/sections/experience/ExperienceCard.tsx";
@@ -16,7 +17,7 @@ interface IProps {
   sectionId: string;
 }
 
-export const WorkExperience = ({ sectionId }: Readonly<IProps>) => {
+export const WorkExperience = memo(({ sectionId }: Readonly<IProps>) => {
   const form = useFormContext<TProfileFormData>();
 
   const {
@@ -24,6 +25,13 @@ export const WorkExperience = ({ sectionId }: Readonly<IProps>) => {
     append: appendWorkExp,
     remove: removeWorkExp,
   } = useFieldArray({ control: form.control, name: "workExperience" });
+
+  const onAppend = () =>
+    appendWorkExp({
+      company: "",
+      title: "",
+      isCurrent: false,
+    });
 
   return (
     <Card className="px-1" id={sectionId}>
@@ -33,13 +41,7 @@ export const WorkExperience = ({ sectionId }: Readonly<IProps>) => {
         <CardAction className="pt-2 pr-1">
           <Button
             className="rounded-full bg-primary/50"
-            onClick={() =>
-              appendWorkExp({
-                company: "",
-                title: "",
-                isCurrent: false,
-              })
-            }
+            onClick={onAppend}
             size="icon-sm"
           >
             <PlusIcon weight="bold" />
@@ -51,7 +53,7 @@ export const WorkExperience = ({ sectionId }: Readonly<IProps>) => {
           <WorkExperienceCard
             index={index}
             key={field.id}
-            onRemove={() => removeWorkExp(index)}
+            onRemove={removeWorkExp}
           />
         ))}
         {workExpFields.length === 0 && (
@@ -62,4 +64,4 @@ export const WorkExperience = ({ sectionId }: Readonly<IProps>) => {
       </CardContent>
     </Card>
   );
-};
+});
