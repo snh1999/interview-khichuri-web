@@ -1,10 +1,14 @@
 import type {
+  TActivityDto,
   TEducationDto,
   TJobPreferencesDto,
   TProfessionalInfoDto,
   TProfileFormData,
   TProfileLinkDto,
   TProfilePersonalDto,
+  TProjectDto,
+  TPublicationDto,
+  TReferenceDto,
   TWorkExperienceDto,
 } from "@/components/job-profile/profile.helpers.ts";
 
@@ -67,6 +71,58 @@ export type TJobPreference = Omit<TJobPreferencesDto, "titles"> & {
   titles: IPreferenceTitle[];
 };
 
+export interface TProfilePublication {
+  id: number;
+  profileId: string;
+  title: string;
+  authors: string[];
+  notes: string | null;
+  link: string | null;
+  year: number | null;
+  publicationType: string | null;
+}
+
+export interface IProjectSkill {
+  id: number;
+  projectId: number;
+  topicId: number;
+  topic: { id: number; name: string };
+}
+
+export interface TProject {
+  id: number;
+  profileId: string;
+  name: string;
+  type: "project" | "research";
+  description: string | null;
+  link: string | null;
+  skills: IProjectSkill[] | null;
+}
+
+export interface TProfileReference {
+  id: number;
+  profileId: string;
+  name: string;
+  title: string | null;
+  company: string | null;
+  email: string | null;
+  phone: string | null;
+  relationType: string | null;
+  notes: string | null;
+}
+
+export interface TProfileActivity {
+  id: number;
+  profileId: string;
+  name: string;
+  organization: string | null;
+  position: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  isCurrent: boolean;
+  notes: string | null;
+}
+
 export interface IResume {
   id: string;
   profileId: string;
@@ -87,4 +143,26 @@ export type TProfilePopulated = TProfile & {
   workExperiences: TWorkExperience[] | null;
   educations: TEducation[] | null;
   jobPreferences: TJobPreference[] | null;
+  publications: TProfilePublication[] | null;
+  projects: TProject[] | null;
+  references: TProfileReference[] | null;
+  activities: TProfileActivity[] | null;
 };
+
+export interface TExtractionResult {
+  personal: Partial<TProfilePersonalDto>;
+  professional: Partial<Omit<TProfessionalInfoDto, "skills" | "industries">> & {
+    skills?: number[];
+    industries?: number[];
+  };
+  workExperience: Partial<TWorkExperienceDto>[];
+  education: Partial<TEducationDto>[];
+  preferences: Partial<Omit<TJobPreferencesDto, "titles">> & {
+    titles?: number[];
+  };
+  links: TProfileLinkDto[];
+  publications: Partial<TPublicationDto>[];
+  projects: Partial<TProjectDto>[];
+  references: Partial<TReferenceDto>[];
+  activities: Partial<TActivityDto>[];
+}
