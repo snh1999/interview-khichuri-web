@@ -50,14 +50,14 @@ export const ChangedRow = ({ row, pick, edited, onSelect, onEdit }: IProps) => {
           ) : null}
 
           {isModified ? (
-            <Button onClick={onDiscard} size="sm" variant="destructive">
+            <Button onClick={onDiscard} size="icon-xs" variant="destructive">
               <ArrowCounterClockwiseIcon />
             </Button>
           ) : (
             <div className="flex shrink-0 gap-1.5">
               <Button
                 onClick={accepted ? onRevert : onAccept}
-                size="sm"
+                size="icon-xs"
                 variant={accepted ? "destructive" : "default"}
               >
                 {accepted ? <BackspaceIcon /> : <CheckIcon weight="bold" />}

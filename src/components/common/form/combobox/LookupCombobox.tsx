@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/performance/noJsxPropsBind: <> */
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 import {
   type ILookupEntry,
@@ -6,6 +7,7 @@ import {
 } from "@/api/lookups";
 import {
   FormCombobox,
+  type IComboboxOption,
   type TComboboxProps,
 } from "@/components/common/form/combobox/FormCombobox.tsx";
 import { Chip } from "@/components/ui/Chip.tsx";
@@ -18,6 +20,11 @@ interface IProps<T extends FieldValues> extends Partial<TComboboxProps<T>> {
   schema?: TLookupSchema;
   label?: string;
 }
+
+const toLookupOption = (item: ILookupEntry): IComboboxOption => ({
+  label: item.name,
+  value: item.id,
+});
 
 export const LookupCombobox = <T extends FieldValues>({
   form,
@@ -80,10 +87,7 @@ export const LookupCombobox = <T extends FieldValues>({
         name={idsName}
         onCreateItem={names ? handleCreate : undefined}
         placeholder={placeholder}
-        toOption={(item: ILookupEntry) => ({
-          label: item.name,
-          value: item.id,
-        })}
+        toOption={toLookupOption}
         {...rest}
       />
       {ids.length > 0 || pendingNames.length > 0 ? (

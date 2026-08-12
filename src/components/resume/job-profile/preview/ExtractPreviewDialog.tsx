@@ -1,4 +1,11 @@
-import { BackspaceIcon, FileArrowDownIcon, XIcon } from "@phosphor-icons/react";
+import {
+  BackspaceIcon,
+  CheckIcon,
+  ChecksIcon,
+  FileArrowDownIcon,
+  SubtractSquareIcon,
+  XIcon,
+} from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
 import type { TExtractionResult } from "@/api/profile";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
@@ -14,13 +21,13 @@ import {
   DrawLogTitle,
 } from "@/components/ui/custom/DrawLog.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
-import type { IRow, TPick } from "./preview.helpers.ts";
 import {
   allAfterSelections,
   buildMergedData,
   buildRowGroups,
   defaultSelections,
   flattenRowGroups,
+  type TPick,
 } from "./preview.helpers.ts";
 
 interface IProps {
@@ -31,6 +38,11 @@ interface IProps {
   onOverride: (data: TProfileFormData) => void;
 }
 
+const sectionCount = (items: readonly unknown[] | undefined): number =>
+  items?.length ?? 0;
+
+type TMode = "merge" | "override";
+
 export const ExtractPreviewDialog = ({
   before,
   data,
@@ -40,12 +52,18 @@ export const ExtractPreviewDialog = ({
 }: IProps) => {
   const groups = useMemo(() => buildRowGroups(before, data), [before, data]);
   const rows = useMemo(() => flattenRowGroups(groups), [groups]);
-  const initialSelections = useMemo(() => defaultSelections(rows), [rows]);
+  const initialData = useMemo(() => defaultSelections(rows), [rows]);
 
   const [selections, setSelections] = useState<Record<string, TPick>>(() =>
     defaultSelections(rows)
   );
   const [edits, setEdits] = useState<Record<string, string>>({});
+  const [mode, setMode] = useState<TMode>("merge");
+
+  const hasDecisions =
+    Object.keys(edits).length > 0 ||
+    mode === "override" ||
+    Object.keys(selections).some((key) => selections[key] !== initialData[key]);
 
   const onSelect = (key: string, pick: TPick) =>
     setSelections((prev) => ({ ...prev, [key]: pick }));
@@ -61,17 +79,30 @@ export const ExtractPreviewDialog = ({
 
   const shared = { edits, onEdit, onSelect, selections };
 
-  const onOverrideClick = () =>
-    onOverride(
-      buildMergedData(rows, allAfterSelections(rows), edits, before, data)
-    );
+  const onMergeAllClick = () => {
+    setSelections(allAfterSelections(rows));
+    setMode("merge");
+  };
 
-  const onMergeClick = () =>
+  const onOverrideClick = () => {
+    setSelections(allAfterSelections(rows));
+    setMode("override");
+  };
+
+  const onApplyClick = () => {
+    if (mode === "override") {
+      onOverride(
+        buildMergedData(rows, allAfterSelections(rows), edits, undefined, data)
+      );
+      return;
+    }
     onMerge(buildMergedData(rows, selections, edits, before, data));
+  };
 
   const revertAll = () => {
-    setSelections(initialSelections);
+    setSelections(defaultSelections(rows));
     setEdits({});
+    setMode("merge");
   };
 
   const onOpen = (open: boolean) => {
@@ -82,11 +113,19 @@ export const ExtractPreviewDialog = ({
 
   return (
     <DrawLog onOpenChange={onOpen} open>
-      <DrawLogContent className="sm:max-w-3xl">
+      <DrawLogContent className="sm:max-w-3xl" showCloseButton={false}>
         <DrawLogHeader>
-          <DrawLogTitle className="flex items-center gap-2">
-            <FileArrowDownIcon />
-            Extracted Resume Data
+          <DrawLogTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileArrowDownIcon />
+              Extracted Resume Data
+            </div>
+            <SelectionButtons
+              hasDecisions={hasDecisions}
+              onMergeAll={onMergeAllClick}
+              onOverride={onOverrideClick}
+              onRevert={revertAll}
+            />
           </DrawLogTitle>
         </DrawLogHeader>
 
@@ -106,7 +145,7 @@ export const ExtractPreviewDialog = ({
               <Section
                 emptyHint="No work experience on either side"
                 rows={groups.workExperienceRows}
-                title={`Work Experience (${data.workExperience.length})`}
+                title={`Work Experience (${sectionCount(data.workExperience)})`}
                 {...shared}
               />
             ) : null}
@@ -114,7 +153,7 @@ export const ExtractPreviewDialog = ({
               <Section
                 emptyHint="No education on either side"
                 rows={groups.educationRows}
-                title={`Education (${data.education.length})`}
+                title={`Education (${sectionCount(data.education)})`}
                 {...shared}
               />
             ) : null}
@@ -127,7 +166,7 @@ export const ExtractPreviewDialog = ({
               <Section
                 emptyHint="No links on either side"
                 rows={groups.linkRows}
-                title={`Links (${data.links.length})`}
+                title={`Links (${sectionCount(data.links)})`}
                 {...shared}
               />
             ) : null}
@@ -135,7 +174,7 @@ export const ExtractPreviewDialog = ({
               <Section
                 emptyHint="No publications on either side"
                 rows={groups.publicationRows}
-                title={`Publications (${data.publications.length})`}
+                title={`Publications (${sectionCount(data.publications)})`}
                 {...shared}
               />
             ) : null}
@@ -143,7 +182,7 @@ export const ExtractPreviewDialog = ({
               <Section
                 emptyHint="No projects on either side"
                 rows={groups.projectRows}
-                title={`Projects (${data.projects.length})`}
+                title={`Projects (${sectionCount(data.projects)})`}
                 {...shared}
               />
             ) : null}
@@ -151,7 +190,7 @@ export const ExtractPreviewDialog = ({
               <Section
                 emptyHint="No references on either side"
                 rows={groups.referenceRows}
-                title={`References (${data.references.length})`}
+                title={`References (${sectionCount(data.references)})`}
                 {...shared}
               />
             ) : null}
@@ -159,7 +198,7 @@ export const ExtractPreviewDialog = ({
               <Section
                 emptyHint="No activities on either side"
                 rows={groups.activityRows}
-                title={`Activities (${data.activities.length})`}
+                title={`Activities (${sectionCount(data.activities)})`}
                 {...shared}
               />
             ) : null}
@@ -167,7 +206,7 @@ export const ExtractPreviewDialog = ({
         </DrawLogBody>
 
         <DrawLogFooter>
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex items-center justify-between gap-2 pt-2">
             <DrawLogClose
               onClick={onClose}
               render={
@@ -176,16 +215,9 @@ export const ExtractPreviewDialog = ({
                 </Button>
               }
             />
-            <Button onClick={onOverrideClick} variant="outline">
-              Override all data
+            <Button disabled={!hasDecisions} onClick={onApplyClick}>
+              <ChecksIcon /> Apply
             </Button>
-            <ExtraButtons
-              edits={edits}
-              onMerge={onMergeClick}
-              revertAll={revertAll}
-              rows={rows}
-              selections={selections}
-            />
           </div>
         </DrawLogFooter>
       </DrawLogContent>
@@ -193,38 +225,34 @@ export const ExtractPreviewDialog = ({
   );
 };
 
-const ExtraButtons = ({
-  rows,
-  revertAll,
-  edits,
-  selections,
-  onMerge,
+const SelectionButtons = ({
+  hasDecisions,
+  onMergeAll,
+  onOverride,
+  onRevert,
 }: {
-  rows: IRow[];
-  revertAll: () => void;
-  onMerge: () => void;
-  edits: Record<string, string>;
-  selections: Record<string, TPick>;
-}) => {
-  const initialSelections = useMemo(() => defaultSelections(rows), [rows]);
-
-  const hasDecisions =
-    Object.keys(edits).length > 0 ||
-    Object.keys(selections).some(
-      (key) => selections[key] !== initialSelections[key]
-    );
-
-  return (
-    <div className="flex gap-2">
-      {hasDecisions ? (
-        <Button onClick={revertAll} variant="destructive">
-          <BackspaceIcon />
-          Revert All
-        </Button>
-      ) : null}
-      <Button onClick={onMerge}>
-        <FileArrowDownIcon /> {hasDecisions ? "Merge selected" : "Merge all"}
-      </Button>
-    </div>
-  );
-};
+  hasDecisions: boolean;
+  onMergeAll: () => void;
+  onOverride: () => void;
+  onRevert: () => void;
+}) => (
+  <div className="flex gap-0.5">
+    <Button
+      disabled={!hasDecisions}
+      onClick={onRevert}
+      size="xs"
+      variant="destructive"
+    >
+      <BackspaceIcon />
+      Discard
+    </Button>
+    <Button onClick={onOverride} size="xs" variant="destructive">
+      <SubtractSquareIcon />
+      Override
+    </Button>
+    <Button onClick={onMergeAll} size="xs" variant="default">
+      <CheckIcon />
+      Accept All
+    </Button>
+  </div>
+);

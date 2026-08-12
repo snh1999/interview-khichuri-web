@@ -265,6 +265,12 @@ export const defaultSelections = (rows: IRow[]): Record<string, TPick> =>
 export const allAfterSelections = (rows: IRow[]): Record<string, TPick> =>
   buildSelections(rows, () => "after");
 
+const isValidValue = (value: unknown): boolean =>
+  value !== undefined &&
+  value !== null &&
+  value !== "" &&
+  !(Array.isArray(value) && value.length === 0);
+
 const readRaw = (
   source: object | undefined,
   section: string,
@@ -324,7 +330,7 @@ export const buildMergedData = (
     }
 
     const pick: TPick = row.changed
-      ? (selections[row.key] ?? "before")
+      ? (selections[row.key] ?? (row.before ? "before" : "after"))
       : "after";
 
     const raw =
@@ -332,7 +338,9 @@ export const buildMergedData = (
         ? readRaw(data, row.section, row.arrayIndex, row.field)
         : readRaw(before, row.section, row.arrayIndex, row.field);
 
-    setSectionField(result, row.section, row.arrayIndex, row.field, raw);
+    if (pick === "before" || isValidValue(raw)) {
+      setSectionField(result, row.section, row.arrayIndex, row.field, raw);
+    }
   }
 
   return result;

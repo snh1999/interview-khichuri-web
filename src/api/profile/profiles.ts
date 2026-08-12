@@ -37,8 +37,45 @@ export const useProfile = () =>
 
 export const useResumes = () =>
   useSuspenseQuery({
-    queryKey: queryKeys.profile.resumes,
     queryFn: async () => await api.get<IResume[]>("/resume"),
+    queryKey: queryKeys.profile.resumes,
+  });
+
+export const useResumeById = (id: string) =>
+  useSuspenseQuery({
+    queryFn: async () => await api.get<IResume>(`/resume/${id}`),
+    queryKey: queryKeys.profile.resumeById(id),
+  });
+
+export const usePublicResume = (slug: string) =>
+  useSuspenseQuery({
+    queryFn: async () => await api.get<IResume>(`/resume/slug/${slug}`),
+    queryKey: queryKeys.profile.resumeBySlug(slug),
+  });
+
+export const useCreateResume = () =>
+  useMutation({
+    mutationFn: async (dto: {
+      name: string;
+      content: TProfileFormData;
+      template?: string;
+    }) => await api.post<IResume>("/resume/create", dto),
+    meta: { invalidates: queryKeys.profile.resumes },
+  });
+
+export const useUpdateResume = () =>
+  useMutation({
+    mutationFn: async (dto: {
+      id: string;
+      name?: string;
+      content?: TProfileFormData;
+      template?: string;
+      isPublic?: boolean;
+    }) => {
+      const { id, ...data } = dto;
+      return await api.patch<IResume>(`/resume/${id}`, data);
+    },
+    meta: { invalidates: queryKeys.profile.resumes },
   });
 
 export const useUpdateProfile = () =>
@@ -149,9 +186,9 @@ export const useSetPrimaryResume = () =>
 
 export const useResumeViewUrl = (resumeId: string | null) =>
   useSuspenseQuery({
-    queryKey: queryKeys.profile.resumeView(resumeId ?? ""),
+    gcTime: 1000 * 60 * 60,
     queryFn: async () =>
       await api.get<IViewUrlResponse>(`/resume/${resumeId}/url`),
+    queryKey: queryKeys.profile.resumeView(resumeId ?? ""),
     staleTime: 1000 * 60 * 30,
-    gcTime: 1000 * 60 * 60,
   });
