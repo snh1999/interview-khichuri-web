@@ -1,6 +1,6 @@
 import { type FC, useEffect, useMemo, useRef } from "react";
-import type { TProfileFormData } from "@/components/job-profile/profile.helpers";
-import type { ResumeTemplateConfig } from "@/components/resume/temp/template-registry";
+import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
+import type { ResumeTemplateConfig } from "@/components/resume/template-registry.ts";
 import {
   dateRange,
   filterSkills,
@@ -8,8 +8,8 @@ import {
   HARDCODED_TOPICS,
   stripProtocol,
   useResumeLookup,
-} from "@/components/resume/temp/utils";
-import { type ISectionConfig, useResumeStore } from "@/store/resumeStore";
+} from "@/components/resume/utils.ts";
+import { type ISectionConfig, useResumeStore } from "@/store/resumeStore.ts";
 import {
   Document,
   Link,
@@ -19,7 +19,7 @@ import {
   Text,
   usePdfSettings,
   View,
-} from "./PDFAdapter";
+} from "../PDFAdapter.tsx";
 
 const COLORS = {
   highlight: "#3D5A80",
@@ -257,7 +257,7 @@ function SummarySection({ data, styles }: ISectionProps) {
 }
 
 function EducationSection({ title, data, styles }: ISectionProps) {
-  const education = data.education;
+  const { education } = data;
   if (!education || education.length === 0) {
     return null;
   }
@@ -284,7 +284,7 @@ function EducationSection({ title, data, styles }: ISectionProps) {
                 {instText ? <Text>{instText}</Text> : null}
               </Text>
               <Text style={styles.regularRightDate}>
-                {dateRange(edu.startDate, edu.graduationDate, false, true)}
+                {dateRange(edu.startDate, edu.endDate, false, true)}
               </Text>
             </View>
           </View>
@@ -296,7 +296,7 @@ function EducationSection({ title, data, styles }: ISectionProps) {
 
 function TechnicalExperienceSection({ title, data, styles }: ISectionProps) {
   const workExperience = data.workExperience ?? [];
-  const projects = data.researchProjects ?? [];
+  const projects = data.projects ?? [];
   const publications = data.publications ?? [];
 
   if (
@@ -326,16 +326,16 @@ function TechnicalExperienceSection({ title, data, styles }: ISectionProps) {
             </Text>
           </View>
 
-          {(exp.company || exp.location) && (
+          {exp.company || exp.location ? (
             <View style={styles.flexRowBetween}>
               <Text style={styles.subtext}>{exp.company}</Text>
-              {exp.location && (
+              {exp.location ? (
                 <Text style={styles.subtext}>{exp.location}</Text>
-              )}
+              ) : null}
             </View>
-          )}
+          ) : null}
 
-          {exp.responsibilities && (
+          {exp.responsibilities ? (
             <View style={styles.bulletList}>
               {exp.responsibilities
                 .split("\n")
@@ -347,25 +347,18 @@ function TechnicalExperienceSection({ title, data, styles }: ISectionProps) {
                   </View>
                 ))}
             </View>
-          )}
+          ) : null}
         </View>
       ))}
 
       {projects.map((proj, i) => {
-        const bulletsList = proj.notes?.split("\n");
+        const bulletsList = proj.description?.split("\n");
 
         return (
           <View key={proj.id ?? `proj-${i}`} style={styles.entryBlock}>
             <View style={styles.flexRowBetween}>
-              <Text style={styles.boldTitle}>{proj.title}</Text>
-              {proj.date && (
-                <Text style={styles.boldRightDate}>{proj.date}</Text>
-              )}
+              <Text style={styles.boldTitle}>{proj.name}</Text>
             </View>
-
-            {proj.organization && (
-              <Text style={styles.subtext}>{proj.organization}</Text>
-            )}
 
             {bulletsList && bulletsList.length > 0 && (
               <View style={styles.bulletList}>
@@ -387,7 +380,7 @@ function TechnicalExperienceSection({ title, data, styles }: ISectionProps) {
             <Text style={styles.boldTitle}>{pub.title}</Text>
           </View>
           <Text style={styles.subtext}>{pub.authors.join(", ")}</Text>
-          {pub.venue && <Text style={styles.para}>{pub.venue}</Text>}
+          {pub.notes ? <Text style={styles.para}>{pub.notes}</Text> : null}
         </View>
       ))}
     </View>
@@ -412,33 +405,33 @@ function SkillsSection({ title, data, styles }: ISectionProps) {
     setSkillGroups([
       {
         id: "languages",
-        label: "Languages",
         keywords: filterSkills(
           skillIds,
           topicsMap,
           categoriesMap,
           new Set(["languages"])
         ).join(", "),
+        label: "Languages",
       },
       {
         id: "libraries",
-        label: "Libraries & Frameworks",
         keywords: filterSkills(
           skillIds,
           topicsMap,
           categoriesMap,
           new Set(["libraries", "frameworks"])
         ).join(", "),
+        label: "Libraries & Frameworks",
       },
       {
         id: "tools",
-        label: "Tools & Platforms",
         keywords: filterSkills(
           skillIds,
           topicsMap,
           categoriesMap,
           new Set(["tools", "platforms"])
         ).join(", "),
+        label: "Tools & Platforms",
       },
     ]);
   }, [data.professional?.skills, setSkillGroups, topicsMap, categoriesMap]);
@@ -471,7 +464,7 @@ function SkillsSection({ title, data, styles }: ISectionProps) {
 }
 
 function ActivitiesSection({ title, data, styles }: ISectionProps) {
-  const activities = data.activities;
+  const { activities } = data;
   if (!activities || activities.length === 0) {
     return null;
   }
@@ -483,16 +476,22 @@ function ActivitiesSection({ title, data, styles }: ISectionProps) {
       </View>
 
       {activities.map((act, i) => {
-        const lineText = [act.title, act.organization, act.description]
+        const lineText = [act.name, act.organization, act.position]
           .filter(Boolean)
           .join(", ");
+        const dateText = dateRange(
+          act.startDate,
+          act.endDate,
+          act.isCurrent,
+          true
+        );
 
         return (
           <View key={act.id ?? i} style={{ marginBottom: 2 }}>
             <View style={styles.flexRowBetween}>
               <Text style={styles.regularTitle}>{lineText}</Text>
-              {act.date && (
-                <Text style={styles.regularRightDate}>{act.date}</Text>
+              {dateText && (
+                <Text style={styles.regularRightDate}>{dateText}</Text>
               )}
             </View>
           </View>
@@ -503,14 +502,14 @@ function ActivitiesSection({ title, data, styles }: ISectionProps) {
 }
 
 const SECTION_REGISTRY: Record<string, FC<ISectionProps>> = {
-  summary: SummarySection,
-  education: EducationSection,
-  workExperience: TechnicalExperienceSection,
-  skills: SkillsSection,
-  researchProjects: () => null,
-  publications: () => null,
   activities: ActivitiesSection,
+  education: EducationSection,
+  projects: () => null,
+  publications: () => null,
   references: () => null,
+  skills: SkillsSection,
+  summary: SummarySection,
+  workExperience: TechnicalExperienceSection,
 };
 
 export function DataScienceTechTemplate({
@@ -537,13 +536,13 @@ export function DataScienceTechTemplate({
       <Page style={styles.page}>
         <View style={styles.headerContainer}>
           <View style={styles.headerLeft}>
-            {personal.phone && (
+            {personal.phone ? (
               <Text style={styles.headerText}>{personal.phone}</Text>
-            )}
-            {personal.location && (
+            ) : null}
+            {personal.location ? (
               <Text style={styles.headerText}>{personal.location}</Text>
-            )}
-            {personal.email && (
+            ) : null}
+            {personal.email ? (
               <Text style={styles.headerText}>
                 <Link
                   src={`mailto:${personal.email}`}
@@ -552,41 +551,40 @@ export function DataScienceTechTemplate({
                   {personal.email}
                 </Link>
               </Text>
-            )}
+            ) : null}
           </View>
 
-          {/* Center Column */}
           <View style={styles.headerCenter}>
             <Text style={styles.name}>{fullName}</Text>
-            {professional?.title && (
+            {professional?.title ? (
               <Text style={styles.roleTitle}>{professional.title}</Text>
-            )}
+            ) : null}
           </View>
 
           {/* Right Column */}
           <View style={styles.headerRight}>
-            {portfolioLink && (
+            {portfolioLink ? (
               <Text style={styles.headerText}>
                 Portfolio:{" "}
                 <Link src={portfolioLink} style={styles.headerLink}>
                   {stripProtocol(portfolioLink)}
                 </Link>
               </Text>
-            )}
-            {githubLink && (
+            ) : null}
+            {githubLink ? (
               <Text style={styles.headerText}>
                 <Link src={githubLink} style={styles.headerLink}>
                   {stripProtocol(githubLink)}
                 </Link>
               </Text>
-            )}
-            {linkedinLink && (
+            ) : null}
+            {linkedinLink ? (
               <Text style={styles.headerText}>
                 <Link src={linkedinLink} style={styles.headerLink}>
                   {stripProtocol(linkedinLink)}
                 </Link>
               </Text>
-            )}
+            ) : null}
           </View>
         </View>
 

@@ -1,6 +1,6 @@
 import { type FC, useEffect, useMemo, useRef } from "react";
-import type { TProfileFormData } from "@/components/job-profile/profile.helpers";
-import type { ResumeTemplateConfig } from "@/components/resume/temp/template-registry";
+import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
+import type { ResumeTemplateConfig } from "@/components/resume/template-registry.ts";
 import {
   dateRange,
   filterSkills,
@@ -8,8 +8,8 @@ import {
   HARDCODED_TOPICS,
   stripProtocol,
   useResumeLookup,
-} from "@/components/resume/temp/utils";
-import { type ISectionConfig, useResumeStore } from "@/store/resumeStore";
+} from "@/components/resume/utils.ts";
+import { type ISectionConfig, useResumeStore } from "@/store/resumeStore.ts";
 import {
   Document,
   Link,
@@ -19,7 +19,7 @@ import {
   Text,
   usePdfSettings,
   View,
-} from "./PDFAdapter";
+} from "../PDFAdapter.tsx";
 
 const COLORS = {
   black: "#000000",
@@ -33,7 +33,7 @@ export const jakesTemplateConfig: ResumeTemplateConfig = {
     { id: "summary", title: "Summary", enabled: true },
     { id: "education", title: "Education", enabled: true },
     { id: "workExperience", title: "Experience", enabled: true },
-    { id: "researchProjects", title: "Projects", enabled: true },
+    { id: "projects", title: "Projects", enabled: true },
     { id: "skills", title: "Technical Skills", enabled: true },
     { id: "publications", title: "Publications", enabled: true },
     { id: "activities", title: "Activities", enabled: true },
@@ -128,9 +128,8 @@ function buildStyles(settings: PdfSettings) {
       flex: 1,
       paddingRight: 8,
     },
-    boldRight: {
+    rightText: {
       fontSize: settings.fontSize,
-      fontWeight: 700,
       color: COLORS.black,
       textAlign: "right" as const,
     },
@@ -186,14 +185,13 @@ interface ISectionProps {
   styles: ReturnType<typeof buildStyles>;
 }
 
-function SummarySection({ title, data, styles }: ISectionProps) {
+function SummarySection({ data, styles }: ISectionProps) {
   const summary = data.professional?.summary;
   if (!summary) {
     return null;
   }
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
       <View style={styles.sectionRule} />
       <Text style={styles.para}>{summary}</Text>
     </View>
@@ -201,7 +199,7 @@ function SummarySection({ title, data, styles }: ISectionProps) {
 }
 
 function EducationSection({ title, data, styles }: ISectionProps) {
-  const education = data.education;
+  const { education } = data;
   if (!education || education.length === 0) {
     return null;
   }
@@ -221,9 +219,7 @@ function EducationSection({ title, data, styles }: ISectionProps) {
             {/* Row 1: Institution (Bold) | Location (Bold) */}
             <View style={styles.flexRowBetween}>
               <Text style={styles.boldTitle}>{edu.institution}</Text>
-              <Text style={styles.boldRight}>
-                {[edu.location, edu.country].filter(Boolean).join(", ")}
-              </Text>
+              <Text style={styles.rightText}>{edu.location ?? ""}</Text>
             </View>
 
             {/* Row 2: Degree/Field (Italic) | Dates (Italic) */}
@@ -233,11 +229,11 @@ function EducationSection({ title, data, styles }: ISectionProps) {
                 {edu.gpa ? ` (GPA: ${edu.gpa})` : ""}
               </Text>
               <Text style={styles.italicRight}>
-                {dateRange(edu.startDate, edu.graduationDate, false, true)}
+                {dateRange(edu.startDate, edu.endDate, false, true)}
               </Text>
             </View>
 
-            {edu.notes && <Text style={styles.para}>{edu.notes}</Text>}
+            {edu.notes ? <Text style={styles.para}>{edu.notes}</Text> : null}
             {edu.coursework && edu.coursework.length > 0 && (
               <Text style={styles.para}>
                 <Text style={styles.bold}>Relevant Coursework: </Text>
@@ -252,7 +248,7 @@ function EducationSection({ title, data, styles }: ISectionProps) {
 }
 
 function ExperienceSection({ title, data, styles }: ISectionProps) {
-  const workExperience = data.workExperience;
+  const { workExperience } = data;
   if (!workExperience || workExperience.length === 0) {
     return null;
   }
@@ -275,7 +271,7 @@ function ExperienceSection({ title, data, styles }: ISectionProps) {
             {/* Row 1: Role Title (Bold) | Dates (Bold) */}
             <View style={styles.flexRowBetween}>
               <Text style={styles.boldTitle}>{exp.title}</Text>
-              <Text style={styles.boldRight}>
+              <Text style={styles.rightText}>
                 {dateRange(exp.startDate, exp.endDate, exp.isCurrent)}
               </Text>
             </View>
@@ -304,7 +300,8 @@ function ExperienceSection({ title, data, styles }: ISectionProps) {
 }
 
 function ProjectsSection({ title, data, styles }: ISectionProps) {
-  const projects = data.researchProjects;
+  const topicsMap = useResumeLookup(HARDCODED_TOPICS);
+  const { projects } = data;
   if (!projects || projects.length === 0) {
     return null;
   }
@@ -315,27 +312,26 @@ function ProjectsSection({ title, data, styles }: ISectionProps) {
       <View style={styles.sectionRule} />
 
       {projects.map((proj, i) => {
-        const bulletsList = proj.notes?.split("\n") ?? [];
-
+        const bulletsList = proj.description?.split("\n") ?? [];
         const techStackString = proj.skills?.length
-          ? proj.skills.join(", ")
+          ? proj.skills
+              .map((id) => topicsMap.get(id)?.name)
+              .filter((name): name is string => Boolean(name))
+              .join(", ")
           : "";
 
         return (
           <View key={proj.id ?? i} style={styles.entryBlock}>
             <View style={styles.flexRowBetween}>
-              <Text style={styles.boldTitle}>
-                {proj.title}
-                {techStackString ? (
-                  <Text style={styles.italicSubtext}> | {techStackString}</Text>
-                ) : null}
-              </Text>
-              {proj.date && <Text style={styles.boldRight}>{proj.date}</Text>}
+              <Text style={styles.boldTitle}>{proj.name}</Text>
+              {proj.type === "research" ? (
+                <Text style={styles.italicSubtext}>Research</Text>
+              ) : null}
             </View>
 
-            {proj.organization && (
-              <Text style={styles.italicSubtext}>{proj.organization}</Text>
-            )}
+            {techStackString ? (
+              <Text style={styles.italicSubtext}>{techStackString}</Text>
+            ) : null}
 
             {bulletsList.length > 0 && (
               <View style={styles.bulletList}>
@@ -372,43 +368,42 @@ function SkillsSection({ title, data, styles }: ISectionProps) {
     setSkillGroups([
       {
         id: "languages",
-        label: "Languages",
         keywords: filterSkills(
           skillIds,
           topicsMap,
           categoriesMap,
           new Set(["languages"])
         ).join(", "),
+        label: "Languages",
       },
       {
         id: "frameworks",
-        label: "Frameworks",
         keywords: filterSkills(
           skillIds,
           topicsMap,
           categoriesMap,
           new Set(["libraries", "frameworks"])
         ).join(", "),
+        label: "Frameworks",
       },
       {
         id: "tools",
-        label: "Developer Tools",
         keywords: filterSkills(
           skillIds,
           topicsMap,
           categoriesMap,
           new Set(["tools", "platforms"])
         ).join(", "),
+        label: "Developer Tools",
       },
       {
         id: "libraries",
-        label: "Libraries",
         keywords: "",
+        label: "Libraries",
       },
     ]);
   }, [data.professional?.skills, setSkillGroups, topicsMap, categoriesMap]);
 
-  // If skills array contains strings formatted like "Languages: Python, Java", parse directly
   const rawSkills = data.professional?.skills ?? [];
   const parsedDirectSkills = rawSkills
     .map((s) => String(s).trim())
@@ -417,8 +412,8 @@ function SkillsSection({ title, data, styles }: ISectionProps) {
       const idx = s.indexOf(":");
       if (idx !== -1) {
         return {
-          label: s.slice(0, idx).trim(),
           keywords: s.slice(idx + 1).trim(),
+          label: s.slice(0, idx).trim(),
         };
       }
       return null;
@@ -434,7 +429,7 @@ function SkillsSection({ title, data, styles }: ISectionProps) {
   const itemsToRender =
     parsedDirectSkills.length > 0
       ? parsedDirectSkills
-      : visibleGroups.map((g) => ({ label: g.label, keywords: g.keywords }));
+      : visibleGroups.map((g) => ({ keywords: g.keywords, label: g.label }));
 
   return (
     <View style={styles.section}>
@@ -452,7 +447,7 @@ function SkillsSection({ title, data, styles }: ISectionProps) {
 }
 
 function PublicationsSection({ title, data, styles }: ISectionProps) {
-  const publications = data.publications;
+  const { publications } = data;
   if (!publications || publications.length === 0) {
     return null;
   }
@@ -466,10 +461,12 @@ function PublicationsSection({ title, data, styles }: ISectionProps) {
         <View key={pub.id ?? i} style={styles.entryBlock}>
           <View style={styles.flexRowBetween}>
             <Text style={styles.boldTitle}>{pub.title}</Text>
-            {pub.status && <Text style={styles.boldRight}>{pub.status}</Text>}
+            {pub.publicationType ? (
+              <Text style={styles.rightText}>{pub.publicationType}</Text>
+            ) : null}
           </View>
           <Text style={styles.italicSubtext}>{pub.authors.join(", ")}</Text>
-          {pub.venue && <Text style={styles.para}>{pub.venue}</Text>}
+          {pub.notes ? <Text style={styles.para}>{pub.notes}</Text> : null}
         </View>
       ))}
     </View>
@@ -477,7 +474,7 @@ function PublicationsSection({ title, data, styles }: ISectionProps) {
 }
 
 function ActivitiesSection({ title, data, styles }: ISectionProps) {
-  const activities = data.activities;
+  const { activities } = data;
   if (!activities || activities.length === 0) {
     return null;
   }
@@ -487,41 +484,55 @@ function ActivitiesSection({ title, data, styles }: ISectionProps) {
       <Text style={styles.sectionTitle}>{title}</Text>
       <View style={styles.sectionRule} />
 
-      {activities.map((act, i) => (
-        <View key={act.id ?? i} style={styles.entryBlock}>
-          <View style={styles.flexRowBetween}>
-            <Text style={styles.boldTitle}>
-              {[act.title, act.organization].filter(Boolean).join(", ")}
-            </Text>
-            {act.date && <Text style={styles.boldRight}>{act.date}</Text>}
-          </View>
-          {act.description && (
-            <Text style={styles.para}>{act.description}</Text>
-          )}
-          {act.bullets && act.bullets.length > 0 && (
-            <View style={styles.bulletList}>
-              {act.bullets.map((b, j) => (
-                <View key={j.toString()} style={styles.bulletRow}>
-                  <Text style={styles.bulletMark}>{"\u2022"}</Text>
-                  <Text style={styles.bulletText}>{b}</Text>
-                </View>
-              ))}
+      {activities.map((act, i) => {
+        const dateText = dateRange(
+          act.startDate,
+          act.endDate,
+          act.isCurrent,
+          true
+        );
+        const notesList = act.notes
+          ? act.notes
+              .split("\n")
+              .map((line) => line.trim())
+              .filter(Boolean)
+          : [];
+
+        return (
+          <View key={act.id ?? i} style={styles.entryBlock}>
+            <View style={styles.flexRowBetween}>
+              <Text style={styles.boldTitle}>
+                {[act.name, act.organization, act.position]
+                  .filter(Boolean)
+                  .join(", ")}
+              </Text>
+              {dateText && <Text style={styles.rightText}>{dateText}</Text>}
             </View>
-          )}
-        </View>
-      ))}
+            {notesList.length > 0 && (
+              <View style={styles.bulletList}>
+                {notesList.map((b, j) => (
+                  <View key={j.toString()} style={styles.bulletRow}>
+                    <Text style={styles.bulletMark}>{"\u2022"}</Text>
+                    <Text style={styles.bulletText}>{b}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        );
+      })}
     </View>
   );
 }
 
 const SECTION_REGISTRY: Record<string, FC<ISectionProps>> = {
-  summary: SummarySection,
-  education: EducationSection,
-  workExperience: ExperienceSection,
-  researchProjects: ProjectsSection,
-  skills: SkillsSection,
-  publications: PublicationsSection,
   activities: ActivitiesSection,
+  education: EducationSection,
+  projects: ProjectsSection,
+  publications: PublicationsSection,
+  skills: SkillsSection,
+  summary: SummarySection,
+  workExperience: ExperienceSection,
 };
 
 export function JakeResumeTemplate({
@@ -539,20 +550,18 @@ export function JakeResumeTemplate({
     .filter(Boolean)
     .join(" ");
 
-  // Build contact items array
   const contactItems: Array<{ text: string; url?: string }> = [];
   if (personal.phone) {
     contactItems.push({ text: personal.phone });
   }
+
   if (personal.email) {
     contactItems.push({
       text: personal.email,
       url: `mailto:${personal.email}`,
     });
   }
-  if (personal.location) {
-    contactItems.push({ text: personal.location });
-  }
+
   if (links) {
     for (const link of links) {
       contactItems.push({
@@ -565,7 +574,6 @@ export function JakeResumeTemplate({
   return (
     <Document>
       <Page style={styles.page}>
-        {/* Centered Heading */}
         <View style={styles.headerContainer}>
           <Text style={styles.name}>{fullName}</Text>
           <View style={styles.contactRow}>
@@ -584,7 +592,6 @@ export function JakeResumeTemplate({
           </View>
         </View>
 
-        {/* Dynamic Sections */}
         {sections
           .filter((sec) => sec.enabled)
           .map((sec) => {
