@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { useResumeStore } from "@/store/resumeStore.ts";
 

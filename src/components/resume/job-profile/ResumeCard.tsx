@@ -19,10 +19,10 @@ import { ExtractPreviewDialog } from "@/components/resume/job-profile/preview/Ex
 import { ResumeListItem } from "@/components/resume/job-profile/ResumeListItem.tsx";
 import {
   EMPTY_FORM,
+  mergeIntoFormData,
   resumeExtractionSchema,
 } from "@/components/resume/job-profile/resume.helpers.ts";
 import { ViewResume } from "@/components/resume/job-profile/ViewResume.tsx";
-import { resumeToFormData } from "@/components/resume/resume.helpers.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
@@ -114,7 +114,7 @@ export const ResumeCard = () => {
       return;
     }
     setExtractTarget(resume);
-    setExtraction(resumeToFormData(resume.content) as TExtractionResult);
+    setExtraction(mergeIntoFormData(resume.content));
   };
 
   return (
@@ -163,7 +163,7 @@ export const ResumeCard = () => {
             ))}
           </div>
         ) : (
-          <AddResume compactTab count={0} onSuccess={closeDialog} />
+          <AddResume count={0} onSuccess={closeDialog} />
         )}
 
         {viewingResume ? (

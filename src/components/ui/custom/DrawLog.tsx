@@ -56,7 +56,7 @@ function DrawLogTrigger(props: ComponentProps<typeof DialogTrigger>) {
 
 interface DrawLogContentProps extends Omit<ComponentProps<typeof DialogContent>, "render"> {}
 
-function DrawLogContent({ className, ...props }: DrawLogContentProps) {
+function DrawLogContent({ className, showCloseButton, ...props }: DrawLogContentProps) {
   const isDesktop = useDrawLogContext()
   const Comp = isDesktop ? DialogContent : DrawerContent
   return (
@@ -66,6 +66,7 @@ function DrawLogContent({ className, ...props }: DrawLogContentProps) {
           ? "max-h-[95vh]"
           : "max-h-[80vh] [&_form]:flex [&_form]:min-h-0 [&_form]:flex-1 [&_form]:flex-col",
         className)}
+      {...isDesktop? {showCloseButton}: {}}
       {...props}
     />
   )

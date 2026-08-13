@@ -9,6 +9,31 @@ function formatMonthYear(date?: Date): string {
   return format(date, "MMMM, yyyy");
 }
 
+export const formatToString = (
+  value: unknown,
+  numberSuffix = ""
+): string | null => {
+  if (value instanceof Date) {
+    return value.toLocaleDateString();
+  }
+  if (value === undefined || value === null || value === "") {
+    return null;
+  }
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
+  }
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return null;
+    }
+    if (value.every((entry) => typeof entry === "number")) {
+      return `${value.length} ${numberSuffix}`;
+    }
+    return value.filter((entry) => entry !== "").join(", ");
+  }
+  return String(value);
+};
+
 export function formatYear(date?: Date): string {
   if (!date) {
     return "";

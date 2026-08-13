@@ -246,24 +246,21 @@ export const buildRowGroups = (
 export const flattenRowGroups = (groups: IRowGroups): IRow[] =>
   Object.values(groups).flat();
 
-const buildSelections = (
-  rows: IRow[],
-  pick: (row: IRow) => TPick
-): Record<string, TPick> => {
+const buildSelections = (rows: IRow[], pick: TPick): Record<string, TPick> => {
   const map: Record<string, TPick> = {};
   for (const row of rows) {
     if (row.changed) {
-      map[row.key] = pick(row);
+      map[row.key] = pick;
     }
   }
   return map;
 };
 
 export const defaultSelections = (rows: IRow[]): Record<string, TPick> =>
-  buildSelections(rows, (row) => (row.before ? "before" : "after"));
+  buildSelections(rows, "before");
 
 export const allAfterSelections = (rows: IRow[]): Record<string, TPick> =>
-  buildSelections(rows, () => "after");
+  buildSelections(rows, "after");
 
 const isValidValue = (value: unknown): boolean =>
   value !== undefined &&

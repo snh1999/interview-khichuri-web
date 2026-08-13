@@ -1,15 +1,10 @@
-import {
-  FONT_FAMILIES,
-  type TFontFamily,
-} from "@/components/resume/temp/font.ts";
+import { FONT_FAMILIES, type TFontFamily } from "@/components/resume/font.ts";
+import { TemplatePicker } from "@/components/resume/menu/TemplatePicker.tsx";
 import type {
   PdfSettings,
   RenderMode,
-} from "@/components/resume/temp/PDFAdapter.tsx";
-import {
-  TEMPLATES,
-  type TTemplateKey,
-} from "@/components/resume/temp/template-registry.ts";
+} from "@/components/resume/PDFAdapter.tsx";
+import type { TTemplateKey } from "@/components/resume/template-registry.ts";
 import {
   Select,
   SelectContent,
@@ -18,9 +13,9 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+} from "@/components/ui/select.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx";
 
 export interface ResumeSettingsValue {
   templateId: TTemplateKey;
@@ -53,23 +48,10 @@ export function ResumeSettingsMenu({
         <span className="font-medium text-[11px] text-muted-foreground leading-none">
           Template
         </span>
-        <Select
-          onValueChange={(v) =>
-            onChange({ ...value, templateId: v as TTemplateKey })
-          }
-          value={templateId}
-        >
-          <SelectTrigger className="min-w-20" size="sm">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {TEMPLATES.map((t) => (
-              <SelectItem key={t.id} value={t.id}>
-                {t.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <TemplatePicker
+          onChange={(v) => onChange({ ...value, templateId: v })}
+          templateId={templateId}
+        />
       </div>
 
       <Separator className="mx-1 h-5" orientation="vertical" />

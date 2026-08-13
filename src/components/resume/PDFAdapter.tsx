@@ -19,7 +19,7 @@ import {
 import {
   registerPdfFonts,
   type TFontFamily,
-} from "@/components/resume/temp/font.ts";
+} from "@/components/resume/font.ts";
 
 registerPdfFonts();
 

@@ -6,9 +6,9 @@ import {
   EyeSlashIcon,
   PencilSimpleIcon,
 } from "@phosphor-icons/react";
-import { useTemplateSections } from "@/components/resume/temp/template.helpers.ts";
-import type { TTemplateKey } from "@/components/resume/temp/template-registry.ts";
-import { Button } from "@/components/ui/button";
+import { useTemplateSections } from "@/components/resume/template.helpers.ts";
+import type { TTemplateKey } from "@/components/resume/template-registry.ts";
+import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
   CardAction,
@@ -17,14 +17,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input.tsx";
 import {
   Item,
   ItemActions,
   ItemContent,
   ItemMedia,
 } from "@/components/ui/item.tsx";
-import { useResumeStore } from "@/store/resumeStore";
+import { useResumeStore } from "@/store/resumeStore.ts";
 
 interface SectionManagerProps {
   sectionId: string;

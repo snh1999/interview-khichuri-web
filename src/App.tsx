@@ -37,6 +37,7 @@ import { LandingPage } from "@/pages/landing/LandingPage.tsx";
 import { SessionsPage } from "@/pages/SessionsPage.tsx";
 import SettingsPage from "@/pages/SettingsPage.tsx";
 import { SidebarLayout } from "@/pages/SidebarLayout.tsx";
+import { ResumeEditorWithPreviewPage } from "./pages/ResumeEditorWithPreviewPage";
 import { SessionDetailPage } from "./pages/SessionDetailPage";
 
 const App = () => {
@@ -51,7 +52,8 @@ const App = () => {
       <Route element={<VerifyEmailPage />} path={ACCOUNT_VERIFICATION_PAGE} />
       <Route element={<ResetPasswordPage />} path={RESET_PASSWORD_PAGE} />
 
-      <Route element={<ResumeEditorWithPreviewPage />} path={PUBLIC_RESUME_EDITOR_PAGE} />
+      <Route element={<PublicResumePage />} path={PUBLIC_RESUME_PAGE} />
+      <Route element={<ExtractPreviewDemoPage />} path="/preview/extract" />
 
       <Route
         element={session ? <Navigate replace to={HOMEPAGE} /> : <Outlet />}

@@ -3,7 +3,6 @@ import type {
   TEducationDto,
   TJobPreferencesDto,
   TProfessionalInfoDto,
-  TProfileFormData,
   TProfileLinkDto,
   TProfilePersonalDto,
   TProjectDto,
@@ -11,6 +10,7 @@ import type {
   TReferenceDto,
   TWorkExperienceDto,
 } from "@/components/job-profile/profile.helpers.ts";
+import type { TResumeContent } from "@/components/resume/job-profile/resume.helpers.ts";
 
 export type TProfile = TProfilePersonalDto & {
   id: string;
@@ -128,7 +128,7 @@ export interface IResume {
   profileId: string;
   name: string;
   url: string | null;
-  content: TProfileFormData | null;
+  content: TResumeContent | null;
   template: string | null;
   isPrimary: boolean;
   isPublic: boolean;

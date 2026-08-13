@@ -1,15 +1,19 @@
 import { FloppyDiskBackIcon } from "@phosphor-icons/react";
 import { FormProvider, type UseFormReturn } from "react-hook-form";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
+import { ActivitiesSection } from "@/components/job-profile/sections/activities/ActivitiesSection.tsx";
 import { EducationInformation } from "@/components/job-profile/sections/education/EducationInformation.tsx";
 import { WorkExperience } from "@/components/job-profile/sections/experience/WorkExperience.tsx";
 import { LinksSection } from "@/components/job-profile/sections/links/LinksSection.tsx";
 import { PersonalInformation } from "@/components/job-profile/sections/personal/PersonalInformation.tsx";
 import { PreferencesInformation } from "@/components/job-profile/sections/preferences/PreferencesInformation.tsx";
 import { ProfessionalInformation } from "@/components/job-profile/sections/professional/ProfessionalInformation.tsx";
-import { SectionManager } from "@/components/resume/temp/SectionManager.tsx";
-import { SkillGroupsSection } from "@/components/resume/temp/SkillGroupsSection.tsx";
-import type { TTemplateKey } from "@/components/resume/temp/template-registry.ts";
+import { ProjectsSection } from "@/components/job-profile/sections/projects/ProjectsSection.tsx";
+import { PublicationsSection } from "@/components/job-profile/sections/publications/PublicationsSection.tsx";
+import { ReferencesSection } from "@/components/job-profile/sections/references/ReferencesSection.tsx";
+import { SectionManager } from "@/components/resume/menu/SectionManager.tsx";
+import { SkillGroupsSection } from "@/components/resume/menu/SkillGroupsSection.tsx";
+import type { TTemplateKey } from "@/components/resume/template-registry.ts";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { ScrollableTabs } from "@/components/ui/custom/ScrollableTab.tsx";
@@ -21,6 +25,10 @@ const TABS = [
   { key: "professional", label: "Professional" },
   { key: "experience", label: "Experience" },
   { key: "education", label: "Education" },
+  { key: "publications", label: "Publications" },
+  { key: "projects", label: "Projects" },
+  { key: "references", label: "References" },
+  { key: "activities", label: "Activities" },
   { key: "preferences", label: "Preferences" },
   { key: "links", label: "Links" },
   { key: "skillGroups", label: "Skill Groups" },
@@ -76,6 +84,10 @@ export const ResumeFormPanel = ({
           <ProfessionalInformation sectionId={getSectionId("professional")} />
           <WorkExperience sectionId={getSectionId("experience")} />
           <EducationInformation sectionId={getSectionId("education")} />
+          <PublicationsSection sectionId={getSectionId("publications")} />
+          <ProjectsSection sectionId={getSectionId("projects")} />
+          <ReferencesSection sectionId={getSectionId("references")} />
+          <ActivitiesSection sectionId={getSectionId("activities")} />
           <PreferencesInformation sectionId={getSectionId("preferences")} />
           <LinksSection sectionId={getSectionId("links")} />
           <SkillGroupsSection sectionId={getSectionId("skillGroups")} />

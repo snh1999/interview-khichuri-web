@@ -56,7 +56,7 @@ export const professionalSchema = z.object({
 
 export type TProfessionalInfoDto = z.infer<typeof professionalSchema>;
 
-const workExperienceSchema = z.object({
+export const workExperienceSchema = z.object({
   company: z.string().trim().min(1).max(MAX_SHORT_LENGTH),
   endDate: z.date().nullish(),
   id: z.uuid().optional(),
@@ -70,7 +70,7 @@ const workExperienceSchema = z.object({
 
 export type TWorkExperienceDto = z.infer<typeof workExperienceSchema>;
 
-const educationSchema = z.object({
+export const educationSchema = z.object({
   coursework: z.array(z.string()).max(10).nullish(),
   degreeName: z.string().trim().min(1).max(MAX_SHORT_LENGTH),
   endDate: z.date().nullish(),
@@ -86,7 +86,7 @@ const educationSchema = z.object({
 });
 export type TEducationDto = z.infer<typeof educationSchema>;
 
-const preferencesSchema = z.object({
+export const preferencesSchema = z.object({
   coverLetterTemplate: z
     .string()
     .max(DEFAULT_MAX_STRING_LENGTH)
@@ -101,13 +101,13 @@ const preferencesSchema = z.object({
   preferredLocation: z.string().max(MAX_SHORT_LENGTH).nullish(),
   salaryExpected: z.number().int().min(0).nullish(),
   salaryLower: z.number().int().min(0).nullish(),
-  titles: z.array(z.number().int().positive()).optional().nullable(),
+  titles: z.array(z.number().int().positive()).optional(),
   workType: workTypeSchema.optional().nullable(),
 });
 
 export type TJobPreferencesDto = z.infer<typeof preferencesSchema>;
 
-const profileLinkSchema = z.object({
+export const profileLinkSchema = z.object({
   type: linkTypeSchema,
   url: z.url().max(MAX_URL_LENGTH),
 });
@@ -122,7 +122,7 @@ const optionalUrlSchema = z.union([
 
 const optionalEmailSchema = z.union([z.literal(""), z.email(), z.undefined()]);
 
-const publicationSchema = z.object({
+export const publicationSchema = z.object({
   authors: z.array(z.string().trim().min(1).max(MAX_NAME_LENGTH)),
   id: z.number().int().positive().optional(),
   link: optionalUrlSchema,
@@ -135,7 +135,7 @@ export type TPublicationDto = z.infer<typeof publicationSchema>;
 
 export const projectTypeSchema = z.enum(["project", "research"]);
 
-const projectSchema = z.object({
+export const projectSchema = z.object({
   description: z.string().max(DEFAULT_MAX_STRING_LENGTH).optional(),
   id: z.number().int().positive().optional(),
   link: optionalUrlSchema,
@@ -145,7 +145,7 @@ const projectSchema = z.object({
 });
 export type TProjectDto = z.infer<typeof projectSchema>;
 
-const referenceSchema = z.object({
+export const referenceSchema = z.object({
   company: z.string().max(MAX_SHORT_LENGTH).optional(),
   email: optionalEmailSchema,
   id: z.number().int().positive().optional(),
@@ -157,7 +157,7 @@ const referenceSchema = z.object({
 });
 export type TReferenceDto = z.infer<typeof referenceSchema>;
 
-const activitySchema = z.object({
+export const activitySchema = z.object({
   endDate: z.date().optional(),
   id: z.number().int().positive().optional(),
   isCurrent: z.boolean(),

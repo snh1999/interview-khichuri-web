@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { TTemplateKey } from "@/components/resume/temp/template-registry.ts";
+import type { TTemplateKey } from "@/components/resume/template-registry.ts";
 
 export type TSectionIds =
   | "summary"
   | "education"
   | "workExperience"
   | "publications"
-  | "researchProjects"
+  | "projects"
   | "skills"
   | "references"
   | "activities";
@@ -51,11 +51,17 @@ interface ResumeState {
 export const useResumeStore = create<ResumeState>()(
   persist(
     (set) => ({
-      sections: {},
-
-      setSections: (templateId, sections) =>
+      addSkillGroup: () =>
         set((state) => ({
-          sections: { ...state.sections, [templateId]: sections },
+          skillGroups: [
+            ...state.skillGroups,
+            { id: crypto.randomUUID(), keywords: "", label: "New Group" },
+          ],
+        })),
+
+      removeSkillGroup: (id) =>
+        set((state) => ({
+          skillGroups: state.skillGroups.filter((group) => group.id !== id),
         })),
 
       resetSections: (templateId) =>
@@ -64,29 +70,22 @@ export const useResumeStore = create<ResumeState>()(
           delete next[templateId];
           return { sections: next };
         }),
+      sections: {},
 
-      skillGroups: [],
+      setSections: (templateId, sections) =>
+        set((state) => ({
+          sections: { ...state.sections, [templateId]: sections },
+        })),
 
       setSkillGroups: (groups) => set({ skillGroups: groups }),
+
+      skillGroups: [],
 
       updateSkillGroup: (id, patch) =>
         set((state) => ({
           skillGroups: state.skillGroups.map((group) =>
             group.id === id ? { ...group, ...patch } : group
           ),
-        })),
-
-      addSkillGroup: () =>
-        set((state) => ({
-          skillGroups: [
-            ...state.skillGroups,
-            { id: crypto.randomUUID(), label: "New Group", keywords: "" },
-          ],
-        })),
-
-      removeSkillGroup: (id) =>
-        set((state) => ({
-          skillGroups: state.skillGroups.filter((group) => group.id !== id),
         })),
     }),
     {
