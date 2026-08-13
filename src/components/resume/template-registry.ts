@@ -1,13 +1,19 @@
 import type { FC } from "react";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
-import type { ISectionConfig } from "@/store/resumeStore";
+import type { ISectionConfig } from "@/store/resumeStore.ts";
+import type { PdfSettings } from "./PDFAdapter.tsx";
 import {
   DataScienceTechTemplate,
   dataScienceTemplateConfig,
-} from "./DataScienceTechTemplate.tsx";
-import { JakeResumeTemplate, jakesTemplateConfig } from "./JakesTemplate.tsx";
-import { MbzuaiTemplate, mbzuaiTemplateConfig } from "./MbzuaiTemplate.tsx";
-import type { PdfSettings } from "./PDFAdapter.tsx";
+} from "./templates/DataScienceTechTemplate.tsx";
+import {
+  JakeResumeTemplate,
+  jakesTemplateConfig,
+} from "./templates/JakesTemplate.tsx";
+import {
+  MbzuaiTemplate,
+  mbzuaiTemplateConfig,
+} from "./templates/MbzuaiTemplate.tsx";
 
 export interface ResumeTemplateConfig {
   sections?: ISectionConfig[];
@@ -29,6 +35,10 @@ export const RESUME_ENTRIES = {
 } as const satisfies Record<string, ResumeTemplateEntry>;
 
 export type TTemplateKey = keyof typeof RESUME_ENTRIES;
+
+export function resolveTemplateEntry(key: string): ResumeTemplateEntry {
+  return RESUME_ENTRIES[key as TTemplateKey] ?? RESUME_ENTRIES.mbzuai;
+}
 
 export const TEMPLATES: { id: TTemplateKey; label: string; source?: string }[] =
   [

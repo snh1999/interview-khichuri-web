@@ -1,13 +1,13 @@
 import { type FC, useEffect, useMemo, useRef } from "react";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
-import type { ResumeTemplateConfig } from "@/components/resume/temp/template-registry.ts";
+import type { ResumeTemplateConfig } from "@/components/resume/template-registry.ts";
 import {
   dateRange,
   filterSkills,
   HARDCODED_CATEGORIES,
   HARDCODED_TOPICS,
   useResumeLookup,
-} from "@/components/resume/temp/utils.ts";
+} from "@/components/resume/utils.ts";
 import {
   DEFAULT_SECTION_CONFIGS,
   type ISectionConfig,
@@ -23,78 +23,32 @@ import {
   Text,
   usePdfSettings,
   View,
-} from "./PDFAdapter.tsx";
+} from "../PDFAdapter.tsx";
 
 const COLORS = {
-  titleBlue: "#00199e",
-  subtitleBlue: "#2ec1e0",
   darkText: "#222222",
+  subtitleBlue: "#2ec1e0",
+  titleBlue: "#00199e",
 };
 
 export const mbzuaiTemplateConfig: ResumeTemplateConfig = {
-  sections: DEFAULT_SECTION_CONFIGS,
   pdfSettings: {
     fontFamily: "Inter",
     fontSize: 11,
     lineHeight: 1.1,
     padding: 57.6,
   },
+  sections: DEFAULT_SECTION_CONFIGS,
 };
 
 // name/sectionTitle scale off settings.fontSize using the original template's
 // ratios (24/11 and 14/11) so resizing the base font resizes the whole doc.
 function buildStyles(settings: PdfSettings) {
   return StyleSheet.create({
-    page: {
-      paddingTop: settings.padding,
-      paddingBottom: settings.padding,
-      paddingLeft: settings.padding,
-      paddingRight: settings.padding,
-      fontFamily: settings.fontFamily,
-      fontSize: settings.fontSize,
-      lineHeight: settings.lineHeight,
-      color: COLORS.darkText,
-    },
-    name: {
-      fontSize: settings.fontSize * (24 / 11),
-      lineHeight: 1,
-      fontWeight: 700,
-      color: COLORS.titleBlue,
-      marginBottom: 6,
-    },
-    headerLine: {
-      fontSize: settings.fontSize,
-      lineHeight: 1.2,
-    },
-    url: {
-      textDecoration: "none",
-    },
-    headerBlockSpacer: {
-      marginBottom: 4,
-    },
-    section: {
-      marginTop: 6,
-    },
-    sectionTitle: {
-      fontSize: settings.fontSize * (14 / 11),
-      lineHeight: 1,
-      fontWeight: 700,
-      color: COLORS.titleBlue,
-      marginBottom: 6,
-    },
-    para: {
-      marginBottom: 0.5,
-    },
-    entryBlock: {
-      marginBottom: 3.3,
-    },
     blueItem: {
-      fontWeight: 600,
       color: COLORS.subtitleBlue,
+      fontWeight: 600,
       marginBottom: 0.5,
-    },
-    italic: {
-      fontStyle: "italic" as const,
     },
     bold: {
       fontWeight: 700,
@@ -102,36 +56,82 @@ function buildStyles(settings: PdfSettings) {
     bulletList: {
       marginTop: 0,
     },
+    bulletMark: {
+      width: 10,
+    },
     bulletRow: {
       flexDirection: "row" as const,
       marginBottom: 0,
     },
-    bulletMark: {
-      width: 10,
-    },
     bulletText: {
       flex: 1,
+    },
+    entryBlock: {
+      marginBottom: 3.3,
+    },
+    headerBlockSpacer: {
+      marginBottom: 4,
+    },
+    headerLine: {
+      fontSize: settings.fontSize,
+      lineHeight: 1.2,
+    },
+    italic: {
+      fontStyle: "italic" as const,
+    },
+    name: {
+      color: COLORS.titleBlue,
+      fontSize: settings.fontSize * (24 / 11),
+      fontWeight: 700,
+      lineHeight: 1,
+      marginBottom: 6,
+    },
+    page: {
+      color: COLORS.darkText,
+      fontFamily: settings.fontFamily,
+      fontSize: settings.fontSize,
+      lineHeight: settings.lineHeight,
+      paddingBottom: settings.padding,
+      paddingLeft: settings.padding,
+      paddingRight: settings.padding,
+      paddingTop: settings.padding,
+    },
+    para: {
+      marginBottom: 0.5,
+    },
+    referenceCol: {
+      marginBottom: 6,
+      width: "48%",
     },
     referencesRow: {
       flexDirection: "row",
       flexWrap: "wrap",
       justifyContent: "space-between",
     } as const,
-    referenceCol: {
-      width: "48%",
+    section: {
+      marginTop: 6,
+    },
+    sectionTitle: {
+      color: COLORS.titleBlue,
+      fontSize: settings.fontSize * (14 / 11),
+      fontWeight: 700,
+      lineHeight: 1,
       marginBottom: 6,
+    },
+    url: {
+      textDecoration: "none",
     },
   });
 }
 
 const LINK_LABELS: Record<string, string> = {
+  blog: "Blog",
   github: "GitHub",
   gitlab: "GitLab",
   linkedin: "LinkedIn",
-  portfolio: "Portfolio",
-  blog: "Blog",
-  scholar: "Scholar",
   other: "Link",
+  portfolio: "Portfolio",
+  scholar: "Scholar",
 };
 
 interface ISectionProps {
@@ -154,7 +154,7 @@ function SummarySection({ title, data, styles }: ISectionProps) {
 }
 
 function EducationSection({ title, data, styles }: ISectionProps) {
-  const education = data.education;
+  const { education } = data;
   if (!education || education.length === 0) {
     return null;
   }
@@ -164,37 +164,34 @@ function EducationSection({ title, data, styles }: ISectionProps) {
       {education.map((edu, i) => (
         <View key={edu.id ?? i} style={styles.entryBlock}>
           <Text style={styles.blueItem}>
-            {dateRange(edu.startDate, edu.graduationDate, false, true)}
-            {dateRange(edu.startDate, edu.graduationDate, false, true)
-              ? ": "
-              : ""}
+            {dateRange(edu.startDate, edu.endDate, false, true)}
+            {dateRange(edu.startDate, edu.endDate, false, true) ? ": " : ""}
             {edu.degreeName}
             {edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ""}
           </Text>
           <Text style={styles.italic}>
             {edu.institution}
-            {edu.location ? `, ${edu.location}` : ""}
-            {edu.country ? `, ${edu.country}.` : "."}
+            {edu.location ? `, ${edu.location}.` : "."}
           </Text>
-          {edu.notes && <Text style={styles.para}>{edu.notes}</Text>}
-          {edu.gpa && (
+          {edu.notes ? <Text style={styles.para}>{edu.notes}</Text> : null}
+          {edu.gpa ? (
             <Text style={styles.para}>
               <Text style={styles.bold}>GPA: </Text>
               {edu.gpa}
             </Text>
-          )}
-          {edu.coursework && edu.coursework.length > 0 && (
+          ) : null}
+          {edu.coursework && edu.coursework.length > 0 ? (
             <Text style={styles.para}>
               <Text style={styles.bold}>Relevant Coursework: </Text>
               {edu.coursework.join(", ")}.
             </Text>
-          )}
-          {edu.thesis && (
+          ) : null}
+          {edu.thesis ? (
             <Text style={styles.para}>
               <Text style={styles.bold}>Thesis: </Text>
               {edu.thesis}
             </Text>
-          )}
+          ) : null}
         </View>
       ))}
     </View>
@@ -202,7 +199,7 @@ function EducationSection({ title, data, styles }: ISectionProps) {
 }
 
 function WorkExperienceSection({ title, data, styles }: ISectionProps) {
-  const workExperience = data.workExperience;
+  const { workExperience } = data;
   if (!workExperience || workExperience.length === 0) {
     return null;
   }
@@ -218,7 +215,7 @@ function WorkExperienceSection({ title, data, styles }: ISectionProps) {
             {exp.company}
             {exp.location ? `, ${exp.location}` : ""}
           </Text>
-          {exp.responsibilities && (
+          {exp.responsibilities ? (
             <View style={styles.bulletList}>
               {exp.responsibilities
                 .split("\n")
@@ -230,7 +227,7 @@ function WorkExperienceSection({ title, data, styles }: ISectionProps) {
                   </View>
                 ))}
             </View>
-          )}
+          ) : null}
         </View>
       ))}
     </View>
@@ -238,7 +235,7 @@ function WorkExperienceSection({ title, data, styles }: ISectionProps) {
 }
 
 function PublicationsSection({ title, data, styles }: ISectionProps) {
-  const publications = data.publications;
+  const { publications } = data;
   if (!publications || publications.length === 0) {
     return null;
   }
@@ -249,40 +246,37 @@ function PublicationsSection({ title, data, styles }: ISectionProps) {
         <View key={pub.id ?? i} style={styles.entryBlock}>
           <Text style={styles.blueItem}>
             {pub.title}
-            {pub.status ? ` ${pub.status}.` : ""}
+            {pub.publicationType ? ` ${pub.publicationType}.` : ""}
             {pub.link ? " [Link]" : ""}
           </Text>
           <Text style={styles.italic}>{pub.authors.join(", ")}</Text>
-          {pub.venue && <Text style={styles.italic}>{pub.venue}</Text>}
+          {pub.notes ? <Text style={styles.italic}>{pub.notes}</Text> : null}
         </View>
       ))}
     </View>
   );
 }
 
-function ResearchProjectsSection({ title, data, styles }: ISectionProps) {
+function ProjectsSection({ title, data, styles }: ISectionProps) {
   const topicsMap = useResumeLookup(HARDCODED_TOPICS);
 
-  const researchProjects = data.researchProjects;
-  if (!researchProjects || researchProjects.length === 0) {
+  const { projects } = data;
+  if (!projects || projects.length === 0) {
     return null;
   }
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
-      {researchProjects.map((proj, i) => {
-        const bulletsList = proj.notes?.split("\n") ?? [];
+      {projects.map((proj, i) => {
+        const bulletsList = proj.description?.split("\n") ?? [];
         const projectSkills = proj.skills ?? [];
         return (
           <View key={proj.id ?? i} style={styles.entryBlock}>
             <Text style={styles.blueItem}>
-              {proj.title}
-              {proj.date ? ` | ${proj.date}` : ""}
+              {proj.name}
+              {proj.type === "research" ? " (Research)" : ""}
             </Text>
-            {proj.organization && (
-              <Text style={styles.italic}>{proj.organization}</Text>
-            )}
-            {bulletsList && bulletsList.length > 0 && (
+            {bulletsList && bulletsList.length > 0 ? (
               <View style={styles.bulletList}>
                 {bulletsList.map((b, j) => (
                   <View key={j.toString()} style={styles.bulletRow}>
@@ -291,13 +285,13 @@ function ResearchProjectsSection({ title, data, styles }: ISectionProps) {
                   </View>
                 ))}
               </View>
-            )}
+            ) : null}
             {projectSkills.length > 0 && (
               <Text style={styles.para}>
                 <Text style={styles.bold}>Tech Stack: </Text>
                 {projectSkills
                   .map((id) => topicsMap.get(id)?.name)
-                  .filter(Boolean)
+                  .filter((name): name is string => Boolean(name))
                   .join(", ")}
               </Text>
             )}
@@ -326,33 +320,33 @@ function SkillsSection({ title, data, styles }: ISectionProps) {
     setSkillGroups([
       {
         id: "languages",
-        label: "Languages",
         keywords: filterSkills(
           skillIds,
           topicsMap,
           categoriesMap,
           new Set(["languages"])
         ).join(", "),
+        label: "Languages",
       },
       {
         id: "libraries",
-        label: "Libraries & Frameworks",
         keywords: filterSkills(
           skillIds,
           topicsMap,
           categoriesMap,
           new Set(["libraries", "frameworks"])
         ).join(", "),
+        label: "Libraries & Frameworks",
       },
       {
         id: "tools",
-        label: "Tools & Platforms",
         keywords: filterSkills(
           skillIds,
           topicsMap,
           categoriesMap,
           new Set(["tools", "platforms"])
         ).join(", "),
+        label: "Tools & Platforms",
       },
     ]);
   }, [data.professional?.skills, setSkillGroups, topicsMap, categoriesMap]);
@@ -380,37 +374,49 @@ function SkillsSection({ title, data, styles }: ISectionProps) {
 }
 
 function ActivitiesSection({ title, data, styles }: ISectionProps) {
-  const activities = data.activities; // TODO: add activities schema
+  const { activities } = data;
   if (!activities || activities.length === 0) {
     return null;
   }
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
-      {activities.map((act, i) => (
-        <View key={act.id ?? i} style={styles.entryBlock}>
-          <Text style={styles.blueItem}>
-            {act.title}
-            {act.date ? ` | ${act.date}` : ""}
-          </Text>
-          {act.organization && (
-            <Text style={styles.italic}>{act.organization}</Text>
-          )}
-          {act.description && (
-            <Text style={styles.para}>{act.description}</Text>
-          )}
-          {act.bullets && act.bullets.length > 0 && (
-            <View style={styles.bulletList}>
-              {act.bullets.map((b, j) => (
-                <View key={j.toString()} style={styles.bulletRow}>
-                  <Text style={styles.bulletMark}>{"\u2022"}</Text>
-                  <Text style={styles.bulletText}>{b}</Text>
-                </View>
-              ))}
-            </View>
-          )}
-        </View>
-      ))}
+      {activities.map((act, i) => {
+        const dateText = dateRange(
+          act.startDate,
+          act.endDate,
+          act.isCurrent,
+          true
+        );
+        const notesList = act.notes
+          ? act.notes
+              .split("\n")
+              .map((line) => line.trim())
+              .filter(Boolean)
+          : [];
+
+        return (
+          <View key={act.id ?? i} style={styles.entryBlock}>
+            <Text style={styles.blueItem}>
+              {act.name}
+              {dateText ? ` | ${dateText}` : ""}
+            </Text>
+            {act.organization ? (
+              <Text style={styles.italic}>{act.organization}</Text>
+            ) : null}
+            {notesList.length > 0 ? (
+              <View style={styles.bulletList}>
+                {notesList.map((b, j) => (
+                  <View key={j.toString()} style={styles.bulletRow}>
+                    <Text style={styles.bulletMark}>{"\u2022"}</Text>
+                    <Text style={styles.bulletText}>{b}</Text>
+                  </View>
+                ))}
+              </View>
+            ) : null}
+          </View>
+        );
+      })}
     </View>
   );
 }
@@ -428,10 +434,10 @@ function ReferencesSection({ title, data, styles }: ISectionProps) {
           (ref: NonNullable<TProfileFormData["references"]>[number], i) => (
             <View key={ref.id ?? i} style={styles.referenceCol}>
               <Text style={styles.bold}>{ref.name}</Text>
-              {ref.title && <Text>{ref.title}</Text>}
-              {ref.department && <Text>{ref.department}</Text>}
-              {ref.institution && <Text>{ref.institution}</Text>}
-              {ref.email && <Text>Email: {ref.email}</Text>}
+              {ref.title ? <Text>{ref.title}</Text> : null}
+              {ref.company ? <Text>{ref.company}</Text> : null}
+              {ref.email ? <Text>Email: {ref.email}</Text> : null}
+              {ref.phone ? <Text>Phone: {ref.phone}</Text> : null}
             </View>
           )
         )}
@@ -441,14 +447,14 @@ function ReferencesSection({ title, data, styles }: ISectionProps) {
 }
 
 const SECTION_REGISTRY: Record<TSectionIds, FC<ISectionProps>> = {
-  summary: SummarySection,
-  education: EducationSection,
-  workExperience: WorkExperienceSection,
-  publications: PublicationsSection,
-  researchProjects: ResearchProjectsSection,
-  skills: SkillsSection,
   activities: ActivitiesSection,
+  education: EducationSection,
+  projects: ProjectsSection,
+  publications: PublicationsSection,
   references: ReferencesSection,
+  skills: SkillsSection,
+  summary: SummarySection,
+  workExperience: WorkExperienceSection,
 };
 
 export function MbzuaiTemplate({
@@ -471,26 +477,26 @@ export function MbzuaiTemplate({
       <Page style={styles.page}>
         <Text style={styles.name}>{fullName}</Text>
 
-        {personal.location && (
+        {personal.location ? (
           <Text style={styles.headerLine}>{personal.location}</Text>
-        )}
-        {personal.phone && (
+        ) : null}
+        {personal.phone ? (
           <Text style={styles.headerLine}>Mobile: {personal.phone}</Text>
-        )}
-        {personal.email && (
+        ) : null}
+        {personal.email ? (
           <Text style={styles.headerLine}>Email: {personal.email}</Text>
-        )}
+        ) : null}
         {links?.map((link) => (
           <Text key={link.type} style={styles.headerLine}>
             {LINK_LABELS[link.type] ?? "Link"}:{" "}
             <Link src={link.url}>{link.url}</Link>
           </Text>
         ))}
-        {personal.nationality && (
+        {personal.nationality ? (
           <Text style={styles.headerLine}>
             Nationality: {personal.nationality}
           </Text>
-        )}
+        ) : null}
 
         <View style={styles.headerBlockSpacer} />
 

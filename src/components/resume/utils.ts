@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { useMemo } from "react";
 import type { ILookupEntry } from "@/api/lookups";
 
-function formatMonthYear(date?: Date): string {
+function formatMonthYear(date?: Date | null): string {
   if (!date) {
     return "";
   }
@@ -34,7 +34,7 @@ export const formatToString = (
   return String(value);
 };
 
-export function formatYear(date?: Date): string {
+export function formatYear(date?: Date | null): string {
   if (!date) {
     return "";
   }
@@ -42,8 +42,8 @@ export function formatYear(date?: Date): string {
 }
 
 export function dateRange(
-  start?: Date,
-  end?: Date,
+  start?: Date | null,
+  end?: Date | null,
   isCurrent?: boolean,
   yearOnly = false
 ): string {
