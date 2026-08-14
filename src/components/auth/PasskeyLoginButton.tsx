@@ -6,7 +6,15 @@ import { signIn, useSession } from "@/lib/auth/auth-client.ts";
 
 export const PasskeyButton = () => {
   const navigate = useNavigate();
+  // TODO: use react query
   const { refetch } = useSession();
+  const handleSignIn = () =>
+    signIn.passkey(undefined, {
+      onSuccess() {
+        refetch();
+        navigate(HOMEPAGE);
+      },
+    });
 
   useEffect(() => {
     signIn.passkey(
@@ -22,14 +30,7 @@ export const PasskeyButton = () => {
 
   return (
     <AuthActionButton
-      action={() =>
-        signIn.passkey(undefined, {
-          onSuccess() {
-            refetch();
-            navigate(HOMEPAGE);
-          },
-        })
-      }
+      action={handleSignIn}
       className="my-4 w-full"
       successMessage=""
       variant="outline"

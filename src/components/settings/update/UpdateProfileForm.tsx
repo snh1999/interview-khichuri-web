@@ -11,6 +11,7 @@ interface IProp {
 }
 export const UpdateProfileForm = ({ user }: Readonly<IProp>) => {
   const { form, isLoading, onSubmit } = useUpdateProfileForm(user);
+  const resetForm = () => form.reset();
 
   return (
     <Card>
@@ -37,7 +38,7 @@ export const UpdateProfileForm = ({ user }: Readonly<IProp>) => {
         <CardFooter className="flex items-center justify-between">
           <Button
             disabled={!form.formState.isDirty}
-            onClick={() => form.reset()}
+            onClick={resetForm}
             size="lg"
             variant="outline"
           >

@@ -27,10 +27,12 @@ export const useViewToggle = (defaultView: TViewMode = "grid") => {
 
 export const ViewToggle = ({ defaultView = "grid" }: Readonly<IProps>) => {
   const { currentView, handleViewChange } = useViewToggle(defaultView);
+  const handleToggle = (value: string[]) =>
+    handleViewChange(value[0] as TViewMode);
 
   return (
     <ToggleGroup
-      onValueChange={(value) => handleViewChange(value[0] as TViewMode)}
+      onValueChange={handleToggle}
       size="sm"
       spacing={0}
       value={[currentView]}

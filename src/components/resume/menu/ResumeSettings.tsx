@@ -49,6 +49,7 @@ export function ResumeSettingsMenu({
           Template
         </span>
         <TemplatePicker
+          // biome-ignore lint/performance/noJsxPropsBind: <uses prop, rerender anyways>
           onChange={(v) => onChange({ ...value, templateId: v })}
           templateId={templateId}
         />
@@ -57,7 +58,10 @@ export function ResumeSettingsMenu({
       <Separator className="mx-1 h-5" orientation="vertical" />
 
       <ToggleGroup
-        onValueChange={(v) => onChange({ ...value, mode: v[0] as RenderMode })}
+        // biome-ignore lint/performance/noJsxPropsBind: <>
+        onValueChange={(v) =>
+          v[0] && onChange({ ...value, mode: v[0] as RenderMode })
+        }
         size="sm"
         spacing={0}
         value={[mode]}
@@ -74,6 +78,7 @@ export function ResumeSettingsMenu({
           Font
         </span>
         <Select
+          // biome-ignore lint/performance/noJsxPropsBind: <>
           onValueChange={(v) =>
             updatePdfSettings({ fontFamily: v as TFontFamily })
           }
@@ -106,6 +111,7 @@ export function ResumeSettingsMenu({
           Size
         </span>
         <Select
+          // biome-ignore lint/performance/noJsxPropsBind: <>
           onValueChange={(v) => updatePdfSettings({ fontSize: Number(v) })}
           value={String(effective.fontSize)}
         >
@@ -127,6 +133,7 @@ export function ResumeSettingsMenu({
           Line
         </span>
         <Select
+          // biome-ignore lint/performance/noJsxPropsBind: <>
           onValueChange={(v) => updatePdfSettings({ lineHeight: Number(v) })}
           value={String(effective.lineHeight)}
         >
@@ -151,6 +158,7 @@ export function ResumeSettingsMenu({
           Pad
         </span>
         <Select
+          // biome-ignore lint/performance/noJsxPropsBind: <>
           onValueChange={(v) => updatePdfSettings({ padding: Number(v) })}
           value={String(effective.padding)}
         >

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useNavigate } from "react-router";
+import { generatePath, useNavigate } from "react-router";
 import { useJob } from "@/api/jobs";
 import { useRoles } from "@/api/lookups";
 import type { IPrepSession } from "@/api/sessions";
@@ -33,13 +33,15 @@ const FieldLabel = ({
 
 const LinkedJobField = ({ jobId }: { jobId: string }) => {
   const navigate = useNavigate();
+  const handleClick = () =>
+    navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
   const { data: job } = useJob(jobId);
 
   return (
     <FieldLabel title="Linked Job">
       <Button
         className="h-auto p-0 text-sm"
-        onClick={() => navigate(JOB_DETAIL_PAGE.replace(":jobId", job.id))}
+        onClick={handleClick}
         variant="link"
       >
         {job.title} @ {job.companyName}
@@ -61,7 +63,7 @@ export const SessionInfoSection = ({ sectionId, session }: IProps) => {
     <Card className="mt-2 px-1" id={sectionId}>
       <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FieldLabel full title="Title">
-          {session.title ?? "Not set"}
+          {session.title}
         </FieldLabel>
 
         {session.jobId ? <LinkedJobField jobId={session.jobId} /> : null}

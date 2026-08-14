@@ -40,7 +40,7 @@ export const ProfileSecurity = () => {
     return null;
   }
 
-  const email = session.user.email;
+  const { email } = session.user;
   const hasPassword = accounts?.some(
     (account) => account.providerId === "credential"
   );

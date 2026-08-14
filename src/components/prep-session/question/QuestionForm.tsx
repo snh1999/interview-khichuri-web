@@ -40,7 +40,7 @@ const useQuestionForm = ({
 
   const form = useForm<TQuestionFormData>({
     defaultValues: {
-      questionText: question?.questionText ?? "",
+      questionText: question?.questionText || "",
       answer: question?.answer ?? "",
       notes: question?.notes ?? "",
     },

@@ -1,5 +1,5 @@
 import { CaretRightIcon } from "@phosphor-icons/react";
-import { useNavigate } from "react-router";
+import { generatePath, useNavigate } from "react-router";
 import type { IJob, TJobStatus } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { Button } from "@/components/ui/button.tsx";
@@ -35,16 +35,14 @@ const formatDeadline = (deadline?: string | null) => {
 
 export const JobListRow = ({ job }: { job: IJob }) => {
   const navigate = useNavigate();
+  const handleClick = () =>
+    navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
 
   return (
     <Item
       className="py-3"
       render={
-        <Button
-          className="h-auto"
-          onClick={() => navigate(JOB_DETAIL_PAGE.replace(":jobId", job.id))}
-          variant="ghost"
-        />
+        <Button className="h-auto" onClick={handleClick} variant="ghost" />
       }
       size="sm"
     >

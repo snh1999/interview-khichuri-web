@@ -71,6 +71,8 @@ export const KeysFormDialog = () => {
 
   const { form, onSubmit, isPending } = useKeysForm(closeDialog);
 
+  const resetForm = () => form.reset();
+
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger
@@ -130,7 +132,7 @@ export const KeysFormDialog = () => {
 
               <div className="flex items-center gap-2">
                 <DialogClose
-                  onClick={() => form.reset()}
+                  onClick={resetForm}
                   render={<Button variant="outline">Cancel</Button>}
                 />
 

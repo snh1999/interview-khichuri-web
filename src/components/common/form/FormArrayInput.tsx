@@ -33,6 +33,8 @@ export const FormArrayInput = <T extends FieldValues>({
     | { message?: string }
     | undefined;
 
+  const addNew = () => append({ value: "" } as FieldArray<T, ArrayPath<T>>);
+
   return (
     <Field>
       <FieldLabel>{label}</FieldLabel>
@@ -46,6 +48,7 @@ export const FormArrayInput = <T extends FieldValues>({
               />
             </InputGroup>
             <Button
+              // biome-ignore lint/performance/noJsxPropsBind: <depends on index>
               onClick={() => remove(index)}
               size="icon"
               type="button"
@@ -58,7 +61,7 @@ export const FormArrayInput = <T extends FieldValues>({
         <div>
           <Button
             className="text-xs"
-            onClick={() => append({ value: "" } as FieldArray<T, ArrayPath<T>>)}
+            onClick={addNew}
             size="sm"
             type="button"
             variant="outline"

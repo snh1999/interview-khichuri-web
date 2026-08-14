@@ -10,12 +10,12 @@ interface IProps {
 }
 
 export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
-  const navigateToPage = useNavigateToSessionPage();
+  const navigateToPage = useNavigateToSessionPage(session.id);
 
   return (
     <Card
       className="cursor-pointer gap-2 px-4 py-4"
-      onClick={() => navigateToPage(session.id)}
+      onClick={navigateToPage}
       size="sm"
     >
       <div className="flex items-center justify-between gap-2">

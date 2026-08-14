@@ -8,21 +8,22 @@ export const ImpersonationIndicator = () => {
   const navigate = useNavigate();
   const { data: session, refetch } = useSession();
 
-  if (session?.session.impersonatedBy == null) {
+  const handleStopImpersonation = () =>
+    authAdmin.stopImpersonating(undefined, {
+      onSuccess: () => {
+        navigate(ADMIN_PAGE);
+        refetch();
+      },
+    });
+
+  if (session?.session.impersonatedBy === null) {
     return null;
   }
 
   return (
     <div className="fixed bottom-4 left-4 z-50">
       <AuthActionButton
-        action={() =>
-          authAdmin.stopImpersonating(undefined, {
-            onSuccess: () => {
-              navigate(ADMIN_PAGE);
-              refetch();
-            },
-          })
-        }
+        action={handleStopImpersonation}
         size="sm"
         successMessage="Stopped Impersonation"
         variant="destructive"

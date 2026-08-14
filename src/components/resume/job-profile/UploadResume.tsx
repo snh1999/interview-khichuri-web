@@ -22,11 +22,28 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB - move to app.constants.ts ideally
+
 interface IProps {
   count: number;
   isUploading: boolean;
   onUpload: (file: File, name?: string) => void;
 }
+
+const validateFile = (file: File | undefined): file is File => {
+  if (!file) {
+    return false;
+  }
+  if (file.type !== "application/pdf") {
+    toast.error("Invalid file type, only PDF files are allowed!");
+    return false;
+  }
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    toast.error("File too large, maximum 5MB allowed!");
+    return false;
+  }
+  return true;
+};
 
 export const UploadResume = ({
   count,
@@ -38,9 +55,10 @@ export const UploadResume = ({
 
   const [isDragOver, setIsDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const wasUploadingRef = useRef(false);
+  const wasUploadingRef = useRef<boolean>(false);
 
   useEffect(() => {
+    // biome-ignore lint/suspicious/noUnnecessaryConditions: <>
     if (wasUploadingRef.current && !isUploading) {
       setSelectedFile(null);
       setName("");
@@ -50,10 +68,8 @@ export const UploadResume = ({
 
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type === "application/pdf") {
+    if (validateFile(file)) {
       setSelectedFile(file);
-    } else if (file) {
-      toast.error("Invalid file type, only PDF files are allowed!");
     }
     e.target.value = "";
   }, []);
@@ -62,10 +78,8 @@ export const UploadResume = ({
     e.preventDefault();
     setIsDragOver(false);
     const file = e.dataTransfer.files?.[0];
-    if (file && file.type === "application/pdf") {
+    if (validateFile(file)) {
       setSelectedFile(file);
-    } else {
-      toast.error("Invalid file type, only PDF files are allowed!");
     }
   }, []);
 
@@ -149,6 +163,7 @@ export const UploadResume = ({
         </Card>
       ) : (
         <Card
+          aria-label="Upload resume, click or drag and drop"
           className={`flex flex-col items-center gap-3 rounded-lg border-2 border-muted-foreground/25 border-dashed p-8 transition-colors ${
             isDragOver ? "border-primary bg-primary/5" : ""
           }`}
@@ -157,6 +172,7 @@ export const UploadResume = ({
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           onKeyDown={handleCardKeyDown}
+          role="button"
           tabIndex={0}
         >
           {isUploading ? (

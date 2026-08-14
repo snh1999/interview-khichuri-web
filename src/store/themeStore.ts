@@ -189,14 +189,14 @@ export const useThemeStore = create<IThemeCustomizerHandle>()(
             });
           } else if (base) {
             const currentAccentId = get().activeAccentId;
-            const accent = currentAccentId
+            const accentVar = currentAccentId
               ? BUILT_IN_ACCENTS.find((a) => a.id === currentAccentId)
               : null;
-            const { light, dark } = mergeVars(base, accent);
+            const { light, dark } = mergeVars(base, accentVar);
             set({
               light,
               dark,
-              radius: accent?.radius ?? base.radius,
+              radius: accentVar?.radius ?? base.radius,
               activeBaseId: base.id,
               activeAccentId: currentAccentId,
               activePresetId: getCompositeId(base.id, currentAccentId),

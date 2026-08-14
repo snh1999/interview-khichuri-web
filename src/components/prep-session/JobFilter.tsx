@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/combobox.tsx";
 
 const JOB_FILTER_KEY = "job";
-
 interface IJobOption {
   value: string;
   label: string;
@@ -62,12 +61,14 @@ export const JobFilter = () => {
     setJobFilter(opt?.value ? String(opt.value) : null);
   };
 
+  const itemToStringValue = (opt: IJobOption) => opt.label;
+
   return (
     <Combobox
       autoHighlight
       inputValue={inputValue}
       items={options}
-      itemToStringValue={(opt: IJobOption) => opt.label}
+      itemToStringValue={itemToStringValue}
       onInputValueChange={setInputValue}
       onValueChange={handleValueChange}
       value={selectedOption}

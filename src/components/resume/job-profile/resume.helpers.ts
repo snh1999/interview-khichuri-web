@@ -29,15 +29,17 @@ export const resumeExtractionSchema = z.object({
       .extend({ endDate: dateOrNull, startDate: dateOrNull })
       .partial()
   ),
-  activities: z.array(
-    activitySchema
-      .extend({ endDate: dateOrNull, startDate: dateOrNull })
-      .partial()
-  ),
-  projects: z.array(projectSchema.partial()),
-  publications: z.array(publicationSchema.partial()),
-  references: z.array(referenceSchema.partial()),
-  links: z.array(profileLinkSchema.partial()),
+  activities: z
+    .array(
+      activitySchema
+        .extend({ endDate: dateOrNull, startDate: dateOrNull })
+        .partial()
+    )
+    .optional(),
+  projects: z.array(projectSchema.partial()).optional(),
+  publications: z.array(publicationSchema.partial()).optional(),
+  references: z.array(referenceSchema.partial()).optional(),
+  links: z.array(profileLinkSchema.partial()).optional(),
 });
 
 export type TResumeContent = z.infer<typeof resumeExtractionSchema>;
@@ -98,17 +100,17 @@ export const mergeIntoFormData = (
         education: extraction.education.length
           ? extraction.education
           : base.education,
-        links: extraction.links.length ? extraction.links : base.links,
-        publications: extraction.publications.length
+        links: extraction.links?.length ? extraction.links : base.links,
+        publications: extraction.publications?.length
           ? extraction.publications
           : base.publications,
-        projects: extraction.projects.length
+        projects: extraction.projects?.length
           ? extraction.projects
           : base.projects,
-        references: extraction.references.length
+        references: extraction.references?.length
           ? extraction.references
           : base.references,
-        activities: extraction.activities.length
+        activities: extraction.activities?.length
           ? extraction.activities
           : base.activities,
       } as TProfileFormData)

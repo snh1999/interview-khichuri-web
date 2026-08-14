@@ -1,5 +1,5 @@
 import { CalendarBlankIcon } from "@phosphor-icons/react";
-import { useNavigate } from "react-router";
+import { generatePath, useNavigate } from "react-router";
 import type { IJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { Badge } from "@/components/ui/badge.tsx";
@@ -29,11 +29,13 @@ const formatDeadline = (deadline?: string | null) => {
 
 export const JobCardGrid = ({ job }: { job: IJob }) => {
   const navigate = useNavigate();
+  const handleClick = () =>
+    navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
 
   return (
     <Card
       className="cursor-pointer gap-2 px-4 py-4"
-      onClick={() => navigate(JOB_DETAIL_PAGE.replace(":jobId", job.id))}
+      onClick={handleClick}
       size="sm"
     >
       <div className="flex items-center justify-between gap-2">

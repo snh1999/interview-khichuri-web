@@ -98,7 +98,7 @@ export const useJobPostForm = ({
   useEffect(() => {
     form.reset({
       ...form.getValues(),
-      description: initialDescription ?? job?.description ?? "",
+      description: initialDescription || job?.description || "",
     });
   }, [initialDescription, form, job]);
 

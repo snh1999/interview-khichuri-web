@@ -68,6 +68,10 @@ export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
     setEditOpen(false);
   });
 
+  const handleActivateClick = () => activateKey(apiKey.id);
+  const handleDelete = () => deleteKey(apiKey.id);
+  const handleReset = () => form.reset();
+
   return (
     <Card className="px-3" size="sm">
       <CardHeader>
@@ -91,7 +95,7 @@ export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
           ) : (
             <Button
               disabled={isActive}
-              onClick={() => activateKey(apiKey.id)}
+              onClick={handleActivateClick}
               size="sm"
               variant="secondary"
             >
@@ -121,7 +125,7 @@ export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
                 />
                 <div className="flex items-center justify-end gap-2">
                   <DialogClose
-                    onClick={() => form.reset()}
+                    onClick={handleReset}
                     render={<Button variant="outline">Cancel</Button>}
                   />
                   <AsyncButton type="submit">Save</AsyncButton>
@@ -132,7 +136,7 @@ export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
 
           <MutationButton
             dialogDescription="This will permanently delete this API key."
-            mutationFn={() => deleteKey(apiKey.id)}
+            mutationFn={handleDelete}
             requireConfirmation
             size="sm"
             successMessage="API key deleted"

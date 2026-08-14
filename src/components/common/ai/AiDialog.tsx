@@ -73,6 +73,15 @@ export const AiDialog = ({
     onExecute(provider, model);
   };
 
+  const handleSelect = (v: TApiKeyProvider | null) => {
+    if (v) {
+      setProvider(v);
+    }
+  };
+
+  const handleModelChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setModel(e.target.value);
+
   return (
     <DrawLog onOpenChange={onOpenChange} open={open}>
       <DrawLogContent>
@@ -95,11 +104,7 @@ export const AiDialog = ({
                 </span>
                 <Select
                   items={providerItems}
-                  onValueChange={(v) => {
-                    if (v) {
-                      setProvider(v);
-                    }
-                  }}
+                  onValueChange={handleSelect}
                   value={provider}
                 >
                   <SelectTrigger className="w-full" disabled={isLoading}>
@@ -123,7 +128,7 @@ export const AiDialog = ({
                 </span>
                 <Input
                   disabled={isLoading}
-                  onChange={(e) => setModel(e.target.value)}
+                  onChange={handleModelChange}
                   placeholder="Name of specific model (optional)"
                   value={model}
                 />

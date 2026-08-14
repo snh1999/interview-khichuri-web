@@ -53,12 +53,15 @@ export const AppPagination = ({
     setLimit(value);
   };
 
-  const onPageChange = (page: number | null) => {
-    if (!page) {
+  const onPageChange = (newPage: number | null) => {
+    if (!newPage) {
       return;
     }
-    setPage(page);
+    setPage(newPage);
   };
+
+  const nextPage = () => setPage(page + 1);
+  const previousPage = () => setPage(page - 1);
 
   return (
     <div className="mt-4 flex items-center justify-between gap-4">
@@ -95,7 +98,7 @@ export const AppPagination = ({
                       ? "cursor-pointer"
                       : "pointer-events-none opacity-50"
                   }
-                  onClick={() => setPage(page - 1)}
+                  onClick={previousPage}
                 />
               </PaginationItem>
               <PaginationItem className="flex items-center px-2 text-muted-foreground text-sm">
@@ -127,7 +130,7 @@ export const AppPagination = ({
                       ? "cursor-pointer"
                       : "pointer-events-none opacity-50"
                   }
-                  onClick={() => setPage(page + 1)}
+                  onClick={nextPage}
                 />
               </PaginationItem>
             </PaginationContent>

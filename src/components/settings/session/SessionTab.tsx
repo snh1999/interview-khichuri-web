@@ -86,6 +86,11 @@ const SessionNotFreshFallback = ({
 }: FallbackProps) => {
   const navigate = useNavigate();
 
+  const handleLogin = () => {
+    resetErrorBoundary();
+    navigate(LOGIN_PAGE);
+  };
+
   // @ts-expect-error
   if ("message" in error && error?.message !== "Session is not fresh") {
     throw error;
@@ -98,14 +103,7 @@ const SessionNotFreshFallback = ({
         <CardDescription>Log in again to manage sessions</CardDescription>
       </CardHeader>
       <CardFooter>
-        <Button
-          onClick={() => {
-            resetErrorBoundary();
-            navigate(LOGIN_PAGE);
-          }}
-        >
-          Log In
-        </Button>
+        <Button onClick={handleLogin}>Log In</Button>
       </CardFooter>
     </Card>
   );

@@ -35,7 +35,7 @@ export const formatToString = (
 };
 
 export function formatYear(date?: Date | null): string {
-  if (!date) {
+  if (!(date instanceof Date)) {
     return "";
   }
   return `${date.getFullYear()}`;

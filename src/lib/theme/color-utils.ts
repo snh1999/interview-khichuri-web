@@ -96,7 +96,7 @@ const NORMALIZED_REGEX = /^#[\da-f]{6}$/iu;
 export const hexToOklch = (hex: string): IOklchColor => {
   const normalized = hex.replace(
     HEX_STRING_REGEX,
-    (_, r, g, b) => `#${r}${r}${g}${g}${b}${b}`
+    (_, _r, _g, _b) => `#${_r}${_r}${_g}${_g}${_b}${_b}`
   );
 
   if (!NORMALIZED_REGEX.test(normalized)) {

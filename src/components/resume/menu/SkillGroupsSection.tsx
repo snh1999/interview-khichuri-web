@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
-import { useResumeStore } from "@/store/resumeStore.ts";
+import { type ISkillGroup, useResumeStore } from "@/store/resumeStore.ts";
 
 interface IProps {
   sectionId: string;
@@ -19,9 +19,7 @@ const MAX_GROUPS = 5;
 
 export const SkillGroupsSection = ({ sectionId }: Readonly<IProps>) => {
   const skillGroups = useResumeStore((state) => state.skillGroups);
-  const updateSkillGroup = useResumeStore((state) => state.updateSkillGroup);
   const addSkillGroup = useResumeStore((state) => state.addSkillGroup);
-  const removeSkillGroup = useResumeStore((state) => state.removeSkillGroup);
 
   return (
     <Card className="px-1" id={sectionId}>
@@ -48,32 +46,44 @@ export const SkillGroupsSection = ({ sectionId }: Readonly<IProps>) => {
           </p>
         )}
         {skillGroups.map((group) => (
-          <div className="flex items-center gap-2" key={group.id}>
-            <Input
-              className="w-1/3"
-              onChange={(event) =>
-                updateSkillGroup(group.id, { label: event.target.value })
-              }
-              placeholder="Label"
-              value={group.label}
-            />
-            <Input
-              className="flex-1"
-              onChange={(event) =>
-                updateSkillGroup(group.id, { keywords: event.target.value })
-              }
-              placeholder="Comma-separated skills"
-              value={group.keywords}
-            />
-            <Button
-              onClick={() => removeSkillGroup(group.id)}
-              variant="destructive"
-            >
-              <TrashIcon />
-            </Button>
-          </div>
+          <SkillGroup group={group} key={group.id} />
         ))}
       </CardContent>
     </Card>
+  );
+};
+
+interface IGroupProps {
+  group: ISkillGroup;
+}
+const SkillGroup = ({ group }: Readonly<IGroupProps>) => {
+  const updateSkillGroup = useResumeStore((state) => state.updateSkillGroup);
+  const removeSkillGroup = useResumeStore((state) => state.removeSkillGroup);
+
+  const handleLabelChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    updateSkillGroup(group.id, { label: event.target.value });
+  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    updateSkillGroup(group.id, { keywords: event.target.value });
+
+  const handleRemove = () => removeSkillGroup(group.id);
+
+  return (
+    <div className="flex items-center gap-2">
+      <Input
+        className="w-1/3"
+        onChange={handleLabelChange}
+        placeholder="Label"
+        value={group.label}
+      />
+      <Input
+        className="flex-1"
+        onChange={handleKeywordChange}
+        placeholder="Comma-separated skills"
+        value={group.keywords}
+      />
+      <Button onClick={handleRemove} variant="destructive">
+        <TrashIcon />
+      </Button>
+    </div>
   );
 };

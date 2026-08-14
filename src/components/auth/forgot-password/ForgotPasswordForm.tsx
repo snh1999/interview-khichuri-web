@@ -10,6 +10,7 @@ export const ForgotPasswordForm = (props: IFormProps) => {
   const { onSubmit, form, isLoading, cooldown } = useForgotPasswordForm(props);
 
   const navigate = useNavigate();
+  const handleBackClick = () => navigate(-1);
 
   return (
     <form className="space-y-4" onSubmit={onSubmit}>
@@ -25,7 +26,7 @@ export const ForgotPasswordForm = (props: IFormProps) => {
       <div className="flex items-center justify-center gap-2">
         <Button
           className="flex-1"
-          onClick={() => navigate(-1)}
+          onClick={handleBackClick}
           size="lg"
           variant="secondary"
         >

@@ -16,17 +16,13 @@ export const SessionListRow = ({
   session: IPrepSession;
   jobLabel?: string;
 }) => {
-  const navigateToPage = useNavigateToSessionPage();
+  const navigateToPage = useNavigateToSessionPage(session.id);
 
   return (
     <Item
       className="py-2"
       render={
-        <Button
-          className="h-auto"
-          onClick={() => navigateToPage(session.id)}
-          variant="ghost"
-        />
+        <Button className="h-auto" onClick={navigateToPage} variant="ghost" />
       }
       size="sm"
     >

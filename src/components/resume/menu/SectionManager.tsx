@@ -24,7 +24,7 @@ import {
   ItemContent,
   ItemMedia,
 } from "@/components/ui/item.tsx";
-import { useResumeStore } from "@/store/resumeStore.ts";
+import { type ISectionConfig, useResumeStore } from "@/store/resumeStore.ts";
 
 interface SectionManagerProps {
   sectionId: string;
@@ -47,6 +47,12 @@ export function SectionManager({ sectionId, templateId }: SectionManagerProps) {
     setSections(templateId, next);
   };
 
+  const updateSection = (id: string, patch: Partial<ISectionConfig>) =>
+    setSections(
+      templateId,
+      sections.map((sec) => (sec.id === id ? { ...sec, ...patch } : sec))
+    );
+
   return (
     <Card id={sectionId}>
       <CardHeader>
@@ -59,6 +65,7 @@ export function SectionManager({ sectionId, templateId }: SectionManagerProps) {
         </CardDescription>
         <CardAction>
           <Button
+            // biome-ignore lint/performance/noJsxPropsBind: <renders anyways because of store, performance gain minimal>
             onClick={() => resetSections(templateId)}
             type="button"
             variant="outline"
@@ -80,6 +87,7 @@ export function SectionManager({ sectionId, templateId }: SectionManagerProps) {
               <div className="flex flex-col gap-1">
                 <Button
                   disabled={index === 0}
+                  // biome-ignore lint/performance/noJsxPropsBind: <index required, new component does not solve>
                   onClick={() => move(index, "up")}
                   size="icon-xs"
                   type="button"
@@ -89,6 +97,7 @@ export function SectionManager({ sectionId, templateId }: SectionManagerProps) {
                 </Button>
                 <Button
                   disabled={index === sections.length - 1}
+                  // biome-ignore lint/performance/noJsxPropsBind: <>
                   onClick={() => move(index, "down")}
                   size="icon-xs"
                   type="button"
@@ -100,15 +109,9 @@ export function SectionManager({ sectionId, templateId }: SectionManagerProps) {
             </ItemMedia>
             <ItemContent>
               <Input
+                // biome-ignore lint/performance/noJsxPropsBind: <section spcific>
                 onChange={(e) =>
-                  setSections(
-                    templateId,
-                    sections.map((sec) =>
-                      sec.id === section.id
-                        ? { ...sec, title: e.target.value }
-                        : sec
-                    )
-                  )
+                  updateSection(section.id, { title: e.target.value })
                 }
                 placeholder="Section Title"
                 value={section.title}
@@ -116,18 +119,11 @@ export function SectionManager({ sectionId, templateId }: SectionManagerProps) {
             </ItemContent>
             <ItemActions>
               <Button
+                // biome-ignore lint/performance/noJsxPropsBind: <section spcific>
                 onClick={() =>
-                  setSections(
-                    templateId,
-                    sections.map((sec) =>
-                      sec.id === section.id
-                        ? { ...sec, enabled: !sec.enabled }
-                        : sec
-                    )
-                  )
+                  updateSection(section.id, { enabled: !section.enabled })
                 }
                 size="icon"
-                type="button"
                 variant="outline"
               >
                 {section.enabled ? <EyeIcon /> : <EyeSlashIcon />}

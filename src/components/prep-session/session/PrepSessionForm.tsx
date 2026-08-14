@@ -50,8 +50,8 @@ const JobPrefillEffect = ({
     }
     prefilledJobId.current = jobId;
 
-    const currentTopicIds = (form.getValues("topicIds") as number[]) ?? [];
-    const currentTopicNames = (form.getValues("topicNames") as string[]) ?? [];
+    const currentTopicIds = form.getValues("topicIds") ?? [];
+    const currentTopicNames = form.getValues("topicNames") ?? [];
     const hasExistingTopics =
       currentTopicIds.length > 0 || currentTopicNames.length > 0;
 

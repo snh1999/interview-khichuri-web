@@ -1,5 +1,5 @@
 import type { FieldValues } from "react-hook-form";
-import { useCreateLookup, useRoles } from "@/api/lookups";
+import { type ILookupEntry, useCreateLookup, useRoles } from "@/api/lookups";
 import {
   FormCombobox,
   type TComboboxProps,
@@ -20,6 +20,11 @@ export const RolesCombobox = <T extends FieldValues>({
     form.setValue(name as never, created.id as never);
   };
 
+  const optionMapping = (item: ILookupEntry) => ({
+    label: item.name,
+    value: item.id,
+  });
+
   return (
     <FormCombobox
       creatable
@@ -29,7 +34,7 @@ export const RolesCombobox = <T extends FieldValues>({
       name={name}
       onCreateItem={handleCreateRole}
       placeholder={placeholder}
-      toOption={(item) => ({ label: item.name, value: item.id })}
+      toOption={optionMapping}
       {...rest}
     />
   );

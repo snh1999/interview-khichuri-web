@@ -107,6 +107,14 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
   };
 
   const isCardExpanded = (questionId: number) => expandedIds.has(questionId);
+  const openAiDialog = () => setAiDialogOpen(true);
+  const viewAddForm = () => setShowAddForm(true);
+  const hideAddForm = () => setShowAddForm(false);
+  const toggleNoteView = () => setShowNotes((state) => !state);
+  const handleJobCheckbox = (val: boolean) => setIncludeJobDescription(val);
+  const handleQuestionCheckbox = (val: boolean) => setAvoidRepeat(val);
+  const handleQuestionCountChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setCount(Number(e.target.value));
 
   return (
     <>
@@ -114,7 +122,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
         <CardHeader>
           <CardTitle>Questions</CardTitle>
           <CardAction className="flex gap-1">
-            <Button onClick={() => setAiDialogOpen(true)} size="xs">
+            <Button onClick={openAiDialog} size="xs">
               <SparkleIcon className="size-3" />
               Generate
             </Button>
@@ -127,16 +135,13 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
               <DropdownMenuContent>
                 <DropdownMenuItem
                   className="whitespace-nowrap"
-                  onClick={() => setShowAddForm(true)}
+                  onClick={viewAddForm}
                 >
                   <PlusIcon className="size-3" weight="bold" />
                   Add Question
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  closeOnClick={false}
-                  onClick={() => setShowNotes((state) => !state)}
-                >
+                <DropdownMenuItem closeOnClick={false} onClick={toggleNoteView}>
                   {showNotes ? (
                     <EyeSlashIcon className="size-3" />
                   ) : (
@@ -162,8 +167,8 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
         <CardContent className="flex flex-col gap-4 pt-4">
           {showAddForm ? (
             <QuestionForm
-              onCancel={() => setShowAddForm(false)}
-              onSuccess={() => setShowAddForm(false)}
+              onCancel={hideAddForm}
+              onSuccess={hideAddForm}
               sessionId={sessionId}
             />
           ) : null}
@@ -180,7 +185,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <Button onClick={() => setAiDialogOpen(true)} size="sm">
+                <Button onClick={openAiDialog} size="sm">
                   <SparkleIcon className="size-3" />
                   Generate Questions
                 </Button>
@@ -218,7 +223,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
             id="question-count"
             max={50}
             min={1}
-            onChange={(e) => setCount(Number(e.target.value))}
+            onChange={handleQuestionCountChange}
             type="number"
             value={count}
           />
@@ -229,7 +234,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
             checked={avoidRepeat}
             disabled={isQuestionPending}
             id="avoid-repeat"
-            onCheckedChange={(val) => setAvoidRepeat(val)}
+            onCheckedChange={handleQuestionCheckbox}
           />
           <Label htmlFor="avoid-repeat">
             Avoid repeating previous questions
@@ -242,7 +247,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
               checked={includeJobDescription}
               disabled={isQuestionPending}
               id="include-job-description"
-              onCheckedChange={(val) => setIncludeJobDescription(val)}
+              onCheckedChange={handleJobCheckbox}
             />
             <Label htmlFor="include-job-description">
               Include job description

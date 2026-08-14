@@ -58,6 +58,9 @@ export const JobPostForm = ({
   const hasContent = description?.trim().length > 0;
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
 
+  const openAiDialog = () => setAiDialogOpen(true);
+  const closeAiDialog = () => setAiDialogOpen(false);
+
   const handleExtract = async (provider: string, model?: string) => {
     try {
       const result = stripNulls(
@@ -82,7 +85,7 @@ export const JobPostForm = ({
         status: result.status ?? form.getValues("status"),
       });
     } finally {
-      setAiDialogOpen(false);
+      closeAiDialog();
     }
   };
 
@@ -102,7 +105,7 @@ export const JobPostForm = ({
                   hasContent ? (
                     <span className="flex w-full justify-end">
                       <Button
-                        onClick={() => setAiDialogOpen(true)}
+                        onClick={openAiDialog}
                         size="sm"
                         variant="outline"
                       >
@@ -217,7 +220,7 @@ export const JobPostForm = ({
         description="Choose an AI provider to extract job details from the description and links."
         executeLabel="Extract"
         isLoading={extractJob.isPending}
-        onExecute={(provider, model) => handleExtract(provider, model)}
+        onExecute={handleExtract}
         onOpenChange={setAiDialogOpen}
         open={aiDialogOpen}
         title="Extract Job Details"

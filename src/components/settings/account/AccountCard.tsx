@@ -32,6 +32,14 @@ export const AccountCard = ({
     (authProvider) => authProvider.id === provider
   );
 
+  const handleLinkAccount = () => linkAccounts(provider);
+  const handleUnlinkAccount = () =>
+    unlinkAccount({
+      // biome-ignore lint/style/noNonNullAssertion: <used only when account is defined>
+      account: account!,
+      providerId: provider,
+    });
+
   if (!providerDetails) {
     return null;
   }
@@ -45,33 +53,18 @@ export const AccountCard = ({
             <CardHeader>
               <CardTitle className="text-xs">{providerDetails.name}</CardTitle>
               <CardDescription>
-                {account == null
-                  ? `Connect your ${providerDetails.name} account for easier sign-in`
-                  : `Linked on ${new Date(account.createdAt).toLocaleDateString()}`}
+                {account
+                  ? `Linked on ${new Date(account.createdAt).toLocaleDateString()}`
+                  : `Connect your ${providerDetails.name} account for easier sign-in`}
               </CardDescription>
             </CardHeader>
             <div>
               <p className="" />
             </div>
           </div>
-          {account == null ? (
+          {account ? (
             <AuthActionButton
-              action={async () => linkAccounts(provider)}
-              size="sm"
-              successMessage={`Redirecting to ${providerDetails.name}`}
-              variant="outline"
-            >
-              <PlusIcon />
-              Link
-            </AuthActionButton>
-          ) : (
-            <AuthActionButton
-              action={() =>
-                unlinkAccount({
-                  account,
-                  providerId: provider,
-                })
-              }
+              action={handleUnlinkAccount}
               disabled={disableUnlink}
               size="sm"
               successMessage={`Removed ${providerDetails.name} account`}
@@ -79,6 +72,16 @@ export const AccountCard = ({
             >
               <TrashIcon />
               Unlink
+            </AuthActionButton>
+          ) : (
+            <AuthActionButton
+              action={handleLinkAccount}
+              size="sm"
+              successMessage={`Redirecting to ${providerDetails.name}`}
+              variant="outline"
+            >
+              <PlusIcon />
+              Link
             </AuthActionButton>
           )}
         </div>

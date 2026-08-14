@@ -64,7 +64,7 @@ export const ResumeFormPanel = ({
           <div className="fixed right-6 bottom-6 z-50 flex gap-2 rounded-lg border bg-card p-2 shadow-lg">
             <Button
               disabled={!isDirty || isSaving}
-              onClick={() => onReset()}
+              onClick={onReset}
               type="button"
               variant="outline"
             >

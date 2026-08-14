@@ -48,9 +48,9 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
 
   const isSelf = user.id === session?.user.id;
 
-  function handleImpersonateUser(userId: string) {
+  const handleImpersonateUser = () => {
     authAdmin.impersonateUser(
-      { userId },
+      { userId: user.id },
       {
         onError: (error) => {
           toast.error(error.error.message || "Failed to impersonate");
@@ -61,7 +61,11 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
         },
       }
     );
-  }
+  };
+  const handleRevokeSession = () => revokeUserSession(user.id);
+  const handleUnban = () => unbanUser(user.id);
+  const handleBan = () => banUser(user.id);
+  const handleRemove = () => removeUser(user.id);
 
   return (
     <TableRow key={user.id}>
@@ -105,20 +109,18 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
                 }
               />
               <DropdownMenuContent>
-                <DropdownMenuItem
-                  onClick={() => handleImpersonateUser(user.id)}
-                >
+                <DropdownMenuItem onClick={handleImpersonateUser}>
                   Impersonate
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => revokeUserSession(user.id)}>
+                <DropdownMenuItem onClick={handleRevokeSession}>
                   Revoke Sessions
                 </DropdownMenuItem>
                 {user.banned ? (
-                  <DropdownMenuItem onClick={() => unbanUser(user.id)}>
+                  <DropdownMenuItem onClick={handleUnban}>
                     Unban User
                   </DropdownMenuItem>
                 ) : (
-                  <DropdownMenuItem onClick={() => banUser(user.id)}>
+                  <DropdownMenuItem onClick={handleBan}>
                     Ban User
                   </DropdownMenuItem>
                 )}
@@ -145,7 +147,7 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={() => removeUser(user.id)}
+                  onClick={handleRemove}
                 >
                   Delete
                 </AlertDialogAction>

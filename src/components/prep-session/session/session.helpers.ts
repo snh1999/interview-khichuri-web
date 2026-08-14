@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { BaseSyntheticEvent } from "react";
 import { type UseFormReturn, useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { generatePath, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import {
@@ -57,15 +57,16 @@ export const useCreateSessionForm = ({
   session,
   onSuccess,
 }: IProps): TFormHook<TCreateSessionFormData> => {
-  const navigateToPage = useNavigateToSessionPage();
+  const navigate = useNavigate();
+
   const createSession = useCreateSession();
   const updateSession = useUpdateSession();
 
   const form = useForm<TCreateSessionFormData>({
     defaultValues: {
       ...session,
-      title: session?.title ?? "",
-      description: session?.description ?? "",
+      title: session?.title || "",
+      description: session?.description || "",
     },
     resolver: zodResolver(createSessionSchema),
   });
@@ -93,7 +94,7 @@ export const useCreateSessionForm = ({
       }
 
       onSuccess?.();
-      navigateToPage(newSessionId);
+      navigate(generatePath(SESSION_DETAIL_PAGE, { sessionId: newSessionId }));
     } catch {
       toast.error("Failed to create session");
     }
@@ -102,9 +103,10 @@ export const useCreateSessionForm = ({
   return { form, isLoading: createSession.isPending, onSubmit };
 };
 
-export const useNavigateToSessionPage = () => {
+export const useNavigateToSessionPage = (id: string) => {
   const navigate = useNavigate();
-  return (id: string) => {
-    navigate(SESSION_DETAIL_PAGE.replace(":sessionId", id));
+
+  return () => {
+    navigate(generatePath(SESSION_DETAIL_PAGE, { sessionId: id }));
   };
 };

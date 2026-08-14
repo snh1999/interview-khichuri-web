@@ -28,17 +28,17 @@ export const SessionCard = ({
   const userAgentInfo = session.userAgent ? UAParser(session.userAgent) : null;
 
   function getBrowserInformation() {
-    if (userAgentInfo == null) {
+    if (!userAgentInfo) {
       return "Unknown Device";
     }
-    if (userAgentInfo.browser.name == null && userAgentInfo.os.name == null) {
+    if (!(userAgentInfo.browser.name || userAgentInfo.os.name)) {
       return "Unknown Device";
     }
 
-    if (userAgentInfo.browser.name == null) {
+    if (!userAgentInfo.browser.name) {
       return userAgentInfo.os.name;
     }
-    if (userAgentInfo.os.name == null) {
+    if (!userAgentInfo.os.name) {
       return userAgentInfo.browser.name;
     }
 
@@ -48,6 +48,8 @@ export const SessionCard = ({
   function formatDate(date: Date) {
     return `${format(date, "dd MMMM, yyyy")} (${format(date, "h:mm a")})`;
   }
+
+  const handleRevokeSession = () => revokeSession({ token: session.token });
 
   return (
     <Card size="sm">
@@ -65,7 +67,7 @@ export const SessionCard = ({
             <Badge>Current Session</Badge>
           ) : (
             <AuthActionButton
-              action={() => revokeSession({ token: session.token })}
+              action={handleRevokeSession}
               successMessage="Session revoked"
               variant="destructive"
             >

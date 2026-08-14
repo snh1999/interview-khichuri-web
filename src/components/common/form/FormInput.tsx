@@ -1,4 +1,4 @@
-import { Controller, type FieldValues } from "react-hook-form";
+import { type FieldValues, useController } from "react-hook-form";
 import type { IFormInputProps } from "@/components/common/form/form.types.ts";
 import {
   Field,
@@ -23,60 +23,59 @@ export const FormInput = <T extends FieldValues>({
   StartComponent,
   EndComponent,
   textArea,
-}: IFormInputProps<T>) => (
-  <Controller
-    control={form.control}
-    name={name}
-    render={({ field, fieldState }) => (
-      <Field data-invalid={fieldState.invalid}>
-        {label ? <FieldLabel htmlFor={field.name}>{label}</FieldLabel> : null}
-        <InputGroup>
-          {textArea ? (
-            <InputGroupTextarea
-              {...field}
-              aria-invalid={fieldState.invalid}
-              className="text-xs"
-              id={field.name}
-              placeholder={placeholder}
-              value={field.value ?? ""}
-            />
-          ) : (
-            <InputGroupInput
-              {...field}
-              aria-invalid={fieldState.invalid}
-              className="text-xs"
-              id={field.name}
-              placeholder={placeholder}
-              type={type}
-              value={field.value ?? ""}
-            />
-          )}
-          {StartComponent ? (
-            <InputGroupAddon
-              align="inline-start"
-              className="mx-1 text-muted-foreground/50"
-            >
-              {StartComponent}
-            </InputGroupAddon>
-          ) : null}
+}: IFormInputProps<T>) => {
+  const { field, fieldState } = useController({
+    control: form.control,
+    name,
+  });
 
-          {EndComponent ? (
-            <InputGroupAddon
-              align={textArea ? "block-end" : "inline-end"}
-              className="text-muted-foreground/50"
-            >
-              {EndComponent}
-            </InputGroupAddon>
-          ) : null}
-        </InputGroup>
-        {description ? (
-          <FieldDescription>{description}</FieldDescription>
+  return (
+    <Field data-invalid={fieldState.invalid}>
+      {label ? <FieldLabel htmlFor={field.name}>{label}</FieldLabel> : null}
+      <InputGroup>
+        {textArea ? (
+          <InputGroupTextarea
+            {...field}
+            aria-invalid={fieldState.invalid}
+            className="text-xs"
+            id={field.name}
+            placeholder={placeholder}
+            value={field.value ?? ""}
+          />
+        ) : (
+          <InputGroupInput
+            {...field}
+            aria-invalid={fieldState.invalid}
+            className="text-xs"
+            id={field.name}
+            placeholder={placeholder}
+            type={type}
+            value={field.value ?? ""}
+          />
+        )}
+        {StartComponent ? (
+          <InputGroupAddon
+            align="inline-start"
+            className="mx-1 text-muted-foreground/50"
+          >
+            {StartComponent}
+          </InputGroupAddon>
         ) : null}
 
-        {fieldState.invalid ? (
-          <FieldError className="text-[12px]" errors={[fieldState.error]} />
+        {EndComponent ? (
+          <InputGroupAddon
+            align={textArea ? "block-end" : "inline-end"}
+            className="text-muted-foreground/50"
+          >
+            {EndComponent}
+          </InputGroupAddon>
         ) : null}
-      </Field>
-    )}
-  />
-);
+      </InputGroup>
+      {description ? <FieldDescription>{description}</FieldDescription> : null}
+
+      {fieldState.invalid ? (
+        <FieldError className="text-[12px]" errors={[fieldState.error]} />
+      ) : null}
+    </Field>
+  );
+};
