@@ -26,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
+import { useResumeId } from "@/hooks/useId.ts";
 
 const ResumeEditorContent = () => {
   const { resumeId } = useParams<{ resumeId: string }>();
@@ -46,7 +47,7 @@ const ResumeEditorContent = () => {
   });
 
   const watchedData = form.watch();
-  const formDirty = form.formState.isDirty;
+  const formDirty = Object.keys(form.formState.dirtyFields).length > 0;
   const isSaving = updateResume.isPending;
   const isDirty = formDirty || name !== resume.name;
 
@@ -62,6 +63,7 @@ const ResumeEditorContent = () => {
         content: data,
         id: resumeId ?? "",
         name: trimmedName || undefined,
+        template: templateId,
       });
       form.reset(data, { keepValues: true });
       toast.success("Resume saved successfully");
@@ -145,8 +147,11 @@ const ResumeEditorContent = () => {
   );
 };
 
-export const ResumeEditorWithPreviewPage = () => (
-  <AppErrorSuspense>
-    <ResumeEditorContent />
-  </AppErrorSuspense>
-);
+export const ResumeEditorWithPreviewPage = () => {
+  const resumeId = useResumeId();
+  return (
+    <AppErrorSuspense>
+      <ResumeEditorContent key={resumeId} />
+    </AppErrorSuspense>
+  );
+};

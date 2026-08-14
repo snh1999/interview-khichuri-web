@@ -22,7 +22,7 @@ export const DEFAULT_SECTION_CONFIGS: ISectionConfig[] = [
   { id: "education", title: "Education", enabled: true },
   { id: "workExperience", title: "Experience", enabled: true },
   { id: "publications", title: "Academic Publications", enabled: true },
-  { id: "researchProjects", title: "Projects/Research", enabled: true },
+  { id: "projects", title: "Projects/Research", enabled: true },
   { id: "skills", title: "Skills", enabled: true },
   { id: "references", title: "References", enabled: true },
   { id: "activities", title: "Activities", enabled: true },

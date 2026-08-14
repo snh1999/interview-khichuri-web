@@ -2,13 +2,6 @@ import { format } from "date-fns";
 import { useMemo } from "react";
 import type { ILookupEntry } from "@/api/lookups";
 
-function formatMonthYear(date?: Date | null): string {
-  if (!date) {
-    return "";
-  }
-  return format(date, "MMMM, yyyy");
-}
-
 export const formatToString = (
   value: unknown,
   numberSuffix = ""
@@ -34,11 +27,22 @@ export const formatToString = (
   return String(value);
 };
 
-export function formatYear(date?: Date | null): string {
-  if (!(date instanceof Date)) {
-    return "";
+function toSafeDate(value?: Date | string | null): Date | undefined {
+  if (!value) {
+    return;
   }
-  return `${date.getFullYear()}`;
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
+function formatMonthYear(value?: Date | null): string {
+  const date = toSafeDate(value);
+  return date ? format(date, "MMMM, yyyy") : "";
+}
+
+export function formatYear(value?: Date | null): string {
+  const date = toSafeDate(value);
+  return date ? `${date.getFullYear()}` : "";
 }
 
 export function dateRange(

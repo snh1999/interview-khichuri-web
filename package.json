@@ -75,7 +75,6 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "preview": "vite preview",
     "check": "ultracite check",
-    "lint": "ultracite lint",
     "fix": "ultracite fix"
   },
   "type": "module",

@@ -16,7 +16,7 @@ export const ImpersonationIndicator = () => {
       },
     });
 
-  if (session?.session.impersonatedBy === null) {
+  if (session?.session?.impersonatedBy === null) {
     return null;
   }
 

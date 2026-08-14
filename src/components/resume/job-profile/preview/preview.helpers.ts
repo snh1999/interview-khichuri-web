@@ -13,6 +13,26 @@ export type TValue =
 
 export type TPick = "before" | "after";
 
+const numericArrayEqual = (b: number[], a: number[]): boolean => {
+  if (b.length !== a.length) {
+    return false;
+  }
+  const aIds = new Set(a);
+  return b.every((id) => aIds.has(id));
+};
+
+const rawEqual = (b: unknown, a: unknown): boolean => {
+  if (
+    Array.isArray(b) &&
+    Array.isArray(a) &&
+    b.every((entry) => typeof entry === "number") &&
+    a.every((entry) => typeof entry === "number")
+  ) {
+    return numericArrayEqual(b, a);
+  }
+  return formatToString(b) === formatToString(a);
+};
+
 export interface IRow {
   key: string;
   section: string;
@@ -151,7 +171,7 @@ const scalarRows = (
       label,
       before: b,
       after: a,
-      changed: b !== a,
+      changed: !rawEqual(before?.[field], after?.[field]),
     };
   });
 
@@ -175,7 +195,7 @@ const arrayRows = (
         label: `${label} #${index + 1}`,
         before: b,
         after: a,
-        changed: b !== a,
+        changed: !rawEqual(before?.[index]?.[field], after?.[index]?.[field]),
       });
     }
   }
@@ -335,7 +355,7 @@ export const buildMergedData = (
         ? readRaw(data, row.section, row.arrayIndex, row.field)
         : readRaw(before, row.section, row.arrayIndex, row.field);
 
-    if (pick === "before" || isValidValue(raw)) {
+    if (isValidValue(raw)) {
       setSectionField(result, row.section, row.arrayIndex, row.field, raw);
     }
   }

@@ -10,7 +10,7 @@ interface TScrollableTab<T extends string> {
 }
 
 interface Props<T extends string> {
-  tabs: TScrollableTab<T>[];
+  tabs: TScrollableTab<T>[] | readonly TScrollableTab<T>[];
   defaultTab: T;
   scrollTracking?: boolean;
   scrollOffset?: number;

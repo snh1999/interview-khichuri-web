@@ -12,6 +12,7 @@ import {
   referenceSchema,
   workExperienceSchema,
 } from "@/components/job-profile/profile.helpers.ts";
+import { stringToDate } from "@/lib/utils.ts";
 
 const dateOrNull = z.coerce.date().nullish();
 
@@ -63,7 +64,10 @@ export const EMPTY_FORM: TProfileFormData = {
   workExperience: [],
 };
 
-const pickDefined = <T extends object>(value: T): Partial<T> => {
+const pickDefined = <T extends object>(value?: T | null): Partial<T> => {
+  if (!value || typeof value !== "object") {
+    return {};
+  }
   const result: Partial<T> = {};
   for (const [key, entry] of Object.entries(value) as [keyof T, T[keyof T]][]) {
     if (
@@ -77,6 +81,25 @@ const pickDefined = <T extends object>(value: T): Partial<T> => {
   }
   return result;
 };
+
+interface TDateEntry {
+  startDate?: Date | string | null;
+  endDate?: Date | string | null;
+  isCurrent?: boolean;
+}
+
+const toDate = (value: Date | string | null | undefined): Date | undefined =>
+  value instanceof Date ? value : stringToDate(value);
+
+const normalizeEntries = <T extends TDateEntry>(
+  entries: readonly T[] | undefined
+): T[] =>
+  (entries ?? []).map((entry) => ({
+    ...entry,
+    endDate: toDate(entry.endDate),
+    isCurrent: entry.isCurrent ?? false,
+    startDate: toDate(entry.startDate),
+  }));
 
 export const mergeIntoFormData = (
   extraction?: TResumeContent | null,
@@ -94,12 +117,8 @@ export const mergeIntoFormData = (
           ...base.preferences,
           ...pickDefined(extraction.preferences),
         },
-        workExperience: extraction.workExperience.length
-          ? extraction.workExperience
-          : base.workExperience,
-        education: extraction.education.length
-          ? extraction.education
-          : base.education,
+        workExperience: normalizeEntries(extraction.workExperience),
+        education: normalizeEntries(extraction.education),
         links: extraction.links?.length ? extraction.links : base.links,
         publications: extraction.publications?.length
           ? extraction.publications
@@ -110,8 +129,6 @@ export const mergeIntoFormData = (
         references: extraction.references?.length
           ? extraction.references
           : base.references,
-        activities: extraction.activities?.length
-          ? extraction.activities
-          : base.activities,
+        activities: normalizeEntries(extraction.activities),
       } as TProfileFormData)
     : base;

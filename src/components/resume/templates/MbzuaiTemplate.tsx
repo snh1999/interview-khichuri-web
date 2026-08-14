@@ -487,7 +487,7 @@ export function MbzuaiTemplate({
           <Text style={styles.headerLine}>Email: {personal.email}</Text>
         ) : null}
         {links?.map((link) => (
-          <Text key={link.type} style={styles.headerLine}>
+          <Text key={`${link.url}`} style={styles.headerLine}>
             {LINK_LABELS[link.type] ?? "Link"}:{" "}
             <Link src={link.url}>{link.url}</Link>
           </Text>

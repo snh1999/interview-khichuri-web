@@ -50,7 +50,7 @@ export const AiDialog = ({
   const { data: apiKeys } = useApiKeys();
   const providers = [
     ...new Set(
-      apiKeys.filter((key) => key.isActive).map((key) => key.provider)
+      (apiKeys ?? []).filter((key) => key.isActive).map((key) => key.provider)
     ),
   ];
   const hasProviders = providers.length > 0;

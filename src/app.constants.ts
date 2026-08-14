@@ -14,7 +14,8 @@ export const JOB_DETAIL_PAGE = "/jobs/:jobId";
 
 export const SESSIONS_PAGE = "/sessions";
 export const SESSION_DETAIL_PAGE = "/sessions/:sessionId";
-
+export const RESUME_EDITOR_PAGE = "/resumes/:resumeId";
+export const PUBLIC_RESUME_PAGE = "/r/:slug";
 export const FORGOT_PASSWORD_EMAIL_CONTEXT = "forgotpass";
 export const VERIFY_EMAIL_CONTEXT = "verifyAccount";
 
