@@ -14,13 +14,19 @@ import {
   useUpdateWorkExperience,
   useUpdateWorkOverview,
 } from "@/api/profile";
-import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
+import type {
+  TProfileFormData,
+  TProfileFormSections,
+} from "@/components/job-profile/profile.helpers.ts";
 import {
   profileFormSchema,
   profileToFormData,
 } from "@/components/job-profile/profile.helpers.ts";
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
-import { stripNulls } from "@/lib/utils.ts";
+import { formatSectionLabel, stripNulls } from "@/lib/utils.ts";
+
+const formatSectionNames = (names: string[]) =>
+  names.map(formatSectionLabel).join(", ");
 
 export const getUseJobProfileForm = () => {
   const { data: profileData } = useProfile();
@@ -65,14 +71,17 @@ export const getUseJobProfileForm = () => {
 
     try {
       const mutations: {
+        name: TProfileFormSections;
         dirty: unknown;
         run: () => Promise<unknown>;
       }[] = [
         {
+          name: "personal",
           dirty: dirtyFields.personal,
           run: () => updateProfile.mutateAsync(data.personal),
         },
         {
+          name: "professional",
           dirty: dirtyFields.professional,
           run: async () => {
             const { industriesNames, skillNames, ...overviewFields } =
@@ -93,6 +102,7 @@ export const getUseJobProfileForm = () => {
           },
         },
         {
+          name: "workExperience",
           dirty: dirtyFields.workExperience,
           run: () =>
             updateWorkExperience.mutateAsync({
@@ -100,43 +110,71 @@ export const getUseJobProfileForm = () => {
             }),
         },
         {
+          name: "education",
           dirty: dirtyFields.education,
           run: () => updateEducation.mutateAsync({ education: data.education }),
         },
         {
+          name: "preferences",
           dirty: dirtyFields.preferences,
           run: () => updatePreferences.mutateAsync(data.preferences),
         },
         {
+          name: "links",
           dirty: dirtyFields.links,
           run: () => updateLinks.mutateAsync({ links: data.links }),
         },
         {
+          name: "publications",
           dirty: dirtyFields.publications,
           run: () =>
             updatePublications.mutateAsync({ publications: data.publications }),
         },
         {
+          name: "projects",
           dirty: dirtyFields.projects,
           run: () => updateProjects.mutateAsync({ projects: data.projects }),
         },
         {
+          name: "references",
           dirty: dirtyFields.references,
           run: () =>
             updateReferences.mutateAsync({ references: data.references }),
         },
         {
+          name: "activities",
           dirty: dirtyFields.activities,
           run: () =>
             updateActivities.mutateAsync({ activities: data.activities }),
         },
       ];
 
-      await Promise.all(
-        mutations.filter(({ dirty }) => dirty).map(({ run }) => run())
-      );
-      reset(rawData, { keepDirty: false });
-      toast.success("Profile saved successfully");
+      const toRun = mutations.filter(({ dirty }) => dirty);
+      const results = await Promise.allSettled(toRun.map(({ run }) => run()));
+
+      const succeeded: TProfileFormSections[] = [];
+      const failed: string[] = [];
+      for (const [i, result] of results.entries()) {
+        (result.status === "fulfilled" ? succeeded : failed).push(
+          toRun[i].name
+        );
+      }
+
+      for (const name of succeeded) {
+        form.resetField(name, {
+          defaultValue: rawData[name as keyof TProfileFormData],
+        });
+      }
+
+      if (failed.length === 0) {
+        toast.success("Profile saved successfully");
+      } else if (succeeded.length === 0) {
+        toast.error(`Failed to save: ${formatSectionNames(failed)}`);
+      } else {
+        toast.warning(
+          `Saved: ${formatSectionNames(succeeded)}. Failed: ${formatSectionNames(failed)}`
+        );
+      }
     } catch {
       toast.error("Failed to save profile");
     }

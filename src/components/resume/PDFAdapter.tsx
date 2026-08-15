@@ -216,15 +216,31 @@ export function Page({ style, children, ...rest }: PageProps) {
       return;
     }
     const el = contentRef.current;
+    let rafId: number | null = null;
     const measure = () => {
       const paddingTotalPx = paddingPx * 2;
       const rawContentPx = Math.max(0, el.scrollHeight - paddingTotalPx);
-      setPageCount(Math.max(1, Math.ceil(rawContentPx / usableHeightPx)));
+      const next = Math.max(1, Math.ceil(rawContentPx / usableHeightPx));
+      setPageCount((prev) => (prev === next ? prev : next));
+    };
+    const onResize = () => {
+      if (rafId !== null) {
+        return;
+      }
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        measure();
+      });
     };
     measure();
-    const ro = new ResizeObserver(measure);
+    const ro = new ResizeObserver(onResize);
     ro.observe(el);
-    return () => ro.disconnect();
+    return () => {
+      ro.disconnect();
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+    };
   }, [mode, paddingPx, usableHeightPx]);
 
   if (mode === "pdf") {

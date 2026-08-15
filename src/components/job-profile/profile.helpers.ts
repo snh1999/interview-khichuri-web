@@ -183,6 +183,7 @@ export const profileFormSchema = z.object({
 });
 
 export type TProfileFormData = z.infer<typeof profileFormSchema>;
+export type TProfileFormSections = keyof TProfileFormData;
 
 export const profileToFormData = (
   profile: TProfilePopulated

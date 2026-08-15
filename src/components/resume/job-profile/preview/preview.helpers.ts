@@ -325,6 +325,16 @@ const setSectionField = (
   }
 };
 
+const SECTIONS_WITH_ARRAY = [
+  "workExperience",
+  "education",
+  "links",
+  "publications",
+  "projects",
+  "references",
+  "activities",
+] as const;
+
 export const buildMergedData = (
   rows: IRow[],
   selections: Record<string, TPick>,
@@ -357,6 +367,15 @@ export const buildMergedData = (
 
     if (isValidValue(raw)) {
       setSectionField(result, row.section, row.arrayIndex, row.field, raw);
+    }
+  }
+
+  for (const section of SECTIONS_WITH_ARRAY) {
+    const value = result[section];
+    if (Array.isArray(value)) {
+      (result as Record<string, unknown>)[section] = value.filter(
+        (entry) => entry !== undefined && entry !== null
+      );
     }
   }
 

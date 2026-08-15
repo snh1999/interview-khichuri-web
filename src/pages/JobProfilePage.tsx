@@ -1,4 +1,5 @@
 import { WarningCircleIcon } from "@phosphor-icons/react";
+import { useMemo } from "react";
 import { FormProvider } from "react-hook-form";
 import { ProfileCompletionBanner } from "@/components/job-profile/ProfileCompletionBanner.tsx";
 import {
@@ -46,24 +47,32 @@ const countFilled = (data: TProfileFormData, tab: TTabKey) =>
     .length;
 
 const ProfilePage = () => {
-  const { data, form, isSaving, onSubmit } = getUseJobProfileForm();
+  const { form, isSaving, onSubmit } = getUseJobProfileForm();
+  const liveData = form.watch() as TProfileFormData;
 
-  const tabs = TABS.map((tab) => {
-    const filled = countFilled(data, tab.key);
-    const hasMissing =
-      filled < tab.requiredFieldCount && tab.requiredFieldCount > 0;
-    return {
-      key: tab.key,
-      label: tab.label,
-      indicator: hasMissing ? (
-        <WarningCircleIcon className="size-3 text-destructive" weight="fill" />
-      ) : null,
-    };
-  });
+  const tabs = useMemo(
+    () =>
+      TABS.map((tab) => {
+        const filled = countFilled(liveData, tab.key);
+        const hasMissing =
+          filled < tab.requiredFieldCount && tab.requiredFieldCount > 0;
+        return {
+          key: tab.key,
+          label: tab.label,
+          indicator: hasMissing ? (
+            <WarningCircleIcon
+              className="size-3 text-destructive"
+              weight="fill"
+            />
+          ) : null,
+        };
+      }),
+    [liveData]
+  );
 
   return (
     <div className="w-full">
-      <ProfileCompletionBanner data={data} />
+      <ProfileCompletionBanner data={liveData} />
 
       <ScrollableTabs defaultTab="personal" scrollTracking tabs={tabs} />
 

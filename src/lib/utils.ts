@@ -68,3 +68,11 @@ export const stripNulls = (value: unknown): unknown => {
   }
   return value;
 };
+
+const CAMEL_CASE_SEPARATOR = /([a-z])([A-Z])/g;
+const FIRST_CHAR = /^./;
+
+export const formatSectionLabel = (key: string): string =>
+  key
+    .replace(CAMEL_CASE_SEPARATOR, "$1 $2")
+    .replace(FIRST_CHAR, (char) => char.toUpperCase());
