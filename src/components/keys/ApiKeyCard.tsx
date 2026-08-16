@@ -10,6 +10,7 @@ import {
   useDeleteApiKey,
   useUpdateApiKey,
 } from "@/api/keys";
+import { MAX_SHORT_LENGTH } from "@/app.constants.ts";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
@@ -36,8 +37,8 @@ interface Props {
 }
 
 const editSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  model: z.string().optional(),
+  model: z.string().max(MAX_SHORT_LENGTH).nullish(),
+  name: z.string().min(1, "Name is required").max(MAX_SHORT_LENGTH),
 });
 
 type EditFormData = z.infer<typeof editSchema>;
@@ -50,22 +51,26 @@ export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
   const isActive = apiKey.isActive === true;
 
   const form = useForm<EditFormData>({
-    resolver: zodResolver(editSchema),
     defaultValues: {
-      name: apiKey.name,
       model: apiKey.model ?? "",
+      name: apiKey.name,
     },
+    resolver: zodResolver(editSchema),
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
     await updateKey({
       id: apiKey.id,
-      name: data.name,
       model: data.model || null,
+      name: data.name,
     });
     toast.success("API key updated");
     setEditOpen(false);
   });
+
+  const handleActivateClick = () => activateKey(apiKey.id);
+  const handleDelete = () => deleteKey(apiKey.id);
+  const handleReset = () => form.reset();
 
   return (
     <Card className="px-3" size="sm">
@@ -90,7 +95,7 @@ export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
           ) : (
             <Button
               disabled={isActive}
-              onClick={() => activateKey(apiKey.id)}
+              onClick={handleActivateClick}
               size="sm"
               variant="secondary"
             >
@@ -120,7 +125,7 @@ export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
                 />
                 <div className="flex items-center justify-end gap-2">
                   <DialogClose
-                    onClick={() => form.reset()}
+                    onClick={handleReset}
                     render={<Button variant="outline">Cancel</Button>}
                   />
                   <AsyncButton type="submit">Save</AsyncButton>
@@ -131,7 +136,7 @@ export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
 
           <MutationButton
             dialogDescription="This will permanently delete this API key."
-            mutationFn={() => deleteKey(apiKey.id)}
+            mutationFn={handleDelete}
             requireConfirmation
             size="sm"
             successMessage="API key deleted"

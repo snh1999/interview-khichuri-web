@@ -58,27 +58,48 @@ export const apiClient = new QueryClient({
 });
 
 export const queryKeys = {
-  auth: {
-    accounts: ["account"] as const,
-    session: ["session"] as const,
-    passkey: ["passkey"] as const,
-  },
   admin: {
     all: ["admin"] as const,
-    users: (options?: Record<string, unknown>) =>
-      [...queryKeys.admin.all, "users", options] as const,
-    sessions: (options?: Record<string, unknown>) =>
-      [...queryKeys.admin.all, "sessions", options] as const,
-    get permissions() {
-      return [...queryKeys.admin.all, "permissions"] as const;
-    },
     permission: (options: TPermissionOptions) => [
       ...queryKeys.admin.permissions,
       options,
     ],
+    get permissions() {
+      return [...queryKeys.admin.all, "permissions"] as const;
+    },
+    sessions: (options?: Record<string, unknown>) =>
+      [...queryKeys.admin.all, "sessions", options] as const,
+    users: (options?: Record<string, unknown>) =>
+      [...queryKeys.admin.all, "users", options] as const,
+  },
+  auth: {
+    accounts: ["account"] as const,
+    passkey: ["passkey"] as const,
+    session: ["session"] as const,
+  },
+  jobs: {
+    all: ["jobs"] as const,
+    detail: (id: string) => [...queryKeys.jobs.all, "detail", id] as const,
+    list: (filters?: Record<string, unknown>) =>
+      [...queryKeys.jobs.all, "list", filters] as const,
+  },
+  keys: {
+    all: ["keys"] as const,
+    list: (filters?: Record<string, unknown>) =>
+      [...queryKeys.keys.all, "list", filters] as const,
+  },
+  lookups: {
+    categories: ["lookups", "categories"] as const,
+    industries: ["lookups", "industries"] as const,
+    roles: ["lookups", "roles"] as const,
+    topics: ["lookups", "topics"] as const,
   },
   profile: {
     all: ["profile"] as const,
+    resumeById: (id: string) =>
+      [...queryKeys.profile.resumes, "detail", id] as const,
+    resumeBySlug: (slug: string) =>
+      [...queryKeys.profile.resumes, "public", slug] as const,
     get resumes() {
       return [...queryKeys.profile.all, "resumes"] as const;
     },
@@ -86,27 +107,12 @@ export const queryKeys = {
     resumeView: (id: string) =>
       [...queryKeys.profile.resumes, "resumeView", id] as const,
   },
-  lookups: {
-    roles: ["lookups", "roles"] as const,
-    topics: ["lookups", "topics"] as const,
-    industries: ["lookups", "industries"] as const,
-  },
-  jobs: {
-    all: ["jobs"] as const,
-    list: (filters?: Record<string, unknown>) =>
-      [...queryKeys.jobs.all, "list", filters] as const,
-    detail: (id: string) => [...queryKeys.jobs.all, "detail", id] as const,
-  },
-  keys: {
-    all: ["keys"] as const,
-    list: (filters?: Record<string, unknown>) =>
-      [...queryKeys.keys.all, "list", filters] as const,
-  },
+
+
   sessions: {
     all: ["sessions"] as const,
     list: (filters?: Record<string, unknown>) =>
       [...queryKeys.sessions.all, "list", filters] as const,
     detail: (id: string) => [...queryKeys.sessions.all, "detail", id] as const,
   },
-
 } as const;

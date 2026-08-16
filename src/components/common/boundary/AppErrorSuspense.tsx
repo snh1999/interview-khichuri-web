@@ -28,13 +28,14 @@ export const AppErrorSuspense = ({
   errorFallback: ErrorFallbackComponent,
 }: Readonly<IProps>) => {
   const queryClient = useQueryClient();
+  const resetQuery = () => queryClient.resetQueries();
   return (
     <ErrorBoundary
       FallbackComponent={
         ErrorFallbackComponent ??
         (errorPage ? ErrorFallbackPage : ErrorFallbackCard)
       }
-      onReset={() => queryClient.resetQueries()}
+      onReset={resetQuery}
     >
       <Suspense fallback={<Fallback />}>{children}</Suspense>
     </ErrorBoundary>
@@ -46,6 +47,7 @@ const ErrorFallbackCard = ({
   resetErrorBoundary,
 }: Readonly<FallbackProps>) => {
   const navigate = useNavigate();
+  const refreshPage = () => navigate(0);
   return (
     <Card className="border border-destructive">
       <CardHeader>
@@ -57,7 +59,7 @@ const ErrorFallbackCard = ({
           Retry
         </Button>
 
-        <Button onClick={() => navigate(0)}>Refresh</Button>
+        <Button onClick={refreshPage}>Refresh</Button>
       </CardContent>
     </Card>
   );
@@ -68,6 +70,8 @@ const ErrorFallbackPage = ({
   resetErrorBoundary,
 }: Readonly<FallbackProps>) => {
   const navigate = useNavigate();
+  const refreshPage = () => navigate(0);
+
   return (
     <EmptyPage description={getErrorMessage(error)}>
       <div className="flex justify-between gap-5">
@@ -75,7 +79,7 @@ const ErrorFallbackPage = ({
           Retry
         </Button>
 
-        <Button onClick={() => navigate(0)}>Refresh</Button>
+        <Button onClick={refreshPage}>Refresh</Button>
       </div>
     </EmptyPage>
   );

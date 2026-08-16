@@ -18,7 +18,7 @@ export const TwoFactorAuth = () => {
   const { twoFactorData, clearTwoFactorData, onSubmit, form, isLoading } =
     useTwoFactorAuthForm(isEnabled);
 
-  if (twoFactorData != null) {
+  if (twoFactorData) {
     return <QRCodeVerify {...twoFactorData} clearCodes={clearTwoFactorData} />;
   }
 

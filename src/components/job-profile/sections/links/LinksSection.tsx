@@ -1,4 +1,5 @@
 import { PlusIcon, TrashIcon } from "@phosphor-icons/react";
+import { memo } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
@@ -17,15 +18,15 @@ interface IProps {
 }
 
 const LINK_TYPES = [
-  { value: "github", label: "GitHub" },
-  { value: "gitlab", label: "GitLab" },
-  { value: "linkedin", label: "LinkedIn" },
-  { value: "portfolio", label: "Portfolio" },
-  { value: "blog", label: "Blog" },
-  { value: "other", label: "Other" },
+  { label: "GitHub", value: "github" },
+  { label: "GitLab", value: "gitlab" },
+  { label: "LinkedIn", value: "linkedin" },
+  { label: "Portfolio", value: "portfolio" },
+  { label: "Blog", value: "blog" },
+  { label: "Other", value: "other" },
 ] as const;
 
-export const LinksSection = ({ sectionId }: Readonly<IProps>) => {
+export const LinksSection = memo(({ sectionId }: Readonly<IProps>) => {
   const form = useFormContext<TProfileFormData>();
 
   const {
@@ -34,6 +35,8 @@ export const LinksSection = ({ sectionId }: Readonly<IProps>) => {
     remove: removeLink,
   } = useFieldArray({ control: form.control, name: "links" });
 
+  const onAppend = () => appendLink({ type: "other", url: "" });
+
   return (
     <Card className="px-1" id={sectionId}>
       <CardHeader>
@@ -41,14 +44,14 @@ export const LinksSection = ({ sectionId }: Readonly<IProps>) => {
         <CardAction className="pt-2 pr-1">
           <Button
             className="rounded-full bg-primary/50"
-            onClick={() => appendLink({ type: "other", url: "" })}
+            onClick={onAppend}
             size="icon-sm"
           >
             <PlusIcon weight="bold" />
           </Button>
         </CardAction>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         {linkFields.map((field, index) => (
           <div className="flex items-center gap-2" key={field.id}>
             <FormSelect
@@ -61,6 +64,7 @@ export const LinksSection = ({ sectionId }: Readonly<IProps>) => {
             <FormInput form={form} label="Url" name={`links.${index}.url`} />
             <Button
               className="mt-6"
+              // biome-ignore lint/performance/noJsxPropsBind: <>
               onClick={() => removeLink(index)}
               variant="destructive"
             >
@@ -76,4 +80,4 @@ export const LinksSection = ({ sectionId }: Readonly<IProps>) => {
       </CardContent>
     </Card>
   );
-};
+});

@@ -42,6 +42,9 @@ const SessionsContent = () => {
   const { jobFilter } = useJobFilter();
   const { selectedTopicIds } = useTopicFilter();
 
+  const openDialog = () => setDialogOpen(true);
+  const closeDialog = () => setDialogOpen(false);
+
   const roleName = (roleId?: number | null) => rolesMap.get(roleId ?? 0)?.name;
 
   const filteredSessions = useMemo(
@@ -73,7 +76,7 @@ const SessionsContent = () => {
           <ViewToggle />
           <JobFilter />
           <TopicFilter />
-          <Button onClick={() => setDialogOpen(true)} variant="outline">
+          <Button onClick={openDialog} variant="outline">
             <PlusCircleIcon className="size-3" weight="bold" />
             New Session
           </Button>
@@ -116,7 +119,7 @@ const SessionsContent = () => {
 
       <PrepSessionForm
         onOpenChange={setDialogOpen}
-        onSuccess={() => setDialogOpen(false)}
+        onSuccess={closeDialog}
         open={dialogOpen}
       />
     </div>

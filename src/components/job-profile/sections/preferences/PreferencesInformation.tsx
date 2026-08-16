@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useFormContext } from "react-hook-form";
 import { useRoles } from "@/api/lookups";
 import { FormCombobox } from "@/components/common/form/combobox/FormCombobox.tsx";
@@ -22,75 +23,77 @@ interface IProps {
   sectionId: string;
 }
 
-export const PreferencesInformation = ({ sectionId }: Readonly<IProps>) => {
-  const form = useFormContext<TProfileFormData>();
+export const PreferencesInformation = memo(
+  ({ sectionId }: Readonly<IProps>) => {
+    const form = useFormContext<TProfileFormData>();
 
-  const { data: roles } = useRoles();
+    const { data: roles } = useRoles();
 
-  return (
-    <Card className="px-1" id={sectionId}>
-      <CardHeader className="border-b">
-        <CardTitle>Job Preferences</CardTitle>
-        <CardDescription>
-          Your career preferences and salary expectations.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <FormCombobox
-          data={roles}
-          form={form}
-          label="Role Preferences"
-          multiple
-          name="preferences.titles"
-          placeholder="Choose your desired roles"
-          toOption={lookupToComboboxMap}
-        />
-
-        <div className="grid grid-cols-3 gap-3">
-          <FormSelect
+    return (
+      <Card className="px-1" id={sectionId}>
+        <CardHeader className="border-b">
+          <CardTitle>Job Preferences</CardTitle>
+          <CardDescription>
+            Your career preferences and salary expectations.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 gap-4">
+          <FormCombobox
+            data={roles}
             form={form}
-            label="Job Type"
-            name="preferences.workType"
-            selectData={REMOTE_PREFERENCES}
+            label="Role Preferences"
+            multiple
+            name="preferences.titles"
+            placeholder="Choose your desired roles"
+            toOption={lookupToComboboxMap}
           />
 
-          <FormInput
-            form={form}
-            label="Location Preference"
-            name="preferences.preferredLocation"
-          />
+          <div className="grid grid-cols-3 gap-3">
+            <FormSelect
+              form={form}
+              label="Job Type"
+              name="preferences.workType"
+              selectData={REMOTE_PREFERENCES}
+            />
 
-          <FormSelect
-            form={form}
-            label="Cover Letter Tone"
-            name="preferences.coverLetterTone"
-            selectData={COVER_LETTER_TONES}
-          />
+            <FormInput
+              form={form}
+              label="Location Preference"
+              name="preferences.preferredLocation"
+            />
 
-          <FormInput
-            description="Used to filter jobs"
-            form={form}
-            label="Minimum Salary"
-            name="preferences.salaryLower"
-            type="number"
-          />
+            <FormSelect
+              form={form}
+              label="Cover Letter Tone"
+              name="preferences.coverLetterTone"
+              selectData={COVER_LETTER_TONES}
+            />
 
-          <FormInput
-            description="Used for application"
-            form={form}
-            label="Expected Salary"
-            name="preferences.salaryExpected"
-            type="number"
-          />
+            <FormInput
+              description="Used to filter jobs"
+              form={form}
+              label="Minimum Salary"
+              name="preferences.salaryLower"
+              type="number"
+            />
 
-          <FormSelect
-            form={form}
-            label="Currency"
-            name="preferences.currency"
-            selectData={CURRENCIES}
-          />
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+            <FormInput
+              description="Used for application"
+              form={form}
+              label="Expected Salary"
+              name="preferences.salaryExpected"
+              type="number"
+            />
+
+            <FormSelect
+              form={form}
+              label="Currency"
+              name="preferences.currency"
+              selectData={CURRENCIES}
+            />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+);

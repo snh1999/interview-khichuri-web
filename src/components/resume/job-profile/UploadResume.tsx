@@ -1,9 +1,11 @@
+import type { BaseUIEvent } from "@base-ui/react";
 import {
   CloudArrowUpIcon,
   FilePdfIcon,
   SpinnerIcon,
   WarningIcon,
 } from "@phosphor-icons/react";
+import type React from "react";
 import {
   type ChangeEvent,
   type DragEvent,
@@ -20,11 +22,28 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB - move to app.constants.ts ideally
+
 interface IProps {
   count: number;
   isUploading: boolean;
   onUpload: (file: File, name?: string) => void;
 }
+
+const validateFile = (file: File | undefined): file is File => {
+  if (!file) {
+    return false;
+  }
+  if (file.type !== "application/pdf") {
+    toast.error("Invalid file type, only PDF files are allowed!");
+    return false;
+  }
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    toast.error("File too large, maximum 5MB allowed!");
+    return false;
+  }
+  return true;
+};
 
 export const UploadResume = ({
   count,
@@ -36,9 +55,10 @@ export const UploadResume = ({
 
   const [isDragOver, setIsDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const wasUploadingRef = useRef(false);
+  const wasUploadingRef = useRef<boolean>(false);
 
   useEffect(() => {
+    // biome-ignore lint/suspicious/noUnnecessaryConditions: <>
     if (wasUploadingRef.current && !isUploading) {
       setSelectedFile(null);
       setName("");
@@ -48,20 +68,18 @@ export const UploadResume = ({
 
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type === "application/pdf") {
+    if (validateFile(file)) {
       setSelectedFile(file);
-      e.target.value = "";
     }
+    e.target.value = "";
   }, []);
 
   const handleDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragOver(false);
     const file = e.dataTransfer.files?.[0];
-    if (file && file.type === "application/pdf") {
+    if (validateFile(file)) {
       setSelectedFile(file);
-    } else {
-      toast.error("Invalid file type, only PDF files are allowed!");
     }
   }, []);
 
@@ -82,6 +100,28 @@ export const UploadResume = ({
 
   const hasQuota = count < MAX_RESUMES;
 
+  const handleFileSelection = (
+    e: BaseUIEvent<React.MouseEvent<HTMLButtonElement, MouseEvent>>
+  ) => {
+    e.stopPropagation();
+    inputRef.current?.click();
+  };
+
+  const handleFileChange = () => {
+    setSelectedFile(null);
+    setName("");
+  };
+
+  const handleFileRename = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setName(e.target.value);
+
+  const handleCardClick = () => inputRef.current?.click();
+  const handleCardKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      inputRef.current?.click();
+    }
+  };
+
   return (
     <>
       <Input
@@ -98,10 +138,7 @@ export const UploadResume = ({
             <span className="flex-1 truncate">{selectedFile.name}</span>
             <Button
               disabled={isUploading}
-              onClick={() => {
-                setSelectedFile(null);
-                setName("");
-              }}
+              onClick={handleFileChange}
               size="sm"
               variant="outline"
             >
@@ -113,7 +150,7 @@ export const UploadResume = ({
               <Label>File name (optional)</Label>
               <Input
                 disabled={isUploading}
-                onChange={(e) => setName(e.target.value)}
+                onChange={handleFileRename}
                 placeholder="Renamed file"
                 value={name}
               />
@@ -126,18 +163,16 @@ export const UploadResume = ({
         </Card>
       ) : (
         <Card
+          aria-label="Upload resume, click or drag and drop"
           className={`flex flex-col items-center gap-3 rounded-lg border-2 border-muted-foreground/25 border-dashed p-8 transition-colors ${
             isDragOver ? "border-primary bg-primary/5" : ""
           }`}
-          onClick={() => inputRef.current?.click()}
+          onClick={handleCardClick}
           onDragLeave={handleDragLeave}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              inputRef.current?.click();
-            }
-          }}
+          onKeyDown={handleCardKeyDown}
+          role="button"
           tabIndex={0}
         >
           {isUploading ? (
@@ -157,10 +192,7 @@ export const UploadResume = ({
           </div>
           <Button
             disabled={isUploading}
-            onClick={(e) => {
-              e.stopPropagation();
-              inputRef.current?.click();
-            }}
+            onClick={handleFileSelection}
             variant="outline"
           >
             Select From files

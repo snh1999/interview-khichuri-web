@@ -1,8 +1,5 @@
-import {
-  BackspaceIcon,
-  FloppyDiskBackIcon,
-  WarningCircleIcon,
-} from "@phosphor-icons/react";
+import { WarningCircleIcon } from "@phosphor-icons/react";
+import { useMemo } from "react";
 import { FormProvider } from "react-hook-form";
 import { ProfileCompletionBanner } from "@/components/job-profile/ProfileCompletionBanner.tsx";
 import {
@@ -11,15 +8,18 @@ import {
 } from "@/components/job-profile/profile.data.ts";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import { getUseJobProfileForm } from "@/components/job-profile/profile.hooks.ts";
+import { SaveBar } from "@/components/job-profile/SaveBar.tsx";
+import { ActivitiesSection } from "@/components/job-profile/sections/activities/ActivitiesSection.tsx";
 import { EducationInformation } from "@/components/job-profile/sections/education/EducationInformation.tsx";
 import { WorkExperience } from "@/components/job-profile/sections/experience/WorkExperience.tsx";
 import { LinksSection } from "@/components/job-profile/sections/links/LinksSection.tsx";
 import { PersonalInformation } from "@/components/job-profile/sections/personal/PersonalInformation.tsx";
 import { PreferencesInformation } from "@/components/job-profile/sections/preferences/PreferencesInformation.tsx";
 import { ProfessionalInformation } from "@/components/job-profile/sections/professional/ProfessionalInformation.tsx";
-import { ResumeCard } from "@/components/job-profile/sections/ResumeCard.tsx";
-import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
-import { Button } from "@/components/ui/button.tsx";
+import { ProjectsSection } from "@/components/job-profile/sections/projects/ProjectsSection.tsx";
+import { PublicationsSection } from "@/components/job-profile/sections/publications/PublicationsSection.tsx";
+import { ReferencesSection } from "@/components/job-profile/sections/references/ReferencesSection.tsx";
+import { ResumeCard } from "@/components/resume/job-profile/ResumeCard.tsx";
 import { ScrollableTabs } from "@/components/ui/custom/ScrollableTab.tsx";
 
 const TABS: { key: TTabKey; label: string; requiredFieldCount: number }[] = [
@@ -29,6 +29,10 @@ const TABS: { key: TTabKey; label: string; requiredFieldCount: number }[] = [
   "education",
   "preferences",
   "links",
+  "publications",
+  "projects",
+  "references",
+  "activities",
 ].map((key) => ({
   key: key as TTabKey,
   label: key.charAt(0).toUpperCase() + key.slice(1),
@@ -43,45 +47,38 @@ const countFilled = (data: TProfileFormData, tab: TTabKey) =>
     .length;
 
 const ProfilePage = () => {
-  const { data, form, isDirty, isSaving, reset, onSubmit } =
-    getUseJobProfileForm();
+  const { form, isSaving, onSubmit } = getUseJobProfileForm();
+  const liveData = form.watch() as TProfileFormData;
 
-  const tabs = TABS.map((tab) => {
-    const filled = countFilled(data, tab.key);
-    const hasMissing =
-      filled < tab.requiredFieldCount && tab.requiredFieldCount > 0;
-    return {
-      key: tab.key,
-      label: tab.label,
-      indicator: hasMissing ? (
-        <WarningCircleIcon className="size-3 text-destructive" weight="fill" />
-      ) : null,
-    };
-  });
+  const tabs = useMemo(
+    () =>
+      TABS.map((tab) => {
+        const filled = countFilled(liveData, tab.key);
+        const hasMissing =
+          filled < tab.requiredFieldCount && tab.requiredFieldCount > 0;
+        return {
+          key: tab.key,
+          label: tab.label,
+          indicator: hasMissing ? (
+            <WarningCircleIcon
+              className="size-3 text-destructive"
+              weight="fill"
+            />
+          ) : null,
+        };
+      }),
+    [liveData]
+  );
 
   return (
     <div className="w-full">
-      <ProfileCompletionBanner data={data} />
+      <ProfileCompletionBanner data={liveData} />
 
       <ScrollableTabs defaultTab="personal" scrollTracking tabs={tabs} />
 
       <FormProvider {...form}>
         <form onSubmit={onSubmit}>
-          {isDirty ? (
-            <div className="fixed right-6 bottom-6 z-50 flex gap-2 rounded-lg border bg-card p-2 shadow-lg">
-              <Button
-                disabled={!isDirty || isSaving}
-                onClick={() => reset()}
-                type="button"
-                variant="outline"
-              >
-                <BackspaceIcon />
-              </Button>
-              <AsyncButton isLoading={isSaving} type="submit">
-                <FloppyDiskBackIcon /> Save
-              </AsyncButton>
-            </div>
-          ) : null}
+          <SaveBar isSaving={isSaving} />
           <div className="flex flex-col gap-4 py-5">
             <ResumeCard />
             <PersonalInformation sectionId={getSectionId("personal")} />
@@ -90,6 +87,10 @@ const ProfilePage = () => {
             <EducationInformation sectionId={getSectionId("education")} />
             <PreferencesInformation sectionId={getSectionId("preferences")} />
             <LinksSection sectionId={getSectionId("links")} />
+            <PublicationsSection sectionId={getSectionId("publications")} />
+            <ProjectsSection sectionId={getSectionId("projects")} />
+            <ReferencesSection sectionId={getSectionId("references")} />
+            <ActivitiesSection sectionId={getSectionId("activities")} />
           </div>
         </form>
       </FormProvider>

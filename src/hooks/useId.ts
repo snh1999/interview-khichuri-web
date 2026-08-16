@@ -20,3 +20,8 @@ export function useSessionId(): string {
   const { sessionId } = useParams();
   return parseUUID(sessionId);
 }
+
+export function useResumeId(): string {
+  const { resumeId } = useParams();
+  return parseUUID(resumeId);
+}

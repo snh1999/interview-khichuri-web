@@ -32,7 +32,7 @@ export const ProfileDangerZone = () => (
     </CardContent>
     <CardFooter>
       <AuthActionButton
-        action={() => deleteUser()}
+        action={deleteUser}
         requireConfirmation
         successMessage="Account deletion initiated. Please check your email to confirm."
         variant="destructive"

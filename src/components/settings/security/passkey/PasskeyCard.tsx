@@ -47,6 +47,13 @@ export const PasskeyCard = () => {
     });
   });
 
+  const handleDialogOpen = (open: boolean) => {
+    if (open) {
+      form.reset();
+    }
+    setIsDialogOpen(open);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -57,15 +64,7 @@ export const PasskeyCard = () => {
           <PasskeyItems />
         </Suspense>
 
-        <Dialog
-          onOpenChange={(open) => {
-            if (open) {
-              form.reset();
-            }
-            setIsDialogOpen(open);
-          }}
-          open={isDialogOpen}
-        >
+        <Dialog onOpenChange={handleDialogOpen} open={isDialogOpen}>
           <DialogTrigger
             render={<Button className="mt-4">New Passkey</Button>}
           />

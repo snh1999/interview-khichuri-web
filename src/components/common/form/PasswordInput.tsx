@@ -16,16 +16,15 @@ export const PasswordInput = <T extends FieldValues>({
   > & { showStrength?: boolean }
 >) => {
   const [showPassword, setShowPassword] = useState(false);
-  const password = showStrength
-    ? ((props.form.watch(props.name) as string) ?? "")
-    : "";
+  const password = showStrength ? (props.form.watch(props.name) ?? "") : "";
+  const toggleShowPassword = () => setShowPassword(!showPassword);
 
   return (
     <div>
       <FormInput
         {...props}
         EndComponent={
-          <InputGroupButton onClick={() => setShowPassword(!showPassword)}>
+          <InputGroupButton onClick={toggleShowPassword}>
             {showPassword ? (
               <EyeSlashIcon className="h-4 w-4" />
             ) : (

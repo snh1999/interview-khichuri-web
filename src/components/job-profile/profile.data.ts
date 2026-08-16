@@ -6,7 +6,11 @@ export type TTabKey =
   | "experience"
   | "education"
   | "preferences"
-  | "links";
+  | "links"
+  | "publications"
+  | "projects"
+  | "references"
+  | "activities";
 export const REQUIRED_FIELDS: {
   label: string;
   tab: TTabKey;
@@ -64,53 +68,44 @@ export const REQUIRED_FIELDS: {
   },
 ] as const;
 export const EXPERIENCE_LEVELS = [
-  { value: "junior", label: "Junior" },
-  { value: "mid", label: "Mid-Level" },
-  { value: "senior", label: "Senior" },
-  { value: "lead", label: "Lead" },
-  { value: "executive", label: "Executive" },
+  { label: "Junior", value: "junior" },
+  { label: "Mid-Level", value: "mid" },
+  { label: "Senior", value: "senior" },
+  { label: "Lead", value: "lead" },
+  { label: "Executive", value: "executive" },
 ] as const;
 
 export const REMOTE_PREFERENCES = [
-  { value: "remote", label: "Remote" },
-  { value: "onsite", label: "On-site" },
-  { value: "hybrid", label: "Hybrid" },
+  { label: "Remote", value: "remote" },
+  { label: "On-site", value: "onsite" },
+  { label: "Hybrid", value: "hybrid" },
+] as const;
+
+export const PROJECT_TYPES = [
+  { label: "Project", value: "project" },
+  { label: "Research", value: "research" },
 ] as const;
 
 export const DEGREES = [
-  { value: "high_school", label: "High School" },
-  { value: "associate", label: "Associate" },
-  { value: "bachelor", label: "Bachelor's" },
-  { value: "master", label: "Master's" },
-  { value: "doctorate", label: "Doctorate" },
+  { label: "High School", value: "high_school" },
+  { label: "Associate", value: "associate" },
+  { label: "Bachelor's", value: "bachelor" },
+  { label: "Master's", value: "master" },
+  { label: "Doctorate", value: "doctorate" },
 ] as const;
 
 export const COVER_LETTER_TONES = [
-  { value: "formal", label: "Formal" },
-  { value: "casual", label: "Casual" },
-  { value: "enthusiastic", label: "Enthusiastic" },
+  { label: "Formal", value: "formal" },
+  { label: "Casual", value: "casual" },
+  { label: "Enthusiastic", value: "enthusiastic" },
 ] as const;
 
 export const CURRENCIES = [
-  { value: "BDT", label: "BDT (৳)" },
-  { value: "USD", label: "USD ($)" },
-  { value: "EUR", label: "EUR (€)" },
-  { value: "GBP", label: "GBP (£)" },
-  { value: "BDT", label: "BDT (৳)" },
-  { value: "CAD", label: "CAD (C$)" },
-  { value: "AUD", label: "AUD (A$)" },
-] as const;
-
-export const ISO_COUNTRIES = [
-  { value: "US", label: "United States" },
-  { value: "GB", label: "United Kingdom" },
-  { value: "CA", label: "Canada" },
-  { value: "AU", label: "Australia" },
-  { value: "DE", label: "Germany" },
-  { value: "FR", label: "France" },
-  { value: "BD", label: "Bangladesh" },
-  { value: "IN", label: "India" },
-  { value: "NL", label: "Netherlands" },
-  { value: "SG", label: "Singapore" },
-  { value: "AE", label: "UAE" },
+  { label: "BDT (৳)", value: "BDT" },
+  { label: "USD ($)", value: "USD" },
+  { label: "EUR (€)", value: "EUR" },
+  { label: "GBP (£)", value: "GBP" },
+  { label: "BDT (৳)", value: "BDT" },
+  { label: "CAD (C$)", value: "CAD" },
+  { label: "AUD (A$)", value: "AUD" },
 ] as const;

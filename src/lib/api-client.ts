@@ -77,7 +77,7 @@ const request = async <T>(
       }
 
       const message =
-        body?.message ?? `Request failed with status ${response.status}`;
+        body?.message || `Request failed with status ${response.status}`;
       const errors =
         body !== null && "errors" in body
           ? // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion

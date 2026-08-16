@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { ALL_PROVIDERS, PROVIDER_LABELS, useCreateApiKey } from "@/api/keys";
+import { MAX_NAME_LENGTH, MAX_SHORT_LENGTH } from "@/app.constants.ts";
 import { FormCheckbox } from "@/components/common/form/FormCheckbox.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
@@ -21,16 +22,16 @@ import {
 } from "@/components/ui/dialog.tsx";
 
 const API_PROVIDERS = Object.entries(PROVIDER_LABELS).map(([value, label]) => ({
-  value,
   label,
+  value,
 }));
 
 const createKeySchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  provider: z.enum(ALL_PROVIDERS),
-  key: z.string().min(1, "API key is required"),
   isActive: z.boolean(),
-  model: z.string().optional(),
+  key: z.string().min(1, "API key is required").max(MAX_NAME_LENGTH),
+  model: z.string().max(MAX_SHORT_LENGTH).optional(),
+  name: z.string().min(1, "Name is required").max(MAX_SHORT_LENGTH),
+  provider: z.enum(ALL_PROVIDERS),
 });
 
 type CreateKeyFormData = z.infer<typeof createKeySchema>;
@@ -39,14 +40,14 @@ const useKeysForm = (onSuccess: () => void) => {
   const { mutateAsync: createKey, isPending } = useCreateApiKey();
 
   const form = useForm<CreateKeyFormData>({
-    resolver: zodResolver(createKeySchema),
     defaultValues: {
-      name: "",
+      isActive: false,
       key: "",
       model: "",
+      name: "",
       provider: "google",
-      isActive: false,
     },
+    resolver: zodResolver(createKeySchema),
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
@@ -59,7 +60,7 @@ const useKeysForm = (onSuccess: () => void) => {
     });
   });
 
-  return { onSubmit, form, isPending };
+  return { form, isPending, onSubmit };
 };
 
 export const KeysFormDialog = () => {
@@ -69,6 +70,8 @@ export const KeysFormDialog = () => {
   };
 
   const { form, onSubmit, isPending } = useKeysForm(closeDialog);
+
+  const resetForm = () => form.reset();
 
   return (
     <Dialog onOpenChange={setOpen} open={open}>
@@ -129,7 +132,7 @@ export const KeysFormDialog = () => {
 
               <div className="flex items-center gap-2">
                 <DialogClose
-                  onClick={() => form.reset()}
+                  onClick={resetForm}
                   render={<Button variant="outline">Cancel</Button>}
                 />
 

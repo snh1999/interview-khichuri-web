@@ -10,6 +10,7 @@ import { useThemeStore } from "@/store/themeStore.ts";
 
 export const ThemePicker = () => {
   const { theme, setTheme } = useThemeStore();
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
   return (
     <Popover>
@@ -22,11 +23,7 @@ export const ThemePicker = () => {
       />
       <PopoverContent className="gap-0">
         <div className="mt-3 mr-2 flex items-center justify-end">
-          <Button
-            className="w-max"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            variant="outline"
-          >
+          <Button className="w-max" onClick={toggleTheme} variant="outline">
             {theme === "dark" ? <SunIcon /> : <MoonIcon />}
           </Button>
         </div>

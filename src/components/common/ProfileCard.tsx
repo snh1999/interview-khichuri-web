@@ -17,7 +17,7 @@ export const ProfileCard = ({
     return null;
   }
 
-  const user = session.user;
+  const { user } = session;
 
   return (
     <>
@@ -29,9 +29,9 @@ export const ProfileCard = ({
           <AvatarImage src={user.image ?? undefined} />
           <AvatarFallback>{user.name[0] ?? "?"}</AvatarFallback>
         </Avatar>
-        {isCompact && (
+        {isCompact ? (
           <span className="absolute right-0 bottom-0 block size-2 rounded-full bg-green-600 ring-2 ring-card" />
-        )}
+        ) : null}
       </div>
       <div className="flex flex-1 flex-col items-start">
         <span

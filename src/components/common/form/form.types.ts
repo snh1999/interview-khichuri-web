@@ -12,6 +12,7 @@ export interface TBasicFormInputProps<T extends FieldValues> {
   placeholder?: string;
   description?: string;
   disabled?: boolean;
+  autoFocus?: boolean;
 }
 
 export type IFormInputProps<T extends FieldValues> = TBasicFormInputProps<T> & {

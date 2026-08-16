@@ -1,4 +1,5 @@
 import { PlusIcon } from "@phosphor-icons/react";
+import { memo } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import { EducationCard } from "@/components/job-profile/sections/education/EducationCard.tsx";
@@ -16,7 +17,7 @@ interface IProps {
   sectionId: string;
 }
 
-export const EducationInformation = ({ sectionId }: Readonly<IProps>) => {
+export const EducationInformation = memo(({ sectionId }: Readonly<IProps>) => {
   const form = useFormContext<TProfileFormData>();
 
   const {
@@ -24,6 +25,13 @@ export const EducationInformation = ({ sectionId }: Readonly<IProps>) => {
     append: appendEducation,
     remove: removeEducation,
   } = useFieldArray({ control: form.control, name: "education" });
+
+  const onAppend = () =>
+    appendEducation({
+      degreeName: "",
+      institution: "",
+      isCurrent: false,
+    });
 
   return (
     <Card className="px-1" id={sectionId}>
@@ -33,12 +41,7 @@ export const EducationInformation = ({ sectionId }: Readonly<IProps>) => {
         <CardAction className="pt-2 pr-1">
           <Button
             className="rounded-full bg-primary/50"
-            onClick={() =>
-              appendEducation({
-                degreeName: "",
-                institution: "",
-              })
-            }
+            onClick={onAppend}
             size="icon-sm"
           >
             <PlusIcon weight="bold" />
@@ -50,7 +53,7 @@ export const EducationInformation = ({ sectionId }: Readonly<IProps>) => {
           <EducationCard
             index={index}
             key={field.id}
-            onRemove={() => removeEducation(index)}
+            onRemove={removeEducation}
           />
         ))}
         {educationFields.length === 0 && (
@@ -61,4 +64,4 @@ export const EducationInformation = ({ sectionId }: Readonly<IProps>) => {
       </CardContent>
     </Card>
   );
-};
+});

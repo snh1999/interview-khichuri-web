@@ -48,6 +48,7 @@ export const useTopicFilter = () => {
 export const TopicFilter = () => {
   const { data: topics } = useTopics();
   const { selectedTopicIds, setTopicIds } = useTopicFilter();
+  const emptyTopicIds = () => setTopicIds([]);
 
   return (
     <Combobox
@@ -71,7 +72,7 @@ export const TopicFilter = () => {
               ) : null}
             </Button>
             {selectedTopicIds.length > 0 ? (
-              <Button onClick={() => setTopicIds([])} variant="secondary">
+              <Button onClick={emptyTopicIds} variant="secondary">
                 <XIcon />
               </Button>
             ) : null}

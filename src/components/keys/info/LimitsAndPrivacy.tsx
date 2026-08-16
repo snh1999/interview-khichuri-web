@@ -37,9 +37,9 @@ const LimitBadge = ({
   return (
     <div className="flex items-baseline justify-between gap-2 pt-2">
       <span className="font-medium text-foreground text-sm tabular-nums">
-        {label && (
+        {label ? (
           <span className="pr-2 text-muted-foreground text-xs">{label}</span>
-        )}
+        ) : null}
         {formatNumber(value)}
         <span className="ml-1 text-[11px] text-muted-foreground">{unit}</span>
       </span>
@@ -67,9 +67,9 @@ export const LimitsAndPrivacy = ({
               Free tier:
             </span>{" "}
             <ul className="space-y-1 pt-2 text-muted-foreground text-xs">
-              {freeTier.map((info) => (
-                <li className="flex items-start gap-1" key={info}>
-                  - <span>{info}</span>
+              {freeTier.map((freeInfo) => (
+                <li className="flex items-start gap-1" key={freeInfo}>
+                  - <span>{freeInfo}</span>
                 </li>
               ))}
             </ul>

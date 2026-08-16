@@ -96,6 +96,7 @@ const VerifyEmailPage = () => {
         </div>
         <CardTitle className="text-lg">{title}</CardTitle>
         <CardDescription>
+          {/** biome-ignore lint/suspicious/noLeakedRender: <> */}
           {state === "error" ? errorMessage : description}
         </CardDescription>
       </CardHeader>

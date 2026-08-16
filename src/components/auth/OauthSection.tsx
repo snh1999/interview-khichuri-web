@@ -8,6 +8,7 @@ export const OauthSection = () => {
     <div className="grid w-full grid-cols-3 gap-3">
       {oauthProviders.map((provider) => (
         <AuthActionButton
+          // biome-ignore lint/performance/noJsxPropsBind: <child section is generic>
           action={() => oauthLogin(provider.id)}
           failFallbackMessage={`Failed to connect to ${provider.id}`}
           key={provider.id}

@@ -7,14 +7,19 @@ import {
   useAddQuestion,
   useUpdateQuestion,
 } from "@/api/sessions";
+import { DEFAULT_MAX_STRING_LENGTH } from "@/app.constants.ts";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 
 const questionSchema = z.object({
-  questionText: z.string().trim().min(1, "Question text is required"),
-  answer: z.string().trim().nullish(),
-  notes: z.string().trim().nullish(),
+  questionText: z
+    .string()
+    .trim()
+    .min(1, "Question text is required")
+    .max(DEFAULT_MAX_STRING_LENGTH),
+  answer: z.string().trim().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
+  notes: z.string().trim().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
 });
 
 type TQuestionFormData = z.infer<typeof questionSchema>;
@@ -34,12 +39,12 @@ const useQuestionForm = ({
   const updateQuestion = useUpdateQuestion();
 
   const form = useForm<TQuestionFormData>({
-    resolver: zodResolver(questionSchema),
     defaultValues: {
-      questionText: question?.questionText ?? "",
+      questionText: question?.questionText || "",
       answer: question?.answer ?? "",
       notes: question?.notes ?? "",
     },
+    resolver: zodResolver(questionSchema),
   });
 
   const onSubmit = form.handleSubmit(async (data) => {

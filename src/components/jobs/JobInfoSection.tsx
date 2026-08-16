@@ -43,6 +43,9 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
   const createdDate = new Date(job.createdAt).toLocaleDateString();
   const updatedDate = new Date(job.updatedAt).toLocaleDateString();
 
+  const openDialog = () => setDialogOpen(true);
+  const closeDialog = () => setDialogOpen(false);
+
   return (
     <>
       <Card className="px-1" id={sectionId}>
@@ -52,7 +55,7 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
           <CardAction className="flex flex-col gap-1 *:w-fit">
             <Button
               className="ml-auto"
-              onClick={() => setDialogOpen(true)}
+              onClick={openDialog}
               size="sm"
               variant="outline"
             >
@@ -87,7 +90,7 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
 
           <div className="md:col-span-2">
             <FieldLabel title="Topics">
-              {job.topicIds?.length > 0
+              {job.topicIds.length > 0
                 ? job.topicIds
                     .map((id) => topicsMap.get(id)?.name)
                     .filter(Boolean)
@@ -101,7 +104,7 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
       <JobPostForm
         job={job}
         onOpenChange={setDialogOpen}
-        onSuccess={() => setDialogOpen(false)}
+        onSuccess={closeDialog}
         open={dialogOpen}
       />
 

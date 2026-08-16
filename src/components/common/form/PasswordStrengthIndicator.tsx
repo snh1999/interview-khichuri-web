@@ -1,4 +1,4 @@
-import { zxcvbn, zxcvbnOptions } from "@zxcvbn-ts/core";
+import { type Score, zxcvbn, zxcvbnOptions } from "@zxcvbn-ts/core";
 import { adjacencyGraphs, dictionary } from "@zxcvbn-ts/language-common";
 
 import { useMemo } from "react";
@@ -89,11 +89,11 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
     return null;
   }
 
-  const score = result.score;
+  const { score } = result;
   const level = LEVELS[score];
   const times = result.crackTimesDisplay;
-  const warning = result.feedback.warning;
-  const suggestions = result.feedback.suggestions;
+  const { warning } = result.feedback;
+  const { suggestions } = result.feedback;
 
   const throttled = times.onlineThrottling100PerHour;
   const noThrottle = times.offlineSlowHashing1e4PerSecond;
@@ -102,14 +102,7 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
   return (
     <div className="mt-2 space-y-2">
       <div className="flex gap-1">
-        {LEVELS.map((level, i) => (
-          <div
-            className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
-              i <= score ? level.className : "bg-muted"
-            }`}
-            key={level.label}
-          />
-        ))}
+        <LevelComponent score={score} />
       </div>
 
       <div className="flex items-center justify-between text-[14px]">
@@ -138,3 +131,13 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
     </div>
   );
 };
+
+const LevelComponent = ({ score }: { score: Score }) =>
+  LEVELS.map((level, i) => (
+    <div
+      className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+        i <= score ? level.className : "bg-muted"
+      }`}
+      key={level.label}
+    />
+  ));

@@ -17,6 +17,8 @@ export const PresetRow = ({
   editable?: boolean;
 }>) => {
   const [hover, setHover] = useState(false);
+  const startHover = () => setHover(true);
+  const endHover = () => setHover(false);
   const showEdit = hover && editable;
 
   const { loadPreset, deleteUserPreset, renameUserPreset } = useThemeStore();
@@ -38,8 +40,8 @@ export const PresetRow = ({
       className={`flex w-full rounded p-1 ${
         isActive ? "bg-primary/25" : "text-muted-foreground hover:bg-muted/60"
       }`}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onMouseEnter={startHover}
+      onMouseLeave={endHover}
     >
       <EditableText
         hideEditButton={!showEdit}

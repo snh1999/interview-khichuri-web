@@ -34,13 +34,15 @@ const SessionDetailContent = () => {
     label: tab.label,
   }));
 
+  const closeDialog = () => setDialogOpen(false);
+
   return (
     <div className="w-full">
       <div className="mb-6 flex justify-between">
         <h1 className="font-semibold text-xl">{session.title}</h1>
         <PrepSessionForm
           onOpenChange={setDialogOpen}
-          onSuccess={() => setDialogOpen(false)}
+          onSuccess={closeDialog}
           open={dialogOpen}
           session={session}
           viewTrigger
@@ -56,7 +58,7 @@ const SessionDetailContent = () => {
         />
         <QuestionsSection
           sectionId={getSectionId("questions")}
-          sessionId={session.id}
+          session={session}
         />
       </div>
     </div>

@@ -27,6 +27,16 @@ const ProfileDropdown = ({
   align = "end",
 }: Readonly<IProps>) => {
   const navigate = useNavigate();
+  const navigateToProfile = () => navigate(PROFILE_PAGE);
+  const navigateToSettings = () => navigate(SETTINGS_PAGE);
+  const logout = async () => {
+    const result = await signOut();
+    if (result.error) {
+      toast.error(result.error.message ?? "Something went wrong");
+    } else {
+      toast.success("Logged out, Redirecting");
+    }
+  };
 
   return (
     <DropdownMenu defaultOpen={defaultOpen}>
@@ -43,14 +53,14 @@ const ProfileDropdown = ({
         <DropdownMenuGroup>
           <DropdownMenuItem
             className="gap-2 px-4 py-2.5 text-base"
-            onClick={() => navigate(PROFILE_PAGE)}
+            onClick={navigateToProfile}
           >
             <UserIcon className="size-5 text-foreground" />
             <span>My account</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             className="gap-2 px-4 py-2.5 text-base"
-            onClick={() => navigate(SETTINGS_PAGE)}
+            onClick={navigateToSettings}
           >
             <GearIcon className="size-5 text-foreground" />
             <span>Settings</span>
@@ -62,14 +72,7 @@ const ProfileDropdown = ({
         <DropdownMenuGroup>
           <DropdownMenuItem
             className="gap-2 px-4 py-2.5 text-base"
-            onClick={async () => {
-              const result = await signOut();
-              if (result.error) {
-                toast.error(result.error.message ?? "Something went wrong");
-              } else {
-                toast.success("Logged out, Redirecting");
-              }
-            }}
+            onClick={logout}
             variant="destructive"
           >
             <SignOutIcon className="size-5" />

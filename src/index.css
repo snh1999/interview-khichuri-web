@@ -5,6 +5,19 @@
 @import "@fontsource-variable/jetbrains-mono";
 @import "@fontsource-variable/geist-mono";
 
+@import "@fontsource/arimo";
+@import "@fontsource/carlito";
+@import "@fontsource/crimson-pro";
+@import "@fontsource/eb-garamond";
+@import "@fontsource/ibm-plex-sans";
+@import "@fontsource/inter";
+@import "@fontsource/libertinus-serif";
+@import "@fontsource/noto-sans";
+@import "@fontsource/noto-serif";
+@import "@fontsource/public-sans";
+@import "@fontsource/source-sans-3";
+@import "@fontsource/tinos";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -158,4 +171,12 @@ select:-webkit-autofill:focus {
   -webkit-text-fill-color: inherit;
   -webkit-box-shadow: none !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+.page-h-scrollbar {
+  scrollbar-width: none;
+}
+
+.page-h-scrollbar::-webkit-scrollbar {
+  display: none;
 }

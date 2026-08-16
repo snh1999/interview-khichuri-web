@@ -1,7 +1,6 @@
 import { Navigate, Outlet, Route, Routes } from "react-router";
 import {
   ACCOUNT_VERIFICATION_PAGE,
-  ADMIN_LOOKUPS_PAGE,
   ADMIN_PAGE,
   CONFIRM_LOGIN_PAGE,
   EMAIL_REDIRECT_PAGE,
@@ -12,8 +11,10 @@ import {
   LANDING_PAGE,
   LOGIN_PAGE,
   PROFILE_PAGE,
+  PUBLIC_RESUME_PAGE,
   REGISTER_PAGE,
   RESET_PASSWORD_PAGE,
+  RESUME_EDITOR_PAGE,
   SESSION_DETAIL_PAGE,
   SESSIONS_PAGE,
   SETTINGS_PAGE,
@@ -34,9 +35,11 @@ import { JobDetailPage } from "@/pages/JobDetailPage.tsx";
 import JobProfilePage from "@/pages/JobProfilePage.tsx";
 import { JobsPage } from "@/pages/JobsPage.tsx";
 import { LandingPage } from "@/pages/landing/LandingPage.tsx";
+import { PublicResumePage } from "@/pages/PublicResumePage.tsx";
 import { SessionsPage } from "@/pages/SessionsPage.tsx";
 import SettingsPage from "@/pages/SettingsPage.tsx";
 import { SidebarLayout } from "@/pages/SidebarLayout.tsx";
+import { ResumeEditorWithPreviewPage } from "./pages/ResumeEditorWithPreviewPage";
 import { SessionDetailPage } from "./pages/SessionDetailPage";
 
 const App = () => {
@@ -50,6 +53,8 @@ const App = () => {
     <Routes>
       <Route element={<VerifyEmailPage />} path={ACCOUNT_VERIFICATION_PAGE} />
       <Route element={<ResetPasswordPage />} path={RESET_PASSWORD_PAGE} />
+
+      <Route element={<PublicResumePage />} path={PUBLIC_RESUME_PAGE} />
 
       <Route
         element={session ? <Navigate replace to={HOMEPAGE} /> : <Outlet />}
@@ -76,6 +81,10 @@ const App = () => {
           <Route element={<JobProfilePage />} path={PROFILE_PAGE} />
           <Route element={<SettingsPage />} path={SETTINGS_PAGE} />
         </Route>
+        <Route
+          element={<ResumeEditorWithPreviewPage />}
+          path={RESUME_EDITOR_PAGE}
+        />
       </Route>
 
       <Route element={<EmptyPage />} path="/*" />

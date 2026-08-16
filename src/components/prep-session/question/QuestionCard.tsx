@@ -38,18 +38,35 @@ export const QuestionCard = ({
 }: Readonly<IProps>) => {
   const sessionId = useSessionId();
   const [showUpdateForm, setShowUpdateForm] = useState(false);
-
   const updateQuestion = useUpdateQuestion();
-
   const deleteQuestion = useDeleteQuestion();
+  const hideUpdateForm = () => setShowUpdateForm(false);
+  const viewUpdateForm = () => setShowUpdateForm(true);
+
+  const handleOpenChange = () => {
+    onToggleExpanded(question.id);
+  };
+
+  const handleUpdateQuestion = () =>
+    updateQuestion.mutateAsync({
+      sessionId,
+      questionId: question.id,
+      isFavorite: !question.isFavorite,
+    });
+
+  const handleDeleteQuestion = () =>
+    deleteQuestion.mutateAsync({
+      questionId: question.id,
+      sessionId,
+    });
 
   if (showUpdateForm) {
     return (
       <Card className="border-border/50" size="sm">
         <CardContent>
           <QuestionForm
-            onCancel={() => setShowUpdateForm(false)}
-            onSuccess={() => setShowUpdateForm(false)}
+            onCancel={hideUpdateForm}
+            onSuccess={hideUpdateForm}
             question={question}
             sessionId={sessionId}
           />
@@ -57,10 +74,6 @@ export const QuestionCard = ({
       </Card>
     );
   }
-
-  const handleOpenChange = () => {
-    onToggleExpanded(question.id);
-  };
 
   return (
     <Collapsible onOpenChange={handleOpenChange} open={expanded}>
@@ -77,13 +90,7 @@ export const QuestionCard = ({
           <div className="flex shrink-0 items-center gap-1">
             <MutationButton
               errorMessage="Failed to pin question."
-              mutationFn={async () =>
-                updateQuestion.mutateAsync({
-                  sessionId,
-                  questionId: question.id,
-                  isFavorite: !question.isFavorite,
-                })
-              }
+              mutationFn={handleUpdateQuestion}
               size="icon-sm"
               variant="ghost"
             >
@@ -94,7 +101,7 @@ export const QuestionCard = ({
             </MutationButton>
 
             <Button
-              onClick={() => setShowUpdateForm(true)}
+              onClick={viewUpdateForm}
               size="icon-sm"
               type="button"
               variant="ghost"
@@ -105,12 +112,7 @@ export const QuestionCard = ({
             <MutationButton
               dialogDescription="This operation will delete the question."
               errorMessage="Failed to delete question"
-              mutationFn={() =>
-                deleteQuestion.mutateAsync({
-                  questionId: question.id,
-                  sessionId,
-                })
-              }
+              mutationFn={handleDeleteQuestion}
               requireConfirmation
               size="icon-sm"
               successMessage="Question deleted"
@@ -121,15 +123,15 @@ export const QuestionCard = ({
           </div>
         </CardHeader>
         <CollapsibleContent>
-          {(question.answer || question.notes) && (
+          {question.answer || question.notes ? (
             <CardContent className="flex flex-col gap-2 pt-0">
-              {question.answer && (
+              {question.answer ? (
                 <div>
                   <span className="text-muted-foreground text-xs">Answer:</span>
                   <MarkdownContent content={question.answer} />
                 </div>
-              )}
-              {showNotes && question.notes && (
+              ) : null}
+              {showNotes && question.notes ? (
                 <div>
                   <span className="text-muted-foreground text-xs">Notes:</span>
 
@@ -137,9 +139,9 @@ export const QuestionCard = ({
                     <MarkdownContent content={question.notes} />
                   </div>
                 </div>
-              )}
+              ) : null}
             </CardContent>
-          )}
+          ) : null}
         </CollapsibleContent>
       </Card>
     </Collapsible>

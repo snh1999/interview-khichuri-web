@@ -35,6 +35,7 @@ export const PasskeyItems = () => {
                   </CardDescription>
                 </div>
                 <AuthActionButton
+                  // biome-ignore lint/performance/noJsxPropsBind: <>
                   action={() => deletePasskey(passkey.id)}
                   requireConfirmation
                   size="icon"

@@ -12,6 +12,8 @@ export const AccentPicker = () => {
   const activeAccentId = useThemeStore((s) => s.activeAccentId);
   const setAccentPreset = useThemeStore((s) => s.setAccentPreset);
 
+  const removeAccent = () => setAccentPreset(null);
+
   return (
     <div>
       <div className="mb-1 pl-1 font-semibold text-sm">Accent</div>
@@ -19,7 +21,7 @@ export const AccentPicker = () => {
         <AccentCard
           isActive={activeAccentId === null}
           presetName="None"
-          setPreset={() => setAccentPreset(null)}
+          setPreset={removeAccent}
         />
 
         {ACCENT_PRESETS.map((preset) => {
@@ -31,6 +33,7 @@ export const AccentPicker = () => {
               key={preset.id}
               presetName={preset.name}
               primary={vars["--primary"]}
+              // biome-ignore lint/performance/noJsxPropsBind: <>
               setPreset={() => setAccentPreset(preset.id)}
             />
           );
