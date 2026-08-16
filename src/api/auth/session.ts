@@ -1,5 +1,4 @@
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { queryKeys } from "@/api";
 import {
   listSessions,
@@ -16,25 +15,13 @@ export const useListSessions = () =>
 
 export const useRevokeOtherSessions = () =>
   useMutation({
-    mutationFn: async () =>
-      await revokeOtherSessions(undefined, {
-        onError: (error) => {
-          toast.error(error.error.message);
-        },
-      }),
+    mutationFn: async () => await revokeOtherSessions(),
     meta: { invalidates: queryKeys.auth.session },
   });
 
 export const useRevokeSession = () =>
   useMutation({
     mutationFn: async ({ token }: { token: string }) =>
-      await revokeSession(
-        { token },
-        {
-          onError: (error) => {
-            toast.error(error.error.message);
-          },
-        }
-      ),
+      await revokeSession({ token }),
     meta: { invalidates: queryKeys.auth.session },
   });

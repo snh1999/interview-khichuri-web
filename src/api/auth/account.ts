@@ -26,7 +26,7 @@ export const useUnlinkAccounts = () =>
       providerId: TOauthProviders;
     }) => {
       if (account === null) {
-        return { error: { message: "Account not found" } };
+        throw new Error("Account not found");
       }
       return await unlinkAccount(
         {
