@@ -24,7 +24,7 @@ export const FormDatePicker = <T extends FieldValues>({
 
   return (
     <Field data-invalid={fieldState.invalid}>
-      {label ? <FieldLabel htmlFor={field.name}>{label}</FieldLabel> : null}\
+      {label ? <FieldLabel htmlFor={field.name}>{label}</FieldLabel> : null}
       <DatePicker
         {...field}
         autoFocus={autoFocus}

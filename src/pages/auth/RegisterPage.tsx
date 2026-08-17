@@ -5,8 +5,8 @@ import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
 
 const RegisterPage = () => (
   <AuthLayout
-    cardDescription="Sign in to your account to continue preparing"
-    cardTitle="Welcome back"
+    cardDescription="Sign up to start preparing for your interviews"
+    cardTitle="Create an account"
     footer={
       <>
         Already have an account?
