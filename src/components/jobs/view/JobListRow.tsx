@@ -1,7 +1,9 @@
-import { CaretRightIcon } from "@phosphor-icons/react";
+import { CaretRightIcon, HeartIcon } from "@phosphor-icons/react";
 import { generatePath, useNavigate } from "react-router";
 import type { IJob, TJobStatus } from "@/api/jobs";
+import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
+import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Item,
@@ -35,8 +37,15 @@ const formatDeadline = (deadline?: string | null) => {
 
 export const JobListRow = ({ job }: { job: IJob }) => {
   const navigate = useNavigate();
+  const updateJob = useUpdateJob();
   const handleClick = () =>
     navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
+
+  const handleToggleFavorite = () =>
+    updateJob.mutateAsync({
+      id: job.id,
+      isFavorite: !job.isFavorite,
+    });
 
   return (
     <Item
@@ -60,6 +69,17 @@ export const JobListRow = ({ job }: { job: IJob }) => {
         </span>
       </ItemContent>
       <ItemActions>
+        <MutationButton
+          errorMessage="Failed to update favorite."
+          mutationFn={handleToggleFavorite}
+          size="icon-sm"
+          variant="ghost"
+        >
+          <HeartIcon
+            className={`size-3 ${job.isFavorite ? "text-destructive" : "text-muted-foreground"}`}
+            weight={job.isFavorite ? "fill" : "regular"}
+          />
+        </MutationButton>
         <CaretRightIcon className="size-4 shrink-0 text-muted-foreground" />
       </ItemActions>
     </Item>

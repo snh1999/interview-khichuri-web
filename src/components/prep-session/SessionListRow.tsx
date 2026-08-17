@@ -1,6 +1,8 @@
-import { CaretRightIcon } from "@phosphor-icons/react";
+import { CaretRightIcon, HeartIcon } from "@phosphor-icons/react";
 import type { IPrepSession } from "@/api/sessions";
+import { useUpdateSession } from "@/api/sessions";
 import { useNavigateToSessionPage } from "@/components/prep-session/session/session.helpers.ts";
+import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Item,
@@ -17,6 +19,13 @@ export const SessionListRow = ({
   jobLabel?: string;
 }) => {
   const navigateToPage = useNavigateToSessionPage(session.id);
+  const updateSession = useUpdateSession();
+
+  const handleToggleFavorite = () =>
+    updateSession.mutateAsync({
+      id: session.id,
+      isFavorite: !session.isFavorite,
+    });
 
   return (
     <Item
@@ -33,11 +42,19 @@ export const SessionListRow = ({
             <span className="text-muted-foreground"> — {jobLabel}</span>
           ) : null}
         </ItemTitle>
-        {/*<span className="shrink-0 whitespace-nowrap text-muted-foreground text-xs">*/}
-        {/*  {questionCount} question{questionCount === 1 ? "" : "s"}*/}
-        {/*</span>*/}
       </ItemContent>
       <ItemActions>
+        <MutationButton
+          errorMessage="Failed to update favorite."
+          mutationFn={handleToggleFavorite}
+          size="icon-sm"
+          variant="ghost"
+        >
+          <HeartIcon
+            className={`size-3 ${session.isFavorite ? "text-destructive" : "text-muted-foreground"}`}
+            weight={session.isFavorite ? "fill" : "regular"}
+          />
+        </MutationButton>
         <CaretRightIcon className="size-4 shrink-0 text-muted-foreground" />
       </ItemActions>
     </Item>

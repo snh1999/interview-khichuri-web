@@ -9,6 +9,7 @@ export interface ICreateSessionDto {
   jobId?: string | null;
   roleId?: number | null;
   topicIds?: number[] | null;
+  isFavorite?: boolean;
 }
 
 export interface IUpdateSessionDto extends Partial<ICreateSessionDto> {}

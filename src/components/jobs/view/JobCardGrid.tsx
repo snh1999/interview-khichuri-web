@@ -1,8 +1,10 @@
-import { CalendarBlankIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, HeartIcon } from "@phosphor-icons/react";
 import { generatePath, useNavigate } from "react-router";
 import type { IJob } from "@/api/jobs";
+import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { Badge } from "@/components/ui/badge.tsx";
+import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Card } from "@/components/ui/card.tsx";
 
 const STATUS_BADGE: Record<IJob["status"], string> = {
@@ -29,8 +31,15 @@ const formatDeadline = (deadline?: string | null) => {
 
 export const JobCardGrid = ({ job }: { job: IJob }) => {
   const navigate = useNavigate();
+  const updateJob = useUpdateJob();
   const handleClick = () =>
     navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
+
+  const handleToggleFavorite = () =>
+    updateJob.mutateAsync({
+      id: job.id,
+      isFavorite: !job.isFavorite,
+    });
 
   return (
     <Card
@@ -42,9 +51,22 @@ export const JobCardGrid = ({ job }: { job: IJob }) => {
         <span className="truncate text-muted-foreground text-sm">
           {job.companyName}
         </span>
-        <Badge className={`shrink-0 ${STATUS_BADGE[job.status]}`}>
-          {job.status}
-        </Badge>
+        <div className="flex items-center gap-1">
+          <Badge className={`shrink-0 ${STATUS_BADGE[job.status]}`}>
+            {job.status}
+          </Badge>
+          <MutationButton
+            errorMessage="Failed to update favorite."
+            mutationFn={handleToggleFavorite}
+            size="icon-sm"
+            variant="ghost"
+          >
+            <HeartIcon
+              className={`size-3 ${job.isFavorite ? "text-destructive" : "text-muted-foreground"}`}
+              weight={job.isFavorite ? "fill" : "regular"}
+            />
+          </MutationButton>
+        </div>
       </div>
 
       <p className="truncate font-medium text-[15px]">{job.title}</p>
