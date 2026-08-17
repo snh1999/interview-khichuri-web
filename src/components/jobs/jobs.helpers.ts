@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { type DefaultValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import {
@@ -59,48 +59,53 @@ export type TJobFormData = z.infer<typeof jobPostSchema>;
 
 interface IProps {
   job?: IJob;
+  open: boolean;
   initialDescription?: string;
   onSuccess?: () => void;
 }
 
+const buildDefaultValues = (
+  job?: IJob,
+  initialDescription?: string
+): DefaultValues<TJobFormData> => ({
+  ...job,
+  deadline: stringToDate(job?.deadline),
+  description: initialDescription ?? job?.description,
+  interviewDate: stringToDate(job?.interviewDate),
+  links: job?.links
+    ? job.links
+        .split("\n")
+        .filter(Boolean)
+        .map((v) => ({ value: v }))
+    : [],
+  status: job?.status ?? "saved",
+  title: job?.title ?? "",
+  topicIds: job?.topicIds ?? [],
+});
+
 export const useJobPostForm = ({
   job,
+  open,
   initialDescription,
   onSuccess,
 }: IProps) => {
-  const defaultValues = {
-    ...job,
-    deadline: stringToDate(job?.deadline),
-    description: initialDescription ?? job?.description,
-    interviewDate: stringToDate(job?.interviewDate),
-    links: job?.links
-      ? job.links
-          .split("\n")
-          .filter(Boolean)
-          .map((v) => ({ value: v }))
-      : [],
-    roleId: job?.roleId ?? null,
-    status: job?.status ?? "saved",
-    title: job?.title ?? "",
-    topicIds: job?.topicIds ?? [],
-  };
-
   const createJob = useCreateJob();
   const updateJob = useUpdateJob();
 
   const form = useForm<TJobFormData>({
-    defaultValues,
+    defaultValues: buildDefaultValues(job, initialDescription),
     resolver: zodResolver(jobPostSchema),
   });
 
   const resolveTopics = useResolveLookupField(form, "topics");
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: job is excluded so background refetches don't wipe the user's edits
   useEffect(() => {
-    form.reset({
-      ...form.getValues(),
-      description: initialDescription || job?.description || "",
-    });
-  }, [initialDescription, form, job]);
+    if (!open) {
+      return;
+    }
+    form.reset(buildDefaultValues(job, initialDescription));
+  }, [open, initialDescription, form, job?.id]);
 
   const onSubmit = form.handleSubmit(async (rawData: TJobFormData) => {
     const { links, topicNames, ...data } = rawData;

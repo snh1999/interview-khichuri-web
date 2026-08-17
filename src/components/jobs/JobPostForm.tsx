@@ -49,6 +49,7 @@ export const JobPostForm = ({
 
   const { form, isPending, onSubmit } = useJobPostForm({
     job,
+    open,
     initialDescription,
     onSuccess,
   });

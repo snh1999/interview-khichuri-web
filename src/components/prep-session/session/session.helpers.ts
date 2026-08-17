@@ -1,6 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { BaseSyntheticEvent } from "react";
-import { type UseFormReturn, useForm } from "react-hook-form";
+import { useEffect } from "react";
+import {
+  type DefaultValues,
+  type UseFormReturn,
+  useForm,
+} from "react-hook-form";
 import { generatePath, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -49,11 +54,21 @@ const EXPERIENCE_OPTIONS = [
 export { EXPERIENCE_OPTIONS };
 
 interface IProps {
+  open: boolean;
   session?: IPrepSession;
   onSuccess?: () => void;
 }
 
+const buildDefaultValues = (
+  session?: IPrepSession
+): DefaultValues<TCreateSessionFormData> => ({
+  ...session,
+  title: session?.title || "",
+  description: session?.description || "",
+});
+
 export const useCreateSessionForm = ({
+  open,
   session,
   onSuccess,
 }: IProps): TFormHook<TCreateSessionFormData> => {
@@ -63,15 +78,19 @@ export const useCreateSessionForm = ({
   const updateSession = useUpdateSession();
 
   const form = useForm<TCreateSessionFormData>({
-    defaultValues: {
-      ...session,
-      title: session?.title || "",
-      description: session?.description || "",
-    },
+    defaultValues: buildDefaultValues(session),
     resolver: zodResolver(createSessionSchema),
   });
 
   const resolveTopics = useResolveLookupField(form, "topics");
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: session is excluded so background refetches don't wipe the user's edits
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    form.reset(buildDefaultValues(session));
+  }, [open, form, session?.id]);
 
   const onSubmit = form.handleSubmit(async (data) => {
     const { topicNames, ...rest } = data;
