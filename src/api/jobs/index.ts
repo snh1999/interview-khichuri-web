@@ -19,6 +19,7 @@ export interface IJobExtractionResult extends ICommonFields {
   companyName?: string | null;
   deadline: string | null;
   interviewDate: string | null;
+  appliedAt: string | null;
   status: TJobStatus | null;
 }
 
@@ -29,16 +30,18 @@ export interface ICreateJobDto extends ICommonFields {
   links?: string | null;
   deadline?: Date;
   interviewDate?: Date;
+  appliedAt?: Date;
 }
 
 export interface IUpdateJobDto extends Partial<ICreateJobDto> {}
 
 export interface IJob
-  extends Omit<ICreateJobDto, "deadline" | "interviewDate"> {
+  extends Omit<ICreateJobDto, "deadline" | "interviewDate" | "appliedAt"> {
   id: string;
   userId?: string | null;
   deadline?: string | null;
   interviewDate?: string | null;
+  appliedAt?: string | null;
   createdAt: string;
   updatedAt: string;
   topicIds?: number[];

@@ -27,6 +27,7 @@ export const STATUS_OPTIONS: { value: TJobStatus; label: string }[] = [
 ] as const;
 
 const jobPostSchema = z.object({
+  appliedAt: z.date().nullish(),
   companyName: z
     .string()
     .trim()
@@ -69,6 +70,7 @@ const buildDefaultValues = (
   initialDescription?: string
 ): DefaultValues<TJobFormData> => ({
   ...job,
+  appliedAt: stringToDate(job?.appliedAt),
   deadline: stringToDate(job?.deadline),
   description: initialDescription ?? job?.description,
   interviewDate: stringToDate(job?.interviewDate),
@@ -98,6 +100,15 @@ export const useJobPostForm = ({
   });
 
   const resolveTopics = useResolveLookupField(form, "topics");
+
+  const watchedStatus = form.watch("status");
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only auto-set appliedAt when status changes to "applied"
+  useEffect(() => {
+    if (watchedStatus === "applied" && !form.getValues("appliedAt")) {
+      form.setValue("appliedAt", new Date(), { shouldDirty: true });
+    }
+  }, [watchedStatus]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: job is excluded so background refetches don't wipe the user's edits
   useEffect(() => {

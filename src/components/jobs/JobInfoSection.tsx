@@ -74,7 +74,11 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
           <FieldLabel title="Company">{job.companyName}</FieldLabel>
           <FieldLabel title="Location">{job.location ?? "Not set"}</FieldLabel>
           <FieldLabel title="Source">{job.source ?? "Not set"}</FieldLabel>
-          <div />
+          <FieldLabel title="Interview Date">
+            {job.interviewDate
+              ? new Date(job.interviewDate).toLocaleDateString()
+              : "Not set"}
+          </FieldLabel>
 
           <FieldLabel title="Deadline">
             {job.deadline
@@ -82,9 +86,9 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
               : "Not set"}
           </FieldLabel>
 
-          <FieldLabel title="Interview Date">
-            {job.interviewDate
-              ? new Date(job.interviewDate).toLocaleDateString()
+          <FieldLabel title="Applied At">
+            {job.appliedAt
+              ? new Date(job.appliedAt).toLocaleDateString()
               : "Not set"}
           </FieldLabel>
 
