@@ -24,7 +24,7 @@ import {
 import { Spinner } from "@/components/ui/spinner.tsx";
 
 const passkeySchema = z.object({
-  name: z.string().min(1),
+  name: z.string().trim().min(1, "Name is required"),
 });
 type PasskeyForm = z.infer<typeof passkeySchema>;
 

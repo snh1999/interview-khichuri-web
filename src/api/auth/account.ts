@@ -22,13 +22,10 @@ export const useUnlinkAccounts = () =>
       account,
       providerId,
     }: {
-      account: Account | null;
+      account: Account;
       providerId: TOauthProviders;
-    }) => {
-      if (account === null) {
-        throw new Error("Account not found");
-      }
-      return await unlinkAccount(
+    }) =>
+      await unlinkAccount(
         {
           accountId: account.accountId,
           providerId,
@@ -38,8 +35,7 @@ export const useUnlinkAccounts = () =>
             toast.error(error.error.message);
           },
         }
-      );
-    },
+      ),
     meta: { invalidates: queryKeys.auth.accounts },
   });
 
