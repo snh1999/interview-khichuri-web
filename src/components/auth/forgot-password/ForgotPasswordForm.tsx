@@ -33,7 +33,7 @@ export const ForgotPasswordForm = (props: IFormProps) => {
           Back
         </Button>
         <AsyncButton
-          className="flex-2"
+          className="flex-1"
           disabled={!form.formState.isValid || cooldown > 0}
           isLoading={isLoading}
           size="lg"

@@ -8,7 +8,7 @@ import {
 
 export type TOauthProviders = "google" | "github" | "gitlab";
 
-interface IProvider {
+export interface IProvider {
   id: TOauthProviders;
   name: string;
   icon: Icon;

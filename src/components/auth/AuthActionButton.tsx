@@ -1,10 +1,12 @@
 import type { ComponentProps } from "react";
 import { ActionButton } from "@/components/ui/button/ActionButton.tsx";
+import { cn } from "@/lib/utils";
 
 export const AuthActionButton = ({
   action,
   successMessage,
   failFallbackMessage,
+  className,
   ...props
 }: Omit<ComponentProps<typeof ActionButton>, "action"> & {
   readonly action: () => Promise<{ error?: null | { message?: string } }>;
@@ -21,5 +23,11 @@ export const AuthActionButton = ({
     }
     return { error: false, message: successMessage };
   };
-  return <ActionButton className="pt-1" {...props} action={onClickAction} />;
+  return (
+    <ActionButton
+      className={cn("pt-1", className)}
+      {...props}
+      action={onClickAction}
+    />
+  );
 };

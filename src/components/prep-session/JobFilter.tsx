@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { useJobs } from "@/api/jobs";
 import {
@@ -55,6 +55,11 @@ export const JobFilter = () => {
   const [inputValue, setInputValue] = useState(
     () => selectedOption?.label ?? ""
   );
+
+  // Sync input text when the URL filter changes externally (back/forward cleared params) as useState only initializes the value once.
+  useEffect(() => {
+    setInputValue(selectedOption?.label ?? "");
+  }, [selectedOption]);
 
   const handleValueChange = (next: IJobOption | IJobOption[] | null) => {
     const opt = Array.isArray(next) ? (next[0] ?? null) : next;

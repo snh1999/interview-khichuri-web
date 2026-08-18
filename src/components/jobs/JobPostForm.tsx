@@ -49,6 +49,7 @@ export const JobPostForm = ({
 
   const { form, isPending, onSubmit } = useJobPostForm({
     job,
+    open,
     initialDescription,
     onSuccess,
   });
@@ -78,6 +79,8 @@ export const JobPostForm = ({
       form.reset({
         ...form.getValues(),
         ...result,
+        appliedAt:
+          stringToDate(result.appliedAt) ?? form.getValues("appliedAt"),
         companyName: result.companyName ?? "",
         deadline: stringToDate(result.deadline) ?? form.getValues("deadline"),
         interviewDate:
@@ -189,6 +192,13 @@ export const JobPostForm = ({
                 label="Interview Date"
                 name="interviewDate"
                 placeholder="Pick an interview date..."
+              />
+
+              <FormDatePicker
+                form={form}
+                label="Applied At"
+                name="appliedAt"
+                placeholder="Pick application date..."
               />
 
               <FormInput

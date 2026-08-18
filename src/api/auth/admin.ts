@@ -37,18 +37,19 @@ export const useAdminListUsers = ({
 export const useBanUser = () => {
   const { limit, page } = usePagination();
   return useMutation({
-    mutationFn: async (userId: string) =>
-      await authAdmin.banUser(
-        { userId },
-        {
-          onError: (error) => {
-            toast.error(error.error.message || "Failed to ban user");
-          },
-          onSuccess: () => {
-            toast.success("User banned");
-          },
-        }
-      ),
+    mutationFn: async (userId: string) => {
+      const result = await authAdmin.banUser({ userId });
+      if (result.error) {
+        throw new Error(result.error.message ?? "Failed to ban user");
+      }
+      return result;
+    },
+    onSuccess: () => {
+      toast.success("User banned");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
     meta: { invalidates: queryKeys.admin.users({ page, limit }) },
   });
 };
@@ -56,18 +57,19 @@ export const useBanUser = () => {
 export const useUnbanUser = () => {
   const { limit, page } = usePagination();
   return useMutation({
-    mutationFn: async (userId: string) =>
-      await authAdmin.unbanUser(
-        { userId },
-        {
-          onError: (error) => {
-            toast.error(error.error.message || "Failed to unban user");
-          },
-          onSuccess: () => {
-            toast.success("User unbanned");
-          },
-        }
-      ),
+    mutationFn: async (userId: string) => {
+      const result = await authAdmin.unbanUser({ userId });
+      if (result.error) {
+        throw new Error(result.error.message ?? "Failed to unban user");
+      }
+      return result;
+    },
+    onSuccess: () => {
+      toast.success("User unbanned");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
     meta: { invalidates: queryKeys.admin.users({ page, limit }) },
   });
 };
@@ -75,35 +77,37 @@ export const useUnbanUser = () => {
 export const useRemoveUser = () => {
   const { limit, page } = usePagination();
   return useMutation({
-    mutationFn: async (userId: string) =>
-      await authAdmin.removeUser(
-        { userId },
-        {
-          onError: (error) => {
-            toast.error(error.error.message || "Failed to delete user");
-          },
-          onSuccess: () => {
-            toast.success("User deleted");
-          },
-        }
-      ),
+    mutationFn: async (userId: string) => {
+      const result = await authAdmin.removeUser({ userId });
+      if (result.error) {
+        throw new Error(result.error.message ?? "Failed to delete user");
+      }
+      return result;
+    },
+    onSuccess: () => {
+      toast.success("User deleted");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
     meta: { invalidates: queryKeys.admin.users({ page, limit }) },
   });
 };
 
 export const useRevokeSessionByAdmin = () =>
   useMutation({
-    mutationFn: async (userId: string) =>
-      await authAdmin.revokeUserSessions(
-        { userId },
-        {
-          onError: (error) => {
-            toast.error(error.error.message);
-          },
-          onSuccess: () => {
-            toast.success("User sessions revoked");
-          },
-        }
-      ),
+    mutationFn: async (userId: string) => {
+      const result = await authAdmin.revokeUserSessions({ userId });
+      if (result.error) {
+        throw new Error(result.error.message ?? "Failed to revoke sessions");
+      }
+      return result;
+    },
+    onSuccess: () => {
+      toast.success("User sessions revoked");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
     meta: { invalidates: queryKeys.admin.sessions() },
   });

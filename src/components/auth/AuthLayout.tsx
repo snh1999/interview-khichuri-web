@@ -41,10 +41,12 @@ export const AuthLayout = ({
     </div>
 
     <Card className="rounded-xl px-3 py-6">
-      <CardHeader>
-        <CardTitle className="text-lg">{cardTitle}</CardTitle>
-        <CardDescription>{cardDescription}</CardDescription>
-      </CardHeader>
+      {cardTitle || cardDescription ? (
+        <CardHeader>
+          <CardTitle className="text-lg">{cardTitle}</CardTitle>
+          <CardDescription>{cardDescription}</CardDescription>
+        </CardHeader>
+      ) : null}
       {children ? <CardContent className="mt-2">{children}</CardContent> : null}
       <CardFooter className="flex w-full flex-col space-y-4 border-none text-center text-muted-foreground">
         {!hideOauth && (

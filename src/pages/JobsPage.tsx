@@ -38,7 +38,11 @@ const JobsContent = () => {
 
   useEffect(() => {
     const pasteHandler = async (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "v") {
+      if (
+        !dialogOpen &&
+        (e.ctrlKey || e.metaKey) &&
+        e.key.toLowerCase() === "v"
+      ) {
         const target = e.target as HTMLElement;
         if (
           target?.tagName === "INPUT" ||
@@ -59,7 +63,7 @@ const JobsContent = () => {
     };
     window.addEventListener("keydown", pasteHandler);
     return () => window.removeEventListener("keydown", pasteHandler);
-  }, []);
+  }, [dialogOpen]);
 
   const handleSuccess = () => {
     setDialogOpen(false);

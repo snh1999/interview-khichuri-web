@@ -1,5 +1,7 @@
 import { BriefcaseIcon } from "@phosphor-icons/react";
 import type { IPrepSession } from "@/api/sessions";
+import { useUpdateSession } from "@/api/sessions";
+import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { useNavigateToSessionPage } from "@/components/prep-session/session/session.helpers.ts";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -11,6 +13,13 @@ interface IProps {
 
 export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
   const navigateToPage = useNavigateToSessionPage(session.id);
+  const updateSession = useUpdateSession();
+
+  const handleToggleFavorite = () =>
+    updateSession.mutateAsync({
+      id: session.id,
+      isFavorite: !session.isFavorite,
+    });
 
   return (
     <Card
@@ -23,21 +32,22 @@ export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
           <BriefcaseIcon className="size-3.5 shrink-0" />
           {jobLabel ?? "No job linked"}
         </span>
-        {session.experience ? (
-          <Badge className="shrink-0 bg-secondary text-secondary-foreground">
-            {session.experience}
-          </Badge>
-        ) : null}
+        <div className="flex items-center gap-1">
+          {session.experience ? (
+            <Badge className="shrink-0 bg-secondary text-secondary-foreground">
+              {session.experience}
+            </Badge>
+          ) : null}
+          <FavoriteButton
+            isFavorite={session.isFavorite}
+            onToggle={handleToggleFavorite}
+          />
+        </div>
       </div>
 
       <p className="truncate font-medium text-xs">
         {session.title || session.description}
       </p>
-
-      {/*<p className="flex items-center gap-1.5 text-muted-foreground text-xs">*/}
-      {/*  <ChatCircleTextIcon className="size-3.5" />*/}
-      {/*  {questionCount} question{questionCount === 1 ? "" : "s"}*/}
-      {/*</p>*/}
     </Card>
   );
 };

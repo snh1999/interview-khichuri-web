@@ -1,10 +1,11 @@
 import { CodeIcon, TerminalIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 
 export const Background = ({
   children,
 }: Readonly<{ children?: ReactNode }>) => (
-  <div className="relative flex h-full min-h-full items-center justify-center overflow-hidden bg-background/95 p-4">
+  <div className="relative flex h-dvh overflow-hidden bg-background/95">
     <div
       className="absolute inset-0 opacity-[0.03]"
       style={{
@@ -22,6 +23,8 @@ export const Background = ({
       <CodeIcon className="h-10 w-10" weight="thin" />
     </div>
 
-    <div className="relative z-10 w-full max-w-md">{children}</div>
+    <ScrollArea className="relative z-10 flex w-full items-center justify-center p-4">
+      <div className="mx-auto w-full max-w-md">{children}</div>
+    </ScrollArea>
   </div>
 );

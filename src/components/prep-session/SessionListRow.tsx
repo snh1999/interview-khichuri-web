@@ -1,5 +1,7 @@
 import { CaretRightIcon } from "@phosphor-icons/react";
 import type { IPrepSession } from "@/api/sessions";
+import { useUpdateSession } from "@/api/sessions";
+import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { useNavigateToSessionPage } from "@/components/prep-session/session/session.helpers.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {
@@ -17,6 +19,13 @@ export const SessionListRow = ({
   jobLabel?: string;
 }) => {
   const navigateToPage = useNavigateToSessionPage(session.id);
+  const updateSession = useUpdateSession();
+
+  const handleToggleFavorite = () =>
+    updateSession.mutateAsync({
+      id: session.id,
+      isFavorite: !session.isFavorite,
+    });
 
   return (
     <Item
@@ -33,11 +42,12 @@ export const SessionListRow = ({
             <span className="text-muted-foreground"> — {jobLabel}</span>
           ) : null}
         </ItemTitle>
-        {/*<span className="shrink-0 whitespace-nowrap text-muted-foreground text-xs">*/}
-        {/*  {questionCount} question{questionCount === 1 ? "" : "s"}*/}
-        {/*</span>*/}
       </ItemContent>
       <ItemActions>
+        <FavoriteButton
+          isFavorite={session.isFavorite}
+          onToggle={handleToggleFavorite}
+        />
         <CaretRightIcon className="size-4 shrink-0 text-muted-foreground" />
       </ItemActions>
     </Item>

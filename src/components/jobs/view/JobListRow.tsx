@@ -1,7 +1,9 @@
 import { CaretRightIcon } from "@phosphor-icons/react";
 import { generatePath, useNavigate } from "react-router";
 import type { IJob, TJobStatus } from "@/api/jobs";
+import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
+import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Item,
@@ -35,8 +37,15 @@ const formatDeadline = (deadline?: string | null) => {
 
 export const JobListRow = ({ job }: { job: IJob }) => {
   const navigate = useNavigate();
+  const updateJob = useUpdateJob();
   const handleClick = () =>
     navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
+
+  const handleToggleFavorite = () =>
+    updateJob.mutateAsync({
+      id: job.id,
+      isFavorite: !job.isFavorite,
+    });
 
   return (
     <Item
@@ -60,6 +69,10 @@ export const JobListRow = ({ job }: { job: IJob }) => {
         </span>
       </ItemContent>
       <ItemActions>
+        <FavoriteButton
+          isFavorite={job.isFavorite}
+          onToggle={handleToggleFavorite}
+        />
         <CaretRightIcon className="size-4 shrink-0 text-muted-foreground" />
       </ItemActions>
     </Item>

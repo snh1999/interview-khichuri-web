@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 import {
+  type IProvider,
   oauthProviders,
   type TOauthProviders,
 } from "@/lib/auth/auth.helpers.tsx";
@@ -20,72 +21,95 @@ interface IProps {
   disableUnlink?: boolean;
 }
 
-export const AccountCard = ({
-  provider,
-  account,
-  disableUnlink = false,
-}: Readonly<IProps>) => {
-  const { mutateAsync: linkAccounts } = useLinkAccounts();
-  const { mutateAsync: unlinkAccount } = useUnlinkAccounts();
-
+export const AccountCard = (props: Readonly<IProps>) => {
+  const { provider, account } = props;
   const providerDetails = oauthProviders.find(
     (authProvider) => authProvider.id === provider
   );
 
-  const handleLinkAccount = () => linkAccounts(provider);
-  const handleUnlinkAccount = () =>
-    unlinkAccount({
-      // biome-ignore lint/style/noNonNullAssertion: <used only when account is defined>
-      account: account!,
-      providerId: provider,
-    });
-
   if (!providerDetails) {
-    return null;
+    return (
+      <Card size="sm">
+        <CardContent>
+          <p className="text-muted-foreground text-sm">
+            Unknown provider: {provider}
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
     <Card size="sm">
-      <CardContent>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <providerDetails.icon className="size-5" />
-            <CardHeader>
-              <CardTitle className="text-xs">{providerDetails.name}</CardTitle>
-              <CardDescription>
-                {account
-                  ? `Linked on ${new Date(account.createdAt).toLocaleDateString()}`
-                  : `Connect your ${providerDetails.name} account for easier sign-in`}
-              </CardDescription>
-            </CardHeader>
-            <div>
-              <p className="" />
-            </div>
+      <CardHeader className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <providerDetails.icon
+            className="size-5"
+            color={providerDetails.color}
+            weight={providerDetails.weight ?? "regular"}
+          />
+          <div>
+            <CardTitle className="text-xs">{providerDetails.name}</CardTitle>
+            <CardDescription>
+              {account
+                ? `Linked on ${new Intl.DateTimeFormat(undefined, { dateStyle: "long" }).format(new Date(account.createdAt))}`
+                : `Connect your ${providerDetails.name} account for easier sign-in`}
+            </CardDescription>
           </div>
-          {account ? (
-            <AuthActionButton
-              action={handleUnlinkAccount}
-              disabled={disableUnlink}
-              size="sm"
-              successMessage={`Removed ${providerDetails.name} account`}
-              variant="destructive"
-            >
-              <TrashIcon />
-              Unlink
-            </AuthActionButton>
-          ) : (
-            <AuthActionButton
-              action={handleLinkAccount}
-              size="sm"
-              successMessage={`Redirecting to ${providerDetails.name}`}
-              variant="outline"
-            >
-              <PlusIcon />
-              Link
-            </AuthActionButton>
-          )}
         </div>
-      </CardContent>
+        <ActionButton
+          className="flex items-center pb-1"
+          providerDetails={providerDetails}
+          {...props}
+        />
+      </CardHeader>
     </Card>
+  );
+};
+
+const ActionButton = ({
+  providerDetails,
+  provider,
+  account,
+  className,
+  disableUnlink = false,
+}: Readonly<
+  IProps & {
+    providerDetails: IProvider;
+    className?: string;
+  }
+>) => {
+  const { mutateAsync: linkAccounts } = useLinkAccounts();
+  const { mutateAsync: unlinkAccount } = useUnlinkAccounts();
+  const handleLinkAccount = () => linkAccounts(provider);
+
+  if (!account) {
+    return (
+      <AuthActionButton
+        action={handleLinkAccount}
+        className={className}
+        successMessage={`Redirecting to ${providerDetails.name}`}
+        variant="outline"
+      >
+        <PlusIcon />
+        Link
+      </AuthActionButton>
+    );
+  }
+
+  const handleUnlinkAccount = () =>
+    unlinkAccount({ account, providerId: provider });
+
+  return (
+    <AuthActionButton
+      action={handleUnlinkAccount}
+      className={className}
+      disabled={disableUnlink}
+      successMessage={`Removed ${providerDetails.name} account`}
+      variant="destructive"
+    >
+      <TrashIcon />
+      Unlink
+    </AuthActionButton>
   );
 };

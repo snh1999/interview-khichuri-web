@@ -1,7 +1,9 @@
 import { CalendarBlankIcon } from "@phosphor-icons/react";
 import { generatePath, useNavigate } from "react-router";
 import type { IJob } from "@/api/jobs";
+import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
+import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Card } from "@/components/ui/card.tsx";
 
@@ -29,8 +31,15 @@ const formatDeadline = (deadline?: string | null) => {
 
 export const JobCardGrid = ({ job }: { job: IJob }) => {
   const navigate = useNavigate();
+  const updateJob = useUpdateJob();
   const handleClick = () =>
     navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
+
+  const handleToggleFavorite = () =>
+    updateJob.mutateAsync({
+      id: job.id,
+      isFavorite: !job.isFavorite,
+    });
 
   return (
     <Card
@@ -42,9 +51,15 @@ export const JobCardGrid = ({ job }: { job: IJob }) => {
         <span className="truncate text-muted-foreground text-sm">
           {job.companyName}
         </span>
-        <Badge className={`shrink-0 ${STATUS_BADGE[job.status]}`}>
-          {job.status}
-        </Badge>
+        <div className="flex items-center gap-1">
+          <Badge className={`shrink-0 ${STATUS_BADGE[job.status]}`}>
+            {job.status}
+          </Badge>
+          <FavoriteButton
+            isFavorite={job.isFavorite}
+            onToggle={handleToggleFavorite}
+          />
+        </div>
       </div>
 
       <p className="truncate font-medium text-[15px]">{job.title}</p>

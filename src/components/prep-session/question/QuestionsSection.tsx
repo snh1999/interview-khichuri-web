@@ -9,6 +9,7 @@ import {
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 import {
   type IPrepSession,
   useGenerateQuestions,
@@ -44,6 +45,8 @@ import {
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 
+const questionCountSchema = z.coerce.number().int().min(1).max(50);
+
 interface IProps {
   session: IPrepSession;
   sectionId: string;
@@ -71,7 +74,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
         id: sessionId,
         provider,
         model,
-        count,
+        count: questionCountSchema.catch(5).parse(count),
         avoidRepeat,
         includeJobDescription,
       });

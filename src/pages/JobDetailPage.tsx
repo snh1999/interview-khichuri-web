@@ -30,7 +30,14 @@ const JobDetailContent = () => {
         <h1 className="font-semibold text-xl">
           {job.companyName} - {job.title}
         </h1>
-        <Badge className={STATUS_COLORS[job.status]}>{job.status}</Badge>
+        <Badge
+          className={
+            STATUS_COLORS[job.status] ??
+            "bg-secondary text-secondary-foreground"
+          }
+        >
+          {job.status}
+        </Badge>
       </div>
 
       <div className="flex flex-col gap-6">

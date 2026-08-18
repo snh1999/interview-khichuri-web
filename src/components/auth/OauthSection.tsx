@@ -10,6 +10,7 @@ export const OauthSection = () => {
         <AuthActionButton
           // biome-ignore lint/performance/noJsxPropsBind: <child section is generic>
           action={() => oauthLogin(provider.id)}
+          className="relative"
           failFallbackMessage={`Failed to connect to ${provider.id}`}
           key={provider.id}
           size="lg"
@@ -23,7 +24,7 @@ export const OauthSection = () => {
           />
           {provider.name}
           {lastMethod === provider.id && (
-            <span className="absolute bottom-4 left-17 m-0 ml-2 rounded-md bg-blue-500 p-0.75 text-[9px] text-white">
+            <span className="absolute -top-4 -right-8 rounded-full bg-blue-500 px-1.5 py-0.5 font-medium text-[9px] text-white shadow-xs">
               Last
             </span>
           )}

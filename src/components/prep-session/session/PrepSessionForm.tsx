@@ -73,6 +73,7 @@ export const PrepSessionForm = ({
   viewTrigger,
 }: Readonly<IProps>) => {
   const { form, isLoading, onSubmit } = useCreateSessionForm({
+    open,
     session,
     onSuccess,
   });

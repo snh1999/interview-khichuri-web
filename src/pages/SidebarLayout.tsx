@@ -8,7 +8,7 @@ import { SidebarProvider } from "@/components/ui/sidebar.tsx";
 export const SidebarLayout = () => {
   return (
     <SidebarProvider>
-      <div className="min-h flex h-dvh w-full flex-col overflow-hidden">
+      <div className="flex h-dvh w-full flex-col overflow-hidden">
         <Header />
 
         {/* h-full important for right-scrollbar, min-h-0 important for horizontal sidebar*/}
