@@ -1,9 +1,9 @@
-import { BriefcaseIcon, HeartIcon } from "@phosphor-icons/react";
+import { BriefcaseIcon } from "@phosphor-icons/react";
 import type { IPrepSession } from "@/api/sessions";
 import { useUpdateSession } from "@/api/sessions";
+import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { useNavigateToSessionPage } from "@/components/prep-session/session/session.helpers.ts";
 import { Badge } from "@/components/ui/badge";
-import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Card } from "@/components/ui/card";
 
 interface IProps {
@@ -38,17 +38,10 @@ export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
               {session.experience}
             </Badge>
           ) : null}
-          <MutationButton
-            errorMessage="Failed to update favorite."
-            mutationFn={handleToggleFavorite}
-            size="icon-sm"
-            variant="ghost"
-          >
-            <HeartIcon
-              className={`size-3 ${session.isFavorite ? "text-destructive" : "text-muted-foreground"}`}
-              weight={session.isFavorite ? "fill" : "regular"}
-            />
-          </MutationButton>
+          <FavoriteButton
+            isFavorite={session.isFavorite}
+            onToggle={handleToggleFavorite}
+          />
         </div>
       </div>
 

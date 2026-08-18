@@ -1,10 +1,10 @@
-import { CalendarBlankIcon, HeartIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon } from "@phosphor-icons/react";
 import { generatePath, useNavigate } from "react-router";
 import type { IJob } from "@/api/jobs";
 import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
+import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
-import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Card } from "@/components/ui/card.tsx";
 
 const STATUS_BADGE: Record<IJob["status"], string> = {
@@ -55,17 +55,10 @@ export const JobCardGrid = ({ job }: { job: IJob }) => {
           <Badge className={`shrink-0 ${STATUS_BADGE[job.status]}`}>
             {job.status}
           </Badge>
-          <MutationButton
-            errorMessage="Failed to update favorite."
-            mutationFn={handleToggleFavorite}
-            size="icon-sm"
-            variant="ghost"
-          >
-            <HeartIcon
-              className={`size-3 ${job.isFavorite ? "text-destructive" : "text-muted-foreground"}`}
-              weight={job.isFavorite ? "fill" : "regular"}
-            />
-          </MutationButton>
+          <FavoriteButton
+            isFavorite={job.isFavorite}
+            onToggle={handleToggleFavorite}
+          />
         </div>
       </div>
 

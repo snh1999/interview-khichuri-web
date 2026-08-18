@@ -28,6 +28,7 @@ export interface ICreateJobDto extends ICommonFields {
   description: string;
   status: TJobStatus;
   links?: string | null;
+  isFavorite?: boolean;
   deadline?: Date;
   interviewDate?: Date;
   appliedAt?: Date;

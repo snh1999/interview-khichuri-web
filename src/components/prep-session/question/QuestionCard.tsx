@@ -1,7 +1,6 @@
 import {
   CaretDownIcon,
   CaretRightIcon,
-  HeartIcon,
   NotePencilIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
@@ -11,6 +10,7 @@ import {
   useDeleteQuestion,
   useUpdateQuestion,
 } from "@/api/sessions";
+import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { MarkdownContent } from "@/components/common/MarkdownContent.tsx";
 import { QuestionForm } from "@/components/prep-session/question/QuestionForm.tsx";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
@@ -88,17 +88,10 @@ export const QuestionCard = ({
             )}
           </CollapsibleTrigger>
           <div className="flex shrink-0 items-center gap-1">
-            <MutationButton
-              errorMessage="Failed to pin question."
-              mutationFn={handleUpdateQuestion}
-              size="icon-sm"
-              variant="ghost"
-            >
-              <HeartIcon
-                className={`size-3 ${question.isFavorite ? "text-destructive" : "text-muted-foreground"}`}
-                weight={question.isFavorite ? "fill" : "regular"}
-              />
-            </MutationButton>
+            <FavoriteButton
+              isFavorite={question.isFavorite}
+              onToggle={handleUpdateQuestion}
+            />
 
             <Button
               onClick={viewUpdateForm}
