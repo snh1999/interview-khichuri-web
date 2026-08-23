@@ -47,6 +47,15 @@ export const spansMultipleDays = (event: TJobEvent | TCustomEvent): boolean =>
   "startDate" in event &&
   !isSameDay(event.startDate, getEffectiveEndDate(event));
 
+/**
+ * The backend has no all-day column, so nothing persists the flag.
+ *  "All day" is midnight-to-midnight timestamps;
+ */
+export const isAllDayEvent = (event: TJobEvent | TCustomEvent): boolean =>
+  "startDate" in event &&
+  isMidnight(event.startDate) &&
+  isMidnight(event.endDate);
+
 export const eventCoversDay = (
   event: TJobEvent | TCustomEvent,
   day: Date

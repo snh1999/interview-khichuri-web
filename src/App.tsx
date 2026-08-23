@@ -15,6 +15,7 @@ import {
   REGISTER_PAGE,
   RESET_PASSWORD_PAGE,
   RESUME_EDITOR_PAGE,
+  SCHEDULE_PAGE,
   SESSION_DETAIL_PAGE,
   SESSIONS_PAGE,
   SETTINGS_PAGE,
@@ -36,6 +37,7 @@ import JobProfilePage from "@/pages/JobProfilePage.tsx";
 import { JobsPage } from "@/pages/JobsPage.tsx";
 import { LandingPage } from "@/pages/landing/LandingPage.tsx";
 import { PublicResumePage } from "@/pages/PublicResumePage.tsx";
+import { SchedulePage } from "@/pages/SchedulePage.tsx";
 import { SessionsPage } from "@/pages/SessionsPage.tsx";
 import SettingsPage from "@/pages/SettingsPage.tsx";
 import { SidebarLayout } from "@/pages/SidebarLayout.tsx";
@@ -78,6 +80,7 @@ const App = () => {
           <Route element={<JobsPage />} path={JOBS_PAGE} />
           <Route element={<SessionsPage />} path={SESSIONS_PAGE} />
           <Route element={<SessionDetailPage />} path={SESSION_DETAIL_PAGE} />
+          <Route element={<SchedulePage />} path={SCHEDULE_PAGE} />
           <Route element={<JobProfilePage />} path={PROFILE_PAGE} />
           <Route element={<SettingsPage />} path={SETTINGS_PAGE} />
         </Route>

@@ -12,6 +12,7 @@ import {
   HOMEPAGE,
   JOBS_PAGE,
   PROFILE_PAGE,
+  SCHEDULE_PAGE,
   SESSIONS_PAGE,
   SETTINGS_PAGE,
 } from "@/app.constants.ts";
@@ -28,7 +29,7 @@ import {
 
 const SIDEBAR_MENU = [
   { name: "Dashboard", icon: PresentationChartIcon, url: HOMEPAGE },
-  { name: "Schedule", icon: CalendarDotsIcon, url: "#" },
+  { name: "Schedule", icon: CalendarDotsIcon, url: SCHEDULE_PAGE },
   { name: "Jobs", icon: BriefcaseIcon, url: JOBS_PAGE },
   { name: "Preparation", icon: LightbulbFilamentIcon, url: SESSIONS_PAGE },
   { name: "Job Profile", icon: ReadCvLogoIcon, url: PROFILE_PAGE },

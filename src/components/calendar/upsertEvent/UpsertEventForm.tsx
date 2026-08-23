@@ -22,7 +22,8 @@ const DURATION_PRESETS = [
   { label: "2h", minutes: 120 },
   { label: "4h", minutes: 240 },
   { label: "8h", minutes: 480 },
-  { label: "12h", minutes: 1440 },
+  { label: "12h", minutes: 720 },
+  { label: "24h", minutes: 1440 },
 ] as const;
 
 interface PresetButtonProps {

@@ -77,6 +77,11 @@ export const queryKeys = {
     passkey: ["passkey"] as const,
     session: ["session"] as const,
   },
+  calendar: {
+    all: ["calendar"] as const,
+    events: ["calendar", "events"] as const,
+    status: ["calendar", "status"] as const,
+  },
   jobs: {
     all: ["jobs"] as const,
     detail: (id: string) => [...queryKeys.jobs.all, "detail", id] as const,

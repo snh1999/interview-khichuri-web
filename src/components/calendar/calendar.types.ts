@@ -15,10 +15,9 @@ export interface TJobEvent extends IBasic {
 }
 
 export interface TCustomEvent extends IBasic {
-  description?: string | null;
+  description: string;
   startDate: Date;
   endDate: Date;
-  allDay?: boolean;
   isSynced?: boolean;
   privateSync?: boolean;
   googleTitle?: string | null;

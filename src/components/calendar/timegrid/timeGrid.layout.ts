@@ -19,24 +19,26 @@ interface SegmentCluster {
   latestEnd: Date;
 }
 
-export interface SpanningBarLayout {
+export interface SpanningSegmentLayout {
   event: TCustomEvent;
-  startIdx: number;
-  endIdx: number;
-  lane: number;
-  laneCount: number;
+  dayIdx: number;
+  isFirst: boolean;
+  isLast: boolean;
   startsBeforeView: boolean;
   endsAfterView: boolean;
+  lane: number;
+  laneCount: number;
   topPx: number;
   heightPx: number;
 }
 
 const MS_PER_DAY = 86_400_000;
+const SEGMENT_MIN_HEIGHT_PX = 16;
 
-export const buildSpanningBarLayouts = (
+export const buildSpanningSegments = (
   timedEvents: TCustomEvent[],
   days: Date[]
-): SpanningBarLayout[] => {
+): SpanningSegmentLayout[] => {
   const lastDay = days.at(-1);
   if (days.length === 0 || !lastDay) {
     return [];
@@ -109,20 +111,39 @@ export const buildSpanningBarLayouts = (
     assigned.push({ clipped: item, cluster, lane });
   }
 
-  return assigned.map(({ clipped: item, cluster, lane }) => {
+  // One segment per day column so each piece sits at the event's real hours
+  // on that day; a single rectangle can't represent vertical position across
+  // columns that each have their own time axis.
+  return assigned.flatMap(({ clipped: item, cluster, lane }) => {
     const startIdx = dayIndexOf(item.segStart);
     const endIdx = dayIndexOf(item.segEnd);
-    return {
-      event: item.event,
-      startIdx,
-      endIdx,
-      lane,
-      laneCount: cluster.laneEnds.length,
-      startsBeforeView: item.startsBeforeView,
-      endsAfterView: item.endsAfterView,
-      topPx: timeToY(item.segStart),
-      heightPx: Math.max(16, timeToY(item.segEnd) - timeToY(item.segStart)),
-    };
+    const laneCount = cluster.laneEnds.length;
+
+    const segments: SpanningSegmentLayout[] = [];
+    for (let idx = startIdx; idx <= endIdx; idx += 1) {
+      const dayStart = startOfDay(days[idx]);
+      const dayEnd = endOfDay(days[idx]);
+      const segStart = isBefore(item.segStart, dayStart)
+        ? dayStart
+        : item.segStart;
+      const segEnd = isAfter(item.segEnd, dayEnd) ? dayEnd : item.segEnd;
+      segments.push({
+        event: item.event,
+        dayIdx: idx,
+        isFirst: idx === startIdx,
+        isLast: idx === endIdx,
+        startsBeforeView: item.startsBeforeView,
+        endsAfterView: item.endsAfterView,
+        lane,
+        laneCount,
+        topPx: timeToY(segStart),
+        heightPx: Math.max(
+          SEGMENT_MIN_HEIGHT_PX,
+          timeToY(segEnd) - timeToY(segStart)
+        ),
+      });
+    }
+    return segments;
   });
 };
 

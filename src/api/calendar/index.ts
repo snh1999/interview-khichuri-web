@@ -8,7 +8,7 @@ export interface ICalendarEvent {
   id: string;
   userId: string;
   title: string;
-  description?: string | null;
+  description: string;
   startDate: string;
   endDate: string;
   source: "custom" | "job";
@@ -23,7 +23,7 @@ export interface ICalendarEvent {
 
 export interface ICreateCalendarEventDto {
   title: string;
-  description?: string | null;
+  description: string;
   startDate: Date;
   endDate: Date;
   source?: TEventSource;
@@ -34,7 +34,7 @@ export interface ICreateCalendarEventDto {
 
 export interface IUpdateCalendarEventDto {
   title?: string;
-  description?: string | null;
+  description?: string;
   startDate?: Date;
   endDate?: Date;
   privateSync?: boolean;

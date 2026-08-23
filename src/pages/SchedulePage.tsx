@@ -39,7 +39,7 @@ const ScheduleContent = () => {
     () => [
       ...jobEvents,
       ...calendarEvents
-        .filter((e) => e.source === "custom")
+        .filter((e) => e.source === "custom" && visibility.custom)
         .map((e) => ({
           ...e,
           source: "custom" as const,
@@ -47,7 +47,7 @@ const ScheduleContent = () => {
           endDate: new Date(e.endDate),
         })),
     ],
-    [jobEvents, calendarEvents]
+    [jobEvents, calendarEvents, visibility]
   );
 
   const handleSlotSelect = useCallback(

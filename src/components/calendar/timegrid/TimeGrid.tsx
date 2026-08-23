@@ -4,6 +4,7 @@ import {
   DAY_END_HOUR,
   DAY_START_HOUR,
   HOUR_HEIGHT_PX,
+  isAllDayEvent,
   spansMultipleDays,
   yToTime,
 } from "../calendar.helpers";
@@ -11,10 +12,7 @@ import type { TCustomEvent, TJobEvent } from "../calendar.types";
 import { AllDayRow } from "./AllDayRow";
 import { DayColumn } from "./DayColumn";
 import { SpanningBarsOverlay } from "./SpanningBarsOverlay";
-import {
-  buildDayChipLayouts,
-  buildSpanningBarLayouts,
-} from "./timeGrid.layout";
+import { buildDayChipLayouts, buildSpanningSegments } from "./timeGrid.layout";
 import { useTimeGridDrag } from "./useTimeGridDrag";
 
 const HOURS = Array.from(
@@ -47,13 +45,13 @@ export const TimeGrid = ({
   } = useTimeGridDrag(days, onSlotSelect);
 
   const timedEvents = events.filter(
-    (e): e is TCustomEvent => "startDate" in e && !e.allDay
+    (e): e is TCustomEvent => "startDate" in e && !isAllDayEvent(e)
   );
   const singleDayTimedEvents = timedEvents.filter((e) => !spansMultipleDays(e));
   const multiDayTimedEvents = timedEvents.filter((e) => spansMultipleDays(e));
-  const spanningBars = buildSpanningBarLayouts(multiDayTimedEvents, days);
+  const spanningSegments = buildSpanningSegments(multiDayTimedEvents, days);
   const allDayEvents = events.filter(
-    (e) => "date" in e || (e as TCustomEvent).allDay
+    (e) => "date" in e || ("startDate" in e && isAllDayEvent(e))
   );
 
   const stopPropagation = (e: React.PointerEvent<HTMLButtonElement>) =>
@@ -152,10 +150,10 @@ export const TimeGrid = ({
             })}
 
             <SpanningBarsOverlay
-              bars={spanningBars}
               days={days}
               events={events}
               onCustomEventClick={onCustomEventClick}
+              segments={spanningSegments}
               stopPropagation={stopPropagation}
             />
           </div>
