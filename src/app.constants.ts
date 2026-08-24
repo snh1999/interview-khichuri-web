@@ -11,7 +11,7 @@ export const PROFILE_PAGE = "/profile";
 export const CONFIRM_LOGIN_PAGE = "/confirm-login";
 export const JOBS_PAGE = "/jobs";
 export const JOB_DETAIL_PAGE = "/jobs/:jobId";
-
+export const SCHEDULE_PAGE = "/schedule";
 export const SESSIONS_PAGE = "/sessions";
 export const SESSION_DETAIL_PAGE = "/sessions/:sessionId";
 export const RESUME_EDITOR_PAGE = "/resumes/:resumeId";

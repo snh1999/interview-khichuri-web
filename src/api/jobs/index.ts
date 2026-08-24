@@ -71,6 +71,14 @@ export const useJob = (id: string) =>
     queryKey: queryKeys.jobs.detail(id),
   });
 
+export const useJobsAll = () =>
+  useQuery({
+    queryFn: async () => await api.get<IJob[]>("/jobs"),
+    queryKey: [...queryKeys.jobs.all, "all"],
+    staleTime: Number.POSITIVE_INFINITY,
+    gcTime: Number.POSITIVE_INFINITY,
+  });
+
 export const useCreateJob = () =>
   useMutation({
     mutationFn: async (dto: ICreateJobDto) =>
