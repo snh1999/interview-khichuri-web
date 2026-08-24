@@ -1,5 +1,5 @@
 import { CalendarEvent } from "../CalendarEvent";
-import { eventCoversDay, getEventsForDay } from "../calendar.helpers";
+import { coversWholeDay, getEventsForDay } from "../calendar.helpers";
 import type { TCustomEvent, TJobEvent } from "../calendar.types";
 
 interface Props {
@@ -31,7 +31,7 @@ export const AllDayRow = ({
           key={day.toISOString()}
         >
           {allDayEvents
-            .filter((e) => eventCoversDay(e, day))
+            .filter((e) => coversWholeDay(e, day))
             .map((e) => (
               <CalendarEvent
                 event={e}

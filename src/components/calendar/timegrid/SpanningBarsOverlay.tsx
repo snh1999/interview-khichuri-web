@@ -1,8 +1,7 @@
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { getEventsForDay } from "../calendar.helpers";
+import { getEventColors, getEventsForDay } from "../calendar.helpers";
 import type { TCustomEvent, TJobEvent } from "../calendar.types";
-import { EVENT_COLORS } from "../calendar.types";
 import type { SpanningSegmentLayout } from "./timeGrid.layout";
 
 interface Props {
@@ -10,7 +9,6 @@ interface Props {
   days: Date[];
   events: (TJobEvent | TCustomEvent)[];
   onCustomEventClick: (events: (TJobEvent | TCustomEvent)[], day: Date) => void;
-  stopPropagation: (e: React.PointerEvent<HTMLButtonElement>) => void;
 }
 
 export const SpanningBarsOverlay = ({
@@ -18,7 +16,6 @@ export const SpanningBarsOverlay = ({
   days,
   events,
   onCustomEventClick,
-  stopPropagation,
 }: Props) => {
   if (segments.length === 0) {
     return null;
@@ -26,12 +23,9 @@ export const SpanningBarsOverlay = ({
   return (
     <div className="pointer-events-none absolute inset-0 z-20">
       {segments.map((seg) => {
-        const colors = EVENT_COLORS[seg.event.source];
+        const colors = getEventColors(seg.event);
         const companySuffix =
           "companyName" in seg.event ? ` — ${seg.event.companyName}` : "";
-        const dayPct = (1 / days.length) * 100;
-        const slicePct = dayPct / seg.laneCount;
-        const leftPct = (seg.dayIdx / days.length) * 100 + slicePct * seg.lane;
         const barDay = days[seg.dayIdx];
         const handleClick = () =>
           onCustomEventClick(getEventsForDay(events, barDay), barDay);
@@ -45,14 +39,14 @@ export const SpanningBarsOverlay = ({
               colors.bg,
               colors.text
             )}
+            data-calendar-event
             key={`${seg.event.id}-${seg.dayIdx}`}
             onClick={handleClick}
-            onPointerDown={stopPropagation}
             style={{
               top: seg.topPx,
               height: seg.heightPx,
-              left: `${leftPct}%`,
-              width: `${slicePct}%`,
+              left: `${seg.leftPct}%`,
+              width: `${seg.widthPct}%`,
             }}
             title={`${seg.event.title}${companySuffix} (${format(seg.event.startDate, "MMM d h:mm a")} – ${format(seg.event.endDate, "MMM d h:mm a")})`}
             type="button"

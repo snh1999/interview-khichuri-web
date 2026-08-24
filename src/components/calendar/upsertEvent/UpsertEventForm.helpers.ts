@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addDays, addMinutes, format, isSameDay, startOfDay } from "date-fns";
+import { addMinutes, endOfDay, format, isSameDay, startOfDay } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { type DefaultValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -14,23 +14,28 @@ import {
   DEFAULT_CLICK_DURATION_MINUTES,
   isAllDayEvent,
 } from "../calendar.helpers";
-import type { TCustomEvent, TDrawerPrefill } from "../calendar.types.ts";
+import {
+  EVENT_COLOR_KEYS,
+  type TCustomEvent,
+  type TDrawerPrefill,
+} from "../calendar.types.ts";
 
 export const upsertEventSchema = z
   .object({
     title: z.string().trim().min(1, "Title is required"),
     description: z.string().trim().min(1, "Description is required").max(500),
     endDate: z.date(),
+    color: z.enum([...EVENT_COLOR_KEYS]).nullish(),
     // TODO: add those fields
     // googleTitle: z.string().max(200).optional(),
     // privateSync: z.boolean().optional(),
     startDate: z.date(),
   })
   .superRefine((data, ctx) => {
-    if (data.endDate.getTime() <= data.startDate.getTime()) {
+    if (data.endDate.getTime() < data.startDate.getTime()) {
       ctx.addIssue({
         code: "custom",
-        message: "End must be after start",
+        message: "End cannot be before start",
         path: ["endDate"],
       });
     }
@@ -48,12 +53,14 @@ const buildDefaultValues = (
   description: "",
   startDate: new Date(),
   endDate: new Date(),
+  color: null,
   ...prefill,
   ...(editingEvent && {
     title: editingEvent.title,
     description: editingEvent.description,
     startDate: editingEvent.startDate,
     endDate: editingEvent.endDate,
+    color: editingEvent.color ?? null,
   }),
 });
 
@@ -78,12 +85,12 @@ export const useUpsertEventForm = ({
   allDay: boolean;
   isMultiDay: boolean;
   handlePreset: (minutes: number) => void;
-  handleAllDay: () => void;
+  handleToggleAllDay: () => void;
 } => {
-  // Editing an existing all-day event (persisted as midnight-to-midnight)
-  // must open with the toggle ON; prefills keep their own session semantics.
+  // Editing an existing all-day event (persisted as 00:00 → 23:59) must open
+  // with the toggle ON; prefills keep their own session semantics.
   const [allDay, setAllDay] = useState(() =>
-    event ? isAllDayEvent(event) : !(event || prefill)
+    event ? isAllDayEvent(event) : (prefill?.allDay ?? !(event || prefill))
   );
   const { mutateAsync: createEvent, isPending: isCreatePending } =
     useCreateCalendarEvent();
@@ -115,13 +122,13 @@ export const useUpsertEventForm = ({
       prev.end.getTime() - prev.start.getTime(),
       MIN_RANGE_MS
     );
-    if (startChanged && startDate.getTime() >= endDate.getTime()) {
+    if (startChanged && startDate.getTime() > endDate.getTime()) {
       const nextEnd = new Date(startDate.getTime() + durationMs);
       form.setValue("endDate", nextEnd);
       prevRangeRef.current = { end: nextEnd, start: startDate };
       return;
     }
-    if (endChanged && endDate.getTime() <= startDate.getTime()) {
+    if (endChanged && endDate.getTime() < startDate.getTime()) {
       const nextStart = new Date(endDate.getTime() - durationMs);
       form.setValue("startDate", nextStart);
       prevRangeRef.current = { end: endDate, start: nextStart };
@@ -134,7 +141,9 @@ export const useUpsertEventForm = ({
     if (!open) {
       return;
     }
-    setAllDay(event ? isAllDayEvent(event) : !(event || prefill));
+    setAllDay(
+      event ? isAllDayEvent(event) : (prefill?.allDay ?? !(event || prefill))
+    );
     form.reset(buildDefaultValues(prefill, event));
   }, [open, event, prefill, form]);
 
@@ -163,19 +172,24 @@ export const useUpsertEventForm = ({
     setAllDay(false);
   };
 
-  const handleAllDay = () => {
-    const start = startOfDay(new Date(startDate));
-    const end = addDays(start, 1);
-    form.setValue("startDate", start);
-    form.setValue("endDate", end);
+  // Toggling on normalizes to whole days (00:00 → 23:59) while preserving
+  // the selected day span; toggling off just reveals the time inputs and
+  // leaves the current timestamps untouched for fine-tuning.
+  const handleToggleAllDay = () => {
+    if (allDay) {
+      setAllDay(false);
+      return;
+    }
+    form.setValue("startDate", startOfDay(new Date(startDate)));
+    form.setValue("endDate", endOfDay(new Date(endDate)));
     setAllDay(true);
   };
 
   return {
     allDay,
     form,
-    handleAllDay,
     handlePreset,
+    handleToggleAllDay,
     isLoading,
     isMultiDay: !isSameDay(endDate, startDate),
     handleSubmit,

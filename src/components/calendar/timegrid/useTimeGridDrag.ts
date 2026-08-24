@@ -8,13 +8,20 @@ export interface DragState {
   currentY: number;
 }
 
+const EVENT_TARGET_SELECTOR = "[data-calendar-event]";
+
 export const useTimeGridDrag = (
   days: Date[],
   onSlotSelect: (start: Date, end: Date, allDay?: boolean) => void
 ) => {
   const rowRef = useRef<HTMLDivElement | null>(null);
+  // Typed nullable so Biome sees cross-handler mutation as real state.
   const pointerDownClientY = useRef(0);
-  const hasDragged = useRef(false);
+  const hasDragged = useRef<boolean | undefined>(undefined);
+  // Pressing an event chip starts a potential drag too; only a release
+  // without movement falls through to the chip's own click handler.
+  const pressedOnEventRef = useRef<boolean | undefined>(undefined);
+  const pendingClickSuppressionRef = useRef<boolean | undefined>(undefined);
   const [drag, setDrag] = useState<DragState | null>(null);
 
   const getDayIndexFromX = useCallback(
@@ -38,11 +45,17 @@ export const useTimeGridDrag = (
     return clientY - rect.top;
   }, []);
 
+  // Attached once on the shared grid container so presses on event chips,
+  // spanning bars, and empty space all start a potential drag.
   const handlePointerDown = useCallback(
-    (dayIndex: number, e: React.PointerEvent<HTMLDivElement>) => {
+    (e: React.PointerEvent<HTMLDivElement>) => {
       const y = getYFromClientY(e.clientY);
+      const dayIndex = getDayIndexFromX(e.clientX);
       pointerDownClientY.current = e.clientY;
       hasDragged.current = false;
+      pressedOnEventRef.current = Boolean(
+        (e.target as HTMLElement).closest?.(EVENT_TARGET_SELECTOR)
+      );
       setDrag({
         startDayIndex: dayIndex,
         startY: y,
@@ -51,7 +64,7 @@ export const useTimeGridDrag = (
       });
       e.currentTarget.setPointerCapture(e.pointerId);
     },
-    [getYFromClientY]
+    [getDayIndexFromX, getYFromClientY]
   );
 
   const handlePointerMove = useCallback(
@@ -76,6 +89,14 @@ export const useTimeGridDrag = (
 
   const handlePointerUp = useCallback(() => {
     if (!drag) {
+      return;
+    }
+
+    // Press on an event chip + release without movement = click; skip the
+    // slot selection so the chip's own handler opens the event.
+    // biome-ignore lint/suspicious/noUnnecessaryConditions: ref is mutated across handlers
+    if (!hasDragged.current && pressedOnEventRef.current) {
+      setDrag(null);
       return;
     }
     const isMultiDay = drag.startDayIndex !== drag.currentDayIndex;
@@ -104,16 +125,33 @@ export const useTimeGridDrag = (
         onSlotSelect(start, end, false);
       }
     }
+    // Pointer capture routes the trailing click back to the pressed chip;
+    // a committed drag must not also open it.
+    pendingClickSuppressionRef.current =
+      // biome-ignore lint/suspicious/noUnnecessaryConditions: ref is mutated across handlers
+      hasDragged.current && pressedOnEventRef.current;
     setDrag(null);
   }, [drag, days, onSlotSelect]);
 
   // pointercancel fires on touch-gesture takeover, alt-tab mid-drag, etc.;
   // abort the drag without committing a slot selection.
   const handlePointerCancel = useCallback(() => {
+    pendingClickSuppressionRef.current = false;
     setDrag(null);
   }, []);
 
+  const handleClickCapture = useCallback((e: React.MouseEvent) => {
+    // biome-ignore lint/suspicious/noUnnecessaryConditions: ref is mutated in handlePointerUp
+    if (!pendingClickSuppressionRef.current) {
+      return;
+    }
+    pendingClickSuppressionRef.current = false;
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
   return {
+    handleClickCapture,
     rowRef,
     drag,
     handlePointerDown,

@@ -1,9 +1,13 @@
 import { CaretLeftIcon, CaretRightIcon, PlusIcon } from "@phosphor-icons/react";
-import { format } from "date-fns";
+import { addMinutes, format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useScheduleStore } from "@/store/scheduleStore.ts";
-import { getWeekDays, toAnchorDate } from "./calendar.helpers";
+import {
+  DEFAULT_CLICK_DURATION_MINUTES,
+  getWeekDays,
+  toAnchorDate,
+} from "./calendar.helpers";
 import type { TViewMode } from "./calendar.types";
 import { EventFilters } from "./EventFilters";
 
@@ -42,8 +46,18 @@ export const CalendarHeader = () => {
   };
 
   const handleAddEventClick = () => {
-    const now = new Date(anchor.year, anchor.month, anchor.day);
-    openCreateDrawer({ startDate: now, endDate: now, allDay: true });
+    const current = new Date();
+    const start = new Date(
+      anchor.year,
+      anchor.month,
+      anchor.day,
+      current.getHours(),
+      current.getMinutes()
+    );
+    openCreateDrawer({
+      startDate: start,
+      endDate: addMinutes(start, DEFAULT_CLICK_DURATION_MINUTES),
+    });
   };
 
   return (

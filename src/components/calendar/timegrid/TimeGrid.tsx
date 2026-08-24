@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import type { ReactNode } from "react";
 import {
+  coversWholeDay,
   DAY_END_HOUR,
   DAY_START_HOUR,
   HOUR_HEIGHT_PX,
@@ -38,6 +39,7 @@ export const TimeGrid = ({
   const {
     rowRef,
     drag,
+    handleClickCapture,
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
@@ -50,23 +52,23 @@ export const TimeGrid = ({
   const singleDayTimedEvents = timedEvents.filter((e) => !spansMultipleDays(e));
   const multiDayTimedEvents = timedEvents.filter((e) => spansMultipleDays(e));
   const spanningSegments = buildSpanningSegments(multiDayTimedEvents, days);
-  const allDayEvents = events.filter(
-    (e) => "date" in e || ("startDate" in e && isAllDayEvent(e))
+  // The all-day row lists job events plus every day an event fully covers —
+  // so a "full first day, partial second day" event shows its full day up
+  // top and only its partial day inside the time grid.
+  const allDayRowEvents = events.filter(
+    (e) => "date" in e || days.some((day) => coversWholeDay(e, day))
   );
 
-  const stopPropagation = (e: React.PointerEvent<HTMLButtonElement>) =>
-    e.stopPropagation();
-
-  const hasStickyHeader = header !== undefined || allDayEvents.length > 0;
+  const hasStickyHeader = header !== undefined || allDayRowEvents.length > 0;
 
   return (
     <div className="flex flex-col overflow-hidden rounded-md border">
-      <div className="max-h-[70vh] overflow-y-auto">
+      <div className="calendar-scrollbar max-h-[70vh] overflow-y-auto">
         {hasStickyHeader ? (
           <div className="sticky top-0 z-40 bg-card">
             {header}
             <AllDayRow
-              allDayEvents={allDayEvents}
+              allDayEvents={allDayRowEvents}
               days={days}
               events={events}
               onCustomEventClick={onCustomEventClick}
@@ -89,7 +91,9 @@ export const TimeGrid = ({
 
           <div
             className="relative flex flex-1"
+            onClickCapture={handleClickCapture}
             onPointerCancel={handlePointerCancel}
+            onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             ref={rowRef}
@@ -136,15 +140,12 @@ export const TimeGrid = ({
                 <DayColumn
                   day={day}
                   dayChips={dayChips}
-                  dayIndex={i}
                   events={events}
                   inMultiDayRange={inMultiDayRange}
                   key={day.toISOString()}
                   onCustomEventClick={onCustomEventClick}
-                  onPointerDown={handlePointerDown}
                   previewEnd={previewEnd}
                   previewStart={previewStart}
-                  stopPropagation={stopPropagation}
                 />
               );
             })}
@@ -154,7 +155,6 @@ export const TimeGrid = ({
               events={events}
               onCustomEventClick={onCustomEventClick}
               segments={spanningSegments}
-              stopPropagation={stopPropagation}
             />
           </div>
         </div>

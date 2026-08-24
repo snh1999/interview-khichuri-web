@@ -12,12 +12,17 @@ import {
   startOfWeek,
 } from "date-fns";
 import type { TCustomEvent, TJobEvent } from "./calendar.types";
+import {
+  EVENT_COLOR_OPTIONS,
+  EVENT_COLORS,
+  type TEventColor,
+} from "./calendar.types";
 
 export const HOUR_HEIGHT_PX = 48;
 export const SNAP_MINUTES = 15;
 export const DAY_START_HOUR = 0;
 export const DAY_END_HOUR = 24;
-export const DEFAULT_CLICK_DURATION_MINUTES = 30;
+export const DEFAULT_CLICK_DURATION_MINUTES = 15;
 
 export const toAnchorDate = (
   year: number,
@@ -47,14 +52,60 @@ export const spansMultipleDays = (event: TJobEvent | TCustomEvent): boolean =>
   "startDate" in event &&
   !isSameDay(event.startDate, getEffectiveEndDate(event));
 
+const isLastMinuteOfDay = (date: Date): boolean =>
+  date.getHours() === 23 && date.getMinutes() >= 59;
+
 /**
  * The backend has no all-day column, so nothing persists the flag.
- *  "All day" is midnight-to-midnight timestamps;
+ *  "All day" is 00:00 → 23:59 timestamps;
  */
-export const isAllDayEvent = (event: TJobEvent | TCustomEvent): boolean =>
-  "startDate" in event &&
-  isMidnight(event.startDate) &&
-  isMidnight(event.endDate);
+export const isAllDayEvent = (event: TJobEvent | TCustomEvent): boolean => {
+  if (!("startDate" in event && isMidnight(event.startDate))) {
+    return false;
+  }
+  // Tolerate the last minute of the day (23:59:00 …) plus legacy
+  // midnight-capped ranges saved before the 23:59 convention.
+  return isMidnight(event.endDate) || isLastMinuteOfDay(event.endDate);
+};
+
+/**
+ * Whether the event occupies the entire given day (00:00 → last minute).
+ * Used to lift fully-covered days of otherwise timed multi-day events into
+ * the all-day row while partial days stay in the time grid.
+ */
+export const coversWholeDay = (
+  event: TJobEvent | TCustomEvent,
+  day: Date
+): boolean => {
+  if ("date" in event) {
+    return isSameDay(event.date, day);
+  }
+  // Must have started no later than this day's 00:00…
+  if (event.startDate.getTime() > startOfDay(day).getTime()) {
+    return false;
+  }
+  // …and run through this day's end: either past it entirely, or up to
+  // the last minute OF this very day.
+  return (
+    event.endDate.getTime() >= endOfDay(day).getTime() ||
+    (isSameDay(event.endDate, day) && isLastMinuteOfDay(event.endDate))
+  );
+};
+
+/**
+ * User-chosen color wins for custom events; job-event source colors stay
+ * reserved. Unknown/stale keys fall back to the source color.
+ */
+export const getEventColors = (
+  event: TJobEvent | TCustomEvent
+): { bg: string; text: string; dot: string } => {
+  const color =
+    "startDate" in event && event.source === "custom" ? event.color : null;
+  if (color && color in EVENT_COLOR_OPTIONS) {
+    return EVENT_COLOR_OPTIONS[color as TEventColor];
+  }
+  return EVENT_COLORS[event.source];
+};
 
 export const eventCoversDay = (
   event: TJobEvent | TCustomEvent,

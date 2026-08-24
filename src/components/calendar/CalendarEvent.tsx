@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
+import { getEventColors } from "./calendar.helpers";
 import type { TCustomEvent, TJobEvent } from "./calendar.types";
-import { EVENT_COLORS } from "./calendar.types";
 
 interface Props {
   event: TJobEvent | TCustomEvent;
@@ -13,7 +13,7 @@ export const CalendarEvent = ({
   compact = false,
   onCustomClick,
 }: Props) => {
-  const colors = EVENT_COLORS[event.source];
+  const colors = getEventColors(event);
 
   const handleClick = () => {
     onCustomClick?.(event);

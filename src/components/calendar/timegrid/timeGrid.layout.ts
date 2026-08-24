@@ -1,5 +1,6 @@
 import { endOfDay, isAfter, isBefore, isSameDay, startOfDay } from "date-fns";
 import {
+  coversWholeDay,
   getEffectiveEndDate,
   spansMultipleDays,
   timeToY,
@@ -14,9 +15,15 @@ interface ClippedTimedEvent {
   endsAfterView: boolean;
 }
 
-interface SegmentCluster {
-  laneEnds: Date[];
-  latestEnd: Date;
+interface SegmentDraft {
+  event: TCustomEvent;
+  dayIdx: number;
+  segStart: Date;
+  segEnd: Date;
+  isFirst: boolean;
+  isLast: boolean;
+  startsBeforeView: boolean;
+  endsAfterView: boolean;
 }
 
 export interface SpanningSegmentLayout {
@@ -26,8 +33,8 @@ export interface SpanningSegmentLayout {
   isLast: boolean;
   startsBeforeView: boolean;
   endsAfterView: boolean;
-  lane: number;
-  laneCount: number;
+  leftPct: number;
+  widthPct: number;
   topPx: number;
   heightPx: number;
 }
@@ -77,73 +84,95 @@ export const buildSpanningSegments = (
     })
     .sort((a, b) => a.segStart.getTime() - b.segStart.getTime());
 
-  // Greedy interval partitioning; each run of overlapping events ("cluster")
-  // shares a lane count so bars split their span's width instead of stacking.
-  const assigned: {
-    clipped: ClippedTimedEvent;
-    cluster: SegmentCluster;
-    lane: number;
-  }[] = [];
-  const clusters: SegmentCluster[] = [];
-
+  // One draft per partially-covered day so each piece sits at the event's
+  // real hours on that day; fully-covered days render in the all-day row.
+  const draftsByDay = new Map<number, SegmentDraft[]>();
   for (const item of clipped) {
-    const previous = clusters.at(-1);
-    let cluster: SegmentCluster;
-    if (!previous || item.segStart.getTime() >= previous.latestEnd.getTime()) {
-      cluster = { laneEnds: [], latestEnd: item.segStart };
-      clusters.push(cluster);
-    } else {
-      cluster = previous;
-    }
-
-    let lane = cluster.laneEnds.findIndex(
-      (laneEnd) => laneEnd.getTime() <= item.segStart.getTime()
-    );
-    if (lane === -1) {
-      cluster.laneEnds.push(item.segEnd);
-      lane = cluster.laneEnds.length - 1;
-    } else {
-      cluster.laneEnds[lane] = item.segEnd;
-    }
-    if (item.segEnd.getTime() > cluster.latestEnd.getTime()) {
-      cluster.latestEnd = item.segEnd;
-    }
-    assigned.push({ clipped: item, cluster, lane });
-  }
-
-  // One segment per day column so each piece sits at the event's real hours
-  // on that day; a single rectangle can't represent vertical position across
-  // columns that each have their own time axis.
-  return assigned.flatMap(({ clipped: item, cluster, lane }) => {
     const startIdx = dayIndexOf(item.segStart);
     const endIdx = dayIndexOf(item.segEnd);
-    const laneCount = cluster.laneEnds.length;
 
-    const segments: SpanningSegmentLayout[] = [];
     for (let idx = startIdx; idx <= endIdx; idx += 1) {
+      if (coversWholeDay(item.event, days[idx])) {
+        continue;
+      }
       const dayStart = startOfDay(days[idx]);
       const dayEnd = endOfDay(days[idx]);
-      const segStart = isBefore(item.segStart, dayStart)
-        ? dayStart
-        : item.segStart;
-      const segEnd = isAfter(item.segEnd, dayEnd) ? dayEnd : item.segEnd;
-      segments.push({
+      const bucket = draftsByDay.get(idx) ?? [];
+      bucket.push({
         event: item.event,
         dayIdx: idx,
+        segStart: isBefore(item.segStart, dayStart) ? dayStart : item.segStart,
+        segEnd: isAfter(item.segEnd, dayEnd) ? dayEnd : item.segEnd,
         isFirst: idx === startIdx,
         isLast: idx === endIdx,
         startsBeforeView: item.startsBeforeView,
         endsAfterView: item.endsAfterView,
-        lane,
-        laneCount,
-        topPx: timeToY(segStart),
-        heightPx: Math.max(
-          SEGMENT_MIN_HEIGHT_PX,
-          timeToY(segEnd) - timeToY(segStart)
-        ),
       });
+      draftsByDay.set(idx, bucket);
     }
-    return segments;
+  }
+
+  // Lane packing runs per day among the segments actually rendered there;
+  // event-span-wide lanes would keep reserving width on days whose
+  // neighbours were lifted into the all-day row.
+  return [...draftsByDay.entries()].flatMap(([dayIdx, drafts]) => {
+    drafts.sort(
+      (a, b) =>
+        a.segStart.getTime() - b.segStart.getTime() ||
+        b.segEnd.getTime() - a.segEnd.getTime()
+    );
+
+    const layouts: SpanningSegmentLayout[] = [];
+    let cluster: { draft: SegmentDraft; lane: number }[] = [];
+    let laneEnds: Date[] = [];
+    let clusterLatest = Number.NEGATIVE_INFINITY;
+
+    const flushCluster = () => {
+      if (cluster.length === 0) {
+        return;
+      }
+      const slicePct = (1 / days.length) * (100 / laneEnds.length);
+      for (const { draft, lane } of cluster) {
+        layouts.push({
+          event: draft.event,
+          dayIdx,
+          isFirst: draft.isFirst,
+          isLast: draft.isLast,
+          startsBeforeView: draft.startsBeforeView,
+          endsAfterView: draft.endsAfterView,
+          leftPct: (dayIdx / days.length) * 100 + slicePct * lane,
+          widthPct: slicePct,
+          topPx: timeToY(draft.segStart),
+          heightPx: Math.max(
+            SEGMENT_MIN_HEIGHT_PX,
+            timeToY(draft.segEnd) - timeToY(draft.segStart)
+          ),
+        });
+      }
+      cluster = [];
+      laneEnds = [];
+      clusterLatest = Number.NEGATIVE_INFINITY;
+    };
+
+    for (const draft of drafts) {
+      if (cluster.length > 0 && draft.segStart.getTime() >= clusterLatest) {
+        flushCluster();
+      }
+      let lane = laneEnds.findIndex(
+        (end) => end.getTime() <= draft.segStart.getTime()
+      );
+      if (lane === -1) {
+        laneEnds.push(draft.segEnd);
+        lane = laneEnds.length - 1;
+      } else {
+        laneEnds[lane] = draft.segEnd;
+      }
+      clusterLatest = Math.max(clusterLatest, draft.segEnd.getTime());
+      cluster.push({ draft, lane });
+    }
+    flushCluster();
+
+    return layouts;
   });
 };
 

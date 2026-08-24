@@ -12,7 +12,9 @@ import {
   DrawLogHeader,
   DrawLogTitle,
 } from "@/components/ui/custom/DrawLog.tsx";
+import { cn } from "@/lib/utils";
 import { useScheduleStore } from "@/store/scheduleStore.ts";
+import { EVENT_COLOR_KEYS, EVENT_COLOR_OPTIONS } from "../calendar.types";
 import { useUpsertEventForm } from "./UpsertEventForm.helpers.ts";
 
 const DURATION_PRESETS = [
@@ -30,6 +32,44 @@ interface PresetButtonProps {
   minutes: number;
   onPreset: (minutes: number) => void;
 }
+
+interface ColorSwatchProps {
+  colorKey: string | null;
+  swatchClassName: string;
+  selected: boolean;
+  title: string;
+  ariaLabel: string;
+  onSelectColor: (color: string | null) => void;
+}
+
+const ColorSwatch = ({
+  colorKey,
+  swatchClassName,
+  selected,
+  title,
+  ariaLabel,
+  onSelectColor,
+}: ColorSwatchProps) => {
+  const handleClick = useCallback(
+    () => onSelectColor(colorKey),
+    [onSelectColor, colorKey]
+  );
+  return (
+    <button
+      aria-label={ariaLabel}
+      aria-pressed={selected}
+      className={cn(
+        "flex size-6 items-center justify-center rounded-full transition-shadow",
+        selected && "ring-2 ring-ring ring-offset-2 ring-offset-background"
+      )}
+      onClick={handleClick}
+      title={title}
+      type="button"
+    >
+      <span className={cn("size-4 rounded-full", swatchClassName)} />
+    </button>
+  );
+};
 
 const PresetButton = ({ minutes, onPreset }: PresetButtonProps) => {
   const label = DURATION_PRESETS.find((p) => p.minutes === minutes)?.label;
@@ -58,8 +98,8 @@ export const UpsertEventForm = () => {
   const {
     allDay,
     form,
-    handleAllDay,
     handlePreset,
+    handleToggleAllDay,
     isLoading,
     handleSubmit,
     isMultiDay,
@@ -69,6 +109,15 @@ export const UpsertEventForm = () => {
     prefill: drawerPrefill,
     closeDrawLog: closeDrawer,
   });
+
+  // All-day hides the time inputs, except for multi-day ranges where exact
+  // times still matter (e.g. a conference from Mar 5 09:00 to Mar 7 18:00).
+  const withTime = !allDay || isMultiDay;
+  const selectedColor = form.watch("color") ?? null;
+  const handleSelectColor = useCallback(
+    (color: string | null) => form.setValue("color", color),
+    [form]
+  );
 
   return (
     <DrawLog onOpenChange={handleOpenChange} open={drawerOpen}>
@@ -92,7 +141,7 @@ export const UpsertEventForm = () => {
               label="Start"
               name="startDate"
               placeholder="Pick start date..."
-              withTime={!allDay}
+              withTime={withTime}
             />
 
             <FormDatePicker
@@ -100,7 +149,7 @@ export const UpsertEventForm = () => {
               label="End"
               name="endDate"
               placeholder="Pick end date..."
-              withTime={!allDay}
+              withTime={withTime}
             />
 
             {isMultiDay ? null : (
@@ -115,16 +164,42 @@ export const UpsertEventForm = () => {
                     />
                   ))}
                   <Button
-                    onClick={handleAllDay}
+                    aria-pressed={allDay}
+                    onClick={handleToggleAllDay}
                     size="sm"
                     type="button"
-                    variant="outline"
+                    variant={allDay ? "default" : "outline"}
                   >
                     All day
                   </Button>
                 </div>
               </div>
             )}
+
+            <div className="flex flex-col gap-1.5">
+              <span className="font-medium text-sm">Color</span>
+              <div className="flex flex-wrap gap-1.5">
+                <ColorSwatch
+                  ariaLabel="Default color"
+                  colorKey={null}
+                  onSelectColor={handleSelectColor}
+                  selected={selectedColor === null}
+                  swatchClassName="border-muted-foreground/40 border bg-transparent"
+                  title="Default"
+                />
+                {EVENT_COLOR_KEYS.map((key) => (
+                  <ColorSwatch
+                    ariaLabel={`${key} color`}
+                    colorKey={key}
+                    key={key}
+                    onSelectColor={handleSelectColor}
+                    selected={selectedColor === key}
+                    swatchClassName={EVENT_COLOR_OPTIONS[key].dot}
+                    title={key}
+                  />
+                ))}
+              </div>
+            </div>
 
             <FormInput
               form={form}

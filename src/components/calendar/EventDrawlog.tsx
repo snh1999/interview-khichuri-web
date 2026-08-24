@@ -25,8 +25,9 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { useScheduleStore } from "@/store/scheduleStore.ts";
+import { getEventColors } from "./calendar.helpers";
 import type { TCustomEvent, TJobEvent } from "./calendar.types";
-import { EVENT_COLORS, EVENT_LABELS } from "./calendar.types";
+import { EVENT_LABELS } from "./calendar.types";
 
 export const EventDrawlog = () => {
   const eventList = useScheduleStore((s) => s.eventList);
@@ -82,7 +83,7 @@ const EventListItem = ({ event }: IProps) => {
   const closeEventList = useScheduleStore((s) => s.closeEventList);
   const { mutateAsync: deleteBackendEvent } = useDeleteCalendarEvent();
 
-  const colors = EVENT_COLORS[event.source];
+  const colors = getEventColors(event);
   const isCustom = !("jobId" in event);
 
   const view = isCustom

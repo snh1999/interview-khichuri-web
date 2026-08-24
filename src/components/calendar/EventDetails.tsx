@@ -21,8 +21,8 @@ import {
   DrawLogHeader,
   DrawLogTitle,
 } from "@/components/ui/custom/DrawLog";
+import { getEventColors } from "./calendar.helpers";
 import {
-  EVENT_COLORS,
   EVENT_LABELS,
   type TCustomEvent,
   type TJobEvent,
@@ -46,7 +46,7 @@ export const EventDetails = ({ event, open, onOpenChange, onEdit }: Props) => {
 
   const isCustom = !("jobId" in event);
 
-  const colors = EVENT_COLORS[event.source];
+  const colors = getEventColors(event);
 
   const handleEdit = () => {
     if (isCustom) {
