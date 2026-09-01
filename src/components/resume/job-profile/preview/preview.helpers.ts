@@ -1,4 +1,4 @@
-import type { TExtractionResult } from "@/api/profile";
+import type { TExtractionResult } from "@/api/resumes";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import { formatToString } from "@/components/resume/utils.ts";
 

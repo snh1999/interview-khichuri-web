@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { TPermissionOptions } from "@/api/auth/admin.ts";
+import type { IAtsScoreFilter } from "@/lib/indexdb";
 
 declare module "@tanstack/react-query" {
   interface Register {
@@ -98,22 +99,46 @@ export const queryKeys = {
     industries: ["lookups", "industries"] as const,
     roles: ["lookups", "roles"] as const,
     topics: ["lookups", "topics"] as const,
+    companies: ["lookups", "companies"] as const,
   },
   profile: {
     all: ["profile"] as const,
+  },
+  resumes: {
+    all: ["resumes"] as const,
+    review: ["reviews"] as const,
     resumeById: (id: string) =>
-      [...queryKeys.profile.resumes, "detail", id] as const,
+      [...queryKeys.resumes.all, "detail", id] as const,
     resumeBySlug: (slug: string) =>
-      [...queryKeys.profile.resumes, "public", slug] as const,
-    get resumes() {
-      return [...queryKeys.profile.all, "resumes"] as const;
-    },
+      [...queryKeys.resumes.all, "public", slug] as const,
     // using different key to stop user from refetching
     resumeView: (id: string) =>
-      [...queryKeys.profile.resumes, "resumeView", id] as const,
+      [...queryKeys.resumes.all, "resumeView", id] as const,
+    ats: {
+      get all() {
+        return [...queryKeys.resumes.review, "ats"] as const;
+      },
+      filter: (filter?: IAtsScoreFilter) =>
+        [...queryKeys.resumes.ats.all, filter ?? {}] as const,
+    },
+    reviewById: (resumeId: string) =>
+      [
+        ...queryKeys.resumes.review,
+        ...queryKeys.resumes.all,
+        resumeId,
+      ] as const,
   },
-
-
+  prompts: {
+    all: ["prompts"] as const,
+    get defaults() {
+      return [...queryKeys.prompts.all, "defaults"] as const;
+    },
+    details: (id: number) => [...queryKeys.prompts.all, "detail", id] as const,
+    liked: (filters?: Record<string, unknown>) =>
+      [...queryKeys.prompts.all, "liked", filters] as const,
+    list: (scope: string, filters?: Record<string, unknown>) =>
+      [...queryKeys.prompts.all, scope, filters] as const,
+  },
   sessions: {
     all: ["sessions"] as const,
     list: (filters?: Record<string, unknown>) =>

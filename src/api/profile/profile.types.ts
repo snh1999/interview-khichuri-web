@@ -1,16 +1,11 @@
 import type {
-  TActivityDto,
   TEducationDto,
   TJobPreferencesDto,
   TProfessionalInfoDto,
   TProfileLinkDto,
   TProfilePersonalDto,
-  TProjectDto,
-  TPublicationDto,
-  TReferenceDto,
   TWorkExperienceDto,
 } from "@/components/job-profile/profile.helpers.ts";
-import type { TResumeContent } from "@/components/resume/job-profile/resume.helpers.ts";
 
 export type TProfile = TProfilePersonalDto & {
   id: string;
@@ -123,20 +118,6 @@ export interface TProfileActivity {
   notes: string | null;
 }
 
-export interface IResume {
-  id: string;
-  profileId: string;
-  name: string;
-  url: string | null;
-  content: TResumeContent | null;
-  template: string | null;
-  isPrimary: boolean;
-  isPublic: boolean;
-  slug: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export type TProfilePopulated = TProfile & {
   links: TProfileLink[] | null;
   workOverviews: TWorkOverview[] | null;
@@ -148,21 +129,3 @@ export type TProfilePopulated = TProfile & {
   references: TProfileReference[] | null;
   activities: TProfileActivity[] | null;
 };
-
-export interface TExtractionResult {
-  personal: Partial<TProfilePersonalDto>;
-  professional: Partial<Omit<TProfessionalInfoDto, "skills" | "industries">> & {
-    skills?: number[];
-    industries?: number[];
-  };
-  workExperience: Partial<TWorkExperienceDto>[];
-  education: Partial<TEducationDto>[];
-  preferences: Partial<Omit<TJobPreferencesDto, "titles">> & {
-    titles?: number[];
-  };
-  links: TProfileLinkDto[];
-  publications: Partial<TPublicationDto>[];
-  projects: Partial<TProjectDto>[];
-  references: Partial<TReferenceDto>[];
-  activities: Partial<TActivityDto>[];
-}

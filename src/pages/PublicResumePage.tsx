@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { usePublicResume } from "@/api/profile";
+import { usePublicResume } from "@/api/resumes";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
 import { mergeIntoFormData } from "@/components/resume/job-profile/resume.helpers.ts";
 import { RenderProvider } from "@/components/resume/PDFAdapter.tsx";

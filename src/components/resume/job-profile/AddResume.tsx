@@ -2,11 +2,9 @@ import { WarningIcon } from "@phosphor-icons/react";
 import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import {
-  useCreateResume,
-  useProfile,
-  useUploadResume,
-} from "@/api/profile/profiles.ts";
+import { useProfile } from "@/api/profile";
+import { useCreateResume, useUploadResume } from "@/api/resumes";
+
 import { REQUIRED_FIELDS } from "@/components/job-profile/profile.data.ts";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import { profileToFormData } from "@/components/job-profile/profile.helpers.ts";
@@ -81,7 +79,7 @@ export const AddResume = ({ count, onSuccess }: Readonly<IProps>) => {
       {
         onSuccess: (resume) => {
           onSuccess();
-          navigate(`/resumes/${resume.id}`);
+          navigate(`/resumes/${resume.id}/edit`);
         },
       }
     );
