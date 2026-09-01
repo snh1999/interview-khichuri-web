@@ -1,4 +1,5 @@
 import {
+  ArrowSquareOutIcon,
   DotsThreeVerticalIcon,
   FileArrowDownIcon,
   FilePdfIcon,
@@ -52,7 +53,9 @@ export const ResumeListItem = ({
     }
   };
 
-  const handleNavigate = () => navigate(`/resumes/${resume.id}/edit`);
+  const handleNavigate = () => navigate(`/resumes/${resume.id}`);
+
+  const handleNavigateToEdit = () => navigate(`/resumes/${resume.id}/edit`);
 
   const handleDelete = async () => {
     try {
@@ -117,6 +120,9 @@ export const ResumeListItem = ({
           }
         />
         <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem onClick={handleNavigate}>
+            <ArrowSquareOutIcon className="size-4" /> Visit
+          </DropdownMenuItem>
           {isGenerated ? (
             <DropdownMenuItem onClick={handleFillProfile}>
               <FileArrowDownIcon className="size-4" /> Fill profile
@@ -136,7 +142,7 @@ export const ResumeListItem = ({
             </DropdownMenuItem>
           )}
           {isGenerated && (
-            <DropdownMenuItem onClick={handleNavigate}>
+            <DropdownMenuItem onClick={handleNavigateToEdit}>
               <PenIcon className="size-4" /> Edit
             </DropdownMenuItem>
           )}

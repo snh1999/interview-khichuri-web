@@ -1,82 +1,33 @@
-import { ArrowSquareOutIcon, PenIcon } from "@phosphor-icons/react";
-import { useCallback } from "react";
+import { ListIcon, PenIcon, XIcon } from "@phosphor-icons/react";
 import { generatePath, useNavigate } from "react-router";
-import type { IResume } from "@/api/profile";
-import { useResumeViewUrl } from "@/api/profile/profiles.ts";
-import { RESUME_EDITOR_PAGE } from "@/app.constants.ts";
+import type { IResume } from "@/api/resumes";
+import { RESUME_DETAIL_PAGE, RESUME_EDITOR_PAGE } from "@/app.constants.ts";
+import { ViewResumeContent } from "@/components/resume/job-profile/ViewResumeContent.tsx";
+import { OpenPDFInNewTab } from "@/components/resume/OpenPDFInNewTab.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog.tsx";
-import { Spinner } from "@/components/ui/spinner.tsx";
+  DrawLog,
+  DrawLogContent,
+  DrawLogFooter,
+  DrawLogHeader,
+  DrawLogTitle,
+} from "@/components/ui/custom/DrawLog.tsx";
 
 interface IProps {
   resume: IResume;
   onClose: () => void;
 }
 
-const PdfResumeView = ({ resume, onClose }: Readonly<IProps>) => {
-  const { data, isFetching } = useResumeViewUrl(resume.id);
-
-  const handleOpenInNewTab = useCallback(() => {
-    window.open(data?.url, "_blank");
-  }, [data?.url]);
-
-  return (
-    <>
-      <div className="flex flex-1 px-4 pt-2 pb-4">
-        {isFetching ? (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Spinner />
-          </div>
-        ) : (
-          <embed
-            className="w-full rounded border"
-            src={data?.url}
-            type="application/pdf"
-          />
-        )}
-      </div>
-      <DialogFooter className="flex flex-row items-center justify-end gap-2 border-border border-t px-4 py-3">
-        <Button onClick={onClose} variant="outline">
-          Close
-        </Button>
-        {data?.url ? (
-          <Button onClick={handleOpenInNewTab} variant="default">
-            <ArrowSquareOutIcon className="size-4" />
-            Open in new tab
-          </Button>
-        ) : null}
-      </DialogFooter>
-    </>
-  );
-};
-
-const GeneratedResumeView = ({ resume, onClose }: Readonly<IProps>) => {
-  const navigate = useNavigate();
-  const handleEdit = useCallback(() => {
-    navigate(generatePath(RESUME_EDITOR_PAGE, { resumeId: resume.id }));
-  }, [navigate, resume.id]);
-
-  return (
-    <DialogFooter className="flex flex-row items-center justify-end gap-2 border-border border-t px-4 py-3">
-      <Button onClick={onClose} variant="outline">
-        Close
-      </Button>
-      <Button onClick={handleEdit} variant="default">
-        <PenIcon className="size-4" />
-        Edit
-      </Button>
-    </DialogFooter>
-  );
-};
-
 export const ViewResume = ({ resume, onClose }: Readonly<IProps>) => {
   const isGenerated = Boolean(resume.content);
+  const navigate = useNavigate();
+
+  const handleReview = () =>
+    navigate(generatePath(RESUME_DETAIL_PAGE, { resumeId: resume.id }));
+
+  const handleEdit = () =>
+    navigate(generatePath(RESUME_EDITOR_PAGE, { resumeId: resume.id }));
+
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       onClose();
@@ -84,21 +35,39 @@ export const ViewResume = ({ resume, onClose }: Readonly<IProps>) => {
   };
 
   return (
-    <Dialog onOpenChange={handleOpenChange} open>
-      <DialogContent
+    <DrawLog onOpenChange={handleOpenChange} open>
+      <DrawLogContent
         className="flex h-screen flex-col gap-0 p-0 sm:max-w-5xl"
         showCloseButton={true}
       >
-        <DialogHeader className="flex flex-row items-center justify-between gap-2 px-4 pt-4 pb-0">
-          <DialogTitle className="truncate text-sm">{resume.name}</DialogTitle>
-        </DialogHeader>
+        <DrawLogHeader className="flex flex-row items-center justify-between gap-2 px-4 pt-4 pb-0">
+          <DrawLogTitle className="truncate text-sm">
+            {resume.name}
+          </DrawLogTitle>
+        </DrawLogHeader>
 
-        {isGenerated ? (
-          <GeneratedResumeView onClose={onClose} resume={resume} />
-        ) : (
-          <PdfResumeView onClose={onClose} resume={resume} />
-        )}
-      </DialogContent>
-    </Dialog>
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pt-2 pb-4">
+          <ViewResumeContent resume={resume} />
+        </div>
+
+        <DrawLogFooter className="flex flex-row items-center justify-end gap-2 border-border border-t px-4 py-3">
+          <Button onClick={onClose} variant="destructive">
+            <XIcon />
+            Close
+          </Button>
+          {isGenerated ? (
+            <Button onClick={handleEdit} variant="secondary">
+              <PenIcon className="size-4" />
+              Edit
+            </Button>
+          ) : (
+            <OpenPDFInNewTab resumeId={resume.id} />
+          )}
+          <Button onClick={handleReview}>
+            <ListIcon /> View
+          </Button>
+        </DrawLogFooter>
+      </DrawLogContent>
+    </DrawLog>
   );
 };

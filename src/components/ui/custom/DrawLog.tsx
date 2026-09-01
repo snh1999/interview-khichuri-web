@@ -17,6 +17,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+
 } from "@/components/ui/drawer"
 import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/useMediaQuery.ts"
@@ -83,10 +84,12 @@ function DrawLogHeader({ className, ...props }: ComponentProps<typeof DialogHead
   )
 }
 
-function DrawLogTitle(props: ComponentProps<typeof DialogTitle>) {
+function DrawLogTitle({className, ...props}: ComponentProps<typeof DialogTitle>) {
   const isDesktop = useDrawLogContext()
   const Comp = isDesktop ? DialogTitle : DrawerTitle
-  return <Comp {...props} />
+  return <Comp
+    className={cn("min-w-0", className)}
+    {...props} />
 }
 
 function DrawLogDescription(props: ComponentProps<typeof DialogDescription>) {

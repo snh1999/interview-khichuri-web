@@ -14,7 +14,9 @@ import {
   PUBLIC_RESUME_PAGE,
   REGISTER_PAGE,
   RESET_PASSWORD_PAGE,
+  RESUME_DETAIL_PAGE,
   RESUME_EDITOR_PAGE,
+  RESUMES_PAGE,
   SCHEDULE_PAGE,
   SESSION_DETAIL_PAGE,
   SESSIONS_PAGE,
@@ -37,6 +39,8 @@ import JobProfilePage from "@/pages/JobProfilePage.tsx";
 import { JobsPage } from "@/pages/JobsPage.tsx";
 import { LandingPage } from "@/pages/landing/LandingPage.tsx";
 import { PublicResumePage } from "@/pages/PublicResumePage.tsx";
+import { ResumeDetailPage } from "@/pages/ResumeDetailPage.tsx";
+import { ResumesPage } from "@/pages/ResumesPage.tsx";
 import { SchedulePage } from "@/pages/SchedulePage.tsx";
 import { SessionsPage } from "@/pages/SessionsPage.tsx";
 import SettingsPage from "@/pages/SettingsPage.tsx";
@@ -83,6 +87,8 @@ const App = () => {
           <Route element={<SchedulePage />} path={SCHEDULE_PAGE} />
           <Route element={<JobProfilePage />} path={PROFILE_PAGE} />
           <Route element={<SettingsPage />} path={SETTINGS_PAGE} />
+          <Route element={<ResumesPage />} path={RESUMES_PAGE} />
+          <Route element={<ResumeDetailPage />} path={RESUME_DETAIL_PAGE} />
         </Route>
         <Route
           element={<ResumeEditorWithPreviewPage />}

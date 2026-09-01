@@ -1,6 +1,7 @@
 import {
   BriefcaseIcon,
   CalendarDotsIcon,
+  FrameCornersIcon,
   GearIcon,
   HouseIcon,
   LightbulbFilamentIcon,
@@ -12,6 +13,7 @@ import {
   HOMEPAGE,
   JOBS_PAGE,
   PROFILE_PAGE,
+  RESUMES_PAGE,
   SCHEDULE_PAGE,
   SESSIONS_PAGE,
   SETTINGS_PAGE,
@@ -31,6 +33,7 @@ const SIDEBAR_MENU = [
   { name: "Dashboard", icon: PresentationChartIcon, url: HOMEPAGE },
   { name: "Schedule", icon: CalendarDotsIcon, url: SCHEDULE_PAGE },
   { name: "Jobs", icon: BriefcaseIcon, url: JOBS_PAGE },
+  { name: "Resume", icon: ReadCvLogoIcon, url: RESUMES_PAGE },
   { name: "Preparation", icon: LightbulbFilamentIcon, url: SESSIONS_PAGE },
   { name: "Job Profile", icon: ReadCvLogoIcon, url: PROFILE_PAGE },
   { name: "Settings", icon: GearIcon, url: SETTINGS_PAGE },

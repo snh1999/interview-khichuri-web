@@ -13,7 +13,7 @@ export const JobsCombobox = <T extends FieldValues>({
   disabled,
   description,
 }: Readonly<TComboboxProps<T>>) => {
-  const jobs = useJobs();
+  const { data: jobs } = useJobs();
   const toOption = (item: IJob) => ({
     value: item.id,
     label: `${item.title} @ ${item.companyName}`,
@@ -21,7 +21,7 @@ export const JobsCombobox = <T extends FieldValues>({
 
   return (
     <FormCombobox
-      data={jobs.data}
+      data={jobs}
       description={description}
       disabled={disabled}
       form={form}
