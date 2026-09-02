@@ -87,10 +87,10 @@ const ScoreItemRow = ({ item }: { item: IScoreItem }) => {
     >
       <div className="flex items-center gap-2">
         <Icon className="size-4 shrink-0" />
-        <p className="font-semibold text-sm">{item.label}</p>
+        <p className="font-semibold text-xs">{item.label}</p>
       </div>
       {item.description ? (
-        <p className="text-foreground/80 text-sm">{item.description}</p>
+        <p className="text-foreground/80 text-xs">{item.description}</p>
       ) : null}
     </div>
   );
@@ -171,7 +171,7 @@ export const ScoreCard = ({
   title,
   subtitle,
   sections,
-  collapsible = true,
+  collapsible = false,
   defaultOpen = true,
   defaultOpenSections,
   size = "sm",
@@ -202,7 +202,7 @@ export const ScoreCard = ({
         {sections.map((section) => (
           <AccordionItem key={section.key} value={section.key}>
             <AccordionTrigger className="gap-3 px-4 py-3 hover:no-underline">
-              <span className="flex w-full items-center justify-between gap-3">
+              <span className="flex w-full items-center gap-3">
                 <span className="font-medium text-sm">{section.title}</span>
                 {resolveBadge(section) ? (
                   <Badge variant="secondary">{resolveBadge(section)}</Badge>
@@ -251,7 +251,7 @@ export const ScoreCard = ({
             />
           </div>
         </AccordionTrigger>
-        <AccordionContent className="px-4 pb-4">{Body}</AccordionContent>
+        <AccordionContent className="px-0 py-2">{Body}</AccordionContent>
       </AccordionItem>
     </Accordion>
   );

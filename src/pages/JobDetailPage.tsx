@@ -3,16 +3,12 @@ import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense"
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
 import { MarkdownContent } from "@/components/common/MarkdownContent.tsx";
 import { JobInfoSection } from "@/components/jobs/JobInfoSection.tsx";
+import { JOB_STATUS_BADGE_CLASS } from "@/components/jobs/jobs.helpers.ts";
+import { ATSReview } from "@/components/resume/ats/ATSReview.tsx";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useJobId } from "@/hooks/useId.ts";
-
-const STATUS_COLORS: Record<string, string> = {
-  saved: "bg-secondary text-secondary-foreground",
-  applied: "bg-primary text-primary-foreground",
-  scheduled: "bg-accent text-accent-foreground",
-};
 
 export const JobDetailPage = () => (
   <AppErrorSuspense errorPage fallback={JobDetailSkeleton}>
@@ -30,18 +26,15 @@ const JobDetailContent = () => {
         <h1 className="font-semibold text-xl">
           {job.companyName} - {job.title}
         </h1>
-        <Badge
-          className={
-            STATUS_COLORS[job.status] ??
-            "bg-secondary text-secondary-foreground"
-          }
-        >
+        <Badge className={JOB_STATUS_BADGE_CLASS[job.status]}>
           {job.status}
         </Badge>
       </div>
 
       <div className="flex flex-col gap-6">
         <JobInfoSection job={job} sectionId="details" />
+
+        <ATSReview job={job} />
 
         <Card className="px-1">
           <CardHeader className="border-b">

@@ -34,6 +34,7 @@ export interface AiDialogProps {
   description?: string;
   executeLabel?: string;
   isLoading?: boolean;
+  executeDisabled?: boolean;
   children?: ReactNode;
 }
 
@@ -45,6 +46,7 @@ export const AiDialog = ({
   description,
   executeLabel = "Send",
   isLoading = false,
+  executeDisabled = false,
   children,
 }: Readonly<AiDialogProps>) => {
   const { data: apiKeys } = useApiKeys();
@@ -149,7 +151,7 @@ export const AiDialog = ({
         <DrawLogFooter className="pt-2">
           <DrawLogClose render={<Button variant="outline">Cancel</Button>} />
           <AsyncButton
-            disabled={!hasProviders}
+            disabled={!hasProviders || executeDisabled}
             isLoading={isLoading}
             onClick={handleExecute}
           >

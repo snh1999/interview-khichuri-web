@@ -120,7 +120,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
   const comboValue = multiple
     ? (value as TValue[])
         .map((v) => optionMap.get(v))
-        .filter((o): o is IComboboxOption => o !== null && o!==undefined)
+        .filter((o): o is IComboboxOption => o !== null && o !== undefined)
     : // biome-ignore lint/style/noNestedTernary: <>
       value === null
       ? null

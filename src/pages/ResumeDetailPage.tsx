@@ -125,7 +125,6 @@ const ResumeDetailContent = () => {
           <CardContent className="p-0">
             {cachedReview ? (
               <ScoreCard
-                collapsible={false}
                 overall={cachedReview.overall}
                 sections={cachedReview.categories.map((category) => ({
                   ...category,

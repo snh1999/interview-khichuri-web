@@ -26,6 +26,23 @@ export const STATUS_OPTIONS: { value: TJobStatus; label: string }[] = [
   { label: "Scheduled", value: "scheduled" },
 ] as const;
 
+export const JOB_STATUS_BADGE_CLASS: Record<TJobStatus, string> = {
+  saved: "bg-secondary text-secondary-foreground",
+  applied: "bg-blue-100 text-blue-700",
+  scheduled: "bg-emerald-100 text-emerald-700",
+};
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+export const getDaysUntilDeadline = (
+  deadline?: string | null
+): number | null => {
+  if (!deadline) {
+    return null;
+  }
+  return Math.ceil((new Date(deadline).getTime() - Date.now()) / MS_PER_DAY);
+};
+
 const jobPostSchema = z.object({
   appliedAt: z.date().nullish(),
   companyName: z
