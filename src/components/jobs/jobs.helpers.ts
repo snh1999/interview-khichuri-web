@@ -45,6 +45,7 @@ export const getDaysUntilDeadline = (
 
 const jobPostSchema = z.object({
   appliedAt: z.date().nullish(),
+  companyId: z.number().int().positive().nullish(),
   companyName: z
     .string()
     .trim()

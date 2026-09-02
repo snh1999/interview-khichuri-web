@@ -76,8 +76,9 @@ export const AiDialog = ({
   };
 
   const handleSelect = (v: TApiKeyProvider | null) => {
-    if (v) {
+    if (v && v !== provider) {
       setProvider(v);
+      setModel("");
     }
   };
 

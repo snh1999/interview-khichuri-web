@@ -14,7 +14,11 @@ import {
 } from "@/components/ui/custom/DrawLog.tsx";
 import { cn } from "@/lib/utils";
 import { useScheduleStore } from "@/store/scheduleStore.ts";
-import { EVENT_COLOR_KEYS, EVENT_COLOR_OPTIONS } from "../calendar.types";
+import {
+  EVENT_COLOR_KEYS,
+  EVENT_COLOR_OPTIONS,
+  type TEventColor,
+} from "../calendar.types";
 import { useUpsertEventForm } from "./UpsertEventForm.helpers.ts";
 
 const DURATION_PRESETS = [
@@ -101,7 +105,7 @@ export const UpsertEventForm = () => {
     handlePreset,
     handleToggleAllDay,
     isLoading,
-    handleSubmit,
+    onSubmit,
     isMultiDay,
   } = useUpsertEventForm({
     event,
@@ -115,7 +119,8 @@ export const UpsertEventForm = () => {
   const withTime = !allDay || isMultiDay;
   const selectedColor = form.watch("color") ?? null;
   const handleSelectColor = useCallback(
-    (color: string | null) => form.setValue("color", color),
+    (color: string | null) =>
+      form.setValue("color", color as TEventColor | null),
     [form]
   );
 
@@ -126,7 +131,7 @@ export const UpsertEventForm = () => {
           <DrawLogTitle>{event ? "Edit Event" : "Add Event"}</DrawLogTitle>
         </DrawLogHeader>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={onSubmit}>
           <DrawLogBody>
             <FormInput
               autoFocus

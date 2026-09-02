@@ -29,7 +29,7 @@ export type IFormInputProps<T extends FieldValues> = TBasicFormInputProps<T> & {
 
 export interface IFormHook<T extends FieldValues> {
   isLoading: boolean;
-  handleSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
+  onSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
   form: UseFormReturn<T>;
 }
 

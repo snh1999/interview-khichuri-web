@@ -180,3 +180,26 @@ select:-webkit-autofill:focus {
 .page-h-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Thin theme-aware scrollbar that keeps native scrolling behavior. */
+.calendar-scrollbar {
+  scrollbar-color: var(--muted-foreground) transparent;
+  scrollbar-width: thin;
+}
+
+.calendar-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.calendar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.calendar-scrollbar::-webkit-scrollbar-thumb {
+  background-color: color-mix(
+    in oklab,
+    var(--muted-foreground) 50%,
+    transparent
+  );
+  border-radius: 9999px;
+}

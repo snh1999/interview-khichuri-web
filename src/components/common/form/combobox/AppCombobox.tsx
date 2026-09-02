@@ -80,7 +80,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
 
   const anchor = useComboboxAnchor();
 
-  const options = useMemo(() => data.map(toOption), [data, toOption]);
+  const options = useMemo(() => (data ?? []).map(toOption), [data, toOption]);
   const optionMap = useMemo(
     () => new Map(options.map((o) => [o.value, o])),
     [options]
@@ -118,7 +118,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
     : options;
 
   const comboValue = multiple
-    ? (value as TValue[])
+    ? ((value as TValue[] | undefined) ?? [])
         .map((v) => optionMap.get(v))
         .filter((o): o is IComboboxOption => o !== null && o !== undefined)
     : // biome-ignore lint/style/noNestedTernary: <>
@@ -178,7 +178,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
         {multiple && !hideChips ? (
           <ComboboxChips className="w-full" id={name} ref={anchor}>
             <ComboboxValue>
-              {(values: IComboboxOption[]) => (
+              {(values: IComboboxOption[] = []) => (
                 <>
                   {values.map((opt) => (
                     <ComboboxChip key={String(opt.value)}>

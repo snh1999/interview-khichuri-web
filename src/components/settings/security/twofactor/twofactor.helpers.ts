@@ -36,7 +36,12 @@ export const useQRCodeVerifyForm = (): IFormHook<QrForm> & {
       }
     );
   });
-  return { enabled, onSubmit, form, isLoading: form.formState.isSubmitting };
+  return {
+    enabled,
+    onSubmit,
+    form,
+    isLoading: form.formState.isSubmitting,
+  };
 };
 
 const twoFactorAuthSchema = z.object({

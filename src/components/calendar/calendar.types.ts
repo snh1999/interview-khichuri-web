@@ -18,10 +18,10 @@ export interface TCustomEvent extends IBasic {
   description: string;
   startDate: Date;
   endDate: Date;
-  color?: string | null;
-  isSynced?: boolean;
-  privateSync?: boolean;
-  googleTitle?: string | null;
+  color?: TEventColor | null;
+  // isSynced?: boolean;
+  // privateSync?: boolean;
+  // googleTitle?: string | null;
 }
 
 export type TEventVisibility = Record<TEventSource, boolean>;

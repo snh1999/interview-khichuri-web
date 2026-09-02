@@ -5,6 +5,7 @@ import { api } from "@/lib/api-client";
 import {
   getAtsScoreEntries,
   getCachedStandaloneReview,
+  type IAtsCacheEntry,
   type IAtsScoreFilter,
   type IStandaloneReviewCacheEntry,
   setAtsScore,
@@ -100,16 +101,26 @@ export const useScoreResume = () =>
         timeoutMs: 120_000,
       }),
     onSuccess: async (data, dto) => {
-      await setAtsScore({
-        jobId: dto.jobId,
-        resumeId: dto.resumeId,
-        overall: data.overall,
-        categories: data.categories,
-        recommendations: data.recommendations,
-      });
-      await apiClient.invalidateQueries({
-        queryKey: queryKeys.resumes.ats.all,
-      });
+      try {
+        await setAtsScore({ ...dto, ...data });
+
+        const entries = await getAtsScoreEntries({
+          jobId: dto.jobId,
+          resumeId: dto.resumeId,
+        });
+        apiClient.setQueryData<IAtsCacheEntry[]>(
+          queryKeys.resumes.ats.filter({
+            jobId: dto.jobId,
+            resumeId: dto.resumeId,
+          }),
+          entries
+        );
+        await apiClient.invalidateQueries({
+          queryKey: queryKeys.resumes.ats.all,
+        });
+      } catch {
+        // IndexedDB unavailable — score still returned from server
+      }
     },
   });
 
@@ -120,14 +131,18 @@ export const useReviewResumeStandalone = () =>
         timeoutMs: 120_000,
       }),
     onSuccess: async (data, dto) => {
-      const entry = await setStandaloneReview(
-        dto.resumeId,
-        data.overall,
-        data.categories
-      );
-      apiClient.setQueryData<IStandaloneReviewCacheEntry>(
-        queryKeys.resumes.reviewById(dto.resumeId),
-        entry
-      );
+      try {
+        const entry = await setStandaloneReview(
+          dto.resumeId,
+          data.overall,
+          data.categories
+        );
+        apiClient.setQueryData<IStandaloneReviewCacheEntry>(
+          queryKeys.resumes.reviewById(dto.resumeId),
+          entry
+        );
+      } catch {
+        // IndexedDB unavailable — review still returned from server
+      }
     },
   });

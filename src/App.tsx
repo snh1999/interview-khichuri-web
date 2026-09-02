@@ -8,7 +8,6 @@ import {
   HOMEPAGE,
   JOB_DETAIL_PAGE,
   JOBS_PAGE,
-  LANDING_PAGE,
   LOGIN_PAGE,
   PROFILE_PAGE,
   PUBLIC_RESUME_PAGE,
@@ -37,7 +36,6 @@ import { EmptyPage } from "@/pages/EmptyPage.tsx";
 import { JobDetailPage } from "@/pages/JobDetailPage.tsx";
 import JobProfilePage from "@/pages/JobProfilePage.tsx";
 import { JobsPage } from "@/pages/JobsPage.tsx";
-import { LandingPage } from "@/pages/landing/LandingPage.tsx";
 import { PublicResumePage } from "@/pages/PublicResumePage.tsx";
 import { ResumeDetailPage } from "@/pages/ResumeDetailPage.tsx";
 import { ResumesPage } from "@/pages/ResumesPage.tsx";
@@ -65,7 +63,6 @@ const App = () => {
       <Route
         element={session ? <Navigate replace to={HOMEPAGE} /> : <Outlet />}
       >
-        <Route element={<LandingPage />} path={LANDING_PAGE} />
         <Route element={<LoginPage />} path={LOGIN_PAGE} />
         <Route element={<RegisterPage />} path={REGISTER_PAGE} />
         <Route element={<EmailRedirectPage />} path={EMAIL_REDIRECT_PAGE} />

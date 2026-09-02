@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import { signOut } from "@/lib/auth/auth-client.ts";
+import { clearLocalCache } from "@/lib/indexdb.ts";
 
 interface IProps {
   trigger: ReactElement;
@@ -30,6 +31,7 @@ const ProfileDropdown = ({
   const navigateToProfile = () => navigate(PROFILE_PAGE);
   const navigateToSettings = () => navigate(SETTINGS_PAGE);
   const logout = async () => {
+    await clearLocalCache();
     const result = await signOut();
     if (result.error) {
       toast.error(result.error.message ?? "Something went wrong");

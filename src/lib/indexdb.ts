@@ -11,6 +11,9 @@ export interface IAtsCacheEntry {
   overall: number;
   categories: TAtsCategory[];
   recommendations: string[];
+  matchedKeywords: string[];
+  missingKeywords: string[];
+  tailoringNotes: string;
   timestamp: number;
 }
 
@@ -50,13 +53,28 @@ let dbPromise: Promise<IDBPDatabase<IIndexDbSchema>> | null = null;
 
 const entryKey = (jobId: string, resumeId: string) => `${jobId}|${resumeId}`;
 
-const normalizeAtsEntry = (entry: IAtsCacheEntry): IAtsCacheEntry => ({
-  ...entry,
-  categories: Array.isArray(entry.categories) ? entry.categories : [],
-  recommendations: Array.isArray(entry.recommendations)
-    ? entry.recommendations
-    : [],
-});
+type IAtsCacheEntryStale = Omit<
+  IAtsCacheEntry,
+  "matchedKeywords" | "missingKeywords" | "tailoringNotes"
+> & {
+  matchedKeywords?: unknown;
+  missingKeywords?: unknown;
+  tailoringNotes?: unknown;
+};
+
+const normalizeAtsEntry = (entry: IAtsCacheEntryStale): IAtsCacheEntry => {
+  const { matchedKeywords, missingKeywords, tailoringNotes, ...rest } = entry;
+  return {
+    ...rest,
+    matchedKeywords: Array.isArray(matchedKeywords)
+      ? matchedKeywords.filter((k): k is string => typeof k === "string")
+      : [],
+    missingKeywords: Array.isArray(missingKeywords)
+      ? missingKeywords.filter((k): k is string => typeof k === "string")
+      : [],
+    tailoringNotes: typeof tailoringNotes === "string" ? tailoringNotes : "",
+  };
+};
 
 const normalizeReviewEntry = (
   entry: IStandaloneReviewCacheEntry
@@ -155,4 +173,10 @@ export const setStandaloneReview = async (
 export const clearStandaloneReviews = async (): Promise<void> => {
   const db = await getDb();
   await db.clear(REVIEWS_STORE);
+};
+
+export const clearLocalCache = async (): Promise<void> => {
+  await clearAtsScores();
+  await clearStandaloneReviews();
+  localStorage.clear();
 };

@@ -199,21 +199,24 @@ export const ScoreCard = ({
       ) : null}
 
       <Accordion multiple onValueChange={setOpenSections} value={openSections}>
-        {sections.map((section) => (
-          <AccordionItem key={section.key} value={section.key}>
-            <AccordionTrigger className="gap-3 px-4 py-3 hover:no-underline">
-              <span className="flex w-full items-center gap-3">
-                <span className="font-medium text-sm">{section.title}</span>
-                {resolveBadge(section) ? (
-                  <Badge variant="secondary">{resolveBadge(section)}</Badge>
-                ) : null}
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="px-1 pb-4">
-              <ScoreSectionBody section={section} />
-            </AccordionContent>
-          </AccordionItem>
-        ))}
+        {sections.map((section) => {
+          const resolvedBadge = resolveBadge(section);
+          return (
+            <AccordionItem key={section.key} value={section.key}>
+              <AccordionTrigger className="gap-3 px-4 py-3 hover:no-underline">
+                <span className="flex w-full items-center gap-3">
+                  <span className="font-medium text-sm">{section.title}</span>
+                  {resolvedBadge ? (
+                    <Badge variant="secondary">{resolvedBadge}</Badge>
+                  ) : null}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="px-1 pb-4">
+                <ScoreSectionBody section={section} />
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
       </Accordion>
 
       {footer}

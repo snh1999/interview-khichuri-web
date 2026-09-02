@@ -55,13 +55,7 @@ const buildDefaultValues = (
   endDate: new Date(),
   color: null,
   ...prefill,
-  ...(editingEvent && {
-    title: editingEvent.title,
-    description: editingEvent.description,
-    startDate: editingEvent.startDate,
-    endDate: editingEvent.endDate,
-    color: editingEvent.color ?? null,
-  }),
+  ...(editingEvent ? { ...editingEvent } : {}),
 });
 
 const onSuccess = (message: string) => (event: ICalendarEvent) =>
@@ -147,7 +141,7 @@ export const useUpsertEventForm = ({
     form.reset(buildDefaultValues(prefill, event));
   }, [open, event, prefill, form]);
 
-  const handleSubmit = form.handleSubmit(async (data: TUpsertEventFormData) => {
+  const onSubmit = form.handleSubmit(async (data: TUpsertEventFormData) => {
     const payload = { ...data, source: event ? event.source : "custom" };
 
     try {
@@ -192,6 +186,6 @@ export const useUpsertEventForm = ({
     handleToggleAllDay,
     isLoading,
     isMultiDay: !isSameDay(endDate, startDate),
-    handleSubmit,
+    onSubmit,
   };
 };

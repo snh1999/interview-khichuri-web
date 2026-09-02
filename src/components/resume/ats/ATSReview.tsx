@@ -32,9 +32,9 @@ const toFullScore = (entry: IAtsCacheEntry): TAtsScore => ({
   overall: entry.overall,
   categories: entry.categories,
   recommendations: entry.recommendations,
-  matchedKeywords: [],
-  missingKeywords: [],
-  tailoringNotes: "",
+  matchedKeywords: entry.matchedKeywords,
+  missingKeywords: entry.missingKeywords,
+  tailoringNotes: entry.tailoringNotes,
 });
 
 export const ATSReview = ({ job }: Readonly<IProps>) => {
@@ -152,8 +152,9 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
 
         {entries.length === 0 ? (
           <CardDescription className="text-center italic">
-            No saved scores for selection yet. Pick a job and resume, then tap
-            “New Review” to run the AI resume review.
+            {hasFilter
+              ? "No saved scores for this selection yet. Tap “New Review” to run the AI resume review."
+              : "Pick a job and resume, then tap “New Review” to run the AI resume review."}
           </CardDescription>
         ) : (
           <div className="flex flex-col gap-5">
@@ -175,8 +176,12 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
       </CardContent>
 
       <AiDialog
-        description="Pick a resume to score against the selected job description and company."
-        executeDisabled={!(selectedResumeId && selectedJobId)}
+        description={
+          job
+            ? `Score this resume against ${job.title} @ ${job.companyName}.`
+            : "Pick a job and resume to compare with AI."
+        }
+        executeDisabled={!(jobId && selectedResumeId)}
         executeLabel="Generate"
         isLoading={scoreMutation.isPending}
         onExecute={handleGenerate}
@@ -184,14 +189,20 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
         open={aiDialogOpen}
         title="Generate AI Resume Review"
       >
-        <AppCombobox
-          data={jobs}
-          label="Job"
-          onChange={handleJobChange}
-          placeholder="Select a job..."
-          toOption={jobToOption}
-          value={selectedJobId}
-        />
+        {job ? (
+          <p className="text-muted-foreground text-sm">
+            Job: {job.title} @ {job.companyName}
+          </p>
+        ) : (
+          <AppCombobox
+            data={jobs}
+            label="Job"
+            onChange={handleJobChange}
+            placeholder="Select a job..."
+            toOption={jobToOption}
+            value={selectedJobId}
+          />
+        )}
 
         <AppCombobox
           data={resumes}
