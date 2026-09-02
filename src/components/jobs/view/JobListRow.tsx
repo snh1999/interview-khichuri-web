@@ -4,6 +4,7 @@ import type { IJob, TJobStatus } from "@/api/jobs";
 import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
+import { getDaysUntilDeadline } from "@/components/jobs/jobs.helpers.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Item,
@@ -20,12 +21,10 @@ const STATUS_DOT: Record<TJobStatus, string> = {
 };
 
 const formatDeadline = (deadline?: string | null) => {
-  if (!deadline) {
+  const diffDays = getDaysUntilDeadline(deadline);
+  if (diffDays === null) {
     return "—";
   }
-  const diffDays = Math.ceil(
-    (new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  );
   if (diffDays < 0) {
     return "Overdue";
   }

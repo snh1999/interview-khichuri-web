@@ -13,6 +13,7 @@ export interface ICalendarEvent {
   endDate: string;
   source: "custom" | "job";
   sourceId?: string | null;
+  color?: string | null;
   privateSync: boolean;
   googleTitle?: string | null;
   googleEventId?: string | null;
@@ -28,6 +29,7 @@ export interface ICreateCalendarEventDto {
   endDate: Date;
   source?: TEventSource;
   sourceId?: string | null;
+  color?: string | null;
   privateSync?: boolean;
   googleTitle?: string | null;
 }
@@ -37,6 +39,7 @@ export interface IUpdateCalendarEventDto {
   description?: string;
   startDate?: Date;
   endDate?: Date;
+  color?: string | null;
   privateSync?: boolean;
   googleTitle?: string | null;
 }

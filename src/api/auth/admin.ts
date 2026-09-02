@@ -48,7 +48,9 @@ export const useBanUser = () => {
       toast.success("User banned");
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to ban user"
+      );
     },
     meta: { invalidates: queryKeys.admin.users({ page, limit }) },
   });
@@ -68,7 +70,9 @@ export const useUnbanUser = () => {
       toast.success("User unbanned");
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to unban user"
+      );
     },
     meta: { invalidates: queryKeys.admin.users({ page, limit }) },
   });
@@ -88,7 +92,9 @@ export const useRemoveUser = () => {
       toast.success("User deleted");
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to remove user"
+      );
     },
     meta: { invalidates: queryKeys.admin.users({ page, limit }) },
   });
@@ -107,7 +113,9 @@ export const useRevokeSessionByAdmin = () =>
       toast.success("User sessions revoked");
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to revoke session"
+      );
     },
     meta: { invalidates: queryKeys.admin.sessions() },
   });

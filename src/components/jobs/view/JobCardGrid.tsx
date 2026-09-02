@@ -4,22 +4,18 @@ import type { IJob } from "@/api/jobs";
 import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
+import {
+  getDaysUntilDeadline,
+  JOB_STATUS_BADGE_CLASS,
+} from "@/components/jobs/jobs.helpers.ts";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Card } from "@/components/ui/card.tsx";
 
-const STATUS_BADGE: Record<IJob["status"], string> = {
-  saved: "bg-secondary text-secondary-foreground",
-  applied: "bg-blue-100 text-blue-700",
-  scheduled: "bg-emerald-100 text-emerald-700",
-};
-
 const formatDeadline = (deadline?: string | null) => {
-  if (!deadline) {
+  const diffDays = getDaysUntilDeadline(deadline);
+  if (diffDays === null) {
     return "No deadline";
   }
-  const diffDays = Math.ceil(
-    (new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  );
   if (diffDays < 0) {
     return "Overdue";
   }
@@ -52,7 +48,7 @@ export const JobCardGrid = ({ job }: { job: IJob }) => {
           {job.companyName}
         </span>
         <div className="flex items-center gap-1">
-          <Badge className={`shrink-0 ${STATUS_BADGE[job.status]}`}>
+          <Badge className={`shrink-0 ${JOB_STATUS_BADGE_CLASS[job.status]}`}>
             {job.status}
           </Badge>
           <FavoriteButton

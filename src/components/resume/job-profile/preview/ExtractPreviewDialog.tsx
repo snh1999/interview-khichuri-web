@@ -7,7 +7,7 @@ import {
   XIcon,
 } from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
-import type { TExtractionResult } from "@/api/profile";
+import type { TExtractionResult } from "@/api/resumes";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import { Section } from "@/components/resume/job-profile/preview/Section.tsx";
 import { Button } from "@/components/ui/button.tsx";

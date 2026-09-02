@@ -111,7 +111,7 @@ const CircularProgress = ({
         {showLabel && (
           <div
             className={cn(
-              "absolute inset-0 flex items-center justify-center text-lg font-medium",
+              "absolute inset-0 flex items-center justify-center text-md font-medium",
               labelClassName
             )}
           >

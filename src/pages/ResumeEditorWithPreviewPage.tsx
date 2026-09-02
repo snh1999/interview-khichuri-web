@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { toast } from "sonner";
-import { useResumeById, useUpdateResume } from "@/api/profile";
+import { useGetResumeById, useUpdateResume } from "@/api/resumes";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import { profileFormSchema } from "@/components/job-profile/profile.helpers.ts";
@@ -21,7 +21,7 @@ import {
 } from "@/components/resume/template.helpers.ts";
 import {
   resolveTemplateEntry,
-  type TTemplateKey,
+  resolveTemplateKey,
 } from "@/components/resume/template-registry.ts";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
@@ -30,13 +30,13 @@ import { useResumeId } from "@/hooks/useId.ts";
 
 const ResumeEditorContent = () => {
   const { resumeId } = useParams<{ resumeId: string }>();
-  const { data: resume } = useResumeById(resumeId ?? "");
+  const { data: resume } = useGetResumeById(resumeId ?? "");
   const updateResume = useUpdateResume();
 
   const [settings, setSettings] = useState<ResumeSettingsValue>({
     mode: "web",
     pdfSettings: {},
-    templateId: (resume.template as TTemplateKey | null) ?? "mbzuai",
+    templateId: resolveTemplateKey(resume.template),
   });
 
   const [name, setName] = useState(resume.name);

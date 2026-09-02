@@ -5,14 +5,17 @@ import type {
 } from "react";
 import type { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
-export interface TBasicFormInputProps<T extends FieldValues> {
-  form: UseFormReturn<T>;
-  name: Path<T>;
-  label: string;
+export interface ICommonInputValues {
+  label?: string;
   placeholder?: string;
   description?: string;
   disabled?: boolean;
   autoFocus?: boolean;
+}
+export interface TBasicFormInputProps<T extends FieldValues>
+  extends ICommonInputValues {
+  form: UseFormReturn<T>;
+  name: Path<T>;
 }
 
 export type IFormInputProps<T extends FieldValues> = TBasicFormInputProps<T> & {

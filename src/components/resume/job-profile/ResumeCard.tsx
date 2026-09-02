@@ -2,14 +2,14 @@ import { PlusIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
-import type { IResume, TExtractionResult } from "@/api/profile";
+import { useProfile } from "@/api/profile";
+import type { IResume, TExtractionResult } from "@/api/resumes";
 import {
   useDeleteResume,
   useExtractResume,
-  useProfile,
-  useResumes,
+  useGetResumes,
   useSetPrimaryResume,
-} from "@/api/profile/profiles.ts";
+} from "@/api/resumes";
 import { MAX_RESUMES } from "@/app.constants.ts";
 import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/dialog.tsx";
 
 export const ResumeCard = () => {
-  const { data: resumes } = useResumes();
+  const { data: resumes } = useGetResumes();
   const { data: profileData } = useProfile();
   const { reset } = useFormContext<TProfileFormData>();
 

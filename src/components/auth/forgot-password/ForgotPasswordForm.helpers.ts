@@ -61,5 +61,10 @@ export const useForgotPasswordForm = ({
     }
   });
 
-  return { onSubmit, form, cooldown, isLoading: form.formState.isSubmitting };
+  return {
+    onSubmit,
+    form,
+    cooldown,
+    isLoading: form.formState.isSubmitting,
+  };
 };

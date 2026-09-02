@@ -13,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import type { ICommonInputValues } from "@/components/common/form/form.types.ts";
 
 function formatDate(date?: Date | string) {
   if (!date) {
@@ -39,12 +40,7 @@ const toDate = (val: unknown): Date | undefined => {
   }
 };
 
-interface IProps{
-  label?: string;
-  placeholder?: string;
-  description?: string;
-  disabled?: boolean;
-  autoFocus?: boolean;
+interface IProps extends ICommonInputValues{
   invalid?: boolean;
   value?: unknown;
   name?: string;

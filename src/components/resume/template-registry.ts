@@ -40,6 +40,14 @@ export function resolveTemplateEntry(key: string): ResumeTemplateEntry {
   return RESUME_ENTRIES[key as TTemplateKey] ?? RESUME_ENTRIES.mbzuai;
 }
 
+export function isValidTemplateKey(key: unknown): key is TTemplateKey {
+  return typeof key === "string" && Object.hasOwn(RESUME_ENTRIES, key);
+}
+
+export function resolveTemplateKey(key: unknown): TTemplateKey {
+  return isValidTemplateKey(key) ? key : "mbzuai";
+}
+
 export const TEMPLATES: { id: TTemplateKey; label: string; source?: string }[] =
   [
     {
