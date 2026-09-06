@@ -1,128 +1,54 @@
-import { PlusCircleIcon } from "@phosphor-icons/react";
-import { useMemo, useState } from "react";
-import { useRoles } from "@/api/lookups";
-import { useSessions } from "@/api/sessions";
+import { type ChangeEvent, useCallback, useState } from "react";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
-import { useViewToggle, ViewToggle } from "@/components/common/ViewToggle.tsx";
-import {
-  JobFilter,
-  useJobFilter,
-} from "@/components/prep-session/JobFilter.tsx";
-import { SessionCardGrid } from "@/components/prep-session/SessionCardGrid.tsx";
-import { SessionListRow } from "@/components/prep-session/SessionListRow.tsx";
+import { ViewToggle } from "@/components/common/ViewToggle.tsx";
+import { JobFilter } from "@/components/prep-session/JobFilter.tsx";
+import { SessionPageContent } from "@/components/prep-session/SessionPageContent.tsx";
 import { PrepSessionForm } from "@/components/prep-session/session/PrepSessionForm.tsx";
-import {
-  TopicFilter,
-  useTopicFilter,
-} from "@/components/prep-session/TopicFilter.tsx";
-import { Button } from "@/components/ui/button";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyTitle,
-} from "@/components/ui/empty";
-import { ItemGroup } from "@/components/ui/item.tsx";
+import { TopicFilter } from "@/components/prep-session/TopicFilter.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useLookupMap } from "@/hooks/useLookupMap.ts";
 
-export const SessionsPage = () => (
-  <AppErrorSuspense fallback={SessionsPageSkeleton}>
-    <SessionsContent />
-  </AppErrorSuspense>
-);
-
-const SessionsContent = () => {
-  const { data: sessions } = useSessions();
-  const rolesMap = useLookupMap(useRoles().data);
-
+export const SessionsPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { currentView } = useViewToggle("grid");
-  const { jobFilter } = useJobFilter();
-  const { selectedTopicIds } = useTopicFilter();
-
-  const openDialog = () => setDialogOpen(true);
   const closeDialog = () => setDialogOpen(false);
 
-  const roleName = (roleId?: number | null) => rolesMap.get(roleId ?? 0)?.name;
-
-  const filteredSessions = useMemo(
-    () =>
-      sessions.filter((session) => {
-        if (jobFilter && session.jobId !== jobFilter) {
-          return false;
-        }
-        if (selectedTopicIds.length > 0) {
-          const sessionTopicIds =
-            session.sessionTopics?.map((st) => st.topicId) ?? [];
-          const hasOverlap = selectedTopicIds.some((id) =>
-            sessionTopicIds.includes(id)
-          );
-          if (!hasOverlap) {
-            return false;
-          }
-        }
-        return true;
-      }),
-    [sessions, jobFilter, selectedTopicIds]
+  const [search, setSearch] = useState("");
+  const handleSearchChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
+    []
   );
 
   return (
-    <div className="w-full">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-semibold text-xl">Sessions</h1>
-        <div className="flex items-center gap-2">
-          <ViewToggle />
-          <JobFilter />
-          <TopicFilter />
-          <Button onClick={openDialog} variant="outline">
-            <PlusCircleIcon className="size-3" weight="bold" />
-            New Session
-          </Button>
+    <AppErrorSuspense fallback={SessionsPageSkeleton}>
+      <div className="w-full">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="font-semibold text-xl">Sessions</h1>
+          <div className="flex items-center gap-2">
+            <ViewToggle />
+            <JobFilter />
+            <TopicFilter />
+            <PrepSessionForm
+              onOpenChange={setDialogOpen}
+              onSuccess={closeDialog}
+              open={dialogOpen}
+              viewTrigger
+            />
+          </div>
         </div>
+
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <Input
+            className="min-w-40 flex-1"
+            onChange={handleSearchChange}
+            placeholder="Search sessions..."
+            value={search}
+          />
+        </div>
+
+        <SessionPageContent search={search} />
       </div>
-
-      {filteredSessions.length === 0 ? (
-        <Empty>
-          <EmptyHeader>
-            <EmptyTitle>No sessions yet</EmptyTitle>
-            <EmptyDescription>
-              Create your first preparation session to start practicing
-              interview questions.
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      ) : null}
-
-      {currentView === "grid" && filteredSessions.length ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredSessions.map((session) => (
-            <SessionCardGrid
-              jobLabel={roleName(session.roleId)}
-              key={session.id}
-              session={session}
-            />
-          ))}
-        </div>
-      ) : (
-        <ItemGroup className="overflow-hidden rounded-md bg-card">
-          {filteredSessions.map((session) => (
-            <SessionListRow
-              jobLabel={roleName(session.roleId)}
-              key={session.id}
-              session={session}
-            />
-          ))}
-        </ItemGroup>
-      )}
-
-      <PrepSessionForm
-        onOpenChange={setDialogOpen}
-        onSuccess={closeDialog}
-        open={dialogOpen}
-      />
-    </div>
+    </AppErrorSuspense>
   );
 };
 
@@ -135,6 +61,7 @@ const SessionsPageSkeleton = () => (
         <Skeleton className="h-10 w-28" />
       </div>
     </div>
+    <Skeleton className="mb-4 h-10 w-64" />
     <SkeletonCard>
       <Skeleton className="h-32 w-full" />
     </SkeletonCard>

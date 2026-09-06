@@ -1,4 +1,3 @@
-import { SparkleIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { Link } from "react-router";
@@ -72,7 +71,7 @@ export const AiDialog = ({
     if (!provider) {
       return;
     }
-    onExecute(provider, model);
+    onExecute(provider, model.trim() || undefined);
   };
 
   const handleSelect = (v: TApiKeyProvider | null) => {
@@ -90,7 +89,6 @@ export const AiDialog = ({
       <DrawLogContent>
         <DrawLogHeader>
           <DrawLogTitle className="flex items-center gap-2">
-            <SparkleIcon />
             {title}
           </DrawLogTitle>
           {description ? (
@@ -100,11 +98,9 @@ export const AiDialog = ({
 
         <DrawLogBody>
           {hasProviders ? (
-            <div className="space-y-3">
+            <div className="space-y-3 *:text-muted-foreground *:text-sm">
               <div className="space-y-1.5">
-                <span className="font-medium text-muted-foreground text-xs">
-                  AI Provider
-                </span>
+                <div>AI Provider</div>
                 <Select
                   items={providerItems}
                   onValueChange={handleSelect}
@@ -125,22 +121,20 @@ export const AiDialog = ({
                 </Select>
               </div>
 
-              <div className="space-y-4">
-                <span className="font-medium text-muted-foreground text-xs">
-                  Model Name
-                </span>
+              <div className="space-y-1.5">
+                <div>Model Name</div>
                 <Input
                   disabled={isLoading}
                   onChange={handleModelChange}
                   placeholder="Name of specific model (optional)"
                   value={model}
                 />
-
-                {children}
               </div>
+
+              {children}
             </div>
           ) : (
-            <p className="text-muted-foreground text-sm">
+            <p>
               No AI providers available.{" "}
               <Link className="underline" to={SETTINGS_PAGE}>
                 Add an API key in Settings

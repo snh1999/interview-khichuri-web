@@ -23,11 +23,7 @@ import {
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
 
 const createSessionSchema = z.object({
-  description: z
-    .string()
-    .trim()
-    .min(1, "Description is required")
-    .max(DEFAULT_MAX_STRING_LENGTH),
+  description: z.string().trim().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
   experience: z.string().nullish(),
   jobId: z.uuid().nullish(),
   roleId: z.number().int().positive().nullish(),

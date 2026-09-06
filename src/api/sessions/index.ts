@@ -4,7 +4,7 @@ import { api } from "@/lib/api-client";
 
 export interface ICreateSessionDto {
   title: string;
-  description: string;
+  description?: string | null;
   experience?: string | null;
   jobId?: string | null;
   roleId?: number | null;
@@ -83,7 +83,7 @@ export const useDeleteSession = () =>
     mutationFn: async (id: string) => {
       await api.delete(`/prep-session/${id}`);
     },
-    meta: { invalidates: queryKeys.sessions.all },
+    meta: { invalidates: queryKeys.sessions.list() },
   });
 
 export const useQuestions = (sessionId: string) =>

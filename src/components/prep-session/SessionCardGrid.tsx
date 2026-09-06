@@ -1,19 +1,31 @@
-import { BriefcaseIcon } from "@phosphor-icons/react";
+import { format } from "date-fns";
 import type { IPrepSession } from "@/api/sessions";
 import { useUpdateSession } from "@/api/sessions";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { useNavigateToSessionPage } from "@/components/prep-session/session/session.helpers.ts";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { GutterCard } from "@/components/ui/custom/gutter-card.tsx";
+import type { StatusVariant } from "@/lib/status-styles";
 
 interface IProps {
   session: IPrepSession;
   jobLabel?: string;
 }
 
+const getSessionVariant = (session: IPrepSession): StatusVariant => {
+  if (session.isFavorite) {
+    return "warning";
+  }
+  if (session.jobId) {
+    return "success";
+  }
+  return "default";
+};
+
 export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
   const navigateToPage = useNavigateToSessionPage(session.id);
   const updateSession = useUpdateSession();
+
+  const variant = getSessionVariant(session);
 
   const handleToggleFavorite = () =>
     updateSession.mutateAsync({
@@ -21,33 +33,27 @@ export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
       isFavorite: !session.isFavorite,
     });
 
-  return (
-    <Card
-      className="cursor-pointer gap-2 px-4 py-4"
-      onClick={navigateToPage}
-      size="sm"
-    >
-      <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1.5 truncate text-muted-foreground text-sm">
-          <BriefcaseIcon className="size-3.5 shrink-0" />
-          {jobLabel ?? "No job linked"}
-        </span>
-        <div className="flex items-center gap-1">
-          {session.experience ? (
-            <Badge className="shrink-0 bg-secondary text-secondary-foreground">
-              {session.experience}
-            </Badge>
-          ) : null}
-          <FavoriteButton
-            isFavorite={session.isFavorite}
-            onToggle={handleToggleFavorite}
-          />
-        </div>
-      </div>
+  const createdDate = format(session.createdAt, "d MMMM yyyy");
 
-      <p className="truncate font-medium text-xs">
-        {session.title || session.description}
+  return (
+    <GutterCard onClick={navigateToPage} variant={variant}>
+      <div className="flex items-start justify-between gap-2">
+        <p className="text font-semibold text-foreground leading-tight">
+          {session.title || session.description}
+        </p>
+        <FavoriteButton
+          icon="pin"
+          isFavorite={session.isFavorite}
+          onToggle={handleToggleFavorite}
+        />
+      </div>
+      <p className="mt-1 text-muted-foreground text-sm">
+        {jobLabel ?? (session.jobId ? "Linked to a job" : "Standalone session")}
       </p>
-    </Card>
+      <div className="mt-2.5 flex justify-between font-mono text-muted-foreground text-xs">
+        <span>{session.experience ? `${session.experience}` : ""}</span>
+        <span>{createdDate}</span>
+      </div>
+    </GutterCard>
   );
 };

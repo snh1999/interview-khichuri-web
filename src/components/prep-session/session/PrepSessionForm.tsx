@@ -85,7 +85,7 @@ export const PrepSessionForm = ({
       {viewTrigger ? (
         <DrawLogTrigger
           render={
-            <Button size="sm" type="button" variant="outline">
+            <Button type="button" variant="outline">
               {session ? (
                 <>
                   <PencilLineIcon className="size-3" />

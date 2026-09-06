@@ -23,7 +23,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -57,12 +56,12 @@ export const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Pages</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="text-muted-foreground">
               {SIDEBAR_MENU.map((item) => (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton
+                    className="py-5 text-md"
                     isActive={pathname === item.url}
                     render={<Link to={item.url} />}
                   >
