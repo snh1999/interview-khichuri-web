@@ -5,12 +5,14 @@ import {
   type TLookupSchema,
   useLookups,
 } from "@/api/lookups";
+import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import {
   FormCombobox,
   type IComboboxOption,
   type TComboboxProps,
 } from "@/components/common/form/combobox/FormCombobox.tsx";
 import { Chip } from "@/components/ui/Chip.tsx";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useLookupMap } from "@/hooks/useLookupMap.ts";
 
 interface IProps<T extends FieldValues> extends Partial<TComboboxProps<T>> {
@@ -26,7 +28,17 @@ const toLookupOption = (item: ILookupEntry): IComboboxOption => ({
   value: item.id,
 });
 
-export const LookupCombobox = <T extends FieldValues>({
+const comboboxFallback = () => <Skeleton className="h-7 w-full rounded-md" />;
+
+export const LookupCombobox = <T extends FieldValues>(
+  props: Readonly<IProps<T>>
+) => (
+  <AppErrorSuspense fallback={comboboxFallback}>
+    <LookupComboboxContent {...props} />
+  </AppErrorSuspense>
+);
+
+const LookupComboboxContent = <T extends FieldValues>({
   form,
   idsName,
   names,

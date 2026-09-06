@@ -88,14 +88,16 @@ function DrawLogTitle({className, ...props}: ComponentProps<typeof DialogTitle>)
   const isDesktop = useDrawLogContext()
   const Comp = isDesktop ? DialogTitle : DrawerTitle
   return <Comp
-    className={cn("min-w-0", className)}
+    className={cn("min-w-0 text-base", className)}
     {...props} />
 }
 
-function DrawLogDescription(props: ComponentProps<typeof DialogDescription>) {
+function DrawLogDescription({className, ...props}: ComponentProps<typeof DialogDescription>) {
   const isDesktop = useDrawLogContext()
   const Comp = isDesktop ? DialogDescription : DrawerDescription
-  return <Comp {...props} />
+  return <Comp
+    className={cn("min-w-0 text-sm", className)}
+    {...props} />
 }
 
 function DrawLogBody({ className, ...props }: ComponentProps<"div">) {

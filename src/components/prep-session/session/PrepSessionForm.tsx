@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { useJob } from "@/api/jobs";
 import type { IPrepSession } from "@/api/sessions";
+import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { JobsCombobox } from "@/components/common/form/combobox/JobsCombobox.tsx";
 import { RolesCombobox } from "@/components/common/form/combobox/RolesCombobox.tsx";
 import { TopicsCombobox } from "@/components/common/form/combobox/TopicsCombobox.tsx";
@@ -34,7 +35,21 @@ interface IProps {
   viewTrigger?: boolean;
 }
 
+const nullFallback = () => null;
+
 const JobPrefillEffect = ({
+  jobId,
+  form,
+}: {
+  jobId: string;
+  form: UseFormReturn<TCreateSessionFormData>;
+}) => (
+  <AppErrorSuspense fallback={nullFallback}>
+    <JobPrefillEffectInner form={form} jobId={jobId} />
+  </AppErrorSuspense>
+);
+
+const JobPrefillEffectInner = ({
   jobId,
   form,
 }: {
