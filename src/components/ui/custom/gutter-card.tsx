@@ -1,7 +1,9 @@
 import type { KeyboardEvent, ReactNode } from "react";
 
-import { STATUS_STYLES, type StatusVariant } from "@/lib/status-styles.ts";
 import { cn } from "@/lib/utils.ts";
+
+export type StatusVariant = "default" | "success" | "warning" | "danger";
+
 
 interface GutterCardProps {
   variant: StatusVariant;
@@ -9,6 +11,41 @@ interface GutterCardProps {
   onClick?: () => void;
   className?: string;
 }
+
+interface StatusStyle {
+  gutter: string;
+  badgeBg: string;
+  badgeText: string;
+  label: string;
+}
+
+const STATUS_STYLES: Record<StatusVariant, StatusStyle> = {
+  default: {
+    gutter: "border-l-muted-foreground",
+    badgeBg: "bg-muted",
+    badgeText: "text-muted-foreground",
+    label: "neutral",
+  },
+  success: {
+    gutter: "border-l-emerald-500",
+    badgeBg: "bg-emerald-500/10",
+    badgeText: "text-emerald-700 dark:text-emerald-300",
+    label: "active",
+  },
+  warning: {
+    gutter: "border-l-amber-500",
+    badgeBg: "bg-amber-500/10",
+    badgeText: "text-amber-700 dark:text-amber-300",
+    label: "upcoming",
+  },
+  danger: {
+    gutter: "border-l-rose-500",
+    badgeBg: "bg-rose-500/10",
+    badgeText: "text-rose-700 dark:text-rose-300",
+    label: "urgent",
+  },
+};
+
 
 export const GutterCard = ({
   variant,

@@ -4,14 +4,13 @@ import { useUpdateSession } from "@/api/sessions";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { useNavigateToSessionPage } from "@/components/prep-session/session/session.helpers.ts";
 import { GutterCard } from "@/components/ui/custom/gutter-card.tsx";
-import type { StatusVariant } from "@/lib/status-styles";
 
 interface IProps {
   session: IPrepSession;
   jobLabel?: string;
 }
 
-const getSessionVariant = (session: IPrepSession): StatusVariant => {
+const getSessionVariant = (session: IPrepSession) => {
   if (session.isFavorite) {
     return "warning";
   }

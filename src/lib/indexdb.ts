@@ -1,9 +1,17 @@
 import { type DBSchema, type IDBPDatabase, openDB } from "idb";
 import type { TAtsCategory, TStandaloneCategory } from "@/api/resumes";
+import type { ILocalInterviewState } from "@/lib/interviewStorage";
 
-const INDEX_DB_NAME = "interview-khichuri";
-const SCORES_STORE = "scores";
-const REVIEWS_STORE = "reviews";
+// Pre-production storage bootstrap: instead of migrating schema versions, we
+// bump the DB name whenever the schema changes and let the old DB get orphaned.
+// TODO- cleanup before prod
+const INDEX_DB_NAME = "interview-khichuri-storage-v2";
+const DB_VERSION = 1;
+
+export const SCORES_STORE = "scores";
+export const REVIEWS_STORE = "reviews";
+export const DRAFT_STORE = "interviewDrafts";
+export const ARCHIVE_STORE = "interviewArchives";
 
 export interface IAtsCacheEntry {
   jobId: string;
@@ -29,7 +37,7 @@ export interface IStandaloneReviewCacheEntry {
   timestamp: number;
 }
 
-interface IIndexDbSchema extends DBSchema {
+interface IInterviewKhichuriDb extends DBSchema {
   scores: {
     key: string;
     value: IAtsCacheEntry;
@@ -47,44 +55,28 @@ interface IIndexDbSchema extends DBSchema {
       "by-timestamp": number;
     };
   };
+  interviewDrafts: {
+    key: string;
+    value: ILocalInterviewState;
+    indexes: {
+      "by-session": string;
+      "by-startedAt": number;
+    };
+  };
+  interviewArchives: {
+    key: string;
+    value: ILocalInterviewState;
+    indexes: {
+      "by-session": string;
+      "by-startedAt": number;
+    };
+  };
 }
 
-let dbPromise: Promise<IDBPDatabase<IIndexDbSchema>> | null = null;
+let dbPromise: Promise<IDBPDatabase<IInterviewKhichuriDb>> | null = null;
 
-const entryKey = (jobId: string, resumeId: string) => `${jobId}|${resumeId}`;
-
-type IAtsCacheEntryStale = Omit<
-  IAtsCacheEntry,
-  "matchedKeywords" | "missingKeywords" | "tailoringNotes"
-> & {
-  matchedKeywords?: unknown;
-  missingKeywords?: unknown;
-  tailoringNotes?: unknown;
-};
-
-const normalizeAtsEntry = (entry: IAtsCacheEntryStale): IAtsCacheEntry => {
-  const { matchedKeywords, missingKeywords, tailoringNotes, ...rest } = entry;
-  return {
-    ...rest,
-    matchedKeywords: Array.isArray(matchedKeywords)
-      ? matchedKeywords.filter((k): k is string => typeof k === "string")
-      : [],
-    missingKeywords: Array.isArray(missingKeywords)
-      ? missingKeywords.filter((k): k is string => typeof k === "string")
-      : [],
-    tailoringNotes: typeof tailoringNotes === "string" ? tailoringNotes : "",
-  };
-};
-
-const normalizeReviewEntry = (
-  entry: IStandaloneReviewCacheEntry
-): IStandaloneReviewCacheEntry => ({
-  ...entry,
-  categories: Array.isArray(entry.categories) ? entry.categories : [],
-});
-
-const getDb = (): Promise<IDBPDatabase<IIndexDbSchema>> => {
-  dbPromise ??= openDB<IIndexDbSchema>(INDEX_DB_NAME, 1, {
+export const getDb = (): Promise<IDBPDatabase<IInterviewKhichuriDb>> => {
+  dbPromise ??= openDB<IInterviewKhichuriDb>(INDEX_DB_NAME, DB_VERSION, {
     upgrade(db) {
       const scores = db.createObjectStore(SCORES_STORE);
       scores.createIndex("by-job", "jobId");
@@ -94,19 +86,24 @@ const getDb = (): Promise<IDBPDatabase<IIndexDbSchema>> => {
       const reviews = db.createObjectStore(REVIEWS_STORE);
       reviews.createIndex("by-resume", "resumeId");
       reviews.createIndex("by-timestamp", "timestamp");
+
+      const drafts = db.createObjectStore(DRAFT_STORE, {
+        keyPath: "interviewId",
+      });
+      drafts.createIndex("by-session", "sessionId");
+      drafts.createIndex("by-startedAt", "startedAt");
+
+      const archives = db.createObjectStore(ARCHIVE_STORE, {
+        keyPath: "interviewId",
+      });
+      archives.createIndex("by-session", "sessionId");
+      archives.createIndex("by-startedAt", "startedAt");
     },
   });
   return dbPromise;
 };
 
-export const getCachedAtsScore = async (
-  jobId: string,
-  resumeId: string
-): Promise<IAtsCacheEntry | null> => {
-  const db = await getDb();
-  const entry = await db.get(SCORES_STORE, entryKey(jobId, resumeId));
-  return entry ? normalizeAtsEntry(entry) : null;
-};
+const entryKey = (jobId: string, resumeId: string) => `${jobId}|${resumeId}`;
 
 export const getAtsScoreEntries = async (
   filter?: IAtsScoreFilter
@@ -124,9 +121,7 @@ export const getAtsScoreEntries = async (
   } else {
     entries = await db.getAll(SCORES_STORE);
   }
-  return entries
-    .map(normalizeAtsEntry)
-    .sort((a, b) => b.timestamp - a.timestamp);
+  return entries.sort((a, b) => b.timestamp - a.timestamp);
 };
 
 export const setAtsScore = async (
@@ -150,8 +145,7 @@ export const getCachedStandaloneReview = async (
   resumeId: string
 ): Promise<IStandaloneReviewCacheEntry | null> => {
   const db = await getDb();
-  const entry = await db.get(REVIEWS_STORE, resumeId);
-  return entry ? normalizeReviewEntry(entry) : null;
+  return (await db.get(REVIEWS_STORE, resumeId)) ?? null;
 };
 
 export const setStandaloneReview = async (

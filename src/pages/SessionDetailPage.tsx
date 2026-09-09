@@ -1,6 +1,7 @@
 import { useSession } from "@/api/sessions";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
+import { InterviewsSection } from "@/components/interview/InterviewsSection.tsx";
 import { QuestionsSection } from "@/components/prep-session/question/QuestionsSection.tsx";
 import { SessionInfoSection } from "@/components/prep-session/session/SessionInfoSection.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,7 +11,7 @@ import { useTabs } from "@/hooks/useTabs.ts";
 
 const TABS = [
   { key: "questions", label: "Questions" },
-  { key: "mockInterviews", label: "Mock interviews" },
+  { key: "interviews", label: "Mock interviews" },
   { key: "notes", label: "Notes" },
 ] as const;
 
@@ -51,7 +52,12 @@ const SessionDetailContent = () => {
           />
         </TabsContent>
 
-        <TabsContent value="mockInterviews">Mock Interview</TabsContent>
+        <TabsContent value="interviews">
+          <InterviewsSection
+            sectionId={getSectionId("interviews")}
+            session={session}
+          />
+        </TabsContent>
 
         <TabsContent value="notes">Notes</TabsContent>
       </Tabs>
