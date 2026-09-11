@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox";
 
 import { cn } from "@/lib/utils";
@@ -25,4 +26,60 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   );
 }
 
-export { Checkbox };
+interface ICheckboxGroupProps {
+  className?: string;
+  disabled?: boolean;
+  value: (string | number)[];
+  onValueChange: (values: (string | number)[]) => void;
+  children?: React.ReactNode;
+}
+
+function CheckboxGroup({
+  className,
+  value = [],
+  onValueChange,
+  children,
+}: Readonly<ICheckboxGroupProps>) {
+  return (
+    <div
+      data-slot="checkbox-group"
+      className={cn("flex flex-col gap-2", className)}
+      role="group"
+    >
+      {React.Children.map(children, (child) => {
+        if (!React.isValidElement<{
+          value?: string | number;
+          checked?: boolean;
+          onCheckedChange?: (checked: boolean) => void;
+        }>(child)) {
+          return child;
+        }
+        const itemValue = child.props.value;
+        return React.cloneElement(child, {
+          checked: value.includes(itemValue as never),
+          onCheckedChange: (checked: boolean) => {
+            const next = checked
+              ? [...value, itemValue as never]
+              : value.filter((v) => v !== itemValue);
+            onValueChange(next as (string | number)[]);
+          },
+        });
+      })}
+    </div>
+  );
+}
+
+function CheckboxGroupItem({
+  className,
+  children,
+  ...props
+}: CheckboxPrimitive.Root.Props) {
+  return (
+    <label className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm">
+      <Checkbox {...props} />
+      <span className="font-normal text-foreground">{children}</span>
+    </label>
+  );
+}
+
+export { Checkbox, CheckboxGroup, CheckboxGroupItem };

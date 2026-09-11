@@ -16,6 +16,7 @@ export const JOB_DETAIL_PAGE = "/jobs/:jobId";
 export const SCHEDULE_PAGE = "/schedule";
 export const SESSIONS_PAGE = "/sessions";
 export const SESSION_DETAIL_PAGE = "/sessions/:sessionId";
+export const INTERVIEW_PAGE = "/interviews/:interviewId";
 export const RESUME_EDITOR_PAGE = "/resumes/:resumeId/edit";
 export const PORTFOLIO_PAGE = "/portfolio";
 export const PUBLIC_RESUME_PAGE = "/r/:slug";

@@ -5,9 +5,9 @@ import {
   EyeIcon,
   EyeSlashIcon,
   PlusIcon,
-  SparkleIcon,
 } from "@phosphor-icons/react";
-import { useState } from "react";
+import { type ChangeEvent, useCallback, useMemo, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { toast } from "sonner";
 import { z } from "zod";
 import {
@@ -39,13 +39,16 @@ import {
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
-  EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx";
+import { useStrictSafeAutoAnimate } from "@/hooks/useStrictSafeAutoAnimate";
 
 const questionCountSchema = z.coerce.number().int().min(1).max(50);
+
+type QuestionFilter = "all" | "pinned" | "unanswered";
 
 interface IProps {
   session: IPrepSession;
@@ -62,11 +65,33 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<QuestionFilter>("all");
+  const [questionListParent] = useStrictSafeAutoAnimate();
 
   const [count, setCount] = useState(5);
   const [avoidRepeat, setAvoidRepeat] = useState<boolean>(true);
   const [includeJobDescription, setIncludeJobDescription] =
     useState<boolean>(false);
+
+  const visibleQuestions = useMemo(
+    () =>
+      questions.filter((question) => {
+        if (filter === "pinned" && !question.isFavorite) {
+          return false;
+        }
+        if (filter === "unanswered" && question.answer) {
+          return false;
+        }
+        return (
+          search.trim().length === 0 ||
+          question.questionText
+            .toLowerCase()
+            .includes(search.trim().toLowerCase())
+        );
+      }),
+    [questions, search, filter]
+  );
 
   const handleGenerateQuestions = async (provider: string, model?: string) => {
     try {
@@ -87,17 +112,18 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
   };
 
   const allExpanded =
-    questions.length > 0 && questions.every((q) => expandedIds.has(q.id));
+    visibleQuestions.length > 0 &&
+    visibleQuestions.every((q) => expandedIds.has(q.id));
 
   const toggleAllExpanded = () => {
     if (allExpanded) {
       setExpandedIds(new Set());
     } else {
-      setExpandedIds(new Set(questions.map((q) => q.id)));
+      setExpandedIds(new Set(visibleQuestions.map((q) => q.id)));
     }
   };
 
-  const toggleExpanded = (questionId: number) => {
+  const toggleExpanded = useCallback((questionId: number) => {
     setExpandedIds((prev) => {
       const next = new Set(prev);
       if (next.has(questionId)) {
@@ -107,17 +133,28 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
       }
       return next;
     });
-  };
+  }, []);
 
-  const isCardExpanded = (questionId: number) => expandedIds.has(questionId);
   const openAiDialog = () => setAiDialogOpen(true);
   const viewAddForm = () => setShowAddForm(true);
   const hideAddForm = () => setShowAddForm(false);
   const toggleNoteView = () => setShowNotes((state) => !state);
-  const handleJobCheckbox = (val: boolean) => setIncludeJobDescription(val);
-  const handleQuestionCheckbox = (val: boolean) => setAvoidRepeat(val);
-  const handleQuestionCountChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+
+  useHotkeys(
+    "escape",
+    () => setShowAddForm(false),
+    { enableOnFormTags: true, enabled: showAddForm },
+    [showAddForm]
+  );
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setSearch(e.target.value);
+
+  const handleCountChange = (e: ChangeEvent<HTMLInputElement>) =>
     setCount(Number(e.target.value));
+
+  const handleFilterChange = (value: string[]) =>
+    setFilter(value[0] as QuestionFilter);
 
   return (
     <>
@@ -125,13 +162,10 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
         <CardHeader>
           <CardTitle>Questions</CardTitle>
           <CardAction className="flex gap-1">
-            <Button onClick={openAiDialog} size="xs">
-              <SparkleIcon className="size-3" />
-              Generate
-            </Button>
+            <Button onClick={openAiDialog}>Generate</Button>
             <DropdownMenu>
               <DropdownMenuTrigger
-                render={<Button size="icon-xs" variant="outline" />}
+                render={<Button size="icon" variant="outline" />}
               >
                 <DotsThreeVerticalIcon className="size-4" />
               </DropdownMenuTrigger>
@@ -167,7 +201,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
             </DropdownMenu>
           </CardAction>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4 pt-4">
+        <CardContent className="space-y-4">
           {showAddForm ? (
             <QuestionForm
               onCancel={hideAddForm}
@@ -176,29 +210,50 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
             />
           ) : null}
 
-          {questions.length === 0 ? (
+          {questions.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <Input
+                className="min-w-35 flex-1 text-md"
+                onChange={handleSearchChange}
+                placeholder="Search questions..."
+                value={search}
+              />
+              <ToggleGroup
+                className="*:rounded-full"
+                onValueChange={handleFilterChange}
+                value={[filter]}
+                variant="outline"
+              >
+                <ToggleGroupItem value="all">All</ToggleGroupItem>
+                <ToggleGroupItem value="pinned">Pinned</ToggleGroupItem>
+                <ToggleGroupItem value="unanswered">Unanswered</ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+          ) : null}
+
+          {visibleQuestions.length === 0 ? (
             <Empty>
               <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <SparkleIcon />
-                </EmptyMedia>
-                <EmptyTitle>No questions yet</EmptyTitle>
+                <EmptyTitle>
+                  {questions.length === 0
+                    ? "No questions yet"
+                    : " No questions match your filters."}
+                </EmptyTitle>
                 <EmptyDescription>
-                  Generate questions with AI or add one manually.
+                  {questions.length === 0
+                    ? " Generate questions with AI or add one manually."
+                    : "Adjust your filter or Create new."}
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <Button onClick={openAiDialog} size="sm">
-                  <SparkleIcon className="size-3" />
-                  Generate Questions
-                </Button>
+                <Button onClick={openAiDialog}>Generate Questions</Button>
               </EmptyContent>
             </Empty>
           ) : (
-            <div className="flex flex-col gap-3">
-              {questions.map((question) => (
+            <div className="flex flex-col gap-3" ref={questionListParent}>
+              {visibleQuestions.map((question) => (
                 <QuestionCard
-                  expanded={isCardExpanded(question.id)}
+                  expanded={expandedIds.has(question.id)}
                   key={question.id}
                   onToggleExpanded={toggleExpanded}
                   question={question}
@@ -226,7 +281,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
             id="question-count"
             max={50}
             min={1}
-            onChange={handleQuestionCountChange}
+            onChange={handleCountChange}
             type="number"
             value={count}
           />
@@ -237,7 +292,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
             checked={avoidRepeat}
             disabled={isQuestionPending}
             id="avoid-repeat"
-            onCheckedChange={handleQuestionCheckbox}
+            onCheckedChange={setAvoidRepeat}
           />
           <Label htmlFor="avoid-repeat">
             Avoid repeating previous questions
@@ -250,7 +305,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
               checked={includeJobDescription}
               disabled={isQuestionPending}
               id="include-job-description"
-              onCheckedChange={handleJobCheckbox}
+              onCheckedChange={setIncludeJobDescription}
             />
             <Label htmlFor="include-job-description">
               Include job description

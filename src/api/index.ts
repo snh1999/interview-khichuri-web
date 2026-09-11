@@ -8,10 +8,16 @@ import { toast } from "sonner";
 import type { TPermissionOptions } from "@/api/auth/admin.ts";
 import type { IAtsScoreFilter } from "@/lib/indexdb";
 
+type TQueryFn =
+  | QueryKey
+  | readonly QueryKey[]
+  | ((variables: never) => QueryKey | readonly QueryKey[]);
+
 declare module "@tanstack/react-query" {
   interface Register {
     mutationMeta: {
-      invalidates?: QueryKey | readonly QueryKey[];
+      invalidates?: TQueryFn;
+      removes?: TQueryFn;
     };
   }
 }
@@ -24,20 +30,32 @@ export const apiClient = new QueryClient({
   }),
   mutationCache: new MutationCache({
     // eslint-disable-next-line @typescript-eslint/max-params
-    onSuccess: async (_data, _variables, _context, mutation) => {
-      const keys = mutation.meta?.invalidates;
-      if (!(Array.isArray(keys) && keys) || keys.length === 0) {
-        return;
+    onSuccess: async (_data, variables, _context, mutation) => {
+      const resolve = (val: unknown) =>
+        typeof val === "function" ? val(variables) : val;
+
+      const keys = resolve(mutation.meta?.invalidates);
+      if (Array.isArray(keys) && keys.length > 0) {
+        if (Array.isArray(keys[0])) {
+          await Promise.all(
+            keys.map((key) =>
+              apiClient.invalidateQueries({ queryKey: key as never })
+            )
+          );
+        } else {
+          await apiClient.invalidateQueries({ queryKey: keys as never });
+        }
       }
 
-      if (Array.isArray(keys[0])) {
-        await Promise.all(
-          keys.map(async (key) => {
-            await apiClient.invalidateQueries({ queryKey: key as never });
-          })
-        );
-      } else {
-        await apiClient.invalidateQueries({ queryKey: keys });
+      const removeKeys = resolve(mutation.meta?.removes);
+      if (Array.isArray(removeKeys) && removeKeys.length > 0) {
+        if (Array.isArray(removeKeys[0])) {
+          for (const key of removeKeys) {
+            apiClient.removeQueries({ queryKey: key as never });
+          }
+        } else {
+          apiClient.removeQueries({ queryKey: removeKeys as never });
+        }
       }
     },
     onError: (error) => {
@@ -101,11 +119,23 @@ export const queryKeys = {
     topics: ["lookups", "topics"] as const,
     companies: ["lookups", "companies"] as const,
   },
+  interviews: {
+    all: ["interviews"] as const,
+    detail: (id: string) =>
+      [...queryKeys.interviews.all, "detail", id] as const,
+    bySession: (sessionId: string) =>
+      [...queryKeys.interviews.all, "bySession", sessionId] as const,
+    draft: (id: string) => [...queryKeys.interviews.all, "draft", id] as const,
+    archive: (id: string) =>
+      [...queryKeys.interviews.all, "archive", id] as const,
+  },
+
   profile: {
     all: ["profile"] as const,
   },
   resumes: {
     all: ["resumes"] as const,
+    list: () => [...queryKeys.resumes.all, "list"] as const,
     review: ["reviews"] as const,
     resumeById: (id: string) =>
       [...queryKeys.resumes.all, "detail", id] as const,
@@ -123,9 +153,8 @@ export const queryKeys = {
     },
     reviewById: (resumeId: string) =>
       [
+        ...queryKeys.resumes.resumeById(resumeId),
         ...queryKeys.resumes.review,
-        ...queryKeys.resumes.all,
-        resumeId,
       ] as const,
   },
   prompts: {

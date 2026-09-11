@@ -1,11 +1,23 @@
 import type { FieldValues } from "react-hook-form";
 import { type ILookupEntry, useCreateLookup, useRoles } from "@/api/lookups";
+import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import {
   FormCombobox,
   type TComboboxProps,
 } from "@/components/common/form/combobox/FormCombobox.tsx";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export const RolesCombobox = <T extends FieldValues>({
+const comboboxFallback = () => <Skeleton className="h-7 w-full rounded-md" />;
+
+export const RolesCombobox = <T extends FieldValues>(
+  props: Readonly<TComboboxProps<T>>
+) => (
+  <AppErrorSuspense fallback={comboboxFallback}>
+    <RolesComboboxContent {...props} />
+  </AppErrorSuspense>
+);
+
+const RolesComboboxContent = <T extends FieldValues>({
   name,
   form,
   label = "Role",

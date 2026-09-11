@@ -6,6 +6,7 @@ import {
   EMAIL_REDIRECT_PAGE,
   FORGOT_PASSWORD_PAGE,
   HOMEPAGE,
+  INTERVIEW_PAGE,
   JOB_DETAIL_PAGE,
   JOBS_PAGE,
   LOGIN_PAGE,
@@ -33,6 +34,7 @@ import ResetPasswordPage from "@/pages/auth/ResetPasswordPage.tsx";
 import VerifyEmailPage from "@/pages/auth/VerifyEmailpage.tsx";
 import DashboardPage from "@/pages/DashboardPage.tsx";
 import { EmptyPage } from "@/pages/EmptyPage.tsx";
+import { InterviewPage } from "@/pages/InterviewPage.tsx";
 import { JobDetailPage } from "@/pages/JobDetailPage.tsx";
 import JobProfilePage from "@/pages/JobProfilePage.tsx";
 import { JobsPage } from "@/pages/JobsPage.tsx";
@@ -81,6 +83,7 @@ const App = () => {
           <Route element={<JobsPage />} path={JOBS_PAGE} />
           <Route element={<SessionsPage />} path={SESSIONS_PAGE} />
           <Route element={<SessionDetailPage />} path={SESSION_DETAIL_PAGE} />
+          <Route element={<InterviewPage />} path={INTERVIEW_PAGE} />
           <Route element={<SchedulePage />} path={SCHEDULE_PAGE} />
           <Route element={<JobProfilePage />} path={PROFILE_PAGE} />
           <Route element={<SettingsPage />} path={SETTINGS_PAGE} />

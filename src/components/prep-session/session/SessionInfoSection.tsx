@@ -1,96 +1,143 @@
-import type { ReactNode } from "react";
+import {
+  BriefcaseIcon,
+  ClockIcon,
+  PushPinIcon,
+  QuestionIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
+import { useState } from "react";
 import { generatePath, useNavigate } from "react-router";
 import { useJob } from "@/api/jobs";
-import { useRoles } from "@/api/lookups";
-import type { IPrepSession } from "@/api/sessions";
-import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
+import {
+  type IPrepSession,
+  useDeleteSession,
+  useQuestions,
+} from "@/api/sessions";
+import { JOB_DETAIL_PAGE, SESSIONS_PAGE } from "@/app.constants.ts";
+import { PrepSessionForm } from "@/components/prep-session/session/PrepSessionForm.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
+import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { Card, CardContent, CardDescription } from "@/components/ui/card.tsx";
-import { useLookupMap } from "@/hooks/useLookupMap.ts";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card.tsx";
+
+const DESC_PREVIEW_LENGTH = 220;
 
 interface IProps {
-  sectionId: string;
   session: IPrepSession;
 }
 
-const FieldLabel = ({
-  children,
-  title,
-  full,
-}: {
-  children: ReactNode;
-  title: string;
-  full?: boolean;
-}) => (
-  <div className={full ? "md:col-span-2" : undefined}>
-    <span className="text-muted-foreground text-xs">{title}</span>
-    <p className="wrap-break-word mt-0.5 whitespace-pre-wrap text-sm">
-      {children}
-    </p>
-  </div>
-);
-
-const LinkedJobField = ({ jobId }: { jobId: string }) => {
+export const SessionInfoSection = ({ session }: IProps) => {
+  const { data: questions } = useQuestions(session.id);
   const navigate = useNavigate();
-  const handleClick = () =>
-    navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
-  const { data: job } = useJob(jobId);
+  const [descExpanded, setDescExpanded] = useState(false);
+
+  const descriptionIsClipped =
+    (session.description?.length ?? 0) > DESC_PREVIEW_LENGTH;
+  const preview =
+    session.description && descriptionIsClipped && !descExpanded
+      ? `${session.description.slice(0, DESC_PREVIEW_LENGTH).trimEnd()}…`
+      : session.description;
+
+  const pinnedCount = questions.filter((q) => q.isFavorite).length;
+  const updatedDate = new Date(session.updatedAt).toLocaleDateString();
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const closeDialog = () => setDialogOpen(false);
+  const toggleExpansion = () => setDescExpanded((e) => !e);
+
+  const deleteSession = useDeleteSession();
+
+  const handleDelete = async () =>
+    deleteSession.mutateAsync(session.id, {
+      onSuccess: () => navigate(SESSIONS_PAGE),
+    });
 
   return (
-    <FieldLabel title="Linked Job">
-      <Button
-        className="h-auto p-0 text-sm"
-        onClick={handleClick}
-        variant="link"
-      >
-        {job.title} @ {job.companyName}
-      </Button>
-    </FieldLabel>
+    <Card className="w-full rounded-xs bg-card/80">
+      <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
+        <div className="min-w-0">
+          <CardTitle className="wrap-break-word text-xl">
+            {session.title}
+          </CardTitle>
+          {session.jobId ? <JobDetails jobId={session.jobId} /> : null}
+        </div>
+        <CardAction className="space-x-2">
+          <PrepSessionForm
+            onOpenChange={setDialogOpen}
+            onSuccess={closeDialog}
+            open={dialogOpen}
+            session={session}
+            viewTrigger
+          />
+          <MutationButton
+            mutationFn={handleDelete}
+            requireConfirmation
+            variant="destructive"
+          >
+            <TrashIcon />
+          </MutationButton>
+        </CardAction>
+      </CardHeader>
+
+      <CardContent className="flex flex-wrap gap-1.5">
+        {session.experience ? (
+          <Badge variant="default">{session.experience}</Badge>
+        ) : null}
+        <Badge className="gap-1" variant="secondary">
+          <QuestionIcon className="size-3.5" />
+          {questions.length} questions
+        </Badge>
+        <Badge className="gap-1" variant="secondary">
+          <PushPinIcon className="size-3.5" />
+          {pinnedCount} pinned
+        </Badge>
+        <Badge className="gap-1" variant="secondary">
+          <ClockIcon className="size-3.5" />
+          updated {updatedDate}
+        </Badge>
+      </CardContent>
+
+      {session.description ? (
+        <CardFooter className="flex-col items-start gap-1 border-t pt-3">
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            {preview}
+          </p>
+          {descriptionIsClipped ? (
+            <Button
+              className="h-auto p-0 text-xs"
+              onClick={toggleExpansion}
+              variant="link"
+            >
+              {descExpanded ? "See less" : "See more"}
+            </Button>
+          ) : null}
+        </CardFooter>
+      ) : null}
+    </Card>
   );
 };
 
-export const SessionInfoSection = ({ sectionId, session }: IProps) => {
-  const { data: roles } = useRoles();
-  const rolesMap = useLookupMap(roles);
+const JobDetails = ({ jobId }: { jobId: string }) => {
+  const { data: job } = useJob(jobId);
+  const navigate = useNavigate();
 
-  const roleName = rolesMap.get(session.roleId ?? 0)?.name;
-
-  const createdDate = new Date(session.createdAt).toLocaleDateString();
-  const updatedDate = new Date(session.updatedAt).toLocaleDateString();
+  const openJobDetail = () =>
+    navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
 
   return (
-    <Card className="mt-2 px-1" id={sectionId}>
-      <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <FieldLabel full title="Title">
-          {session.title}
-        </FieldLabel>
-
-        {session.jobId ? <LinkedJobField jobId={session.jobId} /> : null}
-
-        <FieldLabel title="Experience Level">
-          {session.experience ? (
-            <Badge
-              className="bg-secondary text-secondary-foreground"
-              variant="secondary"
-            >
-              {session.experience}
-            </Badge>
-          ) : (
-            "Not set"
-          )}
-        </FieldLabel>
-        <FieldLabel title="Target Role">{roleName ?? "Not set"}</FieldLabel>
-
-        <FieldLabel full title="Description">
-          {session.description}
-        </FieldLabel>
-
-        <div className="flex justify-between italic *:text-[12px] md:col-span-2">
-          <CardDescription>Created {createdDate}</CardDescription>
-          <CardDescription> Updated {updatedDate}</CardDescription>
-        </div>
-      </CardContent>
-    </Card>
+    <CardDescription>
+      <Button className="p-0 text-md" onClick={openJobDetail} variant="link">
+        <BriefcaseIcon className="mr-1 size-3.5" />
+        {job.companyName} - {job.title}
+      </Button>
+    </CardDescription>
   );
 };

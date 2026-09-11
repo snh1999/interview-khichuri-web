@@ -25,3 +25,8 @@ export function useResumeId(): string {
   const { resumeId } = useParams();
   return parseUUID(resumeId);
 }
+
+export function useInterviewId(): string {
+  const { interviewId } = useParams();
+  return parseUUID(interviewId);
+}
