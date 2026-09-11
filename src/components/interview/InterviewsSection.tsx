@@ -23,6 +23,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty.tsx";
+import { retryLocalEntryCleanup } from "@/lib/indexdb.ts";
 import { CreateInterviewDialog } from "./CreateInterviewDialog.tsx";
 
 interface IProps {
@@ -44,8 +45,10 @@ export const InterviewsSection = ({ sectionId, session }: IProps) => {
   const handleDeleteInterview = async (interview: IInterview) => {
     const { id } = interview;
     await deleteInterview(id);
-    await clearLocalInterviewState(id);
-    await clearInterviewArchive(id);
+    await retryLocalEntryCleanup(id, [
+      clearLocalInterviewState,
+      clearInterviewArchive,
+    ]);
   };
 
   return (

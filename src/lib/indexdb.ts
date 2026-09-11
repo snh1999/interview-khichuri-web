@@ -169,6 +169,20 @@ export const clearStandaloneReviews = async (): Promise<void> => {
   await db.clear(REVIEWS_STORE);
 };
 
+export const retryLocalEntryCleanup = async (
+  id: string,
+  cleanupFns: Array<(id: string) => Promise<unknown>>
+): Promise<void> => {
+  const runCleanups = async () =>
+    Promise.allSettled(cleanupFns.map((cleanupFn) => cleanupFn(id)));
+  const firstTry = await runCleanups();
+  if (firstTry.every((result) => result.status === "fulfilled")) {
+    return;
+  }
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  await runCleanups();
+};
+
 export const clearLocalCache = async (): Promise<void> => {
   await clearAtsScores();
   await clearStandaloneReviews();

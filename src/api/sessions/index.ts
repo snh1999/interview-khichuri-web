@@ -68,14 +68,17 @@ export const useCreateSession = () =>
   useMutation({
     mutationFn: async (dto: ICreateSessionDto) =>
       await api.post<IPrepSession>("/prep-session", dto),
-    meta: { invalidates: queryKeys.sessions.all },
+    meta: { invalidates: queryKeys.sessions.list() },
   });
 
 export const useUpdateSession = () =>
   useMutation({
     mutationFn: async ({ id, ...dto }: IUpdateSessionDto & { id: string }) =>
       await api.patch<ISessionWithQuestions>(`/prep-session/${id}`, dto),
-    meta: { invalidates: queryKeys.sessions.all },
+    meta: {
+      invalidates: ({ id }: { id: string }) =>
+        queryKeys.sessions.detailsAndList(id),
+    },
   });
 
 export const useDeleteSession = () =>
@@ -83,12 +86,18 @@ export const useDeleteSession = () =>
     mutationFn: async (id: string) => {
       await api.delete(`/prep-session/${id}`);
     },
-    meta: { invalidates: queryKeys.sessions.list() },
+    meta: {
+      invalidates: queryKeys.sessions.list(),
+      removes: (id: string) => [
+        queryKeys.sessions.detail(id),
+        queryKeys.sessions.questions(id),
+      ],
+    },
   });
 
 export const useQuestions = (sessionId: string) =>
   useSuspenseQuery({
-    queryKey: [...queryKeys.sessions.all, "questions", sessionId] as const,
+    queryKey: [...queryKeys.sessions.questions(sessionId)] as const,
     queryFn: async () =>
       await api.get<IQuestion[]>(`/prep-session/${sessionId}/questions`),
   });
@@ -100,7 +109,10 @@ export const useAddQuestion = () =>
       ...dto
     }: ICreateQuestionDto & { sessionId: string }) =>
       await api.post<IQuestion>(`/prep-session/${sessionId}/questions`, dto),
-    meta: { invalidates: queryKeys.sessions.all },
+    meta: {
+      invalidates: ({ sessionId }: { sessionId: string }) =>
+        queryKeys.sessions.questions(sessionId),
+    },
   });
 
 export const useUpdateQuestion = () =>
@@ -114,7 +126,10 @@ export const useUpdateQuestion = () =>
         `/prep-session/${sessionId}/questions/${questionId}`,
         dto
       ),
-    meta: { invalidates: queryKeys.sessions.all },
+    meta: {
+      invalidates: ({ sessionId }: { sessionId: string }) =>
+        queryKeys.sessions.questions(sessionId),
+    },
   });
 
 export const useDeleteQuestion = () =>
@@ -128,7 +143,10 @@ export const useDeleteQuestion = () =>
     }) => {
       await api.delete(`/prep-session/${sessionId}/questions/${questionId}`);
     },
-    meta: { invalidates: queryKeys.sessions.all },
+    meta: {
+      invalidates: ({ sessionId }: { sessionId: string }) =>
+        queryKeys.sessions.questions(sessionId),
+    },
   });
 
 export const useGenerateQuestions = () =>
@@ -153,5 +171,7 @@ export const useGenerateQuestions = () =>
         { provider, model, count, avoidRepeat, includeJobDescription },
         { timeoutMs: 120_000 }
       ),
-    meta: { invalidates: queryKeys.sessions.all },
+    meta: {
+      invalidates: ({ id }: { id: string }) => queryKeys.sessions.questions(id),
+    },
   });

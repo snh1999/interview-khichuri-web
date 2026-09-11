@@ -63,7 +63,7 @@ export interface TExtractionResult {
 export const useGetResumes = () =>
   useSuspenseQuery({
     queryFn: async () => await api.get<IResume[]>("/resume"),
-    queryKey: queryKeys.resumes.all,
+    queryKey: queryKeys.resumes.list(),
   });
 
 export const useGetResumeById = (id: string) =>
@@ -85,7 +85,7 @@ export const useCreateResume = () =>
       content: TProfileFormData;
       template?: string;
     }) => await api.post<IResume>("/resume/create", dto),
-    meta: { invalidates: queryKeys.resumes.all },
+    meta: { invalidates: queryKeys.resumes.list() },
   });
 
 export const useUpdateResume = () =>
@@ -100,7 +100,9 @@ export const useUpdateResume = () =>
       const { id, ...data } = dto;
       return await api.patch<IResume>(`/resume/${id}`, data);
     },
-    meta: { invalidates: queryKeys.resumes.all },
+    meta: {
+      invalidates: queryKeys.resumes.list(),
+    },
   });
 
 export const useExtractResume = () =>
@@ -123,20 +125,26 @@ export const useUploadResume = () =>
       }
       return await api.upload<IUploadResponse>("/resume", formData);
     },
-    meta: { invalidates: queryKeys.resumes.all },
+    meta: { invalidates: queryKeys.resumes.list() },
   });
 
 export const useDeleteResume = () =>
   useMutation({
     mutationFn: async (id: string) => await api.delete<void>(`/resume/${id}`),
-    meta: { invalidates: queryKeys.resumes.all },
+    meta: {
+      invalidates: queryKeys.resumes.list(),
+      removes: (id: string) => [
+        queryKeys.resumes.resumeById(id),
+        queryKeys.resumes.resumeView(id),
+      ],
+    },
   });
 
 export const useSetPrimaryResume = () =>
   useMutation({
     mutationFn: async (id: string) =>
       await api.patch<void>(`/resume/${id}/primary`),
-    meta: { invalidates: queryKeys.resumes.all },
+    meta: { invalidates: queryKeys.resumes.list() },
   });
 
 // embed causes whole page reload with suspense query

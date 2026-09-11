@@ -32,7 +32,7 @@ export const InterviewPdfExport = ({
   onOpenChange,
   interview,
 }: Readonly<IProps>) => {
-  const { data: archive } = useInterviewArchive(interview.id, open);
+  const { data: archive, isPending } = useInterviewArchive(interview.id, open);
   const [sections, setSections] = useState<TSectionKey[]>(
     SECTION_OPTIONS.map((option) => option.key)
   );
@@ -96,7 +96,7 @@ export const InterviewPdfExport = ({
             <Button onClick={handleCloseDialog} variant="outline">
               Cancel
             </Button>
-            <Button onClick={handleExport}>
+            <Button disabled={isPending} onClick={handleExport}>
               <DownloadSimpleIcon className="size-4" />
               Export PDF
             </Button>

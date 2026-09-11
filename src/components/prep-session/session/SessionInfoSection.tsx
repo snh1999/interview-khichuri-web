@@ -36,7 +36,6 @@ interface IProps {
 
 export const SessionInfoSection = ({ session }: IProps) => {
   const { data: questions } = useQuestions(session.id);
-  const { data: job } = useJob(session.jobId ?? "");
   const navigate = useNavigate();
   const [descExpanded, setDescExpanded] = useState(false);
 
@@ -54,9 +53,6 @@ export const SessionInfoSection = ({ session }: IProps) => {
   const closeDialog = () => setDialogOpen(false);
   const toggleExpansion = () => setDescExpanded((e) => !e);
 
-  const openJobDetail = () =>
-    navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
-
   const deleteSession = useDeleteSession();
 
   const handleDelete = async () =>
@@ -71,18 +67,7 @@ export const SessionInfoSection = ({ session }: IProps) => {
           <CardTitle className="wrap-break-word text-xl">
             {session.title}
           </CardTitle>
-          {session.jobId && job ? (
-            <CardDescription>
-              <Button
-                className="p-0 text-md"
-                onClick={openJobDetail}
-                variant="link"
-              >
-                <BriefcaseIcon className="mr-1 size-3.5" />
-                {job.companyName} - {job.title}
-              </Button>
-            </CardDescription>
-          ) : null}
+          {session.jobId ? <JobDetails jobId={session.jobId} /> : null}
         </div>
         <CardAction className="space-x-2">
           <PrepSessionForm
@@ -137,5 +122,22 @@ export const SessionInfoSection = ({ session }: IProps) => {
         </CardFooter>
       ) : null}
     </Card>
+  );
+};
+
+const JobDetails = ({ jobId }: { jobId: string }) => {
+  const { data: job } = useJob(jobId);
+  const navigate = useNavigate();
+
+  const openJobDetail = () =>
+    navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
+
+  return (
+    <CardDescription>
+      <Button className="p-0 text-md" onClick={openJobDetail} variant="link">
+        <BriefcaseIcon className="mr-1 size-3.5" />
+        {job.companyName} - {job.title}
+      </Button>
+    </CardDescription>
   );
 };
