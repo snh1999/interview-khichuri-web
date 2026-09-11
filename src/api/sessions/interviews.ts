@@ -84,6 +84,8 @@ export interface IInterview {
   overallScore?: number | null;
   technicalScore?: number | null;
   communicationScore?: number | null;
+  problemSolvingScore?: number | null;
+  leadershipFitScore?: number | null;
   elapsedSeconds?: number | null;
   summaryMarkdown?: string | null;
   strengths?: string[] | null;

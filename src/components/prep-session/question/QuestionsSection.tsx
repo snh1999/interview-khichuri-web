@@ -147,17 +147,14 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
     [showAddForm]
   );
 
-  const handleSearchChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
-    []
-  );
-  const handleCountChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => setCount(Number(e.target.value)),
-    []
-  );
-  const handleFilterChange = useCallback((value: string[]) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setSearch(e.target.value);
+
+  const handleCountChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setCount(Number(e.target.value));
+
+  const handleFilterChange = (value: string[]) =>
     setFilter(value[0] as QuestionFilter);
-  }, []);
 
   return (
     <>
@@ -249,9 +246,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <Button onClick={openAiDialog} size="sm">
-                  Generate Questions
-                </Button>
+                <Button onClick={openAiDialog}>Generate Questions</Button>
               </EmptyContent>
             </Empty>
           ) : (
