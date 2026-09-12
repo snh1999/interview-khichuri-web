@@ -1,5 +1,6 @@
 import { useGetInterview } from "@/api/sessions/interviews.ts";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
+import { LiveInterview } from "@/components/interview/live/LiveInterview.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useInterviewId } from "@/hooks/useId.ts";
 import { InterviewReport } from "../components/interview/report/InterviewReport.tsx";
@@ -17,7 +18,8 @@ const InterviewContent = () => {
   if (interview.completedAt) {
     return <InterviewReport interview={interview} />;
   }
-  return null;
+
+  return <LiveInterview interview={interview} />;
 };
 
 export const InterviewSkeleton = () => (
