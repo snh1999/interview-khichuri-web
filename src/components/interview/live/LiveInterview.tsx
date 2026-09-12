@@ -14,9 +14,9 @@ import {
 import { SESSION_DETAIL_PAGE } from "@/app.constants";
 import { AiDialog } from "@/components/common/ai/AiDialog";
 import { AnswerInput } from "@/components/interview/live/AnswerInput";
-import { AvatarView } from "@/components/interview/live/speech/AvatarView.tsx";
 import { ChatColumn } from "@/components/interview/live/ChatColumn";
 import { InterviewPanel } from "@/components/interview/live/InterviewPanel.tsx";
+import { AvatarView } from "@/components/interview/live/speech/AvatarView.tsx";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
