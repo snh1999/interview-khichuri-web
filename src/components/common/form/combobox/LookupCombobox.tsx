@@ -11,9 +11,7 @@ import {
   type IComboboxOption,
   type TComboboxProps,
 } from "@/components/common/form/combobox/FormCombobox.tsx";
-import { Chip } from "@/components/ui/Chip.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useLookupMap } from "@/hooks/useLookupMap.ts";
 
 interface IProps<T extends FieldValues> extends Partial<TComboboxProps<T>> {
   form: UseFormReturn<T>;
@@ -48,13 +46,9 @@ const LookupComboboxContent = <T extends FieldValues>({
   ...rest
 }: Readonly<IProps<T>>) => {
   const lookups = useLookups(schema);
-  const lookupsMap = useLookupMap(lookups.data);
 
-  const getIds = (): Set<number> => new Set(form.getValues(idsName));
   const getNames = (): Set<string> =>
     new Set(names ? form.getValues(names) : []);
-  const setIds = (v: number[]) =>
-    form.setValue(idsName, v as never, { shouldDirty: true });
   const setNames = (v: Set<string>) => {
     const value = [...v] as never;
     if (names) {
@@ -70,58 +64,31 @@ const LookupComboboxContent = <T extends FieldValues>({
     }
   };
 
-  const handleRemoveId = (id: number) => {
-    const current = getIds();
-    current.delete(id);
-    setIds([...current]);
-  };
-
   const handleRemoveName = (name: string) => {
     const current = getNames();
     current.delete(name);
     setNames(current);
   };
 
-  const ids = (form.watch(idsName) as number[] | null | undefined) ?? [];
   const pendingNames = names
     ? ((form.watch(names) as string[] | null | undefined) ?? [])
     : [];
 
   return (
-    <div className="space-y-2">
-      <FormCombobox
-        creatable={Boolean(names)}
-        data={lookups.data}
-        form={form}
-        hideChips
-        label={label}
-        multiple
-        name={idsName}
-        onCreateItem={names ? handleCreate : undefined}
-        placeholder={placeholder}
-        toOption={toLookupOption}
-        {...rest}
-      />
-      {ids.length > 0 || pendingNames.length > 0 ? (
-        <div className="flex flex-wrap gap-1">
-          {ids.map((id) => {
-            const name = lookupsMap.get(id)?.name;
-            if (!name) {
-              return null;
-            }
-            return (
-              <Chip key={id} onRemove={() => handleRemoveId(id)}>
-                {name}
-              </Chip>
-            );
-          })}
-          {pendingNames.map((name) => (
-            <Chip key={name} onRemove={() => handleRemoveName(name)}>
-              {name}
-            </Chip>
-          ))}
-        </div>
-      ) : null}
-    </div>
+    <FormCombobox
+      chipsBelow
+      creatable={Boolean(names)}
+      data={lookups.data}
+      extraChips={pendingNames}
+      form={form}
+      label={label}
+      multiple
+      name={idsName}
+      onCreateItem={names ? handleCreate : undefined}
+      onRemoveExtraChip={names ? handleRemoveName : undefined}
+      placeholder={placeholder}
+      toOption={toLookupOption}
+      {...rest}
+    />
   );
 };

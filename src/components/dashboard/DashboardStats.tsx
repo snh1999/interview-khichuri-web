@@ -1,6 +1,6 @@
 import { cn } from "cn";
+import type { DashboardStats as DashboardStatsType } from "@/components/dashboard/dashboard.helpers";
 import { Card } from "@/components/ui/card";
-import type { DashboardStats as DashboardStatsType } from "@/types/dashboard";
 
 interface StatCardProps {
   label: string;

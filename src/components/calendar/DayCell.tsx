@@ -1,6 +1,6 @@
+import { cn } from "cn";
 import { format, isSameMonth, isToday } from "date-fns";
 import { useCallback } from "react";
-import { cn } from "@/lib/utils";
 import { CalendarEvent } from "./CalendarEvent";
 import {
   MONTH_BAR_ROW_GAP_PX,

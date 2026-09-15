@@ -101,7 +101,10 @@ export const useUpdateResume = () =>
       return await api.patch<IResume>(`/resume/${id}`, data);
     },
     meta: {
-      invalidates: queryKeys.resumes.list(),
+      invalidates: ({ id }: { id: string }) => [
+        queryKeys.resumes.list(),
+        queryKeys.resumes.resumeById(id),
+      ],
     },
   });
 

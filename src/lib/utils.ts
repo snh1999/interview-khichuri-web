@@ -1,15 +1,20 @@
-// eslint-disable-next-line unicorn/prevent-abbreviations
-
-import type { ClassValue } from "clsx";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { URGENT_DAYS_THRESHOLD } from "@/app.constants.ts";
 import type { TResolvedTheme } from "@/components/theme/themes.types.ts";
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,func-style,sonarjs/declarations-in-global-scope
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+export const isUrgent = (date?: string | null): boolean => {
+  const days = daysUntil(date);
+  return days !== null && days <= URGENT_DAYS_THRESHOLD;
+};
 
+export const daysUntil = (date?: string | null): number | null => {
+  if (!date) {
+    return null;
+  }
+  return Math.ceil((new Date(date).getTime() - Date.now()) / MS_PER_DAY);
+};
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,func-style,sonarjs/declarations-in-global-scope
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;

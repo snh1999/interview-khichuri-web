@@ -1,5 +1,3 @@
-import type { ScorePoint } from "@/types/dashboard";
-
 export const RECENT_ITEMS_COUNT = 4;
 export const RECENT_NOTES_COUNT = 5;
 export const NOTES_FETCH_LIMIT = 10;
@@ -39,3 +37,24 @@ export const avgScore = (points: ScorePoint[]): number =>
         points.reduce((total, point) => total + point.score, 0) / points.length
       )
     : 0;
+
+export interface DashboardStats {
+  activeJobs: number;
+  interviewsThisWeek: number;
+  avgMockScore: number;
+  urgentDeadlines: number;
+}
+
+export interface ScorePoint {
+  label: string;
+  score: number;
+}
+
+export type UpcomingUrgency = "urgent" | "soon" | "later";
+
+export interface UpcomingItem {
+  id: string;
+  label: string;
+  daysAway: number;
+  urgency: UpcomingUrgency;
+}

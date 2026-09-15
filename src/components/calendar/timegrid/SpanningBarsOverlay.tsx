@@ -1,5 +1,5 @@
+import { cn } from "cn";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import { getEventColors, getEventsForDay } from "../calendar.helpers";
 import type { TCustomEvent, TJobEvent } from "../calendar.types";
 import type { SpanningSegmentLayout } from "./timeGrid.layout";

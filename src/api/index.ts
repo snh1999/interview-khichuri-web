@@ -99,7 +99,6 @@ export const queryKeys = {
   calendar: {
     all: ["calendar"] as const,
     events: ["calendar", "events"] as const,
-    status: ["calendar", "status"] as const,
   },
   jobs: {
     all: ["jobs"] as const,
@@ -125,11 +124,20 @@ export const queryKeys = {
       [...queryKeys.interviews.all, "detail", id] as const,
     bySession: (sessionId: string) =>
       [...queryKeys.interviews.all, "bySession", sessionId] as const,
+    list: (options?: Record<string, unknown>) =>
+      [...queryKeys.interviews.all, "list", options ?? {}] as const,
     draft: (id: string) => [...queryKeys.interviews.all, "draft", id] as const,
     archive: (id: string) =>
       [...queryKeys.interviews.all, "archive", id] as const,
   },
-
+  notes: {
+    all: ["notes"] as const,
+    list: (filters?: Record<string, unknown>) =>
+      [...queryKeys.notes.all, "list", filters] as const,
+    detail: (id: string) => [...queryKeys.notes.all, "detail", id] as const,
+    detailsAndList: (id: string) =>
+      [queryKeys.notes.list(), queryKeys.notes.detail(id)] as const,
+  },
   profile: {
     all: ["profile"] as const,
   },
@@ -173,5 +181,9 @@ export const queryKeys = {
     list: (filters?: Record<string, unknown>) =>
       [...queryKeys.sessions.all, "list", filters] as const,
     detail: (id: string) => [...queryKeys.sessions.all, "detail", id] as const,
+    detailsAndList: (id: string) =>
+      [queryKeys.sessions.list(), queryKeys.sessions.detail(id)] as const,
+    questions: (sessionId: string) =>
+      [...queryKeys.sessions.all, "questions", sessionId] as const,
   },
 } as const;

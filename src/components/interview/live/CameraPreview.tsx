@@ -4,10 +4,9 @@ import {
   VideoCameraSlashIcon,
   XIcon,
 } from "@phosphor-icons/react";
+import { cn } from "cn";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
-
-import { cn } from "@/lib/utils.ts";
 
 interface CameraPreviewProps {
   className?: string;
@@ -17,11 +16,13 @@ export const CameraPreview = memo(
   ({ className }: Readonly<CameraPreviewProps>) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const streamRef = useRef<MediaStream | null>(null);
+    const streamRequestRef = useRef(0);
     const [isOn, setIsOn] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
 
     const stopStream = useCallback(() => {
+      streamRequestRef.current += 1;
       for (const track of streamRef.current?.getTracks() ?? []) {
         track.stop();
       }
@@ -31,6 +32,8 @@ export const CameraPreview = memo(
     const clearError = () => setError("");
 
     const startStream = useCallback(async () => {
+      const requestId = streamRequestRef.current + 1;
+      streamRequestRef.current = requestId;
       setError("");
       setIsLoading(true);
       try {
@@ -38,17 +41,26 @@ export const CameraPreview = memo(
           video: true,
           audio: false,
         });
+        if (requestId !== streamRequestRef.current) {
+          for (const track of stream.getTracks()) {
+            track.stop();
+          }
+          return;
+        }
         streamRef.current = stream;
-        // biome-ignore lint/suspicious/noUnnecessaryConditions: ref is null initially but populated after mount
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
         setIsOn(true);
       } catch {
-        setError("Camera unavailable or permission denied");
-        setIsOn(false);
+        if (requestId === streamRequestRef.current) {
+          setError("Camera unavailable or permission denied");
+          setIsOn(false);
+        }
       } finally {
-        setIsLoading(false);
+        if (requestId === streamRequestRef.current) {
+          setIsLoading(false);
+        }
       }
     }, []);
 

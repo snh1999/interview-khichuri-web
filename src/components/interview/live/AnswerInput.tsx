@@ -1,7 +1,7 @@
 import { ChecksIcon, PaperPlaneRightIcon } from "@phosphor-icons/react";
+import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 
 export interface IAnswerInputProps {
   answer: string;

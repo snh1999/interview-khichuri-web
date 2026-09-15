@@ -4,11 +4,11 @@ import {
   PlayIcon,
   SquareIcon,
 } from "@phosphor-icons/react";
+import { cn } from "cn";
 import type { ReactNode } from "react";
 import type { TSpeechEnginePref } from "@/components/interview/live/speech/speech.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
-import { cn } from "@/lib/utils.ts";
 
 const ENGINE_LABELS: Record<TSpeechEnginePref, string> = {
   auto: "Auto (Cloud or Browser)",

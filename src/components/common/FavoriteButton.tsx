@@ -10,6 +10,7 @@ interface IProps
   isFavorite?: boolean;
   onToggle: () => Promise<unknown>;
   icon?: "pin" | "heart";
+  size?: "icon" | "icon-sm";
 }
 
 const stopPropagation = (e: React.MouseEvent) => e.stopPropagation();
@@ -19,6 +20,7 @@ export const FavoriteButton = ({
   children,
   icon = "heart",
   isFavorite = false,
+  size = "icon-sm",
   ...props
 }: IProps) => (
   <MutationButton
@@ -26,17 +28,17 @@ export const FavoriteButton = ({
     errorMessage="Failed to update favorite."
     mutationFn={onToggle}
     onClick={stopPropagation}
-    size="icon-sm"
+    size={size}
     variant="ghost"
   >
     {icon === "heart" ? (
       <HeartIcon
-        className={`size-3 ${isFavorite ? "text-destructive" : "text-muted-foreground"}`}
+        className={`${isFavorite ? "text-destructive" : "text-muted-foreground"}`}
         weight={isFavorite ? "fill" : "regular"}
       />
     ) : (
       <PushPinIcon
-        className={`size-3 ${isFavorite ? "text-primary" : "text-muted-foreground"}`}
+        className={` ${isFavorite ? "text-primary" : "text-muted-foreground"}`}
         weight={isFavorite ? "fill" : "regular"}
       />
     )}

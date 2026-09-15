@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { generatePath, Link } from "react-router";
 import { toast } from "sonner";
 import {
@@ -31,6 +31,7 @@ import type {
   IInterviewTranscriptItem,
   ILocalInterviewState,
 } from "@/lib/interviewStorage";
+import { getLocalInterviewState } from "@/lib/interviewStorage";
 import { useInterviewStore } from "@/store/interviewStore";
 import { useInterviewTiming } from "./QuestionClock";
 
@@ -48,6 +49,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [isFetchingFollowUps, setIsFetchingFollowUps] = useState(false);
+  const advancingRef = useRef(false);
 
   const panes = useInterviewStore((state) => state.panes);
 
@@ -63,6 +65,13 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
   const handleAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setAnswer(e.target.value);
   };
+
+  useEffect(() => {
+    const saved = storedDraft?.items[storedDraft.currentIndex]?.answer ?? "";
+    if (saved.length > 0) {
+      setAnswer((current) => current || saved);
+    }
+  }, [storedDraft]);
 
   const questionText =
     storedDraft?.questions[storedDraft.currentIndex]?.questionText ?? "";
@@ -123,16 +132,18 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
         model: storedDraft.model,
         answers: [lastItem],
       });
-      const existingIds = new Set(
-        storedDraft.questions.map((q) => q.questionText)
-      );
+      const latest = await getLocalInterviewState(interview.id);
+      if (!latest) {
+        return;
+      }
+      const existingIds = new Set(latest.questions.map((q) => q.questionText));
       const fresh = followUps.filter((q) => !existingIds.has(q.questionText));
       if (fresh.length === 0) {
         return;
       }
       const next: ILocalInterviewState = {
-        ...storedDraft,
-        questions: [...storedDraft.questions, ...fresh],
+        ...latest,
+        questions: [...latest.questions, ...fresh],
       };
       await saveLocalDraft(next);
       toast.success("Follow-up questions added");
@@ -144,13 +155,22 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
   };
 
   const goNext = async () => {
+    // biome-ignore lint/suspicious/noUnnecessaryConditions: advancingRef guards re-entrancy across async ticks
+    if (advancingRef.current) {
+      return;
+    }
+    advancingRef.current = true;
     const item = commitCurrent();
-    const nextItems = [...items];
-    nextItems[currentIndex] = item;
-    const nextIndex = currentIndex + 1;
-    resetOnAdvance();
-    const next = await persistDraft(nextItems, nextIndex);
-    setAnswer(next?.items[nextIndex]?.answer ?? "");
+    try {
+      const nextItems = [...items];
+      nextItems[currentIndex] = item;
+      const nextIndex = currentIndex + 1;
+      resetOnAdvance();
+      const next = await persistDraft(nextItems, nextIndex);
+      setAnswer(next?.items[nextIndex]?.answer ?? "");
+    } finally {
+      advancingRef.current = false;
+    }
 
     if (interview.mode === "interview_flow") {
       // biome-ignore lint/complexity/noVoid: follow-up generation is intentionally fire-and-forget

@@ -1,5 +1,5 @@
+import type { ScorePoint } from "@/components/dashboard/dashboard.helpers";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { ScorePoint } from "@/types/dashboard";
 
 const SPARKLINE_HEIGHT = 80;
 const SPARKLINE_WIDTH = 280;

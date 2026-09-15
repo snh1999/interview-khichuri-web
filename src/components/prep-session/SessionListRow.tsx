@@ -1,4 +1,5 @@
-import { CaretRightIcon } from "@phosphor-icons/react";
+import { BriefcaseIcon, CaretRightIcon } from "@phosphor-icons/react";
+import { useTopics } from "@/api/lookups";
 import type { IPrepSession } from "@/api/sessions";
 import { useUpdateSession } from "@/api/sessions";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
@@ -10,16 +11,30 @@ import {
   ItemContent,
   ItemTitle,
 } from "@/components/ui/item.tsx";
+import { useLookupMap } from "@/hooks/useLookupMap.ts";
 
 export const SessionListRow = ({
   session,
   jobLabel,
+  showDate = false,
+  hideFavorite = false,
 }: {
   session: IPrepSession;
   jobLabel?: string;
+  showDate?: boolean;
+  hideFavorite?: boolean;
 }) => {
   const navigateToPage = useNavigateToSessionPage(session.id);
   const updateSession = useUpdateSession();
+  const topicMap = useLookupMap(useTopics().data);
+
+  const topicIds =
+    session.topicIds ?? session.sessionTopics?.map((st) => st.topicId);
+  const topicLabel = (topicIds ?? [])
+    .map((topicId) => topicMap.get(topicId)?.name)
+    .filter(Boolean)
+    .join(", ");
+  const metaLabel = jobLabel ?? (topicLabel || "General prep");
 
   const handleToggleFavorite = () =>
     updateSession.mutateAsync({
@@ -29,26 +44,33 @@ export const SessionListRow = ({
 
   return (
     <Item
-      className="rounded-sm border-border px-4 py-2"
+      className="rounded-sm bg-muted/60"
       render={
         <Button className="h-auto" onClick={navigateToPage} variant="ghost" />
       }
-      size="xs"
     >
-      <ItemContent className="min-w-0 flex-row items-center gap-3">
-        <ItemTitle className="min-w-0 flex-1 truncate text-base">
+      <ItemContent className="min-w-0 gap-0.5 space-y-1.5">
+        <ItemTitle className="min-w-0 flex-1 truncate text-sm">
           {session.title}
-          {jobLabel ? (
-            <span className="text-muted-foreground"> — {jobLabel}</span>
-          ) : null}
         </ItemTitle>
+        <span className="flex min-w-0 items-center gap-1.5 text-muted-foreground text-xs">
+          <BriefcaseIcon />
+          <span className="truncate">{metaLabel}</span>
+        </span>
       </ItemContent>
       <ItemActions>
-        <FavoriteButton
-          icon="pin"
-          isFavorite={session.isFavorite}
-          onToggle={handleToggleFavorite}
-        />
+        {hideFavorite ? null : (
+          <FavoriteButton
+            icon="pin"
+            isFavorite={session.isFavorite}
+            onToggle={handleToggleFavorite}
+          />
+        )}
+        {showDate ? (
+          <span className="shrink-0 font-normal text-muted-foreground text-xs">
+            {new Date(session.createdAt).toLocaleDateString()}
+          </span>
+        ) : null}
         <CaretRightIcon className="size-4 shrink-0 text-muted-foreground" />
       </ItemActions>
     </Item>

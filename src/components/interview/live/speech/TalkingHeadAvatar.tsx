@@ -1,4 +1,5 @@
 import { PauseIcon, PlayIcon } from "@phosphor-icons/react";
+import { cn } from "cn";
 import { type ReactNode, useEffect, useState } from "react";
 import {
   AvatarFace,
@@ -7,7 +8,6 @@ import {
 } from "@/components/interview/live/speech/AvatarFace.tsx";
 import type { TViseme } from "@/components/interview/live/speech/speech.ts";
 import { Button } from "@/components/ui/button.tsx";
-import { cn } from "@/lib/utils.ts";
 
 interface IWaveBar {
   id: number;

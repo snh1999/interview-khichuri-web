@@ -1,11 +1,11 @@
 import { RobotIcon } from "@phosphor-icons/react";
+import { cn } from "cn";
 import type { ReactNode } from "react";
 import type { IInterviewQuestion } from "@/api/sessions/interviews.ts";
 import { Bubble } from "@/components/ui/bubble";
 import { Marker, MarkerContent, MarkerIcon } from "@/components/ui/marker";
 import { Message } from "@/components/ui/message";
 import { Spinner } from "@/components/ui/spinner.tsx";
-import { cn } from "@/lib/utils";
 
 interface IChatColumnProps {
   question: IInterviewQuestion | undefined;

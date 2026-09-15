@@ -4,6 +4,7 @@ import {
   TerminalWindowIcon,
   WarningCircleIcon,
 } from "@phosphor-icons/react";
+import { cn } from "cn";
 import {
   type ReactNode,
   useCallback,
@@ -38,7 +39,6 @@ import {
   DrawLogHeader,
   DrawLogTitle,
 } from "@/components/ui/custom/DrawLog.tsx";
-import { cn } from "@/lib/utils.ts";
 
 interface IVoiceSettingsModalProps {
   open: boolean;

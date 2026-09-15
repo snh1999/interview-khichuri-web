@@ -19,7 +19,7 @@ import {
   DrawerTrigger,
 
 } from "@/components/ui/drawer"
-import { cn } from "@/lib/utils"
+import { cn } from "cn";
 import { useMediaQuery } from "@/hooks/useMediaQuery.ts"
 import { type ComponentProps, createContext, type ReactNode, useContext } from "react"
 
@@ -49,7 +49,7 @@ function DrawLog({ open, onOpenChange, children }: DrawLogProps) {
   )
 }
 
-function DrawLogTrigger(props: ComponentProps<typeof DialogTrigger>) {
+function DrawLogTrigger(props: Omit<ComponentProps<typeof DialogTrigger>, "handle">) {
   const isDesktop = useDrawLogContext()
   const Comp = isDesktop ? DialogTrigger : DrawerTrigger
   return <Comp {...props} />

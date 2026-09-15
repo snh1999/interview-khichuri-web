@@ -8,14 +8,14 @@ import {
   INTERVIEWS_WEEK_DAYS,
   RECENT_ITEMS_COUNT,
 } from "@/components/dashboard/dashboard.helpers";
+import type { DashboardStats as DashboardStatsType } from "@/components/dashboard/dashboard.helpers.ts";
 import { RecentNotesSection } from "@/components/dashboard/RecentNotesSection";
 import { RecentSessionsSection } from "@/components/dashboard/RecentSessionsSection";
 import { SavedJobsSection } from "@/components/dashboard/SavedJobsSection";
 import { ScoreProgress } from "@/components/dashboard/ScoreProgress";
 import { UpcomingList } from "@/components/dashboard/UpcomingList";
 import { Skeleton } from "@/components/ui/skeleton";
-import { daysUntil, isUrgent } from "@/lib/status-styles";
-import type { DashboardStats as DashboardStatsType } from "@/types/dashboard";
+import { daysUntil, isUrgent } from "@/lib/utils";
 
 export const DashboardPage = () => (
   <AppErrorSuspense fallback={DashboardSkeleton}>

@@ -1,9 +1,13 @@
 import { cn } from "cn";
 import type { IJob } from "@/api/jobs";
+import { URGENT_DAYS_THRESHOLD } from "@/app.constants.ts";
+import type {
+  UpcomingItem,
+  UpcomingUrgency,
+} from "@/components/dashboard/dashboard.helpers";
 import { UPCOMING_SOON_DAYS } from "@/components/dashboard/dashboard.helpers.ts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { daysUntil, URGENT_DAYS_THRESHOLD } from "@/lib/status-styles.ts";
-import type { UpcomingItem, UpcomingUrgency } from "@/types/dashboard";
+import { daysUntil } from "@/lib/utils";
 
 const URGENCY_CLASS: Record<UpcomingItem["urgency"], string> = {
   urgent: "text-rose-500 dark:text-rose-400",

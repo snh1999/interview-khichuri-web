@@ -1,4 +1,5 @@
 import { ArrowsClockwiseIcon, CheckIcon } from "@phosphor-icons/react";
+import { cn } from "cn";
 import { useCallback } from "react";
 import {
   GEMINI_VOICES,
@@ -20,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select.tsx";
 import { Slider } from "@/components/ui/slider.tsx";
-import { cn } from "@/lib/utils.ts";
 
 interface IGeminiVoiceOptionProps {
   voice: IGeminiVoice;
