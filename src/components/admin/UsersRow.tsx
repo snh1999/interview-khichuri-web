@@ -1,5 +1,6 @@
 import { DotsThreeIcon } from "@phosphor-icons/react";
 import type { UserWithRole } from "better-auth/client/plugins";
+import { cn } from "cn";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import {
@@ -31,7 +32,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { authAdmin, useSession } from "@/lib/auth/auth-client.ts";
-import { cn } from "@/lib/utils.ts";
 
 interface IProps {
   user: UserWithRole;

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client.ts";
 
@@ -14,10 +14,6 @@ export interface ICalendarEvent {
   source: "custom" | "job";
   sourceId?: string | null;
   color?: string | null;
-  privateSync: boolean;
-  googleTitle?: string | null;
-  googleEventId?: string | null;
-  syncedAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -30,8 +26,6 @@ export interface ICreateCalendarEventDto {
   source?: TEventSource;
   sourceId?: string | null;
   color?: string | null;
-  privateSync?: boolean;
-  googleTitle?: string | null;
 }
 
 export interface IUpdateCalendarEventDto {
@@ -40,26 +34,7 @@ export interface IUpdateCalendarEventDto {
   startDate?: Date;
   endDate?: Date;
   color?: string | null;
-  privateSync?: boolean;
-  googleTitle?: string | null;
 }
-
-export interface ISyncEventDto {
-  privateSync?: boolean;
-  googleTitle?: string | null;
-}
-
-export interface ICalendarStatus {
-  connected: boolean;
-  hasCalendarScope: boolean;
-  email?: string;
-}
-
-export const useCalendarStatus = () =>
-  useQuery({
-    queryKey: [...queryKeys.calendar.all, "status"],
-    queryFn: async () => await api.get<ICalendarStatus>("/calendar/status"),
-  });
 
 export const useCalendarEvents = () =>
   useSuspenseQuery({
@@ -90,17 +65,4 @@ export const useDeleteCalendarEvent = () =>
       await api.delete(`/calendar/events/${id}`);
     },
     meta: { invalidates: queryKeys.calendar.events },
-  });
-
-export const useToggleEventSync = () =>
-  useMutation({
-    mutationFn: async ({ id, ...dto }: ISyncEventDto & { id: string }) =>
-      await api.patch<ICalendarEvent>(`/calendar/events/${id}/sync`, dto),
-    meta: { invalidates: queryKeys.calendar.events },
-  });
-
-export const useSyncCalendar = () =>
-  useMutation({
-    mutationFn: async () =>
-      await api.post<{ synced: number; failed: number }>("/calendar/sync"),
   });

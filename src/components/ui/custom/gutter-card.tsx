@@ -1,6 +1,6 @@
 import type { KeyboardEvent, ReactNode } from "react";
 
-import { cn } from "@/lib/utils.ts";
+import { cn } from "cn";
 
 export type StatusVariant = "default" | "success" | "warning" | "danger";
 

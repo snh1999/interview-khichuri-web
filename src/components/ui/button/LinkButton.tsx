@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { useNavigate } from "react-router";
-import { cn } from "@/lib/utils.ts";
+import { cn } from "cn";
 
 export function LinkButton({
   children,

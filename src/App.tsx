@@ -32,7 +32,7 @@ import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage.tsx";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage.tsx";
 import VerifyEmailPage from "@/pages/auth/VerifyEmailpage.tsx";
-import DashboardPage from "@/pages/DashboardPage.tsx";
+import { DashboardPage } from "@/pages/DashboardPage.tsx";
 import { EmptyPage } from "@/pages/EmptyPage.tsx";
 import { InterviewPage } from "@/pages/InterviewPage.tsx";
 import { JobDetailPage } from "@/pages/JobDetailPage.tsx";

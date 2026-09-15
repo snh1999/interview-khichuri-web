@@ -1,5 +1,5 @@
 import { XIcon } from "@phosphor-icons/react";
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
 import { Button } from "@/components/ui/button";
 import type { ComponentPropsWithoutRef } from "react";
 

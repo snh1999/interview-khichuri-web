@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
 import { getEventColors } from "./calendar.helpers";
 import type { TCustomEvent, TJobEvent } from "./calendar.types";
 

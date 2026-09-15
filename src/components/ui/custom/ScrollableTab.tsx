@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils.ts";
+import { cn } from "cn";
 import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { useTabs } from "@/hooks/useTabs.ts";
