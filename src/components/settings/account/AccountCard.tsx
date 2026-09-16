@@ -97,8 +97,7 @@ const ActionButton = ({
     );
   }
 
-  const handleUnlinkAccount = () =>
-    unlinkAccount({ account, providerId: provider });
+  const handleUnlinkAccount = () => unlinkAccount({ account });
 
   return (
     <AuthActionButton

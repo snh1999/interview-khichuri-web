@@ -1,5 +1,5 @@
+import { cn } from "cn";
 import { format, isToday } from "date-fns";
-import { cn } from "@/lib/utils";
 import {
   DAY_END_HOUR,
   DAY_START_HOUR,

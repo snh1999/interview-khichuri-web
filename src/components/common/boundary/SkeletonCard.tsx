@@ -1,3 +1,4 @@
+import { cn } from "cn";
 import type { ReactNode } from "react";
 import {
   Card,
@@ -6,7 +7,6 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils.ts";
 
 interface IProps {
   children?: ReactNode;

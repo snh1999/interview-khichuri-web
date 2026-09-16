@@ -10,6 +10,9 @@ export type TComboboxProps<T extends FieldValues> = TBasicFormInputProps<T> & {
   creatable?: boolean;
   onCreateItem?: (label: string) => void | Promise<void>;
   hideChips?: boolean;
+  chipsBelow?: boolean;
+  extraChips?: string[];
+  onRemoveExtraChip?: (label: string) => void;
   initialValue?: T;
 };
 

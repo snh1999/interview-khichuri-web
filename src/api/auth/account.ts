@@ -18,17 +18,10 @@ export const useListAccounts = () =>
 
 export const useUnlinkAccounts = () =>
   useMutation({
-    mutationFn: async ({
-      account,
-      providerId,
-    }: {
-      account: Account;
-      providerId: TOauthProviders;
-    }) =>
+    mutationFn: async ({ account }: { account: Account }) =>
       await unlinkAccount(
         {
           accountId: account.accountId,
-          providerId,
         },
         {
           onError: (error) => {
@@ -41,6 +34,16 @@ export const useUnlinkAccounts = () =>
 
 export const useLinkAccounts = () =>
   useMutation({
-    mutationFn: async (provider: TOauthProviders) => await linkSocial(provider),
+    mutationFn: async (
+      input:
+        | TOauthProviders
+        | { provider: TOauthProviders; scopes?: string[]; callbackURL?: string }
+    ) => {
+      const opts = typeof input === "string" ? { provider: input } : input;
+      return await linkSocial(opts.provider, {
+        scopes: opts.scopes,
+        callbackURL: opts.callbackURL,
+      });
+    },
     meta: { invalidates: queryKeys.auth.accounts },
   });

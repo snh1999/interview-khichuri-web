@@ -4,6 +4,7 @@ import {
   WarningIcon,
   XCircleIcon,
 } from "@phosphor-icons/react";
+import { cn } from "cn";
 import { type ReactNode, useState } from "react";
 import {
   getScoreTone,
@@ -23,7 +24,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CircularProgress } from "@/components/ui/custom/circular-progress.tsx";
 import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
 
 export interface IScoreItem {
   id: string;

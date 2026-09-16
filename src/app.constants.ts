@@ -1,4 +1,5 @@
-export const HOMEPAGE = "/";
+export const LANDING_PAGE = "/";
+export const HOMEPAGE = "/dashboard";
 export const ADMIN_PAGE = "/admin";
 export const LOGIN_PAGE = "/login";
 export const REGISTER_PAGE = "/register";
@@ -13,10 +14,13 @@ export const RESUME_DETAIL_PAGE = "/resumes/:resumeId";
 export const CONFIRM_LOGIN_PAGE = "/confirm-login";
 export const JOBS_PAGE = "/jobs";
 export const JOB_DETAIL_PAGE = "/jobs/:jobId";
+export const PROMPTS_PAGE = "/prompts";
+export const ADMIN_LOOKUPS_PAGE = "/admin/lookups";
 export const SCHEDULE_PAGE = "/schedule";
 export const SESSIONS_PAGE = "/sessions";
 export const SESSION_DETAIL_PAGE = "/sessions/:sessionId";
 export const INTERVIEW_PAGE = "/interviews/:interviewId";
+export const NOTES_PAGE = "/notes";
 export const RESUME_EDITOR_PAGE = "/resumes/:resumeId/edit";
 export const PORTFOLIO_PAGE = "/portfolio";
 export const PUBLIC_RESUME_PAGE = "/r/:slug";
@@ -31,3 +35,5 @@ export const MAX_NAME_LENGTH = 127;
 export const MAX_LARGE_LENGTH = 1023;
 export const MAX_URL_LENGTH = 512;
 export const DEFAULT_MAX_STRING_LENGTH = 5000;
+
+export const URGENT_DAYS_THRESHOLD = 3;

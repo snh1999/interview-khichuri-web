@@ -8,7 +8,12 @@ const logout = async () => {
 };
 
 export const LogoutButton = () => (
-  <AuthActionButton action={logout} successMessage="Logged out, Redirecting">
+  <AuthActionButton
+    action={logout}
+    dialogDescription="Your ATS scores, review recommendations, keyword analysis, and tailoring notes are stored in this browser's local cache. This data is not saved on the server. If others use this browser, they could see this data after you log out."
+    requireConfirmation
+    successMessage="Logged out, Redirecting"
+  >
     Logout
   </AuthActionButton>
 );

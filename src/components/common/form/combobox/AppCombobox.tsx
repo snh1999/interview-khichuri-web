@@ -1,5 +1,6 @@
 import { PlusIcon, SpinnerGapIcon } from "@phosphor-icons/react";
 import { useEffect, useMemo, useState } from "react";
+import { Chip } from "@/components/ui/Chip.tsx";
 import {
   Combobox,
   ComboboxChip,
@@ -55,9 +56,85 @@ interface IMultiProps<D> extends IBaseProps {
   multiple: true;
   value: TValue[];
   onChange: (value: TValue[]) => void;
+  chipsBelow?: boolean;
+  extraChips?: string[];
+  onRemoveExtraChip?: (label: string) => void;
 }
 
 export type TAppComboboxProps<D> = ISingleProps<D> | IMultiProps<D>;
+
+const toDisplayText = (
+  value: TValue | null,
+  optionMap: ReadonlyMap<TValue, IComboboxOption>
+) => (value === null ? "" : (optionMap.get(value)?.label ?? ""));
+
+const shouldShowCreate = (
+  isCreating: boolean,
+  creatable: boolean,
+  inputValue: string,
+  options: IComboboxOption[]
+) =>
+  !isCreating &&
+  creatable &&
+  inputValue.trim().length > 0 &&
+  !options.some(
+    (o) => o.label.toLowerCase() === inputValue.trim().toLowerCase()
+  );
+
+const toComboValue = (
+  multiple: boolean,
+  value: TValue | TValue[] | null,
+  optionMap: ReadonlyMap<TValue, IComboboxOption>
+): IComboboxOption | IComboboxOption[] | null => {
+  if (multiple) {
+    return ((value as TValue[] | undefined) ?? [])
+      .map((v) => optionMap.get(v))
+      .filter((o): o is IComboboxOption => o !== null && o !== undefined);
+  }
+  return value === null ? null : (optionMap.get(value as TValue) ?? null);
+};
+
+interface IBelowChipsProps {
+  values: TValue[];
+  extraChips?: string[];
+  optionMap: ReadonlyMap<TValue, IComboboxOption>;
+  onChange: (value: TValue[]) => void;
+  onRemoveExtraChip?: (label: string) => void;
+}
+
+const BelowChips = ({
+  values,
+  extraChips,
+  optionMap,
+  onChange,
+  onRemoveExtraChip,
+}: Readonly<IBelowChipsProps>) => {
+  if (values.length === 0 && !extraChips?.length) {
+    return null;
+  }
+  return (
+    <div className="flex flex-wrap gap-1">
+      {values.map((item) => (
+        <Chip
+          key={String(item)}
+          // biome-ignore lint/performance/noJsxPropsBind: onRemove needs the selected value
+          onRemove={() => onChange(values.filter((v) => v !== item))}
+        >
+          {optionMap.get(item)?.label ?? String(item)}
+        </Chip>
+      ))}
+      {(extraChips ?? []).map((label) => (
+        <Chip
+          key={label}
+          // biome-ignore lint/performance/noJsxPropsBind: onRemove needs the extra chip label
+          onRemove={() => onRemoveExtraChip?.(label)}
+        >
+          {label}
+        </Chip>
+      ))}
+    </div>
+  );
+};
 
 export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
   const {
@@ -78,37 +155,38 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
     onChange,
   } = props;
 
+  const chipsBelow = props.multiple ? props.chipsBelow : undefined;
+  const extraChips = props.multiple ? props.extraChips : undefined;
+  const onRemoveExtraChip = props.multiple
+    ? props.onRemoveExtraChip
+    : undefined;
+
   const anchor = useComboboxAnchor();
 
-  const options = useMemo(() => (data ?? []).map(toOption), [data, toOption]);
+  const options = useMemo(() => data.map(toOption), [data, toOption]);
   const optionMap = useMemo(
     () => new Map(options.map((o) => [o.value, o])),
     [options]
   );
 
-  const [inputValue, setInputValue] = useState(() => {
-    if (multiple) {
-      return "";
-    }
-    return value === null ? "" : (optionMap.get(value)?.label ?? "");
-  });
+  const [inputValue, setInputValue] = useState(() =>
+    multiple === true ? "" : toDisplayText(value as TValue | null, optionMap)
+  );
   const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     if (multiple) {
       return;
     }
-    const opt = value === null ? undefined : optionMap.get(value);
-    setInputValue(opt?.label ?? "");
+    setInputValue(toDisplayText(value as TValue | null, optionMap));
   }, [value, optionMap, multiple]);
 
-  const showCreate =
-    !isCreating &&
-    creatable &&
-    inputValue.trim().length > 0 &&
-    !options.some(
-      (o) => o.label.toLowerCase() === inputValue.trim().toLowerCase()
-    );
+  const showCreate = shouldShowCreate(
+    isCreating,
+    creatable ?? false,
+    inputValue,
+    options
+  );
 
   const allItems = showCreate
     ? [
@@ -117,14 +195,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
       ]
     : options;
 
-  const comboValue = multiple
-    ? ((value as TValue[] | undefined) ?? [])
-        .map((v) => optionMap.get(v))
-        .filter((o): o is IComboboxOption => o !== null && o !== undefined)
-    : // biome-ignore lint/style/noNestedTernary: <>
-      value === null
-      ? null
-      : (optionMap.get(value) ?? null);
+  const comboValue = toComboValue(multiple === true, value, optionMap);
 
   const handleValueChange = async (
     next: IComboboxOption | IComboboxOption[] | null
@@ -175,7 +246,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
         onValueChange={handleValueChange}
         value={comboValue}
       >
-        {multiple && !hideChips ? (
+        {multiple && !hideChips && !chipsBelow ? (
           <ComboboxChips className="w-full" id={name} ref={anchor}>
             <ComboboxValue>
               {(values: IComboboxOption[] = []) => (
@@ -233,6 +304,15 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
+      {multiple && chipsBelow && !hideChips ? (
+        <BelowChips
+          extraChips={extraChips}
+          onChange={onChange as (v: TValue[]) => void}
+          onRemoveExtraChip={onRemoveExtraChip}
+          optionMap={optionMap}
+          values={(value as TValue[] | undefined) ?? []}
+        />
+      ) : null}
       {description ? <FieldDescription>{description}</FieldDescription> : null}
       {error ? (
         <FieldError className="text-[12px]" errors={[{ message: error }]} />

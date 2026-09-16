@@ -1,6 +1,6 @@
+import { cn } from "cn";
 import type { ComponentProps } from "react";
 import { ActionButton } from "@/components/ui/button/ActionButton.tsx";
-import { cn } from "@/lib/utils";
 
 export const AuthActionButton = ({
   action,

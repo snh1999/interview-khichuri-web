@@ -3,6 +3,7 @@ import { useCalendarEvents as useBackendCalendarEvents } from "@/api/calendar";
 import { CalendarHeader } from "@/components/calendar/CalendarHeader";
 import type {
   TCustomEvent,
+  TEventColor,
   TJobEvent,
 } from "@/components/calendar/calendar.types";
 import { DayView } from "@/components/calendar/DayView";
@@ -45,6 +46,7 @@ const ScheduleContent = () => {
           source: "custom" as const,
           startDate: new Date(e.startDate),
           endDate: new Date(e.endDate),
+          color: e.color as TEventColor | null,
         })),
     ],
     [jobEvents, calendarEvents, visibility]
@@ -103,7 +105,6 @@ const ScheduleContent = () => {
     <div className="w-full">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-semibold text-xl">Schedule</h1>
-        {/* TODO: Restore <CalendarStatus /> once Google OAuth calendar.events scope is approved */}
       </div>
 
       <div className="rounded-lg border bg-card p-6">

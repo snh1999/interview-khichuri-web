@@ -35,10 +35,14 @@ export const oauthLogin = async (provider: TOauthProviders) =>
     callbackURL: globalThis.location.origin,
   });
 
-export const linkSocial = async (provider: TOauthProviders) =>
+export const linkSocial = async (
+  provider: TOauthProviders,
+  options?: { scopes?: string[]; callbackURL?: string }
+) =>
   await authClient.linkSocial({
     provider,
-    callbackURL: `${globalThis.location.origin}/profile?tab=accounts`,
+    callbackURL: options?.callbackURL ?? globalThis.location.origin,
+    scopes: options?.scopes,
   });
 
 export const {

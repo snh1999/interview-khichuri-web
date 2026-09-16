@@ -1,4 +1,5 @@
 import { TrashIcon } from "@phosphor-icons/react";
+import { cn } from "cn";
 import { generatePath, Link } from "react-router";
 import {
   type IInterview,
@@ -7,7 +8,6 @@ import {
 import { INTERVIEW_PAGE } from "@/app.constants.ts";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { GutterCard } from "@/components/ui/custom/gutter-card.tsx";
-import { cn } from "@/lib/utils.ts";
 
 const formatDate = (value: string) =>
   new Date(value).toLocaleString(undefined, {

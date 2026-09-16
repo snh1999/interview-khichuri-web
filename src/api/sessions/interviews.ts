@@ -114,6 +114,27 @@ export const useGetSessionInterviews = (sessionId: string) =>
       await api.get<IInterview[]>(`/${BACKEND_ROOT}?sessionId=${sessionId}`),
   });
 
+export const useAllInterviews = (options?: {
+  completed?: boolean;
+  limit?: number;
+}) =>
+  useSuspenseQuery({
+    queryKey: queryKeys.interviews.list(options),
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (options?.completed !== undefined) {
+        params.set("completed", String(options.completed));
+      }
+      if (options?.limit !== undefined) {
+        params.set("limit", String(options.limit));
+      }
+      const qs = params.toString();
+      return await api.get<IInterview[]>(
+        `/${BACKEND_ROOT}${qs ? `?${qs}` : ""}`
+      );
+    },
+  });
+
 export const useCreateInterview = () =>
   useMutation({
     mutationFn: async (dto: ICreateInterviewDto) =>
