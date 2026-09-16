@@ -13,17 +13,18 @@ import {
 } from "@/components/ui/item.tsx";
 import { useLookupMap } from "@/hooks/useLookupMap.ts";
 
-export const SessionListRow = ({
-  session,
-  jobLabel,
-  showDate = false,
-  hideFavorite = false,
-}: {
+interface IProps {
   session: IPrepSession;
-  jobLabel?: string;
+  subtitle?: string;
   showDate?: boolean;
   hideFavorite?: boolean;
-}) => {
+}
+export const SessionListRow = ({
+  session,
+  subtitle,
+  showDate = false,
+  hideFavorite = false,
+}: Readonly<IProps>) => {
   const navigateToPage = useNavigateToSessionPage(session.id);
   const updateSession = useUpdateSession();
   const topicMap = useLookupMap(useTopics().data);
@@ -34,7 +35,7 @@ export const SessionListRow = ({
     .map((topicId) => topicMap.get(topicId)?.name)
     .filter(Boolean)
     .join(", ");
-  const metaLabel = jobLabel ?? (topicLabel || "General prep");
+  const metaLabel = subtitle ?? (topicLabel || "General prep");
 
   const handleToggleFavorite = () =>
     updateSession.mutateAsync({

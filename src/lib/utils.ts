@@ -1,7 +1,7 @@
+import { differenceInCalendarDays } from "date-fns";
 import { URGENT_DAYS_THRESHOLD } from "@/app.constants.ts";
 import type { TResolvedTheme } from "@/components/theme/themes.types.ts";
 
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
 export const isUrgent = (date?: string | null): boolean => {
   const days = daysUntil(date);
   return days !== null && days <= URGENT_DAYS_THRESHOLD;
@@ -11,7 +11,7 @@ export const daysUntil = (date?: string | null): number | null => {
   if (!date) {
     return null;
   }
-  return Math.ceil((new Date(date).getTime() - Date.now()) / MS_PER_DAY);
+  return differenceInCalendarDays(new Date(date), new Date());
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,func-style,sonarjs/declarations-in-global-scope

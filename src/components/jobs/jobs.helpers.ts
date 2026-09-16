@@ -18,7 +18,26 @@ import {
   MAX_URL_LENGTH,
 } from "@/app.constants.ts";
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
-import { stringToDate, stripNulls } from "@/lib/utils.ts";
+import { daysUntil, stringToDate, stripNulls } from "@/lib/utils.ts";
+
+export const getDateInfo = (job: IJob): string => {
+  const days = daysUntil(job.deadline);
+
+  if (job.interviewDate) {
+    const interviewDays = daysUntil(job.interviewDate);
+    return interviewDays !== null && interviewDays >= 0
+      ? `${interviewDays} days until interview`
+      : `Interviewed at ${new Date(job.interviewDate).toLocaleDateString()}`;
+  }
+  if (job.appliedAt) {
+    return `applied ${new Date(job.appliedAt).toLocaleDateString()}`;
+  }
+  if (days !== null) {
+    return days >= 0 ? `${days}d left` : "Deadline passed";
+  }
+
+  return `Created: ${new Date(job.createdAt).toLocaleDateString()}`;
+};
 
 export const STATUS_OPTIONS: { value: TJobStatus; label: string }[] = [
   { label: "Saved", value: "saved" },
@@ -26,52 +45,57 @@ export const STATUS_OPTIONS: { value: TJobStatus; label: string }[] = [
   { label: "Scheduled", value: "scheduled" },
 ] as const;
 
-export const JOB_STATUS_BADGE_CLASS: Record<TJobStatus, string> = {
-  saved: "bg-secondary text-secondary-foreground",
-  applied: "bg-blue-100 text-blue-700",
-  scheduled: "bg-emerald-100 text-emerald-700",
-};
+export const JOB_STATUS_VARIANT = {
+  saved: "default",
+  applied: "warning",
+  scheduled: "success",
+} as const;
 
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
-
-export const getDaysUntilDeadline = (
-  deadline?: string | null
-): number | null => {
-  if (!deadline) {
-    return null;
-  }
-  return Math.ceil((new Date(deadline).getTime() - Date.now()) / MS_PER_DAY);
-};
-
-const jobPostSchema = z.object({
-  appliedAt: z.date().nullish(),
-  companyId: z.number().int().positive().nullish(),
-  companyName: z
-    .string()
-    .trim()
-    .min(1, "Company name is required")
-    .max(MAX_SHORT_LENGTH),
-  deadline: z.date().nullish(),
-  description: z
-    .string()
-    .trim()
-    .min(10, "Description too short")
-    .max(DEFAULT_MAX_STRING_LENGTH),
-  interviewDate: z.date().nullish(),
-  links: z.array(z.object({ value: z.url().max(MAX_URL_LENGTH) })).nullish(),
-  location: z.string().max(MAX_SHORT_LENGTH).nullish(),
-  notes: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
-  roleId: z.number().int().positive().nullish(),
-  source: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
-  status: z.enum(JOB_STATUS),
-  title: z
-    .string()
-    .trim()
-    .min(2, "Title too short")
-    .max(50, "Keep the title less than 50 characters"),
-  topicIds: z.array(z.number().int().positive()),
-  topicNames: z.array(z.string().trim().min(1).max(MAX_TINY_LENGTH)).optional(),
-});
+const jobPostSchema = z
+  .object({
+    appliedAt: z.date().nullish(),
+    companyId: z.number().int().positive().nullish(),
+    companyName: z
+      .string()
+      .trim()
+      .min(1, "Company name is required")
+      .max(MAX_SHORT_LENGTH),
+    deadline: z.date().nullish(),
+    description: z
+      .string()
+      .trim()
+      .min(10, "Description too short")
+      .max(DEFAULT_MAX_STRING_LENGTH),
+    interviewDate: z.date().nullish(),
+    links: z.array(z.object({ value: z.url().max(MAX_URL_LENGTH) })).nullish(),
+    location: z.string().max(MAX_SHORT_LENGTH).nullish(),
+    notes: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
+    roleId: z.number().int().positive().nullish(),
+    source: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
+    status: z.enum(JOB_STATUS),
+    title: z
+      .string()
+      .trim()
+      .min(2, "Title too short")
+      .max(50, "Keep the title less than 50 characters"),
+    topicIds: z.array(z.number().int().positive()),
+    topicNames: z
+      .array(z.string().trim().min(1).max(MAX_TINY_LENGTH))
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.deadline &&
+      data.interviewDate &&
+      data.deadline >= data.interviewDate
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Deadline must be before the interview date",
+        path: ["deadline"],
+      });
+    }
+  });
 export default jobPostSchema;
 
 export type TJobFormData = z.infer<typeof jobPostSchema>;

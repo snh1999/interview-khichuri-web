@@ -130,9 +130,9 @@ export const SessionPageContent = ({ search = "" }: { search?: string }) => {
       >
         {filteredSessions.map((session) => (
           <SessionListRow
-            jobLabel={roleName(session.roleId)}
             key={session.id}
             session={session}
+            subtitle={roleName(session.roleId)}
           />
         ))}
       </ItemGroup>
