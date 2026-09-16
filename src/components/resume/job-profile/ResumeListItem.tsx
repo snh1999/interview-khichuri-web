@@ -29,7 +29,6 @@ interface IProps {
   onView: (resume: IResume) => void;
   onSetPrimary: (id: string) => void;
   onDelete: (id: string) => Promise<void>;
-  onExtract: (resume: IResume) => void;
   onFillProfile: (resume: IResume) => void;
 }
 
@@ -39,11 +38,11 @@ export const ResumeListItem = ({
   onView,
   onSetPrimary,
   onDelete,
-  onExtract,
   onFillProfile,
 }: Readonly<IProps>) => {
   const navigate = useNavigate();
-  const isGenerated = !!resume.content;
+  const isGenerated = Boolean(resume.template);
+  const isPdf = Boolean(resume.url);
 
   const handleCopyLink = () => {
     if (resume.slug) {
@@ -72,7 +71,6 @@ export const ResumeListItem = ({
   const handleView = () => onView(resume);
   const handleSetPrimary = () => onSetPrimary(resume.id);
 
-  const handleExtract = () => onExtract(resume);
   const handleFillProfile = () => onFillProfile(resume);
 
   return (
@@ -82,29 +80,27 @@ export const ResumeListItem = ({
         onClick={handleView}
         type="button"
       >
-        {isGenerated ? (
-          <SparkleIcon className="size-5 shrink-0 text-primary" />
-        ) : (
+        {isPdf ? (
           <FilePdfIcon className="size-5 shrink-0 text-muted-foreground" />
+        ) : (
+          <SparkleIcon className="size-5 shrink-0 text-primary" />
         )}
         <span className="flex-1 truncate text-sm hover:underline">
           {resume.name}
         </span>
       </button>
 
-      {isGenerated
-        ? resume.template && (
-            <Badge className="shrink-0 text-muted-foreground" variant="outline">
-              {resume.template}
-            </Badge>
-          )
-        : null}
+      {isGenerated && resume.template ? (
+        <Badge className="shrink-0 text-muted-foreground" variant="outline">
+          {resume.template}
+        </Badge>
+      ) : null}
 
-      {!isGenerated && (
+      {isPdf ? (
         <Badge className="shrink-0 text-muted-foreground" variant="outline">
           PDF
         </Badge>
-      )}
+      ) : null}
 
       <DropdownMenu>
         <DropdownMenuTrigger
@@ -123,15 +119,9 @@ export const ResumeListItem = ({
           <DropdownMenuItem onClick={handleNavigate}>
             <ArrowSquareOutIcon className="size-4" /> Visit
           </DropdownMenuItem>
-          {isGenerated ? (
-            <DropdownMenuItem onClick={handleFillProfile}>
-              <FileArrowDownIcon className="size-4" /> Fill profile
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem onClick={handleExtract}>
-              <SparkleIcon className="size-4" /> Extract
-            </DropdownMenuItem>
-          )}
+          <DropdownMenuItem onClick={handleFillProfile}>
+            <FileArrowDownIcon className="size-4" /> Fill profile
+          </DropdownMenuItem>
 
           {!resume.isPrimary && (
             <DropdownMenuItem

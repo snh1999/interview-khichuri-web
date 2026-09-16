@@ -49,7 +49,6 @@ export const ResumeCard = () => {
   const [aiOpen, setAiOpen] = useState(false);
   const [extractTarget, setExtractTarget] = useState<IResume | null>(null);
   const [extraction, setExtraction] = useState<TExtractionResult | null>(null);
-
   const { mutateAsync: deleteResume } = useDeleteResume();
   const { mutate: setPrimary, isPending: isSettingPrimary } =
     useSetPrimaryResume();
@@ -104,17 +103,13 @@ export const ResumeCard = () => {
   const handleOverride = (merged: TProfileFormData) =>
     applyExtraction(merged, true);
 
-  const onExtract = (resume: IResume) => {
-    setExtractTarget(resume);
-    setAiOpen(true);
-  };
-
   const onFillProfile = (resume: IResume) => {
-    if (!resume.content) {
+    if (resume.content) {
+      setExtraction(mergeIntoFormData(resume.content));
       return;
     }
     setExtractTarget(resume);
-    setExtraction(mergeIntoFormData(resume.content));
+    setAiOpen(true);
   };
 
   return (
@@ -154,7 +149,6 @@ export const ResumeCard = () => {
                 isSettingPrimary={isSettingPrimary}
                 key={resume.id}
                 onDelete={deleteResume}
-                onExtract={onExtract}
                 onFillProfile={onFillProfile}
                 onSetPrimary={setPrimary}
                 onView={setViewingResume}

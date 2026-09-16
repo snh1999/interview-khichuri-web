@@ -79,7 +79,7 @@ const ResumeEditorContent = () => {
     setName(resume.name);
   };
 
-  if (!resume.content) {
+  if (!resume.template) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-12">
         <p className="text-muted-foreground">
