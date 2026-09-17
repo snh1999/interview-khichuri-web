@@ -18,7 +18,7 @@ import { JobPostForm } from "@/components/jobs/JobPostForm.tsx";
 import {
   getDateInfo,
   JOB_STATUS_VARIANT,
-} from "@/components/jobs/jobs.helpers.ts";
+} from "@/components/jobs/jobs.helpers";
 import { Badge } from "@/components/ui/badge.tsx";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Button } from "@/components/ui/button.tsx";

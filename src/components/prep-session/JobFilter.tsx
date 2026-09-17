@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { useJobs } from "@/api/jobs";
+import { useGetJobs } from "@/api/jobs";
 import {
   Combobox,
   ComboboxContent,
@@ -42,7 +42,7 @@ export const useJobFilter = () => {
 };
 
 export const JobFilter = () => {
-  const { data: jobs } = useJobs();
+  const { data: jobs } = useGetJobs();
   const { jobFilter, setJobFilter } = useJobFilter();
 
   const options: IJobOption[] = jobs.map((job) => ({

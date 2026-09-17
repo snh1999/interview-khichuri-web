@@ -69,7 +69,9 @@ export const JobListRow = ({
 
   const deadlineDays = job.deadline ? daysUntil(job.deadline) : null;
   const interviewDays = job.interviewDate ? daysUntil(job.interviewDate) : null;
-  const urgent = isUrgent(job.deadline ?? null);
+  const urgent = job.interviewDate
+    ? isUrgent(job.interviewDate)
+    : !job.appliedAt && isUrgent(job.deadline);
   const showListDate = pickListDate(interviewDays, deadlineDays);
   const interviewLabel = job.interviewDate
     ? new Date(job.interviewDate).toLocaleDateString(undefined, {

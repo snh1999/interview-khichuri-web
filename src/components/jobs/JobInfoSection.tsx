@@ -1,5 +1,6 @@
 import type { IJobWithTopics } from "@/api/jobs";
 import { MarkdownContent } from "@/components/common/MarkdownContent.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
   CardContent,
@@ -46,15 +47,16 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
           </CardHeader>
           <CardContent className="flex flex-col gap-1 pt-4">
             {formattedLinks.map((link) => (
-              <a
-                className="break-all text-blue-600 text-sm underline"
-                href={link}
+              <Button
+                className="break-all text-sm"
                 key={link}
-                rel="noopener noreferrer"
-                target="_blank"
+                render={
+                  <a href={link} rel="noopener noreferrer" target="_blank" />
+                }
+                variant="link"
               >
                 {link}
-              </a>
+              </Button>
             ))}
           </CardContent>
         </Card>

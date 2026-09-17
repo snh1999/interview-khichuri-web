@@ -1,5 +1,5 @@
 import type { FieldValues } from "react-hook-form";
-import { type IJob, useJobs } from "@/api/jobs";
+import { type IJob, useGetJobs } from "@/api/jobs";
 import {
   FormCombobox,
   type TComboboxProps,
@@ -13,7 +13,7 @@ export const JobsCombobox = <T extends FieldValues>({
   disabled,
   description,
 }: Readonly<TComboboxProps<T>>) => {
-  const { data: jobs } = useJobs();
+  const { data: jobs } = useGetJobs();
   const toOption = (item: IJob) => ({
     value: item.id,
     label: `${item.title} @ ${item.companyName}`,

@@ -3,11 +3,11 @@ import { useEffect } from "react";
 import { type DefaultValues, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import type { TJobStatus } from "@/api/jobs";
 import {
   type ICreateJobDto,
   type IJob,
   JOB_STATUS,
-  type TJobStatus,
   useCreateJob,
   useUpdateJob,
 } from "@/api/jobs";
@@ -19,6 +19,18 @@ import {
 } from "@/app.constants.ts";
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
 import { daysUntil, stringToDate, stripNulls } from "@/lib/utils.ts";
+
+export const STATUS_OPTIONS: { value: TJobStatus; label: string }[] = [
+  { label: "Saved", value: "saved" },
+  { label: "Applied", value: "applied" },
+  { label: "Scheduled", value: "scheduled" },
+];
+
+export const JOB_STATUS_VARIANT = {
+  saved: "default",
+  applied: "warning",
+  scheduled: "success",
+} as const;
 
 export const getDateInfo = (job: IJob): string => {
   const days = daysUntil(job.deadline);
@@ -38,18 +50,6 @@ export const getDateInfo = (job: IJob): string => {
 
   return `Created: ${new Date(job.createdAt).toLocaleDateString()}`;
 };
-
-export const STATUS_OPTIONS: { value: TJobStatus; label: string }[] = [
-  { label: "Saved", value: "saved" },
-  { label: "Applied", value: "applied" },
-  { label: "Scheduled", value: "scheduled" },
-] as const;
-
-export const JOB_STATUS_VARIANT = {
-  saved: "default",
-  applied: "warning",
-  scheduled: "success",
-} as const;
 
 const jobPostSchema = z
   .object({
@@ -96,8 +96,6 @@ const jobPostSchema = z
       });
     }
   });
-export default jobPostSchema;
-
 export type TJobFormData = z.infer<typeof jobPostSchema>;
 
 interface IProps {

@@ -7,7 +7,7 @@ import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import {
   getDateInfo,
   JOB_STATUS_VARIANT,
-} from "@/components/jobs/jobs.helpers.ts";
+} from "@/components/jobs/jobs.helpers";
 import { GutterCard } from "@/components/ui/custom/gutter-card.tsx";
 import { StatusBadge } from "@/components/ui/custom/status-badge.tsx";
 import { isUrgent } from "@/lib/utils";

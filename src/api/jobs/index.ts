@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client";
 
@@ -24,6 +24,7 @@ export interface IJobExtractionResult extends ICommonFields {
 }
 
 export interface ICreateJobDto extends ICommonFields {
+  companyId?: number | null;
   companyName: string;
   description: string;
   status: TJobStatus;
@@ -40,6 +41,7 @@ export interface IJob
   extends Omit<ICreateJobDto, "deadline" | "interviewDate" | "appliedAt"> {
   id: string;
   userId?: string | null;
+  companyId?: number | null;
   deadline?: string | null;
   interviewDate?: string | null;
   appliedAt?: string | null;
@@ -52,27 +54,20 @@ export interface IJobWithTopics extends IJob {
   topicIds: number[];
 }
 
-export const useJobs = (search?: string) =>
-  useSuspenseQuery({
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (search) {
-        params.set("search", search);
-      }
-      const qs = params.toString();
-      return await api.get<IJob[]>(`/jobs${qs ? `?${qs}` : ""}`);
-    },
-    queryKey: queryKeys.jobs.list({ search }),
-  });
+export interface IDateFilter {
+  type: "deadline" | "interview" | "applied";
+  from?: string;
+  to?: string;
+}
 
-export const useJob = (id: string) =>
+export const useGetJob = (id: string) =>
   useSuspenseQuery({
     queryFn: async () => await api.get<IJobWithTopics>(`/jobs/${id}`),
     queryKey: queryKeys.jobs.detail(id),
   });
 
-export const useJobsAll = () =>
-  useQuery({
+export const useGetJobs = () =>
+  useSuspenseQuery({
     queryFn: async () => await api.get<IJob[]>("/jobs"),
     queryKey: [...queryKeys.jobs.all, "all"],
     staleTime: Number.POSITIVE_INFINITY,
