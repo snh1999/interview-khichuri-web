@@ -5,6 +5,7 @@ import {
   GearIcon,
   HouseIcon,
   LightbulbFilamentIcon,
+  NotebookIcon,
   PresentationChartIcon,
   ReadCvLogoIcon,
 } from "@phosphor-icons/react";
@@ -12,6 +13,7 @@ import { Link, useLocation } from "react-router";
 import {
   HOMEPAGE,
   JOBS_PAGE,
+  NOTES_PAGE,
   PROFILE_PAGE,
   RESUMES_PAGE,
   SCHEDULE_PAGE,
@@ -32,9 +34,11 @@ const SIDEBAR_MENU = [
   { name: "Dashboard", icon: PresentationChartIcon, url: HOMEPAGE },
   { name: "Schedule", icon: CalendarDotsIcon, url: SCHEDULE_PAGE },
   { name: "Jobs", icon: BriefcaseIcon, url: JOBS_PAGE },
-  { name: "Resume", icon: ReadCvLogoIcon, url: RESUMES_PAGE },
   { name: "Preparation", icon: LightbulbFilamentIcon, url: SESSIONS_PAGE },
-  { name: "Job Profile", icon: ReadCvLogoIcon, url: PROFILE_PAGE },
+  { name: "Notes", icon: NotebookIcon, url: NOTES_PAGE },
+  { name: "Profile", icon: ReadCvLogoIcon, url: PROFILE_PAGE },
+  { name: "Resume", icon: ReadCvLogoIcon, url: RESUMES_PAGE },
+  { name: "Portfolio", icon: FrameCornersIcon, url: "#" },
   { name: "Settings", icon: GearIcon, url: SETTINGS_PAGE },
 ] as const;
 

@@ -1,7 +1,7 @@
 import { PencilLineIcon, PlusCircleIcon } from "@phosphor-icons/react";
 import { useEffect, useRef } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { useJob } from "@/api/jobs";
+import { useGetJob } from "@/api/jobs";
 import type { IPrepSession } from "@/api/sessions";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { JobsCombobox } from "@/components/common/form/combobox/JobsCombobox.tsx";
@@ -56,7 +56,7 @@ const JobPrefillEffectInner = ({
   jobId: string;
   form: UseFormReturn<TCreateSessionFormData>;
 }) => {
-  const { data: job } = useJob(jobId);
+  const { data: job } = useGetJob(jobId);
   const prefilledJobId = useRef<string | null>(null);
 
   useEffect(() => {

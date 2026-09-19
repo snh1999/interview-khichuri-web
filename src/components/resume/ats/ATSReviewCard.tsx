@@ -23,6 +23,7 @@ interface IResumeReviewCardProps {
   isRegenerating?: boolean;
 }
 
+// TODO: either remove the resume reviews stored or show a banner that resume updated after review
 export const ATSReviewCard = ({
   score,
   companyName,

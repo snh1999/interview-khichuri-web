@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { type IJob, useJobsAll } from "@/api/jobs";
+import { type IJob, useGetJobs } from "@/api/jobs";
 import type { IResume } from "@/api/resumes";
 import {
   type TAtsScore,
@@ -38,7 +38,7 @@ const toFullScore = (entry: IAtsCacheEntry): TAtsScore => ({
 });
 
 export const ATSReview = ({ job }: Readonly<IProps>) => {
-  const { data: jobsData } = useJobsAll();
+  const { data: jobsData } = useGetJobs();
   const { data: resumesData } = useGetResumes();
   const jobs = jobsData ?? [];
   const resumes = resumesData ?? [];

@@ -27,7 +27,12 @@ export const RecentNotesSection = () => {
       <CardHeader>
         <CardTitle className="font-semibold text-md">Recent notes</CardTitle>
         <CardAction>
-          <Button render={<Link to={NOTES_PAGE} />} size="sm" variant="outline">
+          <Button
+            nativeButton={false}
+            render={<Link to={NOTES_PAGE} />}
+            size="sm"
+            variant="outline"
+          >
             View
             <ArrowSquareOutIcon />
           </Button>

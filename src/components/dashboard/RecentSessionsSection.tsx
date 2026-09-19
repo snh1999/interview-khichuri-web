@@ -41,6 +41,7 @@ export const RecentSessionsSection = () => {
             <PlusCircleIcon />
           </Button>
           <Button
+            nativeButton={false}
             render={<Link to={SESSIONS_PAGE} />}
             size="sm"
             variant="outline"

@@ -1,14 +1,20 @@
-import { useJob } from "@/api/jobs";
+import { useGetJob } from "@/api/jobs";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
-import { MarkdownContent } from "@/components/common/MarkdownContent.tsx";
+import { JobDetailHeader } from "@/components/jobs/JobDetailHeader.tsx";
 import { JobInfoSection } from "@/components/jobs/JobInfoSection.tsx";
-import { JOB_STATUS_BADGE_CLASS } from "@/components/jobs/jobs.helpers.ts";
+import { LinkedSessionsSection } from "@/components/jobs/LinkedSessionsSection.tsx";
 import { ATSReview } from "@/components/resume/ats/ATSReview.tsx";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useJobId } from "@/hooks/useId.ts";
+import { useTabs } from "@/hooks/useTabs.ts";
+
+const JOB_DETAIL_TABS = [
+  { key: "overview", label: "Overview" },
+  { key: "ats", label: "ATS Review" },
+  { key: "sessions", label: "Sessions" },
+] as const;
 
 export const JobDetailPage = () => (
   <AppErrorSuspense errorPage fallback={JobDetailSkeleton}>
@@ -18,32 +24,38 @@ export const JobDetailPage = () => (
 
 const JobDetailContent = () => {
   const jobId = useJobId();
-  const { data: job } = useJob(jobId);
+  const { data: job } = useGetJob(jobId);
+  const { currentTab, handleTabChange } = useTabs("overview");
+
+  const handleTabValueChange = (value: string | null) =>
+    handleTabChange(String(value));
 
   return (
     <div className="w-full">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-semibold text-xl">
-          {job.companyName} - {job.title}
-        </h1>
-        <Badge className={JOB_STATUS_BADGE_CLASS[job.status]}>
-          {job.status}
-        </Badge>
-      </div>
+      <div className="flex flex-col gap-4">
+        <JobDetailHeader job={job} />
 
-      <div className="flex flex-col gap-6">
-        <JobInfoSection job={job} sectionId="details" />
+        <Tabs onValueChange={handleTabValueChange} value={currentTab}>
+          <TabsList className="*:px-10" variant="line">
+            {JOB_DETAIL_TABS.map((tab) => (
+              <TabsTrigger key={tab.key} value={tab.key}>
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-        <ATSReview job={job} />
+          <TabsContent value="overview">
+            <JobInfoSection job={job} sectionId="details" />
+          </TabsContent>
 
-        <Card className="px-1">
-          <CardHeader className="border-b">
-            <CardTitle>Description</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <MarkdownContent content={job.description} />
-          </CardContent>
-        </Card>
+          <TabsContent value="ats">
+            <ATSReview job={job} />
+          </TabsContent>
+
+          <TabsContent value="sessions">
+            <LinkedSessionsSection job={job} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
@@ -51,8 +63,8 @@ const JobDetailContent = () => {
 
 const JobDetailSkeleton = () => (
   <div className="w-full">
-    <Skeleton className="mb-4 h-8 w-64" />
-    <Skeleton className="mb-6 h-5 w-96" />
+    <Skeleton className="mb-4 h-24 w-full" />
+    <Skeleton className="mb-6 h-10 w-96" />
     <SkeletonCard>
       <Skeleton className="h-48 w-full" />
     </SkeletonCard>

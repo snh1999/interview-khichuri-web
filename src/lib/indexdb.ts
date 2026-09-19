@@ -169,6 +169,25 @@ export const clearStandaloneReviews = async (): Promise<void> => {
   await db.clear(REVIEWS_STORE);
 };
 
+export const deleteAtsScoresByResumeId = async (
+  resumeId: string
+): Promise<void> => {
+  const db = await getDb();
+  const keys = await db.getAllKeysFromIndex(
+    SCORES_STORE,
+    "by-resume",
+    resumeId
+  );
+  await Promise.all(keys.map((key) => db.delete(SCORES_STORE, key)));
+};
+
+export const deleteStandaloneReview = async (
+  resumeId: string
+): Promise<void> => {
+  const db = await getDb();
+  await db.delete(REVIEWS_STORE, resumeId);
+};
+
 export const retryLocalEntryCleanup = async (
   id: string,
   cleanupFns: Array<(id: string) => Promise<unknown>>

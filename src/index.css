@@ -121,6 +121,7 @@
   --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
+  --info: oklch(0.72 0.11 234.09);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.552 0.016 285.938);
@@ -209,4 +210,42 @@ select:-webkit-autofill:focus {
     transparent
   );
   border-radius: 9999px;
+}
+
+.md-editor-wrap {
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.md-editor-wrap .w-md-editor {
+  --color-accent-emphasis: var(--primary);
+  --color-accent-fg: var(--primary);
+  --color-border-default: var(--border);
+  --color-border-muted: var(--border);
+  --color-canvas-default: var(--card);
+  --color-canvas-subtle: var(--muted);
+  --color-fg-default: var(--foreground);
+  --color-fg-muted: var(--muted-foreground);
+  --color-fg-subtle: var(--muted-foreground);
+  --color-neutral-muted: var(--muted);
+  --md-editor-background-color: var(--card);
+  --md-editor-box-shadow-color: var(--input);
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 0 1px var(--md-editor-box-shadow-color);
+}
+
+.md-editor-wrap .w-md-editor-toolbar {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.md-editor-wrap .w-md-editor-content {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.md-editor-wrap:focus-within .w-md-editor {
+  --md-editor-box-shadow-color: var(--ring);
+}
+
+.md-editor-wrap[data-invalid="true"] .w-md-editor {
+  --md-editor-box-shadow-color: var(--destructive);
 }

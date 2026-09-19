@@ -6,6 +6,7 @@ import {
   useExtractJob,
 } from "@/api/jobs";
 import { AiDialog } from "@/components/common/ai/AiDialog";
+import { CompaniesCombobox } from "@/components/common/form/combobox/CompaniesCombobox.tsx";
 import { RolesCombobox } from "@/components/common/form/combobox/RolesCombobox.tsx";
 import { TopicsCombobox } from "@/components/common/form/combobox/TopicsCombobox.tsx";
 import { FormArrayInput } from "@/components/common/form/FormArrayInput.tsx";
@@ -61,6 +62,11 @@ export const JobPostForm = ({
 
   const openAiDialog = () => setAiDialogOpen(true);
   const closeAiDialog = () => setAiDialogOpen(false);
+
+  const handleCompanyChange = (id: number | null, name: string) => {
+    form.setValue("companyId", id, { shouldDirty: true });
+    form.setValue("companyName", name, { shouldDirty: true });
+  };
 
   const handleExtract = async (provider: string, model?: string) => {
     try {
@@ -139,10 +145,10 @@ export const JobPostForm = ({
                 placeholder="e.g. Senior Frontend Engineer"
               />
 
-              <FormInput
-                form={form}
-                label="Company"
-                name="companyName"
+              <CompaniesCombobox
+                companyId={form.watch("companyId") ?? null}
+                companyName={form.watch("companyName") ?? ""}
+                onChange={handleCompanyChange}
                 placeholder="e.g. Acme Corp"
               />
 

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import type { TEventSource } from "@/api/calendar";
-import { type IJob, useJobsAll } from "@/api/jobs";
+import { type IJob, useGetJobs } from "@/api/jobs";
 import type { TEventVisibility, TJobEvent } from "./calendar.types";
 
 const jobToCalendarEvent = (
@@ -17,7 +17,7 @@ const jobToCalendarEvent = (
 });
 
 export const useGetJobEvents = (visibleTypes: TEventVisibility) => {
-  const { data: jobs } = useJobsAll();
+  const { data: jobs } = useGetJobs();
 
   return useMemo(() => {
     if (!jobs) {

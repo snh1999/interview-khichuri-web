@@ -8,13 +8,11 @@ interface IViewResumeProps {
 }
 
 export const ViewResumeContent = ({ resume }: Readonly<IViewResumeProps>) => {
-  const isGenerated = Boolean(resume.content);
-
-  if (isGenerated) {
-    return <GeneratedResumePreview resume={resume} />;
+  if (resume.url) {
+    return <PdfResumeContent resume={resume} />;
   }
 
-  return <PdfResumeContent resume={resume} />;
+  return <GeneratedResumePreview resume={resume} />;
 };
 
 const PdfResumeContent = ({ resume }: Readonly<{ resume: IResume }>) => {

@@ -49,7 +49,8 @@ const ResumeDetailContent = () => {
   const resumeId = useResumeId();
   const navigate = useNavigate();
   const { data: resume } = useGetResumeById(resumeId);
-  const isGenerated = Boolean(resume?.content);
+  const isGenerated = Boolean(resume?.template);
+  const hasPdfFile = Boolean(resume?.url);
 
   const { data: cachedReviewEntry } = useCachedStandaloneReview(resumeId);
   const cachedReview = cachedReviewEntry ? { ...cachedReviewEntry } : null;
@@ -81,9 +82,8 @@ const ResumeDetailContent = () => {
               <PenIcon className="size-4" />
               Edit
             </Button>
-          ) : (
-            <OpenPDFInNewTab resumeId={resumeId} />
-          )}
+          ) : null}
+          {hasPdfFile ? <OpenPDFInNewTab resumeId={resumeId} /> : null}
           <Button onClick={handleNavigateBack} variant="outline">
             <ReadCvLogoIcon className="size-4" />
             All Resumes
