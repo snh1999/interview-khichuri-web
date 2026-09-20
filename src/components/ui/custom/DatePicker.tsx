@@ -1,5 +1,10 @@
 import { CalendarIcon } from "@phosphor-icons/react";
-import { type ChangeEvent, type KeyboardEvent, useState } from "react";
+import {
+  type ChangeEvent,
+  type KeyboardEvent,
+  useEffect,
+  useState,
+} from "react";
 import { Calendar } from "@/components/ui/calendar";
 
 import {
@@ -61,6 +66,16 @@ export const DatePicker = ({
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState<Date | undefined>(toDate(value));
   const [inputValue, setInputValue] = useState(formatDate(toDate(value)));
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (isFocused) {
+      return;
+    }
+    const date = toDate(value);
+    setMonth(date);
+    setInputValue(formatDate(date));
+  }, [isFocused, value]);
 
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
     const parsed = new Date(e.target.value);
@@ -78,6 +93,15 @@ export const DatePicker = ({
     }
   };
 
+  const handleFocus = (): void => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = (): void => {
+    setIsFocused(false);
+    onBlur?.();
+  };
+
   const onDateSelect = (date?: Date) => {
     onChange(date);
     setInputValue(formatDate(date));
@@ -92,8 +116,9 @@ export const DatePicker = ({
           className="text-xs"
           disabled={disabled}
           id={name}
-          onBlur={onBlur}
+          onBlur={handleBlur}
           onChange={onChangeInput}
+          onFocus={handleFocus}
           onKeyDown={onArrowKeyDown}
           placeholder={placeholder}
           value={inputValue}

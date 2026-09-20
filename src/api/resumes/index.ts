@@ -2,7 +2,7 @@
 export * from "./idb.ts";
 
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { queryKeys } from "@/api";
+import { apiClient, queryKeys } from "@/api";
 import type {
   TActivityDto,
   TEducationDto,
@@ -18,6 +18,10 @@ import type {
 } from "@/components/job-profile/profile.helpers.ts";
 import type { TResumeContent } from "@/components/resume/job-profile/resume.helpers.ts";
 import { api } from "@/lib/api-client.ts";
+import {
+  deleteAtsScoresByResumeId,
+  deleteStandaloneReview,
+} from "@/lib/indexdb";
 
 export interface IUploadResponse {
   success: boolean;
@@ -88,6 +92,22 @@ export const useCreateResume = () =>
     meta: { invalidates: queryKeys.resumes.list() },
   });
 
+// Purge the resume's cached scores before invalidating them: the global
+// MutationCache onSuccess (which applies meta.invalidates) runs before the
+// hook's onSuccess, so meta-triggered ATS refetches could read pre-purge
+// IndexedDB and repopulate the cache with stale entries.
+const purgeResumeLocalScores = async (resumeId: string): Promise<void> => {
+  try {
+    await deleteAtsScoresByResumeId(resumeId);
+    await deleteStandaloneReview(resumeId);
+  } catch {
+    // IndexedDB unavailable — cached scores for this resume stay
+  }
+  await apiClient.invalidateQueries({
+    queryKey: queryKeys.resumes.ats.all,
+  });
+};
+
 export const useUpdateResume = () =>
   useMutation({
     mutationFn: async (dto: {
@@ -99,6 +119,12 @@ export const useUpdateResume = () =>
     }) => {
       const { id, ...data } = dto;
       return await api.patch<IResume>(`/resume/${id}`, data);
+    },
+    onSuccess: async (_data, dto) => {
+      await purgeResumeLocalScores(dto.id);
+      await apiClient.invalidateQueries({
+        queryKey: queryKeys.resumes.reviewById(dto.id),
+      });
     },
     meta: {
       invalidates: ({ id }: { id: string }) => [
@@ -134,10 +160,14 @@ export const useUploadResume = () =>
 export const useDeleteResume = () =>
   useMutation({
     mutationFn: async (id: string) => await api.delete<void>(`/resume/${id}`),
+    onSuccess: async (_data, id) => {
+      await purgeResumeLocalScores(id);
+    },
     meta: {
       invalidates: queryKeys.resumes.list(),
       removes: (id: string) => [
         queryKeys.resumes.resumeById(id),
+        queryKeys.resumes.reviewById(id),
         queryKeys.resumes.resumeView(id),
       ],
     },

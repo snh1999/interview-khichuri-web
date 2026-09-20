@@ -1,4 +1,4 @@
-import { useJobs } from "@/api/jobs";
+import { useGetJobs } from "@/api/jobs";
 import { useAllInterviews } from "@/api/sessions/interviews";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
@@ -24,7 +24,7 @@ export const DashboardPage = () => (
 );
 
 const DashboardContent = () => {
-  const { data: jobs } = useJobs();
+  const { data: jobs } = useGetJobs();
 
   const { data: completedInterviews } = useAllInterviews({
     completed: true,

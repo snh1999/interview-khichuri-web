@@ -1,33 +1,26 @@
-import { CalendarBlankIcon } from "@phosphor-icons/react";
+import { cn } from "cn";
 import { generatePath, useNavigate } from "react-router";
 import type { IJob } from "@/api/jobs";
 import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import {
-  getDaysUntilDeadline,
-  JOB_STATUS_BADGE_CLASS,
-} from "@/components/jobs/jobs.helpers.ts";
-import { Badge } from "@/components/ui/badge.tsx";
-import { Card } from "@/components/ui/card.tsx";
-
-const formatDeadline = (deadline?: string | null) => {
-  const diffDays = getDaysUntilDeadline(deadline);
-  if (diffDays === null) {
-    return "No deadline";
-  }
-  if (diffDays < 0) {
-    return "Overdue";
-  }
-  if (diffDays === 0) {
-    return "Deadline today";
-  }
-  return `Deadline in ${diffDays} day${diffDays === 1 ? "" : "s"}`;
-};
+  getDateInfo,
+  JOB_STATUS_VARIANT,
+} from "@/components/jobs/jobs.helpers";
+import { GutterCard } from "@/components/ui/custom/gutter-card.tsx";
+import { StatusBadge } from "@/components/ui/custom/status-badge.tsx";
+import { isUrgent } from "@/lib/utils";
 
 export const JobCardGrid = ({ job }: { job: IJob }) => {
   const navigate = useNavigate();
   const updateJob = useUpdateJob();
+  const urgent = job.interviewDate
+    ? isUrgent(job.interviewDate)
+    : !job.appliedAt && isUrgent(job.deadline);
+
+  const variant = urgent ? "danger" : JOB_STATUS_VARIANT[job.status];
+
   const handleClick = () =>
     navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
 
@@ -38,19 +31,19 @@ export const JobCardGrid = ({ job }: { job: IJob }) => {
     });
 
   return (
-    <Card
-      className="cursor-pointer gap-2 px-4 py-4"
-      onClick={handleClick}
-      size="sm"
-    >
-      <div className="flex items-center justify-between gap-2">
-        <span className="truncate text-muted-foreground text-sm">
-          {job.companyName}
-        </span>
-        <div className="flex items-center gap-1">
-          <Badge className={`shrink-0 ${JOB_STATUS_BADGE_CLASS[job.status]}`}>
-            {job.status}
-          </Badge>
+    <GutterCard className="pt-3" onClick={handleClick} variant={variant}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate font-semibold text-foreground text-md leading-tight">
+            {job.title}
+          </p>
+          <p className="mt-0.5 truncate text-muted-foreground text-sm">
+            {job.companyName}
+            {job.location ? ` · ${job.location}` : ""}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <StatusBadge status={job.status} />
           <FavoriteButton
             isFavorite={job.isFavorite}
             onToggle={handleToggleFavorite}
@@ -58,12 +51,14 @@ export const JobCardGrid = ({ job }: { job: IJob }) => {
         </div>
       </div>
 
-      <p className="truncate font-medium text-[15px]">{job.title}</p>
-
-      <p className="flex items-center gap-1.5 text-muted-foreground text-xs">
-        <CalendarBlankIcon className="size-3.5" />
-        {formatDeadline(job.deadline)}
+      <p
+        className={cn(
+          "mt-2 text-xs",
+          urgent ? "text-destructive" : "text-muted-foreground"
+        )}
+      >
+        {getDateInfo(job)}
       </p>
-    </Card>
+    </GutterCard>
   );
 };

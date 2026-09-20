@@ -10,6 +10,7 @@ import {
   JOB_DETAIL_PAGE,
   JOBS_PAGE,
   LOGIN_PAGE,
+  NOTES_PAGE,
   PROFILE_PAGE,
   PUBLIC_RESUME_PAGE,
   REGISTER_PAGE,
@@ -38,6 +39,7 @@ import { InterviewPage } from "@/pages/InterviewPage.tsx";
 import { JobDetailPage } from "@/pages/JobDetailPage.tsx";
 import JobProfilePage from "@/pages/JobProfilePage.tsx";
 import { JobsPage } from "@/pages/JobsPage.tsx";
+import { NotesPage } from "@/pages/NotesPage.tsx";
 import { PublicResumePage } from "@/pages/PublicResumePage.tsx";
 import { ResumeDetailPage } from "@/pages/ResumeDetailPage.tsx";
 import { ResumesPage } from "@/pages/ResumesPage.tsx";
@@ -84,6 +86,7 @@ const App = () => {
           <Route element={<SessionsPage />} path={SESSIONS_PAGE} />
           <Route element={<SessionDetailPage />} path={SESSION_DETAIL_PAGE} />
           <Route element={<InterviewPage />} path={INTERVIEW_PAGE} />
+          <Route element={<NotesPage />} path={NOTES_PAGE} />
           <Route element={<SchedulePage />} path={SCHEDULE_PAGE} />
           <Route element={<JobProfilePage />} path={PROFILE_PAGE} />
           <Route element={<SettingsPage />} path={SETTINGS_PAGE} />

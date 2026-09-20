@@ -19,7 +19,8 @@ interface IProps {
 }
 
 export const ViewResume = ({ resume, onClose }: Readonly<IProps>) => {
-  const isGenerated = Boolean(resume.content);
+  const isGenerated = Boolean(resume.template);
+  const hasPdfFile = Boolean(resume.url);
   const navigate = useNavigate();
 
   const handleReview = () =>
@@ -60,9 +61,8 @@ export const ViewResume = ({ resume, onClose }: Readonly<IProps>) => {
               <PenIcon className="size-4" />
               Edit
             </Button>
-          ) : (
-            <OpenPDFInNewTab resumeId={resume.id} />
-          )}
+          ) : null}
+          {hasPdfFile ? <OpenPDFInNewTab resumeId={resume.id} /> : null}
           <Button onClick={handleReview}>
             <ListIcon /> View
           </Button>
