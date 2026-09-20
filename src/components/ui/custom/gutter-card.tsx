@@ -60,6 +60,9 @@ export const GutterCard = ({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) {
+      return;
+    }
     if (onClick && (e.key === "Enter" || e.key === " ")) {
       e.preventDefault();
       onClick();
@@ -76,6 +79,7 @@ export const GutterCard = ({
       )}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
+      role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
       {children}

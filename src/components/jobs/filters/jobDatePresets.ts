@@ -1,3 +1,12 @@
+import {
+  endOfMonth,
+  endOfWeek,
+  endOfYear,
+  startOfMonth,
+  startOfWeek,
+  startOfYear,
+  subMonths,
+} from "date-fns";
 import type { IDateFilter, IJob } from "@/api/jobs";
 
 export type TJobDateType = IDateFilter["type"];
@@ -52,11 +61,11 @@ export const JOB_DATE_PRESETS: IJobDatePreset[] = [
     key: "this-week",
     label: "This week",
     getFilter: (now, type) => {
-      const end = new Date(now);
-      end.setDate(end.getDate() + 7);
+      const start = startOfWeek(now);
+      const end = endOfWeek(now);
       return buildDateFiltersForType(
         type,
-        now.toISOString(),
+        start.toISOString(),
         end.toISOString()
       );
     },
@@ -65,8 +74,8 @@ export const JOB_DATE_PRESETS: IJobDatePreset[] = [
     key: "this-month",
     label: "This month",
     getFilter: (now, type) => {
-      const start = new Date(now.getFullYear(), now.getMonth(), 1);
-      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      const start = startOfMonth(now);
+      const end = endOfMonth(now);
       return buildDateFiltersForType(
         type,
         start.toISOString(),
@@ -78,8 +87,9 @@ export const JOB_DATE_PRESETS: IJobDatePreset[] = [
     key: "last-month",
     label: "Last month",
     getFilter: (now, type) => {
-      const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      const end = new Date(now.getFullYear(), now.getMonth(), 0);
+      const prevMonth = subMonths(now, 1);
+      const start = startOfMonth(prevMonth);
+      const end = endOfMonth(prevMonth);
       return buildDateFiltersForType(
         type,
         start.toISOString(),
@@ -91,8 +101,8 @@ export const JOB_DATE_PRESETS: IJobDatePreset[] = [
     key: "this-year",
     label: "This year",
     getFilter: (now, type) => {
-      const start = new Date(now.getFullYear(), 0, 1);
-      const end = new Date(now.getFullYear(), 11, 31);
+      const start = startOfYear(now);
+      const end = endOfYear(now);
       return buildDateFiltersForType(
         type,
         start.toISOString(),

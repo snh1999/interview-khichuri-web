@@ -83,15 +83,11 @@ const CompaniesComboboxInner = ({
 
   const handleBlur = (): void => {
     const typed = inputValue.trim();
-    if (typed && companyId !== null) {
-      const exists = options.some(
-        (o) => o.label.toLowerCase() === typed.toLowerCase()
-      );
-      if (!exists) {
-        onChange(null, typed);
-      }
-    }
-    onChange(companyId ?? null, typed || "");
+    const matched = typed
+      ? options.find((o) => o.label.toLowerCase() === typed.toLowerCase())
+      : undefined;
+
+    onChange(matched ? matched.value : null, matched ? matched.label : typed);
   };
 
   return (
