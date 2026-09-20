@@ -1,5 +1,10 @@
 import { CalendarIcon } from "@phosphor-icons/react";
-import { type ChangeEvent, type KeyboardEvent, useState } from "react";
+import {
+  type ChangeEvent,
+  type KeyboardEvent,
+  useEffect,
+  useState,
+} from "react";
 import { Calendar } from "@/components/ui/calendar";
 
 import {
@@ -61,6 +66,12 @@ export const DatePicker = ({
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState<Date | undefined>(toDate(value));
   const [inputValue, setInputValue] = useState(formatDate(toDate(value)));
+
+  useEffect(() => {
+    const date = toDate(value);
+    setMonth(date);
+    setInputValue(formatDate(date));
+  }, [value]);
 
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
     const parsed = new Date(e.target.value);

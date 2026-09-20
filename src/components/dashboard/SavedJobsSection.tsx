@@ -29,7 +29,11 @@ export const SavedJobsSection = ({ jobs }: Readonly<{ jobs: IJob[] }>) => {
           <Button onClick={openDialog}>
             <PlusCircleIcon />
           </Button>
-          <Button render={<Link to={JOBS_PAGE} />} variant="outline">
+          <Button
+            nativeButton={false}
+            render={<Link to={JOBS_PAGE} />}
+            variant="outline"
+          >
             <ArrowSquareOutIcon /> View
           </Button>
         </CardAction>

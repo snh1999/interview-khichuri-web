@@ -63,8 +63,15 @@ export const JobsDateFilter = () => {
   });
 
   useEffect(() => {
-    setDraft((d) => ({ ...d, type: dateType }));
-  }, [dateType]);
+    const custom = datePreset
+      ? undefined
+      : (value.find((filter) => filter.type === dateType) ?? value[0]);
+    setDraft({
+      type: dateType,
+      from: stringToDate(custom?.from),
+      to: stringToDate(custom?.to),
+    });
+  }, [datePreset, dateType, value]);
 
   const appliedLabel = getLabel(datePreset, dateType, value.length > 0);
 

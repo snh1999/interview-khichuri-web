@@ -52,11 +52,15 @@ export const JOB_DATE_PRESETS: IJobDatePreset[] = [
     key: "this-week",
     label: "This week",
     getFilter: (now, type) => {
-      const end = new Date(now);
-      end.setDate(end.getDate() + 7);
+      const start = new Date(now);
+      start.setHours(0, 0, 0, 0);
+      start.setDate(start.getDate() - start.getDay());
+      const end = new Date(start);
+      end.setDate(end.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
       return buildDateFiltersForType(
         type,
-        now.toISOString(),
+        start.toISOString(),
         end.toISOString()
       );
     },
