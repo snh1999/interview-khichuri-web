@@ -41,7 +41,7 @@ const LimitBadge = ({
           <span className="pr-2 text-muted-foreground text-xs">{label}</span>
         ) : null}
         {formatNumber(value)}
-        <span className="ml-1 text-[11px] text-muted-foreground">{unit}</span>
+        <span className="ml-1 text-muted-foreground text-xs">{unit}</span>
       </span>
     </div>
   );
@@ -61,7 +61,7 @@ export const LimitsAndPrivacy = ({
           <div className="pt-1 text-muted-foreground *:space-y-2">
             <div className="pb-4 text-muted-foreground text-xs">
               <div className="font-medium text-foreground">Privacy:</div>{" "}
-              <p className="text-[14px]">{info.privacyNote}</p>
+              <p className="text-md">{info.privacyNote}</p>
             </div>
             <span className="mb-2 pt-2 font-medium text-foreground">
               Free tier:
@@ -93,7 +93,7 @@ export const LimitsAndPrivacy = ({
               )}
             </div>
             {limitInfo.notes ? (
-              <p className="text-center text-[10px] text-muted-foreground italic">
+              <p className="text-center text-muted-foreground text-xxs italic">
                 {limitInfo.notes}
               </p>
             ) : null}

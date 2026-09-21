@@ -65,9 +65,9 @@ export const EVENT_LABELS: Record<TEventSource, string> = {
  * readable text in both light and dark themes.
  */
 export const EVENT_COLOR_KEYS = [
-  "rose",
-  "amber",
-  "emerald",
+  "pink",
+  "cyan",
+  "indigo",
   "sky",
   "violet",
   "fuchsia",
@@ -79,20 +79,20 @@ export const EVENT_COLOR_OPTIONS: Record<
   TEventColor,
   { bg: string; text: string; dot: string }
 > = {
-  rose: {
-    bg: "bg-rose-100 dark:bg-rose-950/70",
-    dot: "bg-rose-500",
-    text: "text-rose-800 dark:text-rose-200",
+  pink: {
+    bg: "bg-pink-100 dark:bg-pink-950/70",
+    dot: "bg-pink-500",
+    text: "text-pink-800 dark:text-pink-200",
   },
-  amber: {
-    bg: "bg-amber-100 dark:bg-amber-950/70",
-    dot: "bg-amber-500",
-    text: "text-amber-800 dark:text-amber-200",
+  cyan: {
+    bg: "bg-cyan-100 dark:bg-cyan-950/70",
+    dot: "bg-cyan-500",
+    text: "text-cyan-800 dark:text-cyan-200",
   },
-  emerald: {
-    bg: "bg-emerald-100 dark:bg-emerald-950/70",
-    dot: "bg-emerald-500",
-    text: "text-emerald-800 dark:text-emerald-200",
+  indigo: {
+    bg: "bg-indigo-100 dark:bg-indigo-950/70",
+    dot: "bg-indigo-500",
+    text: "text-indigo-800 dark:text-indigo-200",
   },
   sky: {
     bg: "bg-sky-100 dark:bg-sky-950/70",

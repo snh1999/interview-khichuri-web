@@ -48,7 +48,7 @@ export const DayColumn = ({
 
     {isToday(day) && (
       <div
-        className="pointer-events-none absolute right-0 left-0 z-10 h-px bg-destructive"
+        className="pointer-events-none absolute right-0 left-0 z-10 h-px bg-primary"
         style={{ top: timeToY(new Date()) }}
       />
     )}

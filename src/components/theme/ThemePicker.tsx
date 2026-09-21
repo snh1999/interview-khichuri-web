@@ -16,7 +16,7 @@ export const ThemePicker = () => {
     <Popover>
       <PopoverTrigger
         render={
-          <Button variant="outline">
+          <Button aria-label="Change appearance" variant="outline">
             <PaintRollerIcon />
           </Button>
         }

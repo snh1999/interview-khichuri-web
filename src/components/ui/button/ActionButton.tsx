@@ -25,12 +25,16 @@ export function ActionButton({
   action,
   requireConfirmation = false,
   dialogDescription = "This action cannot be undone.",
+  dialogTitle = "Are you sure?",
+  actionLabel = "Confirm",
   renderNode,
   ...props
 }: ComponentProps<typeof Button> & {
   action: () => Promise<{ error: boolean; message?: string }>;
   requireConfirmation?: boolean;
   dialogDescription?: ReactNode;
+  dialogTitle?: ReactNode;
+  actionLabel?: ReactNode;
   renderNode?: ReactElement;
 }) {
   const [isLoading, startTransition] = useTransition();
@@ -62,13 +66,13 @@ export function ActionButton({
         />
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{dialogTitle}</AlertDialogTitle>
             <AlertDialogDescription>{dialogDescription}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction variant={props.variant} disabled={isLoading} onClick={performAction}>
-              <LoadingSwap isLoading={isLoading}>Confirm</LoadingSwap>
+              <LoadingSwap isLoading={isLoading}>{actionLabel}</LoadingSwap>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

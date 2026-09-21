@@ -12,28 +12,28 @@ export const getScoreTone = (score: number): TScoreTone => {
 };
 
 export const SCORE_TEXT_CLASS: Record<TScoreTone, string> = {
-  emerald: "text-emerald-500 dark:text-emerald-400",
-  amber: "text-amber-500 dark:text-amber-400",
-  rose: "text-rose-500 dark:text-rose-400",
+  emerald: "text-signal-success",
+  amber: "text-signal-warning",
+  rose: "text-signal-danger",
 };
 
 export const SCORE_FILL_CLASS: Record<TScoreTone, string> = {
-  emerald: "bg-emerald-500",
-  amber: "bg-amber-500",
-  rose: "bg-rose-500",
+  emerald: "bg-signal-success",
+  amber: "bg-signal-warning",
+  rose: "bg-signal-danger",
 };
 
 export const SCORE_SUMMARY_CLASS: Record<TScoreTone, string> = {
   emerald:
-    "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+    "border-signal-success/30 bg-signal-success/10 text-signal-success-foreground",
   amber:
-    "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300",
-  rose: "border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-300",
+    "border-signal-warning/30 bg-signal-warning/10 text-signal-warning-foreground",
+  rose: "border-signal-danger/30 bg-signal-danger/10 text-signal-danger-foreground",
 };
 
 export const ITEM_TONE_CLASS: Record<TScoreItemTone, string> = {
-  good: "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-  bad: "border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-300",
-  warn: "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300",
-  info: "border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300",
+  good: "border-signal-success/30 bg-signal-success/10 text-signal-success-foreground",
+  bad: "border-signal-danger/30 bg-signal-danger/10 text-signal-danger-foreground",
+  warn: "border-signal-warning/30 bg-signal-warning/10 text-signal-warning-foreground",
+  info: "border-border bg-muted text-muted-foreground",
 };

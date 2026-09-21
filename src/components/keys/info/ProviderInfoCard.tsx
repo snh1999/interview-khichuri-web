@@ -55,7 +55,7 @@ export const ProviderInfoCard = ({ provider }: IProps) => {
                 <ul className="space-y-1 text-muted-foreground text-xs">
                   {info.pros.map((pro) => (
                     <li className="flex items-start gap-1.5" key={pro}>
-                      <CheckIcon className="mt-0.5 shrink-0 text-green-600" />
+                      <CheckIcon className="mt-0.5 shrink-0 text-signal-success" />
                       <span>{pro}</span>
                     </li>
                   ))}
@@ -67,7 +67,7 @@ export const ProviderInfoCard = ({ provider }: IProps) => {
                       className="flex items-start gap-1.5 text-muted-foreground text-xs"
                       key={con}
                     >
-                      <XIcon className="mt-0.5 shrink-0 text-red-600" />
+                      <XIcon className="mt-0.5 shrink-0 text-signal-danger" />
                       <span>{con}</span>
                     </li>
                   ))}

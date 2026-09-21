@@ -47,7 +47,7 @@ export const useForgotPasswordForm = ({
             toast.error(error.error.message);
           },
           onSuccess: async () => {
-            toast.success("Email Sent!");
+            toast.success("Reset link sent");
             markSent();
             await navigate(EMAIL_REDIRECT_PAGE, {
               state: { context: FORGOT_PASSWORD_EMAIL_CONTEXT },
@@ -57,7 +57,7 @@ export const useForgotPasswordForm = ({
         }
       );
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error("Couldn't send the reset link. Try again.");
     }
   });
 

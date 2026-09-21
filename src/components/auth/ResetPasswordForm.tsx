@@ -60,7 +60,7 @@ function useResetPasswordForm(token: string) {
         }
       );
     } catch {
-      setErrorMessage("Something went wrong. Please try again.");
+      setErrorMessage("Couldn't update your password. Try again.");
     }
   });
 

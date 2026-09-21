@@ -165,7 +165,13 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
             <Button onClick={openAiDialog}>Generate</Button>
             <DropdownMenu>
               <DropdownMenuTrigger
-                render={<Button size="icon" variant="outline" />}
+                render={
+                  <Button
+                    aria-label="Question options"
+                    size="icon"
+                    variant="outline"
+                  />
+                }
               >
                 <DotsThreeVerticalIcon className="size-4" />
               </DropdownMenuTrigger>
@@ -237,12 +243,12 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
                 <EmptyTitle>
                   {questions.length === 0
                     ? "No questions yet"
-                    : " No questions match your filters."}
+                    : "No questions match your filters."}
                 </EmptyTitle>
                 <EmptyDescription>
                   {questions.length === 0
-                    ? " Generate questions with AI or add one manually."
-                    : "Adjust your filter or Create new."}
+                    ? "Generate questions with AI or add one manually."
+                    : "Adjust the filter or add a new question."}
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>

@@ -37,6 +37,7 @@ export const ActivitiesSection = memo(({ sectionId }: Readonly<IProps>) => {
         </CardDescription>
         <CardAction className="pt-2 pr-1">
           <Button
+            aria-label="Add activity"
             className="rounded-full bg-primary/50"
             onClick={onAppend}
             size="icon-sm"

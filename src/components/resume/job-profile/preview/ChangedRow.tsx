@@ -31,7 +31,7 @@ export const ChangedRow = ({ row, pick, edited, onSelect, onEdit }: IProps) => {
 
   return (
     <div
-      className={`border-b border-l-4 px-3 py-2 last:border-0 ${isModified ? "border-l-amber-500" : ""} 
+      className={`border-b border-l-2 px-3 py-2 last:border-0 ${isModified ? "border-l-amber-500" : ""} 
       ${accepted ? "border-l-emerald-500" : "border-l-transparent"}`}
     >
       <div className="mb-1 flex items-center justify-between gap-2">
@@ -39,12 +39,12 @@ export const ChangedRow = ({ row, pick, edited, onSelect, onEdit }: IProps) => {
 
         <div className="flex shrink-0 items-center gap-1.5">
           {isModified ? (
-            <Badge className="px-1 text-[10px]" variant="outline">
+            <Badge className="px-1 text-xxs" variant="outline">
               <EraserIcon /> Modified
             </Badge>
             // biome-ignore lint/style/noNestedTernary: <>
           ) : accepted ? (
-            <Badge className="px-1 text-[10px]">
+            <Badge className="px-1 text-xxs">
               <ChecksIcon /> Accepted
             </Badge>
           ) : null}

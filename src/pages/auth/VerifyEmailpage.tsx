@@ -29,9 +29,9 @@ const cardInformation: Record<TVerificationState, ICardInformation> = {
   },
   success: {
     title: "Email verified",
-    description: "Your account is active. Redirecting you to homepage…",
+    description: "Your account is active. Redirecting to your dashboard…",
     icon: (
-      <CheckCircleIcon className="h-6 w-6 text-emerald-500" weight="fill" />
+      <CheckCircleIcon className="h-6 w-6 text-signal-success" weight="fill" />
     ),
   },
   error: {

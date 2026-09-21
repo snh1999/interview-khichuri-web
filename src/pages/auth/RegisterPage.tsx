@@ -10,7 +10,7 @@ const RegisterPage = () => (
     footer={
       <>
         Already have an account?
-        <LinkButton path={LOGIN_PAGE}>Log In</LinkButton>
+        <LinkButton path={LOGIN_PAGE}>Log in</LinkButton>
       </>
     }
   >

@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CircularProgress } from "@/components/ui/custom/circular-progress.tsx";
+import { CircularProgress } from "@/components/ui/custom/CircularProgress.tsx";
 
 interface IProps {
   data: TProfileFormData;
@@ -31,7 +31,7 @@ export const ProfileCompletionBanner = ({ data }: Readonly<IProps>) => {
     return (
       <div className="flex items-center justify-between gap-2 py-3 font-semibold text-sm">
         <span className="text-lg">Profile</span>
-        <CheckCircleIcon className="size-7 text-green-600" weight="fill" />
+        <CheckCircleIcon className="size-7 text-signal-success" weight="fill" />
       </div>
     );
   }
@@ -63,7 +63,7 @@ export const ProfileCompletionBanner = ({ data }: Readonly<IProps>) => {
       <CardFooter className="flex flex-wrap items-center gap-1.5">
         {missingFields.map((field) => (
           <Badge
-            className="rounded-sm border border-destructive/30 font-medium text-[10px] text-destructive"
+            className="rounded-sm border border-destructive/30 font-medium text-destructive text-xxs"
             key={field}
             variant="outline"
           >

@@ -9,7 +9,7 @@ import {
   RECENT_ITEMS_COUNT,
   takeLatest,
 } from "@/components/dashboard/dashboard.helpers";
-import type { DashboardStats as DashboardStatsType } from "@/components/dashboard/dashboard.helpers.ts";
+import type { IDashboardStats } from "@/components/dashboard/dashboard.helpers.ts";
 import { RecentNotesSection } from "@/components/dashboard/RecentNotesSection";
 import { RecentSessionsSection } from "@/components/dashboard/RecentSessionsSection";
 import { SavedJobsSection } from "@/components/dashboard/SavedJobsSection";
@@ -37,7 +37,7 @@ const DashboardContent = () => {
   );
   const avgMockScore = avgScore(buildScoreHistory(completedInterviews));
 
-  const stats: DashboardStatsType = {
+  const stats: IDashboardStats = {
     activeJobs: jobs.length,
     interviewsThisWeek: jobs.filter((job) => {
       const days = daysUntil(job.interviewDate);

@@ -115,10 +115,19 @@ const EventListItem = ({ event }: IProps) => {
       <ItemActions className="gap-1">
         {isCustom ? (
           <>
-            <Button onClick={handleEdit} size="icon-sm" variant="outline">
+            <Button
+              aria-label="Edit event"
+              onClick={handleEdit}
+              size="icon-sm"
+              variant="outline"
+            >
               <PencilIcon />
             </Button>
             <MutationButton
+              actionLabel="Delete"
+              aria-label="Delete event"
+              dialogDescription="This event will be permanently removed."
+              dialogTitle="Delete this event?"
               mutationFn={handleDelete}
               requireConfirmation
               size="icon-sm"
@@ -129,7 +138,12 @@ const EventListItem = ({ event }: IProps) => {
             </MutationButton>
           </>
         ) : (
-          <Button onClick={navigateToJob} size="icon-sm" variant="outline">
+          <Button
+            aria-label="Open job details"
+            onClick={navigateToJob}
+            size="icon-sm"
+            variant="outline"
+          >
             <ArrowSquareOutIcon />
           </Button>
         )}

@@ -7,7 +7,7 @@ import {
 } from "@/api/sessions/interviews.ts";
 import { INTERVIEW_PAGE } from "@/app.constants.ts";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
-import { GutterCard } from "@/components/ui/custom/gutter-card.tsx";
+import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
 
 const formatDate = (value: string) =>
   new Date(value).toLocaleString(undefined, {
@@ -24,9 +24,9 @@ const formatDuration = (seconds: number | null | undefined) => {
 
 const SCORE_TIER_TEXT = {
   default: "text-muted-foreground",
-  success: "text-emerald-600 dark:text-emerald-400",
-  warning: "text-amber-600 dark:text-amber-400",
-  danger: "text-rose-600 dark:text-rose-400",
+  success: "text-signal-success",
+  warning: "text-signal-warning",
+  danger: "text-signal-danger",
 } as const;
 
 const SCORE_TIER = (score: number) => {
@@ -88,9 +88,9 @@ export const InterviewItem = ({ interview, onDelete }: IProps) => {
         })}
       >
         <div className="min-w-0">
-          <p className="font-medium text-[13px] text-foreground">{title}</p>
+          <p className="font-medium text-foreground text-sm">{title}</p>
           {subtitle ? (
-            <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+            <p className="mt-1 font-mono text-muted-foreground text-xs">
               {subtitle}
             </p>
           ) : null}
@@ -102,13 +102,15 @@ export const InterviewItem = ({ interview, onDelete }: IProps) => {
               SCORE_TIER_TEXT[SCORE_TIER(score)]
             )}
           >
-            {score}
+            {score}%
           </p>
         )}
       </Link>
       <MutationButton
+        actionLabel="Delete"
         className="ml-4"
         dialogDescription="This will permanently delete this mock interview and its transcript."
+        dialogTitle="Delete this mock interview?"
         errorMessage="Failed to delete mock interview"
         mutationFn={handleDelete}
         requireConfirmation

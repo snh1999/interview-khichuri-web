@@ -44,7 +44,7 @@ function useUpdatePasswordForm() {
         },
       });
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error("Couldn't update your password. Try again.");
     }
   });
 
@@ -70,7 +70,7 @@ export const UpdatePasswordForm = () => {
       />
       <PasswordInput
         form={form}
-        label="Re-enter new Password"
+        label="Re-enter Password"
         name="confirmPassword"
       />
 

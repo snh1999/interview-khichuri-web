@@ -106,6 +106,7 @@ export const ResumeListItem = ({
         <DropdownMenuTrigger
           render={
             <Button
+              aria-label={`Actions for ${resume.name}`}
               className="shrink-0"
               size="icon"
               type="button"
@@ -143,9 +144,11 @@ export const ResumeListItem = ({
           ) : null}
           <ActionButton
             action={handleDelete}
+            actionLabel="Delete resume"
             aria-label={`Delete ${resume.name}`}
             className="w-full justify-start text-destructive"
             dialogDescription="This resume will be permanently deleted."
+            dialogTitle="Delete this resume?"
             requireConfirmation
             type="button"
             variant="ghost"
@@ -157,8 +160,10 @@ export const ResumeListItem = ({
 
       <ActionButton
         action={handleDelete}
+        actionLabel="Delete resume"
         aria-label={`Delete ${resume.name}`}
         dialogDescription="This resume will be permanently deleted."
+        dialogTitle="Delete this resume?"
         requireConfirmation
         size="icon"
         type="button"

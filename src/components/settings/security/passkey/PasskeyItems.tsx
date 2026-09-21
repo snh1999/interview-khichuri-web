@@ -37,6 +37,9 @@ export const PasskeyItems = () => {
                 <AuthActionButton
                   // biome-ignore lint/performance/noJsxPropsBind: <>
                   action={() => deletePasskey(passkey.id)}
+                  actionLabel="Delete passkey"
+                  dialogDescription="You won't be able to sign in with this passkey after it's deleted."
+                  dialogTitle="Delete this passkey?"
                   requireConfirmation
                   size="icon"
                   successMessage=""

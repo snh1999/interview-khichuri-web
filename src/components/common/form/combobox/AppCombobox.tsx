@@ -315,7 +315,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
       ) : null}
       {description ? <FieldDescription>{description}</FieldDescription> : null}
       {error ? (
-        <FieldError className="text-[12px]" errors={[{ message: error }]} />
+        <FieldError className="text-sm" errors={[{ message: error }]} />
       ) : null}
     </Field>
   );

@@ -119,6 +119,7 @@ export function SectionManager({ sectionId, templateId }: SectionManagerProps) {
             </ItemContent>
             <ItemActions>
               <Button
+                aria-label={`${section.enabled ? "Hide" : "Show"} ${section.title}`}
                 // biome-ignore lint/performance/noJsxPropsBind: <section spcific>
                 onClick={() =>
                   updateSection(section.id, { enabled: !section.enabled })

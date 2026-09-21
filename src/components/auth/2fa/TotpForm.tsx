@@ -10,7 +10,7 @@ import { LoadingSwap } from "@/components/ui/loading-swap";
 import { authTwoFactor } from "@/lib/auth/auth-client.ts";
 
 const totpSchema = z.object({
-  code: z.string().length(6),
+  code: z.string().length(6, "Enter the 6-digit code"),
 });
 
 type TotpForm = z.infer<typeof totpSchema>;
@@ -42,7 +42,12 @@ export const TotpForm = () => {
       className="space-y-4"
       onSubmit={form.handleSubmit(handleTotpVerification)}
     >
-      <FormInput form={form} label="Code" name="code" />
+      <FormInput
+        form={form}
+        label="Authenticator code"
+        name="code"
+        placeholder="6-digit code"
+      />
 
       <Button className="w-full" disabled={isSubmitting} type="submit">
         <LoadingSwap isLoading={isSubmitting}>Verify</LoadingSwap>
