@@ -1,3 +1,4 @@
+// impeccable-disable side-tab: committed Gutter Rule (DESIGN.md) — status lives on the left edge
 import type { KeyboardEvent, ReactNode } from "react";
 
 import { cn } from "cn";
@@ -27,21 +28,21 @@ const STATUS_STYLES: Record<StatusVariant, StatusStyle> = {
     label: "neutral",
   },
   success: {
-    gutter: "border-l-emerald-500",
-    badgeBg: "bg-emerald-500/10",
-    badgeText: "text-emerald-700 dark:text-emerald-300",
+    gutter: "border-l-signal-success",
+    badgeBg: "bg-signal-success/10",
+    badgeText: "text-signal-success-foreground",
     label: "active",
   },
   warning: {
-    gutter: "border-l-amber-500",
-    badgeBg: "bg-amber-500/10",
-    badgeText: "text-amber-700 dark:text-amber-300",
+    gutter: "border-l-signal-warning",
+    badgeBg: "bg-signal-warning/10",
+    badgeText: "text-signal-warning-foreground",
     label: "upcoming",
   },
   danger: {
-    gutter: "border-l-rose-500",
-    badgeBg: "bg-rose-500/10",
-    badgeText: "text-rose-700 dark:text-rose-300",
+    gutter: "border-l-signal-danger",
+    badgeBg: "bg-signal-danger/10",
+    badgeText: "text-signal-danger-foreground",
     label: "urgent",
   },
 };
@@ -72,7 +73,7 @@ export const GutterCard = ({
   return (
     <div
       className={cn(
-        "border-border rounded-xs border-l-4 bg-card py-2 px-4 text-left transition-colors",
+        "border-border rounded-xs border-l-2 bg-card py-2 px-4 text-left transition-colors",
         style.gutter,
         onClick ? "cursor-pointer hover:bg-muted/40" : "",
         className

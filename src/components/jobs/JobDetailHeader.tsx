@@ -18,12 +18,13 @@ import { JobPostForm } from "@/components/jobs/JobPostForm.tsx";
 import {
   getDateInfo,
   JOB_STATUS_VARIANT,
+  STATUS_LABEL,
 } from "@/components/jobs/jobs.helpers";
 import { Badge } from "@/components/ui/badge.tsx";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { GutterCard } from "@/components/ui/custom/gutter-card.tsx";
-import { StatusBadge } from "@/components/ui/custom/status-badge.tsx";
+import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
+import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { useLookupMap } from "@/hooks/useLookupMap.ts";
 import { isUrgent } from "@/lib/utils";
@@ -98,12 +99,15 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <StatusBadge status={job.status} />
+            <StatusBadge label={STATUS_LABEL[job.status]} status={job.status} />
             <Button onClick={openDialog} size="sm" variant="outline">
               <PencilLineIcon className="size-3" />
               Edit
             </Button>
             <MutationButton
+              actionLabel="Delete job"
+              aria-label="Delete job"
+              dialogTitle="Delete this job?"
               mutationFn={handleDelete}
               requireConfirmation
               variant="destructive"

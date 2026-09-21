@@ -78,6 +78,10 @@ export const SessionInfoSection = ({ session }: IProps) => {
             viewTrigger
           />
           <MutationButton
+            actionLabel="Delete"
+            aria-label="Delete session"
+            dialogDescription="This will permanently delete this session and its questions."
+            dialogTitle="Delete this session?"
             mutationFn={handleDelete}
             requireConfirmation
             variant="destructive"

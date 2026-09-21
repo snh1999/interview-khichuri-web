@@ -24,7 +24,10 @@ export const PasswordInput = <T extends FieldValues>({
       <FormInput
         {...props}
         EndComponent={
-          <InputGroupButton onClick={toggleShowPassword}>
+          <InputGroupButton
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            onClick={toggleShowPassword}
+          >
             {showPassword ? (
               <EyeSlashIcon className="h-4 w-4" />
             ) : (

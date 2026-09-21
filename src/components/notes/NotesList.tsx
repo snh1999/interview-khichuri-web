@@ -115,7 +115,7 @@ const NoteListItem = ({
           isFavorite={note.isFavorite}
           onToggle={handleToggleFavorite}
         />
-        <Button onClick={handleEdit}>
+        <Button aria-label={`Edit ${note.title}`} onClick={handleEdit}>
           <PencilIcon />
         </Button>
       </ItemActions>

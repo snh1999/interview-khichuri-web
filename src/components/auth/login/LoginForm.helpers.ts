@@ -62,7 +62,7 @@ export const useLoginForm = ({
         }
       );
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error("Couldn't sign in. Try again.");
     }
   });
 

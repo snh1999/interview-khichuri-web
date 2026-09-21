@@ -23,7 +23,14 @@ interface Props {
 export const EventFilters = ({ visibility, onToggle }: Props) => (
   <DropdownMenu>
     <DropdownMenuTrigger
-      render={<Button className="size-8" size="icon" variant="outline" />}
+      render={
+        <Button
+          aria-label="Filter events"
+          className="size-8"
+          size="icon"
+          variant="outline"
+        />
+      }
     >
       <FunnelIcon className="size-4" />
     </DropdownMenuTrigger>

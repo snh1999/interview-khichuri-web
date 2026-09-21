@@ -41,6 +41,7 @@ export const WorkExperienceCard = ({ index, onRemove }: Readonly<IProps>) => {
         </CardTitle>
         <CardAction>
           <Button
+            aria-label={`Remove ${form.watch(`workExperience.${index}.company`) || `work experience ${index + 1}`}`}
             onClick={onRemoveClick}
             size="sm"
             type="button"

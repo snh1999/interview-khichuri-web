@@ -62,7 +62,7 @@ export const useRegisterForm = ({
         }
       );
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error("Couldn't create your account. Try again.");
     }
   });
 

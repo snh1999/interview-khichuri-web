@@ -1,4 +1,4 @@
-import { PlayIcon, PlusCircleIcon } from "@phosphor-icons/react";
+import { PlusCircleIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import type { ISessionWithQuestions } from "@/api/sessions";
 import {
@@ -54,11 +54,11 @@ export const InterviewsSection = ({ sectionId, session }: IProps) => {
   return (
     <Card className="px-1" id={sectionId}>
       <CardHeader>
-        <CardTitle>Mock Interviews</CardTitle>
+        <CardTitle>Mock interviews</CardTitle>
         <CardAction>
           <AsyncButton onClick={startInterviewDialog}>
             <PlusCircleIcon />
-            New Interview
+            New mock interview
           </AsyncButton>
         </CardAction>
       </CardHeader>
@@ -73,8 +73,8 @@ export const InterviewsSection = ({ sectionId, session }: IProps) => {
           </EmptyHeader>
           <EmptyContent>
             <AsyncButton onClick={startInterviewDialog}>
-              <PlayIcon className="size-4" />
-              Start Mock Interview
+              <PlusCircleIcon className="size-4" />
+              New mock interview
             </AsyncButton>
           </EmptyContent>
         </Empty>

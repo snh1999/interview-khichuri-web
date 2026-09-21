@@ -95,6 +95,7 @@ export const EventDetails = ({ event, open, onOpenChange, onEdit }: Props) => {
               <p className="truncate">{view.title}</p>
               {view.job ? (
                 <Button
+                  aria-label="Open job details"
                   onClick={navigateToJobPage}
                   size="icon-sm"
                   variant="outline"
@@ -106,10 +107,19 @@ export const EventDetails = ({ event, open, onOpenChange, onEdit }: Props) => {
             <div className="flex items-center gap-1">
               {view.job ? null : (
                 <>
-                  <Button onClick={handleEdit} size="icon-sm" variant="outline">
+                  <Button
+                    aria-label="Edit event"
+                    onClick={handleEdit}
+                    size="icon-sm"
+                    variant="outline"
+                  >
                     <PencilIcon />
                   </Button>
                   <MutationButton
+                    actionLabel="Delete"
+                    aria-label="Delete event"
+                    dialogDescription="This event will be permanently removed."
+                    dialogTitle="Delete this event?"
                     mutationFn={handleDelete}
                     requireConfirmation
                     size="icon-sm"
@@ -121,7 +131,9 @@ export const EventDetails = ({ event, open, onOpenChange, onEdit }: Props) => {
                 </>
               )}
               <DrawLogClose
-                render={<Button size="icon-sm" variant="outline" />}
+                render={
+                  <Button aria-label="Close" size="icon-sm" variant="outline" />
+                }
               >
                 <XIcon />
               </DrawLogClose>

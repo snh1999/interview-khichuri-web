@@ -20,11 +20,17 @@ import {
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
 import { daysUntil, stringToDate, stripNulls } from "@/lib/utils.ts";
 
-export const STATUS_OPTIONS: { value: TJobStatus; label: string }[] = [
-  { label: "Saved", value: "saved" },
-  { label: "Applied", value: "applied" },
-  { label: "Scheduled", value: "scheduled" },
-];
+export const STATUS_LABEL: Record<TJobStatus, string> = {
+  saved: "Saved",
+  applied: "Applied",
+  scheduled: "Scheduled",
+};
+
+export const STATUS_OPTIONS: { value: TJobStatus; label: string }[] =
+  Object.entries(STATUS_LABEL).map(([value, label]) => ({
+    value: value as TJobStatus,
+    label,
+  }));
 
 export const JOB_STATUS_VARIANT = {
   saved: "default",
@@ -42,7 +48,7 @@ export const getDateInfo = (job: IJob): string => {
       : `Interviewed at ${new Date(job.interviewDate).toLocaleDateString()}`;
   }
   if (job.appliedAt) {
-    return `applied ${new Date(job.appliedAt).toLocaleDateString()}`;
+    return `Applied ${new Date(job.appliedAt).toLocaleDateString()}`;
   }
   if (days !== null) {
     return days >= 0 ? `${days}d left` : "Deadline passed";

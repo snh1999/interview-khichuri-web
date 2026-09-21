@@ -34,7 +34,7 @@ export const LoginForm = (props: IFormProps) => {
         size="lg"
         type="submit"
       >
-        Log In
+        Log in
       </AsyncButton>
     </form>
   );

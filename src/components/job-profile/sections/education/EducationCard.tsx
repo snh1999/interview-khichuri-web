@@ -43,6 +43,7 @@ export const EducationCard = ({ index, onRemove }: Readonly<IProps>) => {
         </CardTitle>
         <CardAction>
           <Button
+            aria-label={`Remove ${form.watch(`education.${index}.institution`) || `education ${index + 1}`}`}
             onClick={onRemoveClick}
             size="sm"
             type="button"

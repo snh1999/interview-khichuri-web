@@ -19,6 +19,7 @@ interface IPageData {
   cardTitle: string;
   cardDescription: string;
   message: string;
+  resendMessage: string;
   hideOauth: boolean;
   hideFooter: boolean;
 }
@@ -28,13 +29,15 @@ const pageData: Record<TPageContext, IPageData> = {
     cardTitle: "Verify your email",
     cardDescription: "We sent a verification link to your email address.",
     message: "click the link to activate your account",
+    resendMessage: "Verification email sent",
     hideOauth: false,
     hideFooter: false,
   },
   forgotpass: {
     cardTitle: "Check your email",
-    cardDescription: "We sent a the password reset link to your email address.",
+    cardDescription: "We sent a password reset link to your email address.",
     message: "follow the link to set a new password",
+    resendMessage: "Reset link sent",
     hideOauth: true,
     hideFooter: true,
   },
@@ -53,8 +56,14 @@ const EmailRedirectPage = () => {
   }
 
   const email = state.email ?? "";
-  const { cardTitle, cardDescription, message, hideOauth, hideFooter } =
-    pageData[state.context ?? VERIFY_EMAIL_CONTEXT];
+  const {
+    cardTitle,
+    cardDescription,
+    message,
+    resendMessage,
+    hideOauth,
+    hideFooter,
+  } = pageData[state.context ?? VERIFY_EMAIL_CONTEXT];
 
   const handleResend = async () => {
     const result = await sendVerificationEmail({
@@ -87,7 +96,7 @@ const EmailRedirectPage = () => {
           action={handleResend}
           className="mt-4 w-full"
           disabled={cooldown > 0}
-          successMessage="Verification email sent successfully"
+          successMessage={resendMessage}
         >
           Resend Email {cooldown ? `(${cooldown}s)` : ""}
         </AuthActionButton>

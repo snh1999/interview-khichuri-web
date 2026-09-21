@@ -66,11 +66,11 @@ zxcvbnOptions.setOptions({
 });
 
 const LEVELS = [
-  { label: "Very Weak", className: "bg-red-500" },
-  { label: "Weak", className: "bg-orange-500" },
-  { label: "Fair", className: "bg-yellow-500" },
-  { label: "Strong", className: "bg-blue-500" },
-  { label: "Very Strong", className: "bg-green-500" },
+  { label: "Very Weak", className: "bg-signal-danger" },
+  { label: "Weak", className: "bg-signal-danger" },
+  { label: "Fair", className: "bg-signal-warning" },
+  { label: "Strong", className: "bg-signal-success" },
+  { label: "Very Strong", className: "bg-signal-success" },
 ] as const;
 
 interface IProps {
@@ -105,7 +105,7 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
         <LevelComponent score={score} />
       </div>
 
-      <div className="flex items-center justify-between text-[14px]">
+      <div className="flex items-center justify-between text-md">
         <span className="font-medium text-foreground">{level.label}</span>
         <span className="text-muted-foreground">
           Cracks in{" "}
@@ -116,12 +116,10 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
         </span>
       </div>
 
-      {warning ? (
-        <p className="text-[14px] text-destructive">{warning}</p>
-      ) : null}
+      {warning ? <p className="text-destructive text-md">{warning}</p> : null}
 
       {suggestions && suggestions.length > 0 ? (
-        <div className="text-[14px] text-green-500">
+        <div className="text-md text-muted-foreground">
           <p>Suggestions: </p>
           {suggestions.map((suggestion) => (
             <p key={suggestion}>- {suggestion} </p>

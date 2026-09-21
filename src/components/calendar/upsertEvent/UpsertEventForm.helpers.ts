@@ -148,14 +148,14 @@ export const useUpsertEventForm = ({
       if (event) {
         await updateEvent(
           { ...payload, id: event.id },
-          { onSuccess: onSuccess("EventUpdated") }
+          { onSuccess: onSuccess("Event updated") }
         );
       } else {
-        await createEvent(payload, { onSuccess: onSuccess("Event Created") });
+        await createEvent(payload, { onSuccess: onSuccess("Event created") });
       }
       closeDrawLog();
     } catch {
-      toast.error(`Failed to ${event ? "Edit" : "Create"} event`);
+      toast.error(event ? "Failed to update event" : "Failed to create event");
     }
   });
 

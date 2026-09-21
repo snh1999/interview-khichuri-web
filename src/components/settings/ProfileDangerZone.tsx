@@ -18,23 +18,25 @@ export const ProfileDangerZone = () => (
       </CardDescription>
     </CardHeader>
     <CardContent>
-      Follow the following steps:
+      Delete your account in three steps:
       <ol className="mt-4 flex list-decimal flex-col gap-2 pl-6">
         <li>Click the button below.</li>
-        <li>Check your email to get the confirmation link</li>
-        <li>Follow the link to confirm account deletion.</li>
+        <li>Check your email for a confirmation link.</li>
+        <li>Open the link to confirm deletion.</li>
       </ol>
       <p className="whitespace-normal pt-4 text-destructive">
-        NOTE: Upon confirmation, all your personal data, and associated content
-        will be permanently erased from our systems. This includes your profile,
-        preferences, and any saved information tied to your account.
+        NOTE: Once confirmed, your profile, preferences, and all saved data will
+        be erased permanently.
       </p>
     </CardContent>
     <CardFooter>
       <AuthActionButton
         action={deleteUser}
+        actionLabel="Delete account"
+        dialogDescription="This permanently erases your profile, preferences, and all saved data."
+        dialogTitle="Delete your account?"
         requireConfirmation
-        successMessage="Account deletion initiated. Please check your email to confirm."
+        successMessage="Account deletion started. Check your email to confirm."
         variant="destructive"
       >
         Delete Account Permanently

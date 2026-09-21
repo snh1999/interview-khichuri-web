@@ -145,7 +145,7 @@ export const JobsDateFilter = () => {
             ))}
           </ToggleGroup>
           {value.length > 0 ? (
-            <Button onClick={handleClear} size="sm" variant="destructive">
+            <Button onClick={handleClear} size="sm" variant="secondary">
               <XIcon /> Clear
             </Button>
           ) : null}

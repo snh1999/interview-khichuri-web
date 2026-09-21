@@ -35,7 +35,7 @@ export const useUpdateProfileForm = (
               toast.error(error.error.message);
             },
             onSuccess: () => {
-              toast.success("Profile updated!");
+              toast.success("Profile updated");
             },
           }
         );
@@ -57,7 +57,7 @@ export const useUpdateProfileForm = (
         );
       }
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error("Couldn't save your profile. Try again.");
     }
   });
 

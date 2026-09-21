@@ -137,10 +137,9 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
             </DropdownMenu>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete User</AlertDialogTitle>
+                <AlertDialogTitle>Delete this user?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete this user? This action cannot
-                  be undone.
+                  This permanently deletes the user's account.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

@@ -40,6 +40,7 @@ export const EducationInformation = memo(({ sectionId }: Readonly<IProps>) => {
         <CardDescription>Your academic background.</CardDescription>
         <CardAction className="pt-2 pr-1">
           <Button
+            aria-label="Add education"
             className="rounded-full bg-primary/50"
             onClick={onAppend}
             size="icon-sm"

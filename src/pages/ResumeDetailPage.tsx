@@ -28,7 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { CircularProgress } from "@/components/ui/custom/circular-progress.tsx";
+import { CircularProgress } from "@/components/ui/custom/CircularProgress.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useResumeId } from "@/hooks/useId.ts";
 

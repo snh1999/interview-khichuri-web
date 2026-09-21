@@ -74,7 +74,7 @@ export const FormInput = <T extends FieldValues>({
       {description ? <FieldDescription>{description}</FieldDescription> : null}
 
       {fieldState.invalid ? (
-        <FieldError className="text-[12px]" errors={[fieldState.error]} />
+        <FieldError className="text-sm" errors={[fieldState.error]} />
       ) : null}
     </Field>
   );

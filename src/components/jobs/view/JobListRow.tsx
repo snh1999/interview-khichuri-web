@@ -5,9 +5,9 @@ import type { IJob } from "@/api/jobs";
 import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
-import { getDateInfo } from "@/components/jobs/jobs.helpers";
+import { getDateInfo, STATUS_LABEL } from "@/components/jobs/jobs.helpers";
 import { Button } from "@/components/ui/button.tsx";
-import { StatusBadge } from "@/components/ui/custom/status-badge";
+import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import {
   Item,
   ItemActions,
@@ -75,7 +75,7 @@ export const JobListRow = ({
             onToggle={handleToggleFavorite}
           />
         )}
-        <StatusBadge status={job.status} />
+        <StatusBadge label={STATUS_LABEL[job.status]} status={job.status} />
 
         <CaretRightIcon className="size-4 shrink-0 text-muted-foreground" />
       </ItemActions>

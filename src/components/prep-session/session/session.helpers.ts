@@ -111,11 +111,17 @@ export const useCreateSessionForm = ({
       onSuccess?.();
       navigate(generatePath(SESSION_DETAIL_PAGE, { sessionId: newSessionId }));
     } catch {
-      toast.error("Failed to create session");
+      toast.error(
+        session ? "Failed to update session" : "Failed to create session"
+      );
     }
   });
 
-  return { form, isLoading: createSession.isPending, onSubmit };
+  return {
+    form,
+    isLoading: createSession.isPending || updateSession.isPending,
+    onSubmit,
+  };
 };
 
 export const useNavigateToSessionPage = (id: string) => {

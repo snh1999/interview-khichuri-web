@@ -5,7 +5,7 @@ import { LinkButton } from "@/components/ui/button/LinkButton.tsx";
 
 const ForgotPasswordPage = () => (
   <AuthLayout
-    cardDescription="No worries! We will send you a link to your email to reset your password"
+    cardDescription="We'll email you a link to reset your password."
     cardTitle="Forgot your password"
     footer={
       <>

@@ -25,7 +25,7 @@ export const RecentNotesSection = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-semibold text-md">Recent notes</CardTitle>
+        <CardTitle className="font-semibold text-base">Recent notes</CardTitle>
         <CardAction>
           <Button
             nativeButton={false}

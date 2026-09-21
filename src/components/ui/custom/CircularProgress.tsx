@@ -168,7 +168,7 @@ const CircularProgress = ({
           strokeDashoffset={offset}
           strokeLinecap={shape}
           className={cn(
-            "transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+            "transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
             progressClassName
           )}
         />

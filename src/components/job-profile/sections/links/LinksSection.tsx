@@ -43,6 +43,7 @@ export const LinksSection = memo(({ sectionId }: Readonly<IProps>) => {
         <CardTitle>Links</CardTitle>
         <CardAction className="pt-2 pr-1">
           <Button
+            aria-label="Add link"
             className="rounded-full bg-primary/50"
             onClick={onAppend}
             size="icon-sm"
@@ -63,6 +64,7 @@ export const LinksSection = memo(({ sectionId }: Readonly<IProps>) => {
             />
             <FormInput form={form} label="Url" name={`links.${index}.url`} />
             <Button
+              aria-label={`Remove link ${index + 1}`}
               className="mt-6"
               // biome-ignore lint/performance/noJsxPropsBind: <>
               onClick={() => removeLink(index)}

@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CircularProgress } from "@/components/ui/custom/circular-progress.tsx";
+import { CircularProgress } from "@/components/ui/custom/CircularProgress.tsx";
 import { Progress } from "@/components/ui/progress";
 
 export interface IScoreItem {

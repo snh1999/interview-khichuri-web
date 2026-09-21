@@ -41,6 +41,12 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-signal-success: var(--signal-success);
+  --color-signal-success-foreground: var(--signal-success-foreground);
+  --color-signal-warning: var(--signal-warning);
+  --color-signal-warning-foreground: var(--signal-warning-foreground);
+  --color-signal-danger: var(--signal-danger);
+  --color-signal-danger-foreground: var(--signal-danger-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -86,6 +92,12 @@
   --accent: oklch(0.967 0.001 286.375);
   --accent-foreground: oklch(0.21 0.006 285.885);
   --destructive: oklch(0.577 0.245 27.325);
+  --signal-success: oklch(0.696 0.17 162.48);
+  --signal-success-foreground: oklch(0.49 0.15 162.5);
+  --signal-warning: oklch(0.769 0.188 70.08);
+  --signal-warning-foreground: oklch(0.542 0.16 55.5);
+  --signal-danger: oklch(0.645 0.246 16.439);
+  --signal-danger-foreground: oklch(0.505 0.22 10.5);
   --border: oklch(0.92 0.004 286.32);
   --input: oklch(0.92 0.004 286.32);
   --ring: oklch(0.705 0.015 286.067);
@@ -121,6 +133,9 @@
   --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
+  --signal-success-foreground: oklch(0.845 0.143 164.978);
+  --signal-warning-foreground: oklch(0.855 0.17 80);
+  --signal-danger-foreground: oklch(0.81 0.117 11.638);
   --info: oklch(0.72 0.11 234.09);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
@@ -191,7 +206,7 @@ select:-webkit-autofill:focus {
 
 /* Thin theme-aware scrollbar that keeps native scrolling behavior. */
 .calendar-scrollbar {
-  scrollbar-color: var(--muted-foreground) transparent;
+  scrollbar-color: var(--ring) transparent;
   scrollbar-width: thin;
 }
 
@@ -204,11 +219,7 @@ select:-webkit-autofill:focus {
 }
 
 .calendar-scrollbar::-webkit-scrollbar-thumb {
-  background-color: color-mix(
-    in oklab,
-    var(--muted-foreground) 50%,
-    transparent
-  );
+  background-color: color-mix(in oklab, var(--ring) 50%, transparent);
   border-radius: 9999px;
 }
 

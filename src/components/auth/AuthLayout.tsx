@@ -31,8 +31,8 @@ export const AuthLayout = ({
 }: Readonly<IProps>) => (
   <Background>
     <div className="mb-8 text-center">
-      <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-amber-500/20 bg-amber-500/10">
-        <BowlFoodIcon className="h-7 w-7 text-amber-500" weight="fill" />
+      <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10">
+        <BowlFoodIcon className="h-7 w-7 text-primary" weight="fill" />
       </div>
       <h1 className="font-bold text-2xl tracking-tight">Interview Khichuri</h1>
       <p className="mt-1 text-muted-foreground/80 text-sm">
@@ -69,7 +69,7 @@ export const AuthLayout = ({
     </Card>
 
     {!hideFooter && (
-      <p className="mt-6 text-center text-slate-600 text-xs">
+      <p className="mt-6 text-center text-muted-foreground text-xs">
         By continuing, you agree to our Terms of Service and Privacy Policy.
       </p>
     )}

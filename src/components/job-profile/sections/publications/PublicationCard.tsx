@@ -66,6 +66,7 @@ export const PublicationCard = ({ index, onRemove }: Readonly<IProps>) => {
     <div className="rounded-lg border border-border/60 p-3">
       <div className="mt-3 flex justify-end">
         <Button
+          aria-label={`Remove publication ${index + 1}`}
           onClick={onRemoveClick}
           size="sm"
           type="button"

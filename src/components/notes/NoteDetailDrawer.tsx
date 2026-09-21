@@ -89,7 +89,11 @@ const NoteDetailContent = ({
 
             <DrawerClose
               render={
-                <Button className="bg-transparent text-destructive" size="icon">
+                <Button
+                  aria-label="Close note"
+                  className="bg-transparent text-destructive"
+                  size="icon"
+                >
                   <XIcon />
                 </Button>
               }
@@ -111,7 +115,9 @@ const NoteDetailContent = ({
 
         <DrawerFooter className="flex-row justify-between gap-2">
           <MutationButton
-            dialogDescription="This will permanently delete this note. This action cannot be undone."
+            actionLabel="Delete note"
+            dialogDescription="The note and its contents will be permanently removed."
+            dialogTitle="Delete this note?"
             mutationFn={handleDelete}
             requireConfirmation
             successMessage="Note deleted"

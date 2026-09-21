@@ -40,6 +40,7 @@ export const WorkExperience = memo(({ sectionId }: Readonly<IProps>) => {
         <CardDescription>Your professional history.</CardDescription>
         <CardAction className="pt-2 pr-1">
           <Button
+            aria-label="Add work experience"
             className="rounded-full bg-primary/50"
             onClick={onAppend}
             size="icon-sm"

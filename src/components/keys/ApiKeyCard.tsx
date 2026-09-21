@@ -135,7 +135,9 @@ export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
           </Dialog>
 
           <MutationButton
+            actionLabel="Delete key"
             dialogDescription="This will permanently delete this API key."
+            dialogTitle="Delete this API key?"
             mutationFn={handleDelete}
             requireConfirmation
             size="sm"
