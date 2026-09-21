@@ -34,10 +34,10 @@ export const RecentSessionsSection = () => {
     <Card>
       <CardHeader>
         <CardTitle className="font-semibold text-base">
-          Recent Preparation Sessions
+          Recent sessions
         </CardTitle>
         <CardAction className="flex items-center gap-2">
-          <Button onClick={openDialog} size="sm">
+          <Button aria-label="New session" onClick={openDialog} size="sm">
             <PlusCircleIcon />
           </Button>
           <Button
@@ -54,7 +54,7 @@ export const RecentSessionsSection = () => {
       <CardContent className="flex flex-col gap-2">
         {sessions.length === 0 ? (
           <p className="text-muted-foreground text-sm">
-            No prep sessions yet — start your first one.
+            No sessions yet — create your first one.
           </p>
         ) : (
           sessions.map((session) => (

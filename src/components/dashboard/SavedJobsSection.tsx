@@ -24,14 +24,15 @@ export const SavedJobsSection = ({ jobs }: Readonly<{ jobs: IJob[] }>) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-semibold text-base">Saved Jobs</CardTitle>
+        <CardTitle className="font-semibold text-base">Saved jobs</CardTitle>
         <CardAction className="flex items-center gap-2">
-          <Button onClick={openDialog}>
+          <Button aria-label="New job" onClick={openDialog} size="sm">
             <PlusCircleIcon />
           </Button>
           <Button
             nativeButton={false}
             render={<Link to={JOBS_PAGE} />}
+            size="sm"
             variant="outline"
           >
             <ArrowSquareOutIcon /> View

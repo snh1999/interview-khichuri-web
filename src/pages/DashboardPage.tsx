@@ -7,6 +7,7 @@ import {
   buildScoreHistory,
   INTERVIEWS_WEEK_DAYS,
   RECENT_ITEMS_COUNT,
+  takeLatest,
 } from "@/components/dashboard/dashboard.helpers";
 import type { DashboardStats as DashboardStatsType } from "@/components/dashboard/dashboard.helpers.ts";
 import { RecentNotesSection } from "@/components/dashboard/RecentNotesSection";
@@ -28,11 +29,13 @@ const DashboardContent = () => {
 
   const { data: completedInterviews } = useAllInterviews({
     completed: true,
-    limit: RECENT_ITEMS_COUNT,
   });
 
-  const scoreHistory = buildScoreHistory(completedInterviews);
-  const avgMockScore = avgScore(scoreHistory);
+  const scoreHistory = takeLatest(
+    buildScoreHistory(completedInterviews),
+    RECENT_ITEMS_COUNT
+  );
+  const avgMockScore = avgScore(buildScoreHistory(completedInterviews));
 
   const stats: DashboardStatsType = {
     activeJobs: jobs.length,
@@ -48,18 +51,18 @@ const DashboardContent = () => {
     <div className="space-y-6">
       <DashboardStats stats={stats} />
 
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.4fr_1fr]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
         <ScoreProgress points={scoreHistory} />
         <UpcomingList jobs={jobs} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <div className="space-y-4 lg:col-span-7">
+        <div className="lg:col-span-7">
           <RecentSessionsSection />
-          <RecentNotesSection />
         </div>
-        <div className="space-y-6 lg:col-span-5">
+        <div className="space-y-4 lg:col-span-5">
           <SavedJobsSection jobs={jobs} />
+          <RecentNotesSection />
         </div>
       </div>
     </div>
@@ -68,13 +71,19 @@ const DashboardContent = () => {
 
 const DashboardSkeleton = () => (
   <div className="space-y-6">
-    <Skeleton className="h-23 w-full rounded-lg" />
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <Skeleton className="h-6 w-24" />
+      <div className="flex flex-wrap items-center gap-2">
+        <Skeleton className="h-8 w-40" />
+        <Skeleton className="h-8 w-28" />
+      </div>
+    </div>
     <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
       {Array.from({ length: 4 }).map((_, index) => (
         <Skeleton className="h-18.5 w-full rounded-lg" key={index.toString()} />
       ))}
     </div>
-    <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.4fr_1fr]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
       <Skeleton className="h-44 w-full rounded-lg" />
       <Skeleton className="h-44 w-full rounded-lg" />
     </div>
@@ -82,8 +91,9 @@ const DashboardSkeleton = () => (
       <div className="lg:col-span-7">
         <Skeleton className="h-64 w-full rounded-lg" />
       </div>
-      <div className="lg:col-span-5">
-        <Skeleton className="h-105 w-full rounded-lg" />
+      <div className="space-y-4 lg:col-span-5">
+        <Skeleton className="h-64 w-full rounded-lg" />
+        <Skeleton className="h-32 w-full rounded-lg" />
       </div>
     </div>
   </div>
