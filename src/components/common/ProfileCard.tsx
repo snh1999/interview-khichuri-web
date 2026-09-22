@@ -1,17 +1,19 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar.tsx";
+import BoringAvatar from "boring-avatars";
 import { Badge } from "@/components/ui/badge.tsx";
 import { useSession } from "@/lib/auth/auth-client.ts";
+import { useAppStore } from "@/store/appStore.ts";
 
 export const ProfileCard = ({
   isCompact,
+  size,
+  hideText,
 }: Readonly<{
   isCompact?: boolean;
+  size?: number;
+  hideText?: boolean;
 }>) => {
   const { data: session } = useSession();
+  const avatarVariant = useAppStore((state) => state.avatar);
 
   if (!session) {
     return null;
@@ -19,18 +21,24 @@ export const ProfileCard = ({
 
   const { user } = session;
 
+  const avatar = (
+    <BoringAvatar
+      name={user.name ?? user.email ?? "User"}
+      size={size ?? 56}
+      variant={avatarVariant}
+    />
+  );
+
+  if (hideText) {
+    return avatar;
+  }
+
   return (
     <>
       <div className="relative">
-        <Avatar
-          className={isCompact ? undefined : "size-14"}
-          size={isCompact ? "lg" : undefined}
-        >
-          <AvatarImage src={user.image ?? undefined} />
-          <AvatarFallback>{user.name[0] ?? "?"}</AvatarFallback>
-        </Avatar>
+        {avatar}
         {isCompact ? (
-          <span className="absolute right-0 bottom-0 block size-2 rounded-full bg-green-600 ring-2 ring-card" />
+          <span className="absolute right-0 bottom-0 block size-2 rounded-full bg-signal-success ring-2 ring-card" />
         ) : null}
       </div>
       <div className="flex flex-1 flex-col items-start">

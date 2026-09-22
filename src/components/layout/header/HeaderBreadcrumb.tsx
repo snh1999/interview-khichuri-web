@@ -54,7 +54,7 @@ export const HeaderBreadcrumb = () => {
         {allCrumbs.map((crumb, index) => (
           <Fragment key={crumb.path}>
             {index > 0 && <BreadcrumbSeparator />}
-            <BreadcrumbItem>
+            <BreadcrumbItem className="text-sm">
               {index === allCrumbs.length - 1 ? (
                 <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
               ) : (
