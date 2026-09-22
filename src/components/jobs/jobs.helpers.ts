@@ -136,7 +136,7 @@ export const useJobPostForm = ({
   open,
   initialDescription,
   onSuccess,
-}: IProps) => {
+}: IProps): TFormHook<TJobFormData> => {
   const createJob = useCreateJob();
   const updateJob = useUpdateJob();
 
@@ -195,6 +195,6 @@ export const useJobPostForm = ({
   return {
     form,
     onSubmit,
-    isPending: createJob.isPending || updateJob.isPending,
+    isLoading: createJob.isPending || updateJob.isPending,
   };
 };

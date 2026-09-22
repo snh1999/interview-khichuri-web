@@ -19,7 +19,6 @@ import {
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
-  DrawLog,
   DrawLogBody,
   DrawLogClose,
   DrawLogContent,
@@ -28,6 +27,7 @@ import {
   DrawLogTitle,
   DrawLogTrigger,
 } from "@/components/ui/custom/DrawLog.tsx";
+import { FormDrawLogAlert } from "@/components/ui/custom/FormDrawLogAlert.tsx";
 import {
   getQuestionBankItem,
   type IQuestionBankItem,
@@ -54,10 +54,11 @@ export const NoteFormDialog = ({
   onOpenChange,
   showTrigger,
 }: IProps) => {
-  const { form, onSubmit, isPending, isEditing } = useNoteForm(note, () =>
+  const { form, onSubmit, isLoading } = useNoteForm(note, () =>
     onOpenChange(false)
   );
 
+  const isEditing = Boolean(note);
   const noteType = form.watch("noteType");
   const questionBankId = form.watch("questionBankId");
   const lastBankTitleRef = useRef<string>("");
@@ -110,7 +111,14 @@ export const NoteFormDialog = ({
   }, [form, note, noteType, open, questionBankId]);
 
   return (
-    <DrawLog onOpenChange={onOpenChange} open={open}>
+    <FormDrawLogAlert
+      isDirty={form.formState.isDirty}
+      isEdit={Boolean(note)}
+      isLoading={isLoading}
+      onOpenChange={onOpenChange}
+      open={open}
+      type="note"
+    >
       {showTrigger ? (
         <DrawLogTrigger
           render={
@@ -182,12 +190,12 @@ export const NoteFormDialog = ({
 
           <DrawLogFooter>
             <DrawLogClose render={<Button variant="outline">Cancel</Button>} />
-            <AsyncButton isLoading={isPending} type="submit">
+            <AsyncButton isLoading={isLoading} type="submit">
               {isEditing ? "Update" : "Create"}
             </AsyncButton>
           </DrawLogFooter>
         </form>
       </DrawLogContent>
-    </DrawLog>
+    </FormDrawLogAlert>
   );
 };

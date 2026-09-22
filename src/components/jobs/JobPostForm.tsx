@@ -20,7 +20,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { AsyncButton } from "@/components/ui/button/AsyncButton";
 import {
-  DrawLog,
   DrawLogBody,
   DrawLogClose,
   DrawLogContent,
@@ -28,6 +27,7 @@ import {
   DrawLogHeader,
   DrawLogTitle,
 } from "@/components/ui/custom/DrawLog.tsx";
+import { FormDrawLogAlert } from "@/components/ui/custom/FormDrawLogAlert.tsx";
 import { stringToDate, stripNulls } from "@/lib/utils.ts";
 
 interface IProps {
@@ -48,7 +48,7 @@ export const JobPostForm = ({
 }: IProps) => {
   const extractJob = useExtractJob();
 
-  const { form, isPending, onSubmit } = useJobPostForm({
+  const { form, isLoading, onSubmit } = useJobPostForm({
     job,
     open,
     initialDescription,
@@ -100,7 +100,14 @@ export const JobPostForm = ({
 
   return (
     <>
-      <DrawLog onOpenChange={onOpenChange} open={open}>
+      <FormDrawLogAlert
+        isDirty={form.formState.isDirty}
+        isEdit={Boolean(job)}
+        isLoading={isLoading}
+        onOpenChange={onOpenChange}
+        open={open}
+        type="job"
+      >
         <DrawLogContent>
           <DrawLogHeader>
             <DrawLogTitle>{job ? "Edit Job" : "Add Job"}</DrawLogTitle>
@@ -222,7 +229,7 @@ export const JobPostForm = ({
               />
               <AsyncButton
                 disabled={!form.formState.isDirty}
-                isLoading={isPending}
+                isLoading={isLoading}
                 type="submit"
               >
                 {job ? "Update" : "Create"}
@@ -230,7 +237,7 @@ export const JobPostForm = ({
             </DrawLogFooter>
           </form>
         </DrawLogContent>
-      </DrawLog>
+      </FormDrawLogAlert>
 
       <AiDialog
         description="Choose an AI provider to extract job details from the description and links."

@@ -17,7 +17,6 @@ import {
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
-  DrawLog,
   DrawLogBody,
   DrawLogClose,
   DrawLogContent,
@@ -26,6 +25,7 @@ import {
   DrawLogTitle,
   DrawLogTrigger,
 } from "@/components/ui/custom/DrawLog.tsx";
+import { FormDrawLogAlert } from "@/components/ui/custom/FormDrawLogAlert.tsx";
 
 interface IProps {
   session?: IPrepSession;
@@ -96,7 +96,14 @@ export const PrepSessionForm = ({
   const selectedJobId = form.watch("jobId");
 
   return (
-    <DrawLog onOpenChange={onOpenChange} open={open}>
+    <FormDrawLogAlert
+      isDirty={form.formState.isDirty}
+      isEdit={Boolean(session)}
+      isLoading={isLoading}
+      onOpenChange={onOpenChange}
+      open={open}
+      type="session"
+    >
       {viewTrigger ? (
         <DrawLogTrigger
           render={
@@ -142,7 +149,7 @@ export const PrepSessionForm = ({
 
             {session ? null : (
               <JobsCombobox
-                description="You can not update this once session is created"
+                description="This can't be changed after the session is created."
                 form={form}
                 label="Job"
                 name="jobId"
@@ -158,7 +165,7 @@ export const PrepSessionForm = ({
             />
 
             <RolesCombobox
-              description={selectedJobId ? "Filled from job" : ""}
+              description={selectedJobId ? "Set from the selected job" : ""}
               disabled={Boolean(selectedJobId)}
               form={form}
               label="Target Role"
@@ -179,7 +186,7 @@ export const PrepSessionForm = ({
               isLoading={isLoading}
               type="submit"
             >
-              {session ? "Update" : "Create"}
+              {session ? "Update session" : "Create session"}
             </AsyncButton>
           </DrawLogFooter>
         </form>
@@ -188,6 +195,6 @@ export const PrepSessionForm = ({
       {selectedJobId && !session ? (
         <JobPrefillEffect form={form} jobId={selectedJobId} />
       ) : null}
-    </DrawLog>
+    </FormDrawLogAlert>
   );
 };
