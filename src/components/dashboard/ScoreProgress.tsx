@@ -82,7 +82,7 @@ export const ScoreProgress = ({
           <CardAction>
             <Button
               nativeButton={false}
-              render={<Link to={`${SESSIONS_PAGE}?start=1`} />}
+              render={<Link to={`${SESSIONS_PAGE}?create=true`} />}
               size="sm"
               variant="outline"
             >

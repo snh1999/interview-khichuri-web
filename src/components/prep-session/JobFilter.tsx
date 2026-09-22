@@ -79,9 +79,9 @@ export const JobFilter = () => {
       value={selectedOption}
     >
       <ComboboxInput placeholder="Filter by job..." showClear />
-      <ComboboxContent>
+      <ComboboxContent className="w-75">
         <ComboboxEmpty>No jobs found.</ComboboxEmpty>
-        <ComboboxList>
+        <ComboboxList className="*:mb-1">
           {(opt: IJobOption) => (
             <ComboboxItem key={opt.value} value={opt}>
               {opt.label}

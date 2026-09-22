@@ -1,5 +1,6 @@
 import MiniSearch from "minisearch";
 import type { IJob } from "@/api/jobs";
+import type { IPrepSession } from "@/api/sessions";
 import {
   type IQuestionBankItem,
   QUESTION_BANK,
@@ -112,3 +113,21 @@ export const createJobSearch = (jobs: readonly IJob[]) =>
     limit: jobs.length,
     preset: "content",
   });
+
+// TODO(search-job-labels): index the job label (e.g. "Role name @ company") in the session search.
+// Expected format: resolve labels through a global job lookup map (like useLookupMap)
+// then add `jobLabel` to the document below and index `"jobLabel"` in the fields list.
+export const createSessionSearch = (
+  sessions: readonly IPrepSession[],
+  roleName: (roleId?: number | null) => string | undefined
+) =>
+  createSearch(
+    sessions.map((session) => ({
+      id: session.id,
+      title: session.title,
+      description: session.description ?? "",
+      role: roleName(session.roleId) ?? "",
+    })),
+    ["title", "description", "role"],
+    { preset: "content", limit: sessions.length }
+  );
