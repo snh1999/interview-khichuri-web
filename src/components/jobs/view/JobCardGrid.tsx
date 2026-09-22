@@ -7,9 +7,10 @@ import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import {
   getDateInfo,
   JOB_STATUS_VARIANT,
+  STATUS_LABEL,
 } from "@/components/jobs/jobs.helpers";
-import { GutterCard } from "@/components/ui/custom/gutter-card.tsx";
-import { StatusBadge } from "@/components/ui/custom/status-badge.tsx";
+import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
+import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import { isUrgent } from "@/lib/utils";
 
 export const JobCardGrid = ({ job }: { job: IJob }) => {
@@ -43,7 +44,7 @@ export const JobCardGrid = ({ job }: { job: IJob }) => {
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <StatusBadge status={job.status} />
+          <StatusBadge label={STATUS_LABEL[job.status]} status={job.status} />
           <FavoriteButton
             isFavorite={job.isFavorite}
             onToggle={handleToggleFavorite}

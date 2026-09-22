@@ -17,8 +17,16 @@ import {
   MAX_TINY_LENGTH,
   MAX_URL_LENGTH,
 } from "@/app.constants.ts";
+import {
+  DATE_TYPE_SELECTIONS,
+  getDatePreset,
+  type TJobDatePresetKey,
+  type TJobDateTypeSelection,
+} from "@/components/jobs/filters/jobDatePresets.ts";
+import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
 import { daysUntil, stringToDate, stripNulls } from "@/lib/utils.ts";
+import { useJobsStore } from "@/store/useJobsStore.ts";
 
 export const STATUS_LABEL: Record<TJobStatus, string> = {
   saved: "Saved",
@@ -197,4 +205,31 @@ export const useJobPostForm = ({
     onSubmit,
     isLoading: createJob.isPending || updateJob.isPending,
   };
+};
+
+const isJobStatus = (value: string | null): value is TJobStatus =>
+  typeof value === "string" && JOB_STATUS.some((status) => status === value);
+
+const isDateTypeSelection = (
+  value: string | null
+): value is TJobDateTypeSelection =>
+  typeof value === "string" &&
+  DATE_TYPE_SELECTIONS.some((type) => type === value);
+
+const isPresetKey = (value: string | null): value is TJobDatePresetKey =>
+  getDatePreset(value) !== undefined;
+
+export const readFiltersFromParams = (params: URLSearchParams) => {
+  const { setStatus, setDateChange } = useJobsStore.getState();
+
+  const statusParam = params.get("status");
+  if (isJobStatus(statusParam)) {
+    setStatus(statusParam);
+  }
+
+  const presetParam = params.get("datePreset");
+  const typeParam = params.get("dateType");
+  if (isPresetKey(presetParam) && isDateTypeSelection(typeParam)) {
+    setDateChange({ kind: "preset", type: typeParam, key: presetParam });
+  }
 };
