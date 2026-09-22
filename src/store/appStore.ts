@@ -11,17 +11,24 @@ export type TAvatarVariant =
   | "geometric"
   | "abstract";
 
-interface IAvatarState {
+interface IAppState {
   avatar: TAvatarVariant;
+  pageHeader: string | null;
   setAvatar: (avatar: TAvatarVariant) => void;
+  setPageHeader: (pageHeader: string | null) => void;
 }
 
-export const useAppStore = create<IAvatarState>()(
+export const useAppStore = create<IAppState>()(
   persist(
     (set) => ({
       avatar: "beam",
+      pageHeader: null,
       setAvatar: (avatar) => set({ avatar }),
+      setPageHeader: (pageHeader) => set({ pageHeader }),
     }),
-    { name: "app-store" }
+    {
+      name: "app-store",
+      partialize: (state) => ({ avatar: state.avatar }),
+    }
   )
 );

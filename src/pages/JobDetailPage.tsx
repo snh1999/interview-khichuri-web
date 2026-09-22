@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useGetJob } from "@/api/jobs";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
@@ -9,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useJobId } from "@/hooks/useId.ts";
 import { useTabs } from "@/hooks/useTabs.ts";
+import { useAppStore } from "@/store/appStore.ts";
 
 const JOB_DETAIL_TABS = [
   { key: "overview", label: "Overview" },
@@ -26,6 +28,11 @@ const JobDetailContent = () => {
   const jobId = useJobId();
   const { data: job } = useGetJob(jobId);
   const { currentTab, handleTabChange } = useTabs("overview");
+  const setPageHeader = useAppStore((state) => state.setPageHeader);
+
+  useEffect(() => {
+    setPageHeader(job.title);
+  }, [job.title, setPageHeader]);
 
   const handleTabValueChange = (value: string | null) =>
     handleTabChange(String(value));

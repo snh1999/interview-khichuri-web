@@ -1,5 +1,5 @@
 import { PenIcon, ReadCvLogoIcon } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generatePath, useNavigate } from "react-router";
 import { toast } from "sonner";
 import {
@@ -31,6 +31,7 @@ import {
 import { CircularProgress } from "@/components/ui/custom/CircularProgress.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useResumeId } from "@/hooks/useId.ts";
+import { useAppStore } from "@/store/appStore.ts";
 
 export const REVIEW_SECTION_LABEL: Record<TStandaloneCategoryKey, string> = {
   toneAndStyle: "Tone & Style",
@@ -51,6 +52,11 @@ const ResumeDetailContent = () => {
   const { data: resume } = useGetResumeById(resumeId);
   const isGenerated = Boolean(resume?.template);
   const hasPdfFile = Boolean(resume?.url);
+  const setPageHeader = useAppStore((state) => state.setPageHeader);
+
+  useEffect(() => {
+    setPageHeader(resume.name);
+  }, [resume.name, setPageHeader]);
 
   const { data: cachedReviewEntry } = useCachedStandaloneReview(resumeId);
   const cachedReview = cachedReviewEntry ? { ...cachedReviewEntry } : null;

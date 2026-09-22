@@ -1,5 +1,5 @@
-import { Fragment } from "react";
-import { useLocation } from "react-router";
+import { Fragment, useEffect, useRef } from "react";
+import { Link, useLocation } from "react-router";
 import {
   ADMIN_LOOKUPS_PAGE,
   ADMIN_PAGE,
@@ -15,6 +15,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb.tsx";
+import { useAppStore } from "@/store/appStore.ts";
 
 const PATH_LABELS: Record<string, string> = {
   [HOMEPAGE]: "Home",
@@ -24,16 +25,36 @@ const PATH_LABELS: Record<string, string> = {
   [ADMIN_LOOKUPS_PAGE]: "Lookups",
 };
 
+const RESOURCE_SEGMENT_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const formatSegment = (segment: string) =>
   segment.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
 export const HeaderBreadcrumb = () => {
   const { pathname, search } = useLocation();
+  const pageHeader = useAppStore((state) => state.pageHeader);
+  const setPageHeader = useAppStore((state) => state.setPageHeader);
+  const lastResetPath = useRef(pathname);
+
+  useEffect(() => {
+    if (lastResetPath.current !== pathname) {
+      lastResetPath.current = pathname;
+      setPageHeader(null);
+    }
+  }, [pathname, setPageHeader]);
 
   const segments = pathname.split("/").filter(Boolean);
   const breadcrumbs = segments.map((_, index) => {
     const path = `/${segments.slice(0, index + 1).join("/")}`;
     return { path, label: PATH_LABELS[path] ?? formatSegment(segments[index]) };
+  });
+
+  const resolvedCrumbs = breadcrumbs.map((crumb, index) => {
+    const isResourceCrumb = RESOURCE_SEGMENT_PATTERN.test(segments[index]);
+    return isResourceCrumb && pageHeader
+      ? { ...crumb, label: pageHeader }
+      : crumb;
   });
 
   const params = new URLSearchParams(search);
@@ -42,7 +63,7 @@ export const HeaderBreadcrumb = () => {
     ? [{ path: pathname + search, label: formatSegment(tabValue) }]
     : [];
 
-  const allCrumbs = [...breadcrumbs, ...queryCrumb];
+  const allCrumbs = [...resolvedCrumbs, ...queryCrumb];
 
   if (allCrumbs.length === 0) {
     return null;
@@ -58,7 +79,9 @@ export const HeaderBreadcrumb = () => {
               {index === allCrumbs.length - 1 ? (
                 <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
               ) : (
-                <BreadcrumbLink href={crumb.path}>{crumb.label}</BreadcrumbLink>
+                <BreadcrumbLink render={<Link to={crumb.path} />}>
+                  {crumb.label}
+                </BreadcrumbLink>
               )}
             </BreadcrumbItem>
           </Fragment>

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useSession } from "@/api/sessions";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
@@ -8,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSessionId } from "@/hooks/useId.ts";
 import { useTabs } from "@/hooks/useTabs.ts";
+import { useAppStore } from "@/store/appStore.ts";
 
 const TABS = [
   { key: "questions", label: "Questions" },
@@ -29,6 +31,11 @@ const SessionDetailContent = () => {
   const sessionId = useSessionId();
   const { data: session } = useSession(sessionId);
   const { currentTab, handleTabChange } = useTabs("questions");
+  const setPageHeader = useAppStore((state) => state.setPageHeader);
+
+  useEffect(() => {
+    setPageHeader(session.title);
+  }, [session.title, setPageHeader]);
 
   const handleTabValueChange = (value: string | null) =>
     handleTabChange(String(value));
