@@ -8,6 +8,7 @@ import {
   useCreateNote,
   useUpdateNote,
 } from "@/api/notes";
+import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import type { IQuestionBankItem } from "@/lib/questions/question-bank.ts";
 
 export const NOTE_LINK_TYPES = ["job", "question_bank"] as const;
@@ -45,12 +46,12 @@ const noteFormSchema = z
     path: ["jobId"],
   });
 
-export type NoteFormData = z.infer<typeof noteFormSchema>;
+export type TNoteFormData = z.infer<typeof noteFormSchema>;
 
 export const noteFormDefaults = (
   initialValues?: INote,
   preset?: INotePreset
-): NoteFormData => ({
+): TNoteFormData => ({
   title: initialValues?.title ?? "",
   details: initialValues?.details ?? "",
   noteType: initialValues ? "none" : (preset?.noteType ?? "none"),
@@ -58,15 +59,18 @@ export const noteFormDefaults = (
   questionBankId: initialValues ? null : (preset?.questionBankId ?? null),
 });
 
-const toCreatePayload = (data: NoteFormData): ICreateNoteDto => ({
+const toCreatePayload = (data: TNoteFormData): ICreateNoteDto => ({
   title: data.title,
   details: data.details,
   questionId: null,
   jobId: data.noteType === "job" ? data.jobId : null,
 });
 
-export const useNoteForm = (initialValues?: INote, onSuccess?: () => void) => {
-  const form = useForm<NoteFormData>({
+export const useNoteForm = (
+  initialValues?: INote,
+  onSuccess?: () => void
+): TFormHook<TNoteFormData> => {
+  const form = useForm<TNoteFormData>({
     defaultValues: noteFormDefaults(initialValues),
     resolver: zodResolver(noteFormSchema),
   });
@@ -95,8 +99,7 @@ export const useNoteForm = (initialValues?: INote, onSuccess?: () => void) => {
 
   return {
     form,
-    isEditing: Boolean(initialValues),
-    isPending: form.formState.isSubmitting,
+    isLoading: form.formState.isSubmitting,
     onSubmit,
   };
 };

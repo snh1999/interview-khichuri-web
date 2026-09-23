@@ -3,7 +3,11 @@ import { useTopics } from "@/api/lookups";
 import type { IPrepSession } from "@/api/sessions";
 import { useUpdateSession } from "@/api/sessions";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
-import { useNavigateToSessionPage } from "@/components/prep-session/session/session.helpers.ts";
+import {
+  formatSessionDate,
+  getMetaLabel,
+  useNavigateToSessionPage,
+} from "@/components/prep-session/session.helpers.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Item,
@@ -29,13 +33,7 @@ export const SessionListRow = ({
   const updateSession = useUpdateSession();
   const topicMap = useLookupMap(useTopics().data);
 
-  const topicIds =
-    session.topicIds ?? session.sessionTopics?.map((st) => st.topicId);
-  const topicLabel = (topicIds ?? [])
-    .map((topicId) => topicMap.get(topicId)?.name)
-    .filter(Boolean)
-    .join(", ");
-  const metaLabel = subtitle ?? (topicLabel || "General prep");
+  const metaLabel = getMetaLabel(session, topicMap, subtitle);
 
   const handleToggleFavorite = () =>
     updateSession.mutateAsync({
@@ -69,7 +67,7 @@ export const SessionListRow = ({
         )}
         {showDate ? (
           <span className="shrink-0 font-normal text-muted-foreground text-xs">
-            {new Date(session.createdAt).toLocaleDateString()}
+            {formatSessionDate(session.createdAt)}
           </span>
         ) : null}
         <CaretRightIcon className="size-4 shrink-0 text-muted-foreground" />

@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog.tsx";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
+import { XIcon } from "@phosphor-icons/react";
 
 
 export function ActionButton({
@@ -27,6 +28,8 @@ export function ActionButton({
   dialogDescription = "This action cannot be undone.",
   dialogTitle = "Are you sure?",
   actionLabel = "Confirm",
+  cancelLabel = "Cancel",
+  onCancel,
   renderNode,
   ...props
 }: ComponentProps<typeof Button> & {
@@ -35,6 +38,8 @@ export function ActionButton({
   dialogDescription?: ReactNode;
   dialogTitle?: ReactNode;
   actionLabel?: ReactNode;
+  cancelLabel?: ReactNode;
+  onCancel?: () => Promise<unknown> | void;
   renderNode?: ReactElement;
 }) {
   const [isLoading, startTransition] = useTransition();
@@ -62,15 +67,25 @@ export function ActionButton({
       >
         <AlertDialogTrigger
           render={renderNode ?? <Button {...props} />}
+          nativeButton={!renderNode}
           onClick={() => setOpen(true)}
         />
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{dialogTitle}</AlertDialogTitle>
+            <div className="flex justify-between items-center w-full">
+            <AlertDialogTitle className="text-md" >{dialogTitle}</AlertDialogTitle>
+            {onCancel?
+              <AlertDialogCancel disabled={isLoading} variant={"ghost"}>
+                <XIcon/>
+              </AlertDialogCancel> : null}
+            </div>
+
             <AlertDialogDescription>{dialogDescription}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => onCancel?.()} disabled={isLoading}>
+              {cancelLabel}
+            </AlertDialogCancel>
             <AlertDialogAction variant={props.variant} disabled={isLoading} onClick={performAction}>
               <LoadingSwap isLoading={isLoading}>{actionLabel}</LoadingSwap>
             </AlertDialogAction>
