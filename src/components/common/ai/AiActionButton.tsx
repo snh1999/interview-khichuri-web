@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { SETTINGS_PAGE } from "@/app.constants.ts";
 import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
 import { useAIProvider } from "@/components/common/ai/ai.hook.ts";
+import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SplitButton } from "@/components/ui/button/SplitButton";
 import { useAppStore } from "@/store/appStore.ts";
 
@@ -26,7 +27,13 @@ interface IProps
   hideTarget?: boolean;
 }
 
-export const AiActionButton = ({
+export const AiActionButton = (props: Readonly<IProps>) => (
+  <AppErrorSuspense>
+    <AiActionButtonContent {...props} />
+  </AppErrorSuspense>
+);
+
+const AiActionButtonContent = ({
   execute,
   title,
   description,

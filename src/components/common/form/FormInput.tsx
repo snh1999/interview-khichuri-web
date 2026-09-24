@@ -23,6 +23,7 @@ export const FormInput = <T extends FieldValues>({
   StartComponent,
   EndComponent,
   textArea,
+  rows,
 }: IFormInputProps<T>) => {
   const { field, fieldState } = useController({
     control: form.control,
@@ -40,6 +41,7 @@ export const FormInput = <T extends FieldValues>({
             className="text-xs"
             id={field.name}
             placeholder={placeholder}
+            rows={rows}
             value={field.value ?? ""}
           />
         ) : (

@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { PROVIDER_LABELS, type TApiKeyProvider } from "@/api/keys";
 import { SETTINGS_PAGE } from "@/app.constants.ts";
 import { useAIProvider } from "@/components/common/ai/ai.hook.ts";
+import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { Button } from "@/components/ui/button";
 import { AsyncButton } from "@/components/ui/button/AsyncButton";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -40,7 +41,13 @@ export interface AiDialogProps {
   children?: ReactNode;
 }
 
-export const AiDialog = ({
+export const AiDialog = (props: Readonly<AiDialogProps>) => (
+  <AppErrorSuspense>
+    <AiDialogContent {...props} />
+  </AppErrorSuspense>
+);
+
+const AiDialogContent = ({
   open,
   onOpenChange,
   onExecute,

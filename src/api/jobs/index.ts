@@ -30,12 +30,16 @@ interface ICommonFields {
   source?: string | null;
 }
 
-export interface IJobExtractionResult extends ICommonFields {
+export interface IJobExtractionResult {
+  title?: string;
   companyName?: string | null;
+  roleId?: number | null;
+  topicIds?: number[];
+  location?: string | null;
+  source?: string | null;
   deadline: string | null;
   interviewDate: string | null;
-  appliedAt: string | null;
-  status: TJobStatus | null;
+  status: TJobStatus;
 }
 
 export interface ICreateJobDto extends ICommonFields {

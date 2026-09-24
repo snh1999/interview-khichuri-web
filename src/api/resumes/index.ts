@@ -136,10 +136,18 @@ export const useUpdateResume = () =>
 
 export const useExtractResume = () =>
   useMutation({
-    mutationFn: async ({ id, provider }: { id: string; provider: string }) =>
+    mutationFn: async ({
+      id,
+      provider,
+      model,
+    }: {
+      id: string;
+      provider: string;
+      model?: string;
+    }) =>
       await api.post<TExtractionResult>(
         `/resume/${id}/extract`,
-        { provider },
+        { provider, model },
         { timeoutMs: 120_000 }
       ),
   });

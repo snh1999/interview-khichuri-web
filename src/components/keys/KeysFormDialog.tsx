@@ -52,13 +52,16 @@ const useKeysForm = (onSuccess: () => void): TFormHook<TCreateKeyFormData> => {
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await createKey(data, {
-      onSuccess: () => {
-        toast.success("API key saved");
-        form.reset();
-        onSuccess();
-      },
-    });
+    await createKey(
+      { ...data, model: data.model?.trim() || undefined },
+      {
+        onSuccess: () => {
+          toast.success("API key saved");
+          form.reset();
+          onSuccess();
+        },
+      }
+    );
   });
 
   return { form, isLoading, onSubmit };

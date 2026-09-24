@@ -1,11 +1,10 @@
 import { SparkleIcon } from "@phosphor-icons/react";
-import { useState } from "react";
 import {
   type IJob,
   type IJobExtractionResult,
   useExtractJob,
 } from "@/api/jobs";
-import { AiDialog } from "@/components/common/ai/AiDialog";
+import { AiActionButton } from "@/components/common/ai/AiActionButton";
 import { CompaniesCombobox } from "@/components/common/form/combobox/CompaniesCombobox.tsx";
 import { RolesCombobox } from "@/components/common/form/combobox/RolesCombobox.tsx";
 import { TopicsCombobox } from "@/components/common/form/combobox/TopicsCombobox.tsx";
@@ -57,11 +56,9 @@ export const JobPostForm = ({
 
   const description = form.watch("description");
   const links = form.watch("links");
-  const hasContent = description?.trim().length > 0;
-  const [aiDialogOpen, setAiDialogOpen] = useState(false);
-
-  const openAiDialog = () => setAiDialogOpen(true);
-  const closeAiDialog = () => setAiDialogOpen(false);
+  const hasExtractContent =
+    (description?.trim().length ?? 0) > 0 ||
+    (links?.some((link) => link.value.trim().length > 0) ?? false);
 
   const handleCompanyChange = (id: number | null, name: string) => {
     form.setValue("companyId", id, { shouldDirty: true });
@@ -69,37 +66,33 @@ export const JobPostForm = ({
   };
 
   const handleExtract = async (provider: string, model?: string) => {
-    try {
-      const result = stripNulls(
-        await extractJob.mutateAsync({
-          description,
-          links: links
-            ?.map((l) => l.value)
-            .filter(Boolean)
-            .join("\n"),
-          provider,
-          model,
-        })
-      ) as IJobExtractionResult;
+    const joinedLinks = links
+      ?.map((l) => l.value)
+      .filter(Boolean)
+      .join("\n");
+    const result = stripNulls(
+      await extractJob.mutateAsync({
+        description,
+        ...(joinedLinks ? { links: joinedLinks } : {}),
+        provider,
+        model,
+      })
+    ) as IJobExtractionResult;
 
-      form.reset({
-        ...form.getValues(),
+    form.setValues(
+      {
         ...result,
-        appliedAt:
-          stringToDate(result.appliedAt) ?? form.getValues("appliedAt"),
         companyName: result.companyName ?? "",
-        deadline: stringToDate(result.deadline) ?? form.getValues("deadline"),
-        interviewDate:
-          stringToDate(result.interviewDate) ?? form.getValues("interviewDate"),
-        status: result.status ?? form.getValues("status"),
-      });
-    } finally {
-      closeAiDialog();
-    }
+        deadline: stringToDate(result.deadline),
+        interviewDate: stringToDate(result.interviewDate),
+      },
+      { shouldDirty: true }
+    );
   };
 
   return (
-    <>
+    // TODO-remove div later
+    <div>
       <FormDrawLogAlert
         isDirty={form.formState.isDirty}
         isEdit={Boolean(job)}
@@ -115,26 +108,12 @@ export const JobPostForm = ({
 
           <form onSubmit={onSubmit}>
             <DrawLogBody>
-              {/* TODO: expand or use markdown editor here */}
               <FormInput
-                EndComponent={
-                  hasContent ? (
-                    <span className="flex w-full justify-end">
-                      <Button
-                        onClick={openAiDialog}
-                        size="sm"
-                        variant="outline"
-                      >
-                        <SparkleIcon className="size-4" />
-                        AI Extract
-                      </Button>
-                    </span>
-                  ) : null
-                }
                 form={form}
                 label="Description"
                 name="description"
                 placeholder="Paste the job description here..."
+                rows={8}
                 textArea
               />
 
@@ -223,31 +202,37 @@ export const JobPostForm = ({
               />
             </DrawLogBody>
 
-            <DrawLogFooter>
-              <DrawLogClose
-                render={<Button variant="outline">Cancel</Button>}
+            <DrawLogFooter className="justify-between!">
+              <AiActionButton
+                description="Choose an AI provider to extract job details from the description and links."
+                disabled={!hasExtractContent}
+                execute={handleExtract}
+                executeLabel="AI Extract"
+                hideTarget
+                icon={<SparkleIcon className="size-4" />}
+                isLoading={extractJob.isPending}
+                title="Extract Job Details"
+                toastErrorMessage="Failed to extract job details"
+                toastSuccessMessage="Job details extracted"
+                variant="outline"
               />
-              <AsyncButton
-                disabled={!form.formState.isDirty}
-                isLoading={isLoading}
-                type="submit"
-              >
-                {job ? "Update" : "Create"}
-              </AsyncButton>
+
+              <div className="flex items-center gap-2">
+                <DrawLogClose
+                  render={<Button variant="outline">Cancel</Button>}
+                />
+                <AsyncButton
+                  disabled={!form.formState.isDirty}
+                  isLoading={isLoading}
+                  type="submit"
+                >
+                  {job ? "Update" : "Create"}
+                </AsyncButton>
+              </div>
             </DrawLogFooter>
           </form>
         </DrawLogContent>
       </FormDrawLogAlert>
-
-      <AiDialog
-        description="Choose an AI provider to extract job details from the description and links."
-        executeLabel="Extract"
-        isLoading={extractJob.isPending}
-        onExecute={handleExtract}
-        onOpenChange={setAiDialogOpen}
-        open={aiDialogOpen}
-        title="Extract Job Details"
-      />
-    </>
+    </div>
   );
 };
