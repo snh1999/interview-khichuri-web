@@ -148,3 +148,101 @@ export const api = {
     });
   },
 };
+
+const parseSSEEvent = <T>(event: string): T | null => {
+  const dataLine = event
+    .replaceAll("\r\n", "\n")
+    .split("\n")
+    .find((line) => line.startsWith("data:"));
+  if (!dataLine) {
+    return null;
+  }
+
+  const payload = dataLine.slice(5).trim();
+  if (!payload) {
+    return null;
+  }
+
+  return JSON.parse(payload) as T;
+};
+
+const extractSSEPayloads = <T>(
+  buffer: string
+): { payloads: T[]; rest: string } => {
+  const parts = buffer.split("\n\n");
+  const rest = parts.pop() ?? "";
+  const payloads: T[] = [];
+  for (const part of parts) {
+    const payload = parseSSEEvent<T>(part);
+    if (payload !== null) {
+      payloads.push(payload);
+    }
+  }
+  return { payloads, rest };
+};
+
+export async function* streamPost<T>(
+  path: string,
+  data?: unknown,
+  signal?: AbortSignal
+): AsyncGenerator<T> {
+  const response = await fetch(`${API_PREFIX}${path}`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: data ? JSON.stringify(data) : undefined,
+    signal,
+  });
+
+  if (!response.ok) {
+    const rawBody = await response.text();
+    let body: IApiResponse<T> | null = null;
+    try {
+      body = JSON.parse(rawBody) as IApiResponse<T>;
+    } catch {
+      // response is not JSON
+    }
+
+    if (response.status === 401) {
+      globalThis.location.href = "/login";
+      return undefined as T;
+    }
+
+    throw new ApiError(
+      response.status,
+      body?.message || `Request failed with status ${response.status}`
+    );
+  }
+
+  if (!response.body) {
+    throw new ApiError(500, "Streaming is not supported by this browser");
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  try {
+    let done = false;
+    while (!done) {
+      // biome-ignore lint/performance/noAwaitInLoops: <streaming requires sequential reads>
+      const { done: iterationDone, value } = await reader.read();
+      done = iterationDone;
+      buffer += decoder.decode(value ?? new Uint8Array(), {
+        stream: !done,
+      });
+      const { payloads, rest } = extractSSEPayloads<T>(buffer);
+      buffer = rest;
+      for (const payload of payloads) {
+        yield payload;
+      }
+    }
+
+    const { payloads } = extractSSEPayloads<T>(buffer);
+    for (const payload of payloads) {
+      yield payload;
+    }
+  } finally {
+    reader.releaseLock();
+  }
+}
