@@ -28,7 +28,7 @@ import { Label } from "@/components/ui/label.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { useResumeId } from "@/hooks/useId.ts";
 import { useAppStore } from "@/store/appStore.ts";
-import "@/resume-fonts.css";
+import "@/fonts.css";
 
 const ResumeEditorContent = () => {
   const { resumeId } = useParams<{ resumeId: string }>();
