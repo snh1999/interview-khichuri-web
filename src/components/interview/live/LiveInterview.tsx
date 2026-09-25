@@ -129,6 +129,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
   ) => {
     setStreamingFollowUps(true);
     let live: IInterviewQuestion[] = [];
+    let streamSucceeded = false;
     const controller = new AbortController();
     followUpAbortRef.current = controller;
     try {
@@ -153,6 +154,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
           );
           break;
         } else {
+          streamSucceeded = true;
           break;
         }
       }
@@ -162,23 +164,25 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
       }
       toast.error("Could not generate follow-up questions");
     } finally {
-      if (controller.signal.aborted) {
-        setStreamingFollowUps(false);
-        setLiveFollowUps([]);
-      } else {
-        const latest = await getLocalInterviewState(interview.id);
-        if (latest && live.length > 0) {
-          const existingIds = new Set(
-            latest.questions.map((q) => q.questionText)
-          );
-          const fresh = live.filter((q) => !existingIds.has(q.questionText));
-          if (fresh.length > 0) {
-            await saveLocalDraft({
-              ...latest,
-              questions: [...latest.questions, ...fresh],
-            });
+      try {
+        if (!controller.signal.aborted && streamSucceeded) {
+          const latest = await getLocalInterviewState(interview.id);
+          if (latest && live.length > 0) {
+            const existingIds = new Set(
+              latest.questions.map((q) => q.questionText)
+            );
+            const fresh = live.filter((q) => !existingIds.has(q.questionText));
+            if (fresh.length > 0) {
+              await saveLocalDraft({
+                ...latest,
+                questions: [...latest.questions, ...fresh],
+              });
+            }
           }
         }
+      } catch {
+        toast.error("Could not save follow-up questions");
+      } finally {
         setStreamingFollowUps(false);
         setLiveFollowUps([]);
       }

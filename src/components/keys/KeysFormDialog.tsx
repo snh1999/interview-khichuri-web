@@ -84,7 +84,7 @@ export const KeysFormDialog = () => {
       isLoading={isLoading}
       onOpenChange={setOpen}
       open={open}
-      type="note"
+      type="key"
     >
       <DrawLogTrigger
         render={

@@ -31,12 +31,20 @@ const JobsContent = () => {
   const { search, status, dateType, datePreset, dateFrom, dateTo, resetAll } =
     useJobsStore();
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { currentSort } = useJobSort();
 
   useEffect(() => {
     readFiltersFromParams(searchParams);
-  }, [searchParams]);
+    const next = new URLSearchParams();
+    const view = searchParams.get("view");
+    if (view) {
+      next.set("view", view);
+    }
+    if (next.toString() !== searchParams.toString()) {
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const dateFilters = useMemo(
     () => resolveDateFilters({ dateType, datePreset, dateFrom, dateTo }),

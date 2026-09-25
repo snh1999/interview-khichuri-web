@@ -22,7 +22,10 @@ export const useAIProvider = () => {
       ? defaultAiProvider?.provider
       : null) ?? (hasProviders ? providers[0] : null);
 
-  const initialModel = defaultAiProvider?.model ?? "";
+  const initialModel =
+    defaultAiProvider && defaultAiProvider.provider === initialProvider
+      ? (defaultAiProvider.model ?? "")
+      : "";
 
   return {
     providers,

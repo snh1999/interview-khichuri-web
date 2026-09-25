@@ -134,7 +134,20 @@ export const ResumeListItem = ({
             <DropdownMenuItem onClick={handleFillProfile}>
               <FileArrowDownIcon className="size-4" /> Fill profile
             </DropdownMenuItem>
-          ) : null}
+          ) : (
+            <AiActionButton
+              description="Extract your profile data from this PDF resume. Only sections found in the resume will be updated."
+              execute={handleExecute}
+              executeLabel="Fill profile"
+              hideTarget
+              icon={<FileArrowDownIcon className="size-4" />}
+              isLoading={isExtracting}
+              title="Extract Resume Data"
+              toastErrorMessage="Failed to extract resume"
+              toastSuccessMessage="Profile extracted — review and save"
+              variant="ghost"
+            />
+          )}
 
           {!resume.isPrimary && (
             <DropdownMenuItem
@@ -169,20 +182,6 @@ export const ResumeListItem = ({
           </ActionButton>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {resume.content ? null : (
-        <AiActionButton
-          description="Extract your profile data from this PDF resume. Only sections found in the resume will be updated."
-          execute={handleExecute}
-          executeLabel="Fill profile"
-          hideTarget
-          icon={<FileArrowDownIcon className="size-4" />}
-          isLoading={isExtracting}
-          title="Extract Resume Data"
-          toastErrorMessage="Failed to extract resume"
-          toastSuccessMessage="Profile extracted — review and save"
-        />
-      )}
 
       <ActionButton
         action={handleDelete}

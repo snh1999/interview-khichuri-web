@@ -169,7 +169,7 @@ const parseSSEEvent = <T>(event: string): T | null => {
 const extractSSEPayloads = <T>(
   buffer: string
 ): { payloads: T[]; rest: string } => {
-  const parts = buffer.split("\n\n");
+  const parts = buffer.replaceAll("\r\n", "\n").split("\n\n");
   const rest = parts.pop() ?? "";
   const payloads: T[] = [];
   for (const part of parts) {
@@ -238,9 +238,9 @@ export async function* streamPost<T>(
       }
     }
 
-    const { payloads } = extractSSEPayloads<T>(buffer);
-    for (const payload of payloads) {
-      yield payload;
+    const finalPayload = parseSSEEvent<T>(buffer);
+    if (finalPayload !== null) {
+      yield finalPayload;
     }
   } finally {
     reader.releaseLock();

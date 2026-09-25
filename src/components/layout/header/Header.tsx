@@ -30,7 +30,7 @@ export const Header = () => {
               size="icon-lg"
               variant="ghost"
             >
-              <ProfileMenu trigger={<ProfileCard hideText />} />
+              <ProfileCard hideText />
             </Button>
           }
         />
