@@ -5,7 +5,6 @@ import { FormCombobox } from "@/components/common/form/combobox/FormCombobox.tsx
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
 import {
-  COVER_LETTER_TONES,
   CURRENCIES,
   REMOTE_PREFERENCES,
 } from "@/components/job-profile/profile.data.ts";
@@ -60,13 +59,6 @@ export const PreferencesInformation = memo(
               form={form}
               label="Location Preference"
               name="preferences.preferredLocation"
-            />
-
-            <FormSelect
-              form={form}
-              label="Cover Letter Tone"
-              name="preferences.coverLetterTone"
-              selectData={COVER_LETTER_TONES}
             />
 
             <FormInput

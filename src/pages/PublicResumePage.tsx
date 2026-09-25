@@ -9,6 +9,7 @@ import {
 } from "@/components/resume/template-registry.ts";
 import { EmptyPage } from "@/pages/EmptyPage.tsx";
 import { DEFAULT_SECTION_CONFIGS } from "@/store/resumeStore.ts";
+import "@/fonts.css";
 
 const PublicResumeContent = () => {
   const { slug } = useParams<{ slug: string }>();

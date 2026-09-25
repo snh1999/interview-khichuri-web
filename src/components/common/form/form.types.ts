@@ -25,6 +25,7 @@ export type IFormInputProps<T extends FieldValues> = TBasicFormInputProps<T> & {
   // biome-ignore lint/style/useNamingConvention: <component type>
   EndComponent?: ReactNode;
   textArea?: boolean;
+  rows?: number;
 };
 
 export interface IFormHook<T extends FieldValues> {

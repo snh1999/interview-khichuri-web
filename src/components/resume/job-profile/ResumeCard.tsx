@@ -11,7 +11,6 @@ import {
   useSetPrimaryResume,
 } from "@/api/resumes";
 import { MAX_RESUMES } from "@/app.constants.ts";
-import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import { profileToFormData } from "@/components/job-profile/profile.helpers.ts";
 import { AddResume } from "@/components/resume/job-profile/AddResume.tsx";
@@ -46,31 +45,23 @@ export const ResumeCard = () => {
 
   const [viewingResume, setViewingResume] = useState<IResume | null>(null);
   const [open, setOpen] = useState(false);
-  const [aiOpen, setAiOpen] = useState(false);
-  const [extractTarget, setExtractTarget] = useState<IResume | null>(null);
   const [extraction, setExtraction] = useState<TExtractionResult | null>(null);
   const { mutateAsync: deleteResume } = useDeleteResume();
   const { mutate: setPrimary, isPending: isSettingPrimary } =
     useSetPrimaryResume();
   const extractResume = useExtractResume();
 
-  const handleExtract = async (provider: string) => {
-    if (!extractTarget) {
-      return;
-    }
-    try {
-      const result = await extractResume.mutateAsync({
-        id: extractTarget.id,
-        provider,
-      });
-      setExtraction(result);
-      setAiOpen(false);
-      setExtractTarget(null);
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Failed to extract resume"
-      );
-    }
+  const handleExtract = async (
+    resume: IResume,
+    provider: string,
+    model?: string
+  ) => {
+    const result = await extractResume.mutateAsync({
+      id: resume.id,
+      provider,
+      model,
+    });
+    setExtraction(result);
   };
 
   const applyExtraction = (merged: TProfileFormData, override: boolean) => {
@@ -103,13 +94,18 @@ export const ResumeCard = () => {
   const handleOverride = (merged: TProfileFormData) =>
     applyExtraction(merged, true);
 
-  const onFillProfile = (resume: IResume) => {
+  const onFillProfile = async (
+    resume: IResume,
+    provider?: string,
+    model?: string
+  ) => {
     if (resume.content) {
       setExtraction(mergeIntoFormData(resume.content));
       return;
     }
-    setExtractTarget(resume);
-    setAiOpen(true);
+    if (provider) {
+      await handleExtract(resume, provider, model);
+    }
   };
 
   return (
@@ -146,6 +142,7 @@ export const ResumeCard = () => {
           <div className="flex flex-col gap-2">
             {resumes.map((resume) => (
               <ResumeListItem
+                isExtracting={extractResume.isPending}
                 isSettingPrimary={isSettingPrimary}
                 key={resume.id}
                 onDelete={deleteResume}
@@ -173,16 +170,6 @@ export const ResumeCard = () => {
             onOverride={handleOverride}
           />
         ) : null}
-
-        <AiDialog
-          description="Extract your profile data from this PDF resume. Only sections found in the resume will be updated."
-          executeLabel="Extract"
-          isLoading={extractResume.isPending}
-          onExecute={handleExtract}
-          onOpenChange={setAiOpen}
-          open={aiOpen}
-          title="Extract Resume Data"
-        />
       </CardContent>
 
       <Dialog onOpenChange={setOpen} open={open}>

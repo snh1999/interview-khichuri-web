@@ -33,8 +33,8 @@ export const getMetaLabel = (
     .join(", ");
 
   return (
-    topicLabel?.trim() ||
     subtitle?.trim() ||
+    topicLabel?.trim() ||
     session.description?.trim() ||
     "Standalone session"
   );

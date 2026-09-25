@@ -8,14 +8,13 @@ import {
 } from "@phosphor-icons/react";
 import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { toast } from "sonner";
 import { z } from "zod";
 import {
   type IPrepSession,
   useGenerateQuestions,
   useQuestions,
 } from "@/api/sessions";
-import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
+import { AiActionButton } from "@/components/common/ai/AiActionButton.tsx";
 import { QuestionCard } from "@/components/prep-session/question/QuestionCard.tsx";
 import { QuestionForm } from "@/components/prep-session/question/QuestionForm.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -61,7 +60,6 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
   const { mutateAsync: generateQuestions, isPending: isQuestionPending } =
     useGenerateQuestions();
 
-  const [aiDialogOpen, setAiDialogOpen] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
@@ -94,21 +92,14 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
   );
 
   const handleGenerateQuestions = async (provider: string, model?: string) => {
-    try {
-      await generateQuestions({
-        id: sessionId,
-        provider,
-        model,
-        count: questionCountSchema.catch(5).parse(count),
-        avoidRepeat,
-        includeJobDescription,
-      });
-      toast.success("Questions generated");
-    } catch {
-      toast.error("Failed to generate questions");
-    } finally {
-      setAiDialogOpen(false);
-    }
+    await generateQuestions({
+      id: sessionId,
+      provider,
+      model,
+      count: questionCountSchema.catch(5).parse(count),
+      avoidRepeat,
+      includeJobDescription,
+    });
   };
 
   const allExpanded =
@@ -135,7 +126,6 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
     });
   }, []);
 
-  const openAiDialog = () => setAiDialogOpen(true);
   const viewAddForm = () => setShowAddForm(true);
   const hideAddForm = () => setShowAddForm(false);
   const toggleNoteView = () => setShowNotes((state) => !state);
@@ -156,13 +146,67 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
   const handleFilterChange = (value: string[]) =>
     setFilter(value[0] as QuestionFilter);
 
-  return (
+  const dialogAdditionalFields = (
     <>
+      <div className="space-y-1.5">
+        <Label htmlFor="question-count">Number of questions</Label>
+        <Input
+          disabled={isQuestionPending}
+          id="question-count"
+          max={50}
+          min={1}
+          onChange={handleCountChange}
+          type="number"
+          value={count}
+        />
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Checkbox
+          checked={avoidRepeat}
+          disabled={isQuestionPending}
+          id="avoid-repeat"
+          onCheckedChange={setAvoidRepeat}
+        />
+        <Label htmlFor="avoid-repeat">Avoid repeating previous questions</Label>
+      </div>
+
+      {session.jobId ? (
+        <div className="flex items-center gap-2">
+          <Checkbox
+            checked={includeJobDescription}
+            disabled={isQuestionPending}
+            id="include-job-description"
+            onCheckedChange={setIncludeJobDescription}
+          />
+          <Label htmlFor="include-job-description">
+            Include job description
+          </Label>
+        </div>
+      ) : null}
+    </>
+  );
+
+  const dialogProps = {
+    execute: handleGenerateQuestions,
+    title: "Generate Questions",
+    description:
+      "Choose an AI provider to generate questions for this session.",
+    executeLabel: "Generate",
+    isLoading: isQuestionPending,
+    toastSuccessMessage: "Questions generated",
+    toastErrorMessage: "Failed to generate questions",
+  } as const;
+
+  return (
+    <div>
       <Card className="px-1" id={sectionId}>
         <CardHeader>
           <CardTitle>Questions</CardTitle>
           <CardAction className="flex gap-1">
-            <Button onClick={openAiDialog}>Generate</Button>
+            <AiActionButton {...dialogProps}>
+              {dialogAdditionalFields}
+            </AiActionButton>
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
@@ -252,7 +296,12 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <Button onClick={openAiDialog}>Generate Questions</Button>
+                <AiActionButton
+                  {...dialogProps}
+                  executeLabel="Generate Questions"
+                >
+                  {dialogAdditionalFields}
+                </AiActionButton>
               </EmptyContent>
             </Empty>
           ) : (
@@ -270,55 +319,6 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
           )}
         </CardContent>
       </Card>
-
-      <AiDialog
-        description="Choose an AI provider to generate questions for this session."
-        executeLabel="Generate"
-        isLoading={isQuestionPending}
-        onExecute={handleGenerateQuestions}
-        onOpenChange={setAiDialogOpen}
-        open={aiDialogOpen}
-        title="Generate Questions"
-      >
-        <div className="space-y-1.5">
-          <Label htmlFor="question-count">Number of questions</Label>
-          <Input
-            disabled={isQuestionPending}
-            id="question-count"
-            max={50}
-            min={1}
-            onChange={handleCountChange}
-            type="number"
-            value={count}
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Checkbox
-            checked={avoidRepeat}
-            disabled={isQuestionPending}
-            id="avoid-repeat"
-            onCheckedChange={setAvoidRepeat}
-          />
-          <Label htmlFor="avoid-repeat">
-            Avoid repeating previous questions
-          </Label>
-        </div>
-
-        {session.jobId ? (
-          <div className="flex items-center gap-2">
-            <Checkbox
-              checked={includeJobDescription}
-              disabled={isQuestionPending}
-              id="include-job-description"
-              onCheckedChange={setIncludeJobDescription}
-            />
-            <Label htmlFor="include-job-description">
-              Include job description
-            </Label>
-          </div>
-        ) : null}
-      </AiDialog>
-    </>
+    </div>
   );
 };

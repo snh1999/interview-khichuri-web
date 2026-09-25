@@ -3,11 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import { generatePath, Link } from "react-router";
 import { toast } from "sonner";
 import {
+  type IFollowUpStreamChunk,
   type IInterview,
+  type IInterviewQuestion,
   useArchiveLocalInterviewState,
   useClearLocalInterviewState,
   useCompleteInterview,
-  useInterviewFollowUps,
   useLocalInterviewState,
   useSetLocalInterviewState,
 } from "@/api/sessions/interviews.ts";
@@ -27,6 +28,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
+import { streamPost } from "@/lib/api-client";
 import type {
   IInterviewTranscriptItem,
   ILocalInterviewState,
@@ -37,7 +39,6 @@ import { useInterviewTiming } from "./QuestionClock";
 
 export const LiveInterview = ({ interview }: { interview: IInterview }) => {
   const { mutateAsync: completeInterview } = useCompleteInterview();
-  const { mutateAsync: fetchFollowUps } = useInterviewFollowUps();
   const { mutateAsync: saveLocalDraft } = useSetLocalInterviewState();
   const { mutateAsync: archiveLocalDraft } = useArchiveLocalInterviewState();
   const { mutateAsync: clearLocalDraft } = useClearLocalInterviewState();
@@ -48,8 +49,12 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
   const [answer, setAnswer] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isEvaluating, setIsEvaluating] = useState(false);
-  const [isFetchingFollowUps, setIsFetchingFollowUps] = useState(false);
+  const [streamingFollowUps, setStreamingFollowUps] = useState(false);
+  const [liveFollowUps, setLiveFollowUps] = useState<IInterviewQuestion[]>([]);
   const advancingRef = useRef(false);
+  const followUpAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => () => followUpAbortRef.current?.abort(), []);
 
   const panes = useInterviewStore((state) => state.panes);
 
@@ -120,37 +125,67 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
 
   const fetchFollowUpsAndAppend = async (
     lastItem: IInterviewTranscriptItem
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <>
   ) => {
-    setIsFetchingFollowUps(true);
+    setStreamingFollowUps(true);
+    let live: IInterviewQuestion[] = [];
+    let streamSucceeded = false;
+    const controller = new AbortController();
+    followUpAbortRef.current = controller;
     try {
       if (!storedDraft) {
         return;
       }
-      const followUps = await fetchFollowUps({
-        id: interview.id,
-        provider: storedDraft.provider ?? "google",
-        model: storedDraft.model,
-        answers: [lastItem],
-      });
-      const latest = await getLocalInterviewState(interview.id);
-      if (!latest) {
+      for await (const chunk of streamPost<IFollowUpStreamChunk>(
+        `/interviews/${interview.id}/follow-ups/stream`,
+        {
+          provider: storedDraft.provider ?? "google",
+          model: storedDraft.model,
+          answers: [lastItem],
+        },
+        controller.signal
+      )) {
+        if (chunk.type === "snapshot") {
+          live = chunk.questions ?? [];
+          setLiveFollowUps(live);
+        } else if (chunk.type === "error") {
+          toast.error(
+            chunk.message ?? "Could not generate follow-up questions"
+          );
+          break;
+        } else {
+          streamSucceeded = true;
+          break;
+        }
+      }
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
         return;
       }
-      const existingIds = new Set(latest.questions.map((q) => q.questionText));
-      const fresh = followUps.filter((q) => !existingIds.has(q.questionText));
-      if (fresh.length === 0) {
-        return;
-      }
-      const next: ILocalInterviewState = {
-        ...latest,
-        questions: [...latest.questions, ...fresh],
-      };
-      await saveLocalDraft(next);
-      toast.success("Follow-up questions added");
-    } catch {
       toast.error("Could not generate follow-up questions");
     } finally {
-      setIsFetchingFollowUps(false);
+      try {
+        if (!controller.signal.aborted && streamSucceeded) {
+          const latest = await getLocalInterviewState(interview.id);
+          if (latest && live.length > 0) {
+            const existingIds = new Set(
+              latest.questions.map((q) => q.questionText)
+            );
+            const fresh = live.filter((q) => !existingIds.has(q.questionText));
+            if (fresh.length > 0) {
+              await saveLocalDraft({
+                ...latest,
+                questions: [...latest.questions, ...fresh],
+              });
+            }
+          }
+        }
+      } catch {
+        toast.error("Could not save follow-up questions");
+      } finally {
+        setStreamingFollowUps(false);
+        setLiveFollowUps([]);
+      }
     }
   };
 
@@ -261,8 +296,9 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
         <InterviewPanel
           chatSlot={
             <ChatColumn
-              isFetchingFollowUps={isFetchingFollowUps}
+              liveFollowUps={liveFollowUps}
               question={currentQuestion}
+              streamingFollowUps={streamingFollowUps}
             >
               {answerInput(false)}
             </ChatColumn>

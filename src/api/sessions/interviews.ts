@@ -72,6 +72,12 @@ export interface IFollowUpDto {
   answers: IQuestionWithAnswer[];
 }
 
+export interface IFollowUpStreamChunk {
+  type: "snapshot" | "finish" | "error";
+  questions?: IInterviewQuestion[];
+  message?: string;
+}
+
 export interface IInterview {
   id: string;
   sessionId: string;
