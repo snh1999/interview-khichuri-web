@@ -91,6 +91,7 @@ export const useResumeStore = create<ResumeState>()(
     {
       name: "resume-store",
       version: 1,
+      skipHydration: true,
       migrate: (persistedState, version) => {
         if (version < 1) {
           return { ...(persistedState as object), sections: {} } as ResumeState;

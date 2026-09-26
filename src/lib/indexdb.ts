@@ -2,10 +2,7 @@ import { type DBSchema, type IDBPDatabase, openDB } from "idb";
 import type { TAtsCategory, TStandaloneCategory } from "@/api/resumes";
 import type { ILocalInterviewState } from "@/lib/interviewStorage";
 
-// Pre-production storage bootstrap: instead of migrating schema versions, we
-// bump the DB name whenever the schema changes and let the old DB get orphaned.
-// TODO- cleanup before prod
-const INDEX_DB_NAME = "interview-khichuri-storage-v2";
+const INDEX_DB_NAME = "interview-khichuri-db";
 const DB_VERSION = 1;
 
 export const SCORES_STORE = "scores";
@@ -200,10 +197,4 @@ export const retryLocalEntryCleanup = async (
   }
   await new Promise((resolve) => setTimeout(resolve, 300));
   await runCleanups();
-};
-
-export const clearLocalCache = async (): Promise<void> => {
-  await clearAtsScores();
-  await clearStandaloneReviews();
-  localStorage.clear();
 };

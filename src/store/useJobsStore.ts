@@ -78,6 +78,7 @@ export const useJobsStore = create<IJobFiltersState>()(
     }),
     {
       name: "job-filters-sort",
+      skipHydration: true,
       partialize: (state) => ({ sort: state.sort }),
     }
   )
