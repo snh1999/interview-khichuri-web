@@ -29,7 +29,6 @@ export const apiClient = new QueryClient({
     },
   }),
   mutationCache: new MutationCache({
-    // eslint-disable-next-line @typescript-eslint/max-params
     onSuccess: async (_data, variables, _context, mutation) => {
       const resolve = (val: unknown) =>
         typeof val === "function" ? val(variables) : val;

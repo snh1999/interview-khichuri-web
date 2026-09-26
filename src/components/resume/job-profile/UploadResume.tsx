@@ -58,7 +58,6 @@ export const UploadResume = ({
   const wasUploadingRef = useRef<boolean>(false);
 
   useEffect(() => {
-    // biome-ignore lint/suspicious/noUnnecessaryConditions: <>
     if (wasUploadingRef.current && !isUploading) {
       setSelectedFile(null);
       setName("");

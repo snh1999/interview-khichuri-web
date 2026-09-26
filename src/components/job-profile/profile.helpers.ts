@@ -87,16 +87,6 @@ export const educationSchema = z.object({
 export type TEducationDto = z.infer<typeof educationSchema>;
 
 export const preferencesSchema = z.object({
-  coverLetterTemplate: z
-    .string()
-    .max(DEFAULT_MAX_STRING_LENGTH)
-    .optional()
-    .nullable(),
-  coverLetterTone: z
-    .string()
-    .max(DEFAULT_MAX_STRING_LENGTH)
-    .optional()
-    .nullable(),
   currency: z.string().length(3).nullish(),
   preferredLocation: z.string().max(MAX_SHORT_LENGTH).nullish(),
   salaryExpected: z.number().int().min(0).nullish(),

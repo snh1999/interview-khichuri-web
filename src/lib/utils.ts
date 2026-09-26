@@ -14,7 +14,6 @@ export const daysUntil = (date?: string | null): number | null => {
   return differenceInCalendarDays(new Date(date), new Date());
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types,func-style,sonarjs/declarations-in-global-scope
 export const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;

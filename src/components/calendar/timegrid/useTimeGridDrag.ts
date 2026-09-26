@@ -94,7 +94,6 @@ export const useTimeGridDrag = (
 
     // Press on an event chip + release without movement = click; skip the
     // slot selection so the chip's own handler opens the event.
-    // biome-ignore lint/suspicious/noUnnecessaryConditions: ref is mutated across handlers
     if (!hasDragged.current && pressedOnEventRef.current) {
       setDrag(null);
       return;
@@ -115,7 +114,6 @@ export const useTimeGridDrag = (
       const hiY = Math.max(drag.startY, drag.currentY);
       const start = yToTime(loY, day);
 
-      // biome-ignore lint/suspicious/noUnnecessaryConditions: ref is mutated in handlePointerMove
       if (hasDragged.current && hiY - loY > 4) {
         onSlotSelect(start, yToTime(hiY, day), false);
       } else {
@@ -128,7 +126,6 @@ export const useTimeGridDrag = (
     // Pointer capture routes the trailing click back to the pressed chip;
     // a committed drag must not also open it.
     pendingClickSuppressionRef.current =
-      // biome-ignore lint/suspicious/noUnnecessaryConditions: ref is mutated across handlers
       hasDragged.current && pressedOnEventRef.current;
     setDrag(null);
   }, [drag, days, onSlotSelect]);
@@ -141,7 +138,6 @@ export const useTimeGridDrag = (
   }, []);
 
   const handleClickCapture = useCallback((e: React.MouseEvent) => {
-    // biome-ignore lint/suspicious/noUnnecessaryConditions: ref is mutated in handlePointerUp
     if (!pendingClickSuppressionRef.current) {
       return;
     }

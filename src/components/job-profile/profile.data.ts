@@ -94,12 +94,6 @@ export const DEGREES = [
   { label: "Doctorate", value: "doctorate" },
 ] as const;
 
-export const COVER_LETTER_TONES = [
-  { label: "Formal", value: "formal" },
-  { label: "Casual", value: "casual" },
-  { label: "Enthusiastic", value: "enthusiastic" },
-] as const;
-
 export const CURRENCIES = [
   { label: "BDT (৳)", value: "BDT" },
   { label: "USD ($)", value: "USD" },

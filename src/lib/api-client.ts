@@ -72,7 +72,6 @@ const request = async <T>(
       clearTimeout(timeout);
       if (response.status === 401) {
         globalThis.location.href = "/login";
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
         return undefined as T;
       }
 
@@ -80,8 +79,7 @@ const request = async <T>(
         body?.message || `Request failed with status ${response.status}`;
       const errors =
         body !== null && "errors" in body
-          ? // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-            (body.errors as IApiError[])
+          ? (body.errors as IApiError[])
           : undefined;
       throw new ApiError(response.status, message, errors);
     }
