@@ -54,6 +54,10 @@ export const useInterviewStore = create<IInterviewStore>()(
           };
         }),
     }),
-    { name: "interview-panes", version: 1 }
+    {
+      name: "interview-panes",
+      version: 1,
+      skipHydration: true,
+    }
   )
 );

@@ -25,6 +25,7 @@ import {
   SETTINGS_PAGE,
 } from "@/app.constants.ts";
 import { Spinner } from "@/components/ui/spinner.tsx";
+import { useLocalDataOnLogin } from "@/hooks/useLocalDataOnLogin.ts";
 import { useSession } from "@/lib/auth/auth-client.ts";
 import AdminPage from "@/pages/admin/AdminPage.tsx";
 import ConfirmLoginPage from "@/pages/auth/ConfirmLogin.tsx";
@@ -79,8 +80,9 @@ const JobProfilePage = lazy(() => import("@/pages/JobProfilePage.tsx"));
 
 const App = () => {
   const { data: session, isPending } = useSession();
+  const { isSwapping } = useLocalDataOnLogin(session?.user?.id);
 
-  if (isPending) {
+  if (isPending || isSwapping) {
     return <Spinner />;
   }
 

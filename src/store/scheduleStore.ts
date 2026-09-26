@@ -134,6 +134,7 @@ export const useScheduleStore = create<IScheduleState>()(
     {
       name: "schedule-ui",
       version: 1,
+      skipHydration: true,
       partialize: (state): IPersistedScheduleState => ({
         viewMode: state.viewMode,
         visibility: state.visibility,

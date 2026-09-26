@@ -1,9 +1,7 @@
 import { GearIcon, SignOutIcon, UserIcon } from "@phosphor-icons/react";
 import type { ReactElement } from "react";
 import { useNavigate } from "react-router";
-import { toast } from "sonner";
 import { PROFILE_PAGE, SETTINGS_PAGE } from "@/app.constants.ts";
-import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
 import { ProfileCard } from "@/components/common/ProfileCard.tsx";
 import {
   DropdownMenu,
@@ -15,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import { signOut } from "@/lib/auth/auth-client.ts";
-import { clearLocalCache } from "@/lib/indexdb.ts";
 
 interface IProps {
   trigger: ReactElement;
@@ -31,17 +28,7 @@ const ProfileDropdown = ({
   const navigate = useNavigate();
   const navigateToProfile = () => navigate(PROFILE_PAGE);
   const navigateToSettings = () => navigate(SETTINGS_PAGE);
-  const logout = async () => {
-    await clearLocalCache();
-    return signOut();
-  };
-  const logoutKeepData = async () => {
-    const result = await signOut();
-    if (result.error) {
-      toast.error(result.error.message ?? "Something went wrong");
-    }
-    return result;
-  };
+  const logout = () =>  signOut();
 
   return (
     <DropdownMenu defaultOpen={defaultOpen}>
@@ -69,27 +56,14 @@ const ProfileDropdown = ({
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-          <AuthActionButton
-            action={logout}
-            actionLabel="Log out & clear data"
-            cancelLabel="Log out"
-            dialogDescription={`"Logout & Clear data" wipes the local cache (ATS scores, recommendations, tailoring notes) before logging out. Use "Logout" to keep this browser's cached ATS data and just logs out.`}
-            dialogTitle="Log out?"
-            onCancel={logoutKeepData}
-            renderNode={
-              <DropdownMenuItem
-                className="gap-2 px-4 py-2.5 text-md"
-                closeOnClick={false}
-                variant="destructive"
-              >
-                <SignOutIcon className="size-4" />
-                Log out
-              </DropdownMenuItem>
-            }
-            requireConfirmation
-            successMessage="Logged out. Redirecting…"
+          <DropdownMenuItem
+            className="gap-2 px-4 py-2.5 text-md"
+            onClick={logout}
             variant="destructive"
-          />
+          >
+            <SignOutIcon className="size-4" />
+            Log out
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
