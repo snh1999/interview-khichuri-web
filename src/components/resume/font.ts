@@ -21,6 +21,12 @@ import interBold from "@fontsource/inter/files/inter-latin-700-normal.woff";
 import libertinusItalic from "@fontsource/libertinus-serif/files/libertinus-serif-latin-400-italic.woff";
 import libertinusRegular from "@fontsource/libertinus-serif/files/libertinus-serif-latin-400-normal.woff";
 import libertinusBold from "@fontsource/libertinus-serif/files/libertinus-serif-latin-700-normal.woff";
+import loraItalic from "@fontsource/lora/files/lora-latin-400-italic.woff";
+import loraRegular from "@fontsource/lora/files/lora-latin-400-normal.woff";
+import loraBold from "@fontsource/lora/files/lora-latin-700-normal.woff";
+import merriweatherItalic from "@fontsource/merriweather/files/merriweather-latin-400-italic.woff";
+import merriweatherRegular from "@fontsource/merriweather/files/merriweather-latin-400-normal.woff";
+import merriweatherBold from "@fontsource/merriweather/files/merriweather-latin-700-normal.woff";
 import notoSansItalic from "@fontsource/noto-sans/files/noto-sans-latin-400-italic.woff";
 import notoSansRegular from "@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff";
 import notoSansBold from "@fontsource/noto-sans/files/noto-sans-latin-700-normal.woff";
@@ -33,6 +39,9 @@ import publicSansBold from "@fontsource/public-sans/files/public-sans-latin-700-
 import sourceSansItalic from "@fontsource/source-sans-3/files/source-sans-3-latin-400-italic.woff";
 import sourceSansRegular from "@fontsource/source-sans-3/files/source-sans-3-latin-400-normal.woff";
 import sourceSansBold from "@fontsource/source-sans-3/files/source-sans-3-latin-700-normal.woff";
+import sourceSerifItalic from "@fontsource/source-serif-4/files/source-serif-4-latin-400-italic.woff";
+import sourceSerifRegular from "@fontsource/source-serif-4/files/source-serif-4-latin-400-normal.woff";
+import sourceSerifBold from "@fontsource/source-serif-4/files/source-serif-4-latin-700-normal.woff";
 import tinosItalic from "@fontsource/tinos/files/tinos-latin-400-italic.woff";
 import tinosRegular from "@fontsource/tinos/files/tinos-latin-400-normal.woff";
 import tinosBold from "@fontsource/tinos/files/tinos-latin-700-normal.woff";
@@ -49,9 +58,12 @@ export const FONT_FAMILIES = {
 
   Garamond: { category: "serif" },
   "Noto Serif": { category: "serif" }, // Georgia
+  Lora: { category: "serif" },
+  Merriweather: { category: "serif" },
   Libertinus: { category: "serif" }, // Cambria
   Tinos: { category: "serif" }, // Times New Roman
   "Crimson Pro": { category: "serif" },
+  "Source Serif 4": { category: "serif" },
 } as const;
 
 export type TFontFamily = keyof typeof FONT_FAMILIES;
@@ -119,6 +131,15 @@ export function registerPdfFonts() {
   });
 
   Font.register({
+    family: "Source Serif 4",
+    fonts: [
+      { src: sourceSerifRegular, fontWeight: 400 },
+      { src: sourceSerifBold, fontWeight: 700 },
+      { src: sourceSerifItalic, fontWeight: 400, fontStyle: "italic" },
+    ],
+  });
+
+  Font.register({
     family: "Garamond",
     fonts: [
       { src: ebGaramondRegular, fontWeight: 400 },
@@ -142,6 +163,24 @@ export function registerPdfFonts() {
       { src: libertinusRegular, fontWeight: 400 },
       { src: libertinusBold, fontWeight: 700 },
       { src: libertinusItalic, fontWeight: 400, fontStyle: "italic" },
+    ],
+  });
+
+  Font.register({
+    family: "Lora",
+    fonts: [
+      { src: loraRegular, fontWeight: 400 },
+      { src: loraBold, fontWeight: 700 },
+      { src: loraItalic, fontWeight: 400, fontStyle: "italic" },
+    ],
+  });
+
+  Font.register({
+    family: "Merriweather",
+    fonts: [
+      { src: merriweatherRegular, fontWeight: 400 },
+      { src: merriweatherBold, fontWeight: 700 },
+      { src: merriweatherItalic, fontWeight: 400, fontStyle: "italic" },
     ],
   });
 

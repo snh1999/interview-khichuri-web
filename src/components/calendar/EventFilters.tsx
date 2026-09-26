@@ -24,17 +24,12 @@ export const EventFilters = ({ visibility, onToggle }: Props) => (
   <DropdownMenu>
     <DropdownMenuTrigger
       render={
-        <Button
-          aria-label="Filter events"
-          className="size-8"
-          size="icon"
-          variant="outline"
-        />
+        <Button aria-label="Filter events" size="icon" variant="outline" />
       }
     >
-      <FunnelIcon className="size-4" />
+      <FunnelIcon />
     </DropdownMenuTrigger>
-    <DropdownMenuContent align="end">
+    <DropdownMenuContent align="end" className="w-40">
       <DropdownMenuGroup>
         <DropdownMenuLabel>Filter Events</DropdownMenuLabel>
         <DropdownMenuSeparator />

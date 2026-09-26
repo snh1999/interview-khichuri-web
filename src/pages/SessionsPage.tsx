@@ -1,4 +1,5 @@
-import { type ChangeEvent, useCallback, useState } from "react";
+import { type ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
 import { ViewToggle } from "@/components/common/ViewToggle.tsx";
@@ -13,18 +14,34 @@ export const SessionsPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const closeDialog = () => setDialogOpen(false);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("create") === "true") {
+      setDialogOpen(true);
+      setSearchParams(
+        (prev) => {
+          prev.delete("create");
+          return prev;
+        },
+        { replace: true }
+      );
+    }
+  }, [searchParams, setSearchParams]);
+
   const [search, setSearch] = useState("");
   const handleSearchChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
     []
   );
+  const openDialog = useCallback(() => setDialogOpen(true), []);
 
   return (
     <AppErrorSuspense fallback={SessionsPageSkeleton}>
       <div className="w-full">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
           <h1 className="font-semibold text-xl">Sessions</h1>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <ViewToggle />
             <JobFilter />
             <TopicFilter />
@@ -46,7 +63,7 @@ export const SessionsPage = () => {
           />
         </div>
 
-        <SessionPageContent search={search} />
+        <SessionPageContent onNewSession={openDialog} search={search} />
       </div>
     </AppErrorSuspense>
   );

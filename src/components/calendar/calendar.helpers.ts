@@ -1,5 +1,8 @@
 import {
   addDays,
+  addMinutes,
+  differenceInCalendarDays,
+  differenceInMinutes,
   eachDayOfInterval,
   endOfDay,
   endOfMonth,
@@ -7,6 +10,7 @@ import {
   isAfter,
   isBefore,
   isSameDay,
+  lastDayOfMonth,
   startOfDay,
   startOfMonth,
   startOfWeek,
@@ -29,15 +33,12 @@ export const toAnchorDate = (
   month: number,
   day: number
 ): Date => {
-  const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
-  return new Date(year, month, Math.min(day, lastDayOfMonth));
+  const lastDay = lastDayOfMonth(new Date(year, month)).getDate();
+  return new Date(year, month, Math.min(day, lastDay));
 };
 
 export const isMidnight = (date: Date): boolean =>
-  date.getHours() === 0 &&
-  date.getMinutes() === 0 &&
-  date.getSeconds() === 0 &&
-  date.getMilliseconds() === 0;
+  date.getTime() === startOfDay(date).getTime();
 
 /**
  * An event ending exactly at midnight occupies zero time on the next day;
@@ -81,7 +82,7 @@ export const coversWholeDay = (
     return isSameDay(event.date, day);
   }
   // Must have started no later than this day's 00:00…
-  if (event.startDate.getTime() > startOfDay(day).getTime()) {
+  if (isAfter(event.startDate, startOfDay(day))) {
     return false;
   }
   // …and run through this day's end: either past it entirely, or up to
@@ -135,16 +136,22 @@ export const getEventsForDay = (
 ): (TJobEvent | TCustomEvent)[] =>
   events.filter((event) => eventCoversDay(event, day));
 
+export const getWeekBoundary = (
+  anchor: Date,
+  weekStartsOn: 0 | 1 = 0
+): { start: Date; end: Date } => ({
+  start: startOfWeek(anchor, { weekStartsOn }),
+  end: endOfWeek(anchor, { weekStartsOn }),
+});
+
 export const getWeekDays = (anchor: Date, weekStartsOn: 0 | 1 = 0): Date[] => {
-  const start = startOfWeek(anchor, { weekStartsOn });
+  const { start } = getWeekBoundary(anchor, weekStartsOn);
   return Array.from({ length: 7 }, (_, i) => addDays(start, i));
 };
 
 export const MONTH_BAR_AREA_TOP_PX = 30;
 export const MONTH_BAR_ROW_HEIGHT_PX = 20;
 export const MONTH_BAR_ROW_GAP_PX = 4;
-
-const MS_PER_DAY = 86_400_000;
 
 export interface TMonthBarLayout {
   event: TCustomEvent;
@@ -169,9 +176,7 @@ export const getMonthWeekBars = (
       0,
       Math.min(
         weekDays.length - 1,
-        Math.round(
-          (startOfDay(date).getTime() - viewStart.getTime()) / MS_PER_DAY
-        )
+        differenceInCalendarDays(startOfDay(date), viewStart)
       )
     );
 
@@ -217,12 +222,10 @@ export const yToTime = (y: number, day: Date): Date => {
   const totalMinutes = (y / HOUR_HEIGHT_PX) * 60;
   const snapped = Math.round(totalMinutes / SNAP_MINUTES) * SNAP_MINUTES;
   const clamped = Math.max(0, Math.min(24 * 60, snapped));
-  const result = new Date(day);
-  result.setHours(0, clamped, 0, 0);
-  return result;
+  return addMinutes(startOfDay(day), clamped);
 };
 
 export const timeToY = (date: Date): number => {
-  const minutes = date.getHours() * 60 + date.getMinutes();
+  const minutes = differenceInMinutes(date, startOfDay(date));
   return (minutes / 60) * HOUR_HEIGHT_PX;
 };

@@ -54,7 +54,7 @@ export const EVENT_COLORS: Record<
 
 export const EVENT_LABELS: Record<TEventSource, string> = {
   applied: "Applied at",
-  custom: "",
+  custom: "Custom",
   deadline: "Application deadline",
   interview: "Interview",
 } as const;

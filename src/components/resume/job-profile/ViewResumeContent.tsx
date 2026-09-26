@@ -1,7 +1,15 @@
+import { lazy, Suspense } from "react";
 import type { IResume } from "@/api/resumes";
 import { useResumeViewUrl } from "@/api/resumes";
-import { GeneratedResumePreview } from "@/components/resume/job-profile/GeneratedResumePreview.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
+
+const GeneratedResumePreview = lazy(() =>
+  import("@/components/resume/job-profile/GeneratedResumePreview.tsx").then(
+    (m) => ({
+      default: m.GeneratedResumePreview,
+    })
+  )
+);
 
 interface IViewResumeProps {
   resume: IResume;
@@ -12,7 +20,17 @@ export const ViewResumeContent = ({ resume }: Readonly<IViewResumeProps>) => {
     return <PdfResumeContent resume={resume} />;
   }
 
-  return <GeneratedResumePreview resume={resume} />;
+  return (
+    <Suspense
+      fallback={
+        <div className="flex aspect-[1/1.414] w-full items-center justify-center">
+          <Spinner />
+        </div>
+      }
+    >
+      <GeneratedResumePreview resume={resume} />
+    </Suspense>
+  );
 };
 
 const PdfResumeContent = ({ resume }: Readonly<{ resume: IResume }>) => {

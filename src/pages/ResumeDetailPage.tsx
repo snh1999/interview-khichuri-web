@@ -1,7 +1,6 @@
 import { PenIcon, ReadCvLogoIcon } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useEffect } from "react";
 import { generatePath, useNavigate } from "react-router";
-import { toast } from "sonner";
 import {
   type TStandaloneCategoryKey,
   useCachedStandaloneReview,
@@ -9,7 +8,7 @@ import {
   useReviewResumeStandalone,
 } from "@/api/resumes";
 import { RESUME_EDITOR_PAGE, RESUMES_PAGE } from "@/app.constants.ts";
-import { AiDialog } from "@/components/common/ai/AiDialog";
+import { AiActionButton } from "@/components/common/ai/AiActionButton";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
 import { ScoreCard } from "@/components/common/score/ScoreCard";
@@ -31,6 +30,7 @@ import {
 import { CircularProgress } from "@/components/ui/custom/CircularProgress.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useResumeId } from "@/hooks/useId.ts";
+import { useAppStore } from "@/store/appStore.ts";
 
 export const REVIEW_SECTION_LABEL: Record<TStandaloneCategoryKey, string> = {
   toneAndStyle: "Tone & Style",
@@ -51,24 +51,21 @@ const ResumeDetailContent = () => {
   const { data: resume } = useGetResumeById(resumeId);
   const isGenerated = Boolean(resume?.template);
   const hasPdfFile = Boolean(resume?.url);
+  const setPageHeader = useAppStore((state) => state.setPageHeader);
+
+  useEffect(() => {
+    setPageHeader(resume.name);
+  }, [resume.name, setPageHeader]);
 
   const { data: cachedReviewEntry } = useCachedStandaloneReview(resumeId);
   const cachedReview = cachedReviewEntry ? { ...cachedReviewEntry } : null;
-  const [dialogOpen, setDialogOpen] = useState(false);
   const reviewMutation = useReviewResumeStandalone();
 
   const handleExecute = async (provider: string, model?: string) => {
-    try {
-      await reviewMutation.mutateAsync({ resumeId, provider, model });
-      toast.success("Resume review complete");
-      setDialogOpen(false);
-    } catch {
-      toast.error("Failed to review resume. Please try again.");
-    }
+    await reviewMutation.mutateAsync({ resumeId, provider, model });
   };
 
   const handleNavigateBack = () => navigate(RESUMES_PAGE);
-  const handleOpenDialog = () => setDialogOpen(true);
   const handleEdit = () =>
     navigate(generatePath(RESUME_EDITOR_PAGE, { resumeId }));
 
@@ -117,9 +114,16 @@ const ResumeDetailContent = () => {
             </div>
 
             <CardAction>
-              <Button onClick={handleOpenDialog} size="sm">
-                {cachedReview ? "Re-run" : "Generate Review"}
-              </Button>
+              <AiActionButton
+                description="A standalone review of your resume across tone & style, content, structure, and skills. Results are cached locally."
+                execute={handleExecute}
+                executeLabel={cachedReview ? "Re-run" : "Generate Review"}
+                isLoading={reviewMutation.isPending}
+                size="sm"
+                title="AI Resume Review"
+                toastErrorMessage="Failed to review resume. Please try again."
+                toastSuccessMessage="Resume review complete"
+              />
             </CardAction>
           </CardHeader>
           <CardContent className="p-0">
@@ -145,16 +149,6 @@ const ResumeDetailContent = () => {
           <ViewResumeContent resume={resume} />
         </div>
       </div>
-
-      <AiDialog
-        description="A standalone review of your resume across tone & style, content, structure, and skills. Results are cached locally."
-        executeLabel={cachedReview ? "Regenerate Review" : "Generate Review"}
-        isLoading={reviewMutation.isPending}
-        onExecute={handleExecute}
-        onOpenChange={setDialogOpen}
-        open={dialogOpen}
-        title="AI Resume Review"
-      />
     </div>
   );
 };

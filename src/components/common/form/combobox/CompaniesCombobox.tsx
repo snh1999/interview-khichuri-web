@@ -63,7 +63,6 @@ const CompaniesComboboxInner = ({
   useEffect(() => {
     const selected = companyId === null ? undefined : optionMap.get(companyId);
     setInputValue(selected?.label ?? companyName ?? "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyId, companyName, optionMap]);
 
   const currentValue =

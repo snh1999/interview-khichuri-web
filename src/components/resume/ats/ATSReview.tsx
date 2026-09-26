@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 import { type IJob, useGetJobs } from "@/api/jobs";
 import type { IResume } from "@/api/resumes";
 import {
@@ -8,10 +7,9 @@ import {
   useGetResumes,
   useScoreResume,
 } from "@/api/resumes";
-import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
+import { AiActionButton } from "@/components/common/ai/AiActionButton.tsx";
 import { AppCombobox } from "@/components/common/form/combobox/AppCombobox.tsx";
 import { ATSReviewCard } from "@/components/resume/ats/ATSReviewCard.tsx";
-import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
   CardAction,
@@ -46,7 +44,6 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
 
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [selectedResumeId, setSelectedResumeId] = useState<string | null>(null);
-  const [aiDialogOpen, setAiDialogOpen] = useState(false);
 
   const jobId = job ? job.id : selectedJobId;
 
@@ -71,31 +68,16 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
     [resumes]
   );
 
-  const handleOpenDialog = () => {
-    setAiDialogOpen(true);
-  };
-
-  const closeDialog = () => setAiDialogOpen(false);
-
   const handleGenerate = async (provider: string, model?: string) => {
     if (!(jobId && selectedResumeId)) {
-      toast.error("Please select a job and resume");
       return;
     }
-    try {
-      await scoreMutation.mutateAsync({
-        jobId,
-        resumeId: selectedResumeId,
-        provider,
-        model,
-      });
-
-      toast.success("AI resume review generated");
-    } catch {
-      toast.error("Failed to generate AI resume review");
-    } finally {
-      closeDialog();
-    }
+    await scoreMutation.mutateAsync({
+      jobId,
+      resumeId: selectedResumeId,
+      provider,
+      model,
+    });
   };
 
   const handleJobChange = (value: string | number | null) =>
@@ -120,9 +102,45 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
           Results are cached locally and never stored on the server.
         </CardDescription>
         <CardAction>
-          <Button onClick={handleOpenDialog} size="sm">
-            New Review
-          </Button>
+          <AiActionButton
+            description={
+              job
+                ? `Score this resume against ${job.title} @ ${job.companyName}.`
+                : "Pick a job and resume to compare with AI."
+            }
+            execute={handleGenerate}
+            executeDisabled={!(jobId && selectedResumeId)}
+            executeLabel="New Review"
+            isLoading={scoreMutation.isPending}
+            size="sm"
+            title="Generate AI Resume Review"
+            toastErrorMessage="Failed to generate AI resume review"
+            toastSuccessMessage="AI resume review generated"
+          >
+            {job ? (
+              <p className="text-muted-foreground text-sm">
+                Job: {job.title} @ {job.companyName}
+              </p>
+            ) : (
+              <AppCombobox
+                data={jobs}
+                label="Job"
+                onChange={handleJobChange}
+                placeholder="Select a job..."
+                toOption={jobToOption}
+                value={selectedJobId}
+              />
+            )}
+
+            <AppCombobox
+              data={resumes}
+              label="Resume"
+              onChange={handleResumeChange}
+              placeholder="Select a resume..."
+              toOption={resumeToOption}
+              value={selectedResumeId}
+            />
+          </AiActionButton>
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
@@ -174,45 +192,6 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
           </div>
         )}
       </CardContent>
-
-      <AiDialog
-        description={
-          job
-            ? `Score this resume against ${job.title} @ ${job.companyName}.`
-            : "Pick a job and resume to compare with AI."
-        }
-        executeDisabled={!(jobId && selectedResumeId)}
-        executeLabel="Generate"
-        isLoading={scoreMutation.isPending}
-        onExecute={handleGenerate}
-        onOpenChange={setAiDialogOpen}
-        open={aiDialogOpen}
-        title="Generate AI Resume Review"
-      >
-        {job ? (
-          <p className="text-muted-foreground text-sm">
-            Job: {job.title} @ {job.companyName}
-          </p>
-        ) : (
-          <AppCombobox
-            data={jobs}
-            label="Job"
-            onChange={handleJobChange}
-            placeholder="Select a job..."
-            toOption={jobToOption}
-            value={selectedJobId}
-          />
-        )}
-
-        <AppCombobox
-          data={resumes}
-          label="Resume"
-          onChange={handleResumeChange}
-          placeholder="Select a resume..."
-          toOption={resumeToOption}
-          value={selectedResumeId}
-        />
-      </AiDialog>
     </Card>
   );
 };

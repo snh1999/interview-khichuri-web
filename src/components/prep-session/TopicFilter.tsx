@@ -58,6 +58,7 @@ export const TopicFilter = () => {
       value={selectedTopicIds}
     >
       <ComboboxTrigger
+        nativeButton={false}
         render={
           <ButtonGroup>
             <Button

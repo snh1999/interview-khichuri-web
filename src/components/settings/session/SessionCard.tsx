@@ -24,7 +24,6 @@ export const SessionCard = ({
 }: Readonly<IProps>) => {
   const { mutateAsync: revokeSession } = useRevokeSession();
 
-  // eslint-disable-next-line react-hooks/capitalized-calls
   const userAgentInfo = session.userAgent ? UAParser(session.userAgent) : null;
 
   function getBrowserInformation() {

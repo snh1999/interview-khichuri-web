@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PDFViewer } from "@react-pdf/renderer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { toast } from "sonner";
@@ -27,11 +27,18 @@ import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 import { useResumeId } from "@/hooks/useId.ts";
+import { useAppStore } from "@/store/appStore.ts";
+import "@/fonts.css";
 
 const ResumeEditorContent = () => {
   const { resumeId } = useParams<{ resumeId: string }>();
   const { data: resume } = useGetResumeById(resumeId ?? "");
   const updateResume = useUpdateResume();
+  const setPageHeader = useAppStore((state) => state.setPageHeader);
+
+  useEffect(() => {
+    setPageHeader(resume.name);
+  }, [resume.name, setPageHeader]);
 
   const [settings, setSettings] = useState<ResumeSettingsValue>({
     mode: "web",

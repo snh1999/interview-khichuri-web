@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router";
 import {
   ACCOUNT_VERIFICATION_PAGE,
@@ -35,20 +36,46 @@ import ResetPasswordPage from "@/pages/auth/ResetPasswordPage.tsx";
 import VerifyEmailPage from "@/pages/auth/VerifyEmailpage.tsx";
 import { DashboardPage } from "@/pages/DashboardPage.tsx";
 import { EmptyPage } from "@/pages/EmptyPage.tsx";
-import { InterviewPage } from "@/pages/InterviewPage.tsx";
 import { JobDetailPage } from "@/pages/JobDetailPage.tsx";
-import JobProfilePage from "@/pages/JobProfilePage.tsx";
 import { JobsPage } from "@/pages/JobsPage.tsx";
 import { NotesPage } from "@/pages/NotesPage.tsx";
-import { PublicResumePage } from "@/pages/PublicResumePage.tsx";
-import { ResumeDetailPage } from "@/pages/ResumeDetailPage.tsx";
-import { ResumesPage } from "@/pages/ResumesPage.tsx";
 import { SchedulePage } from "@/pages/SchedulePage.tsx";
 import { SessionsPage } from "@/pages/SessionsPage.tsx";
 import SettingsPage from "@/pages/SettingsPage.tsx";
 import { SidebarLayout } from "@/pages/SidebarLayout.tsx";
-import { ResumeEditorWithPreviewPage } from "./pages/ResumeEditorWithPreviewPage";
 import { SessionDetailPage } from "./pages/SessionDetailPage";
+
+const PublicResumePage = lazy(() =>
+  import("@/pages/PublicResumePage.tsx").then((m) => ({
+    default: m.PublicResumePage,
+  }))
+);
+
+const ResumeEditorWithPreviewPage = lazy(() =>
+  import("./pages/ResumeEditorWithPreviewPage").then((m) => ({
+    default: m.ResumeEditorWithPreviewPage,
+  }))
+);
+
+const InterviewPage = lazy(() =>
+  import("@/pages/InterviewPage.tsx").then((m) => ({
+    default: m.InterviewPage,
+  }))
+);
+
+const ResumeDetailPage = lazy(() =>
+  import("@/pages/ResumeDetailPage.tsx").then((m) => ({
+    default: m.ResumeDetailPage,
+  }))
+);
+
+const ResumesPage = lazy(() =>
+  import("@/pages/ResumesPage.tsx").then((m) => ({
+    default: m.ResumesPage,
+  }))
+);
+
+const JobProfilePage = lazy(() => import("@/pages/JobProfilePage.tsx"));
 
 const App = () => {
   const { data: session, isPending } = useSession();
@@ -62,7 +89,14 @@ const App = () => {
       <Route element={<VerifyEmailPage />} path={ACCOUNT_VERIFICATION_PAGE} />
       <Route element={<ResetPasswordPage />} path={RESET_PASSWORD_PAGE} />
 
-      <Route element={<PublicResumePage />} path={PUBLIC_RESUME_PAGE} />
+      <Route
+        element={
+          <Suspense fallback={<Spinner />}>
+            <PublicResumePage />
+          </Suspense>
+        }
+        path={PUBLIC_RESUME_PAGE}
+      />
 
       <Route
         element={session ? <Navigate replace to={HOMEPAGE} /> : <Outlet />}
@@ -85,16 +119,48 @@ const App = () => {
           <Route element={<JobsPage />} path={JOBS_PAGE} />
           <Route element={<SessionsPage />} path={SESSIONS_PAGE} />
           <Route element={<SessionDetailPage />} path={SESSION_DETAIL_PAGE} />
-          <Route element={<InterviewPage />} path={INTERVIEW_PAGE} />
+          <Route
+            element={
+              <Suspense fallback={<Spinner />}>
+                <InterviewPage />
+              </Suspense>
+            }
+            path={INTERVIEW_PAGE}
+          />
           <Route element={<NotesPage />} path={NOTES_PAGE} />
           <Route element={<SchedulePage />} path={SCHEDULE_PAGE} />
-          <Route element={<JobProfilePage />} path={PROFILE_PAGE} />
+          <Route
+            element={
+              <Suspense fallback={<Spinner />}>
+                <JobProfilePage />
+              </Suspense>
+            }
+            path={PROFILE_PAGE}
+          />
           <Route element={<SettingsPage />} path={SETTINGS_PAGE} />
-          <Route element={<ResumesPage />} path={RESUMES_PAGE} />
-          <Route element={<ResumeDetailPage />} path={RESUME_DETAIL_PAGE} />
+          <Route
+            element={
+              <Suspense fallback={<Spinner />}>
+                <ResumesPage />
+              </Suspense>
+            }
+            path={RESUMES_PAGE}
+          />
+          <Route
+            element={
+              <Suspense fallback={<Spinner />}>
+                <ResumeDetailPage />
+              </Suspense>
+            }
+            path={RESUME_DETAIL_PAGE}
+          />
         </Route>
         <Route
-          element={<ResumeEditorWithPreviewPage />}
+          element={
+            <Suspense fallback={<Spinner />}>
+              <ResumeEditorWithPreviewPage />
+            </Suspense>
+          }
           path={RESUME_EDITOR_PAGE}
         />
       </Route>

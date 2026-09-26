@@ -1,9 +1,14 @@
-import { format } from "date-fns";
+import { useTopics } from "@/api/lookups";
 import type { IPrepSession } from "@/api/sessions";
 import { useUpdateSession } from "@/api/sessions";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
-import { useNavigateToSessionPage } from "@/components/prep-session/session/session.helpers.ts";
-import { GutterCard } from "@/components/ui/custom/gutter-card.tsx";
+import {
+  formatSessionDate,
+  getMetaLabel,
+  useNavigateToSessionPage,
+} from "@/components/prep-session/session.helpers.ts";
+import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
+import { useLookupMap } from "@/hooks/useLookupMap.ts";
 
 interface IProps {
   session: IPrepSession;
@@ -23,16 +28,17 @@ const getSessionVariant = (session: IPrepSession) => {
 export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
   const navigateToPage = useNavigateToSessionPage(session.id);
   const updateSession = useUpdateSession();
+  const topicMap = useLookupMap(useTopics().data);
 
   const variant = getSessionVariant(session);
+
+  const metaLabel = getMetaLabel(session, topicMap, jobLabel);
 
   const handleToggleFavorite = () =>
     updateSession.mutateAsync({
       id: session.id,
       isFavorite: !session.isFavorite,
     });
-
-  const createdDate = format(session.createdAt, "d MMMM yyyy");
 
   return (
     <GutterCard onClick={navigateToPage} variant={variant}>
@@ -46,12 +52,10 @@ export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
           onToggle={handleToggleFavorite}
         />
       </div>
-      <p className="mt-1 text-muted-foreground text-sm">
-        {jobLabel ?? (session.jobId ? "Linked to a job" : "Standalone session")}
-      </p>
+      <p className="mt-1 truncate text-muted-foreground text-sm">{metaLabel}</p>
       <div className="mt-2.5 flex justify-between font-mono text-muted-foreground text-xs">
         <span>{session.experience ? `${session.experience}` : ""}</span>
-        <span>{createdDate}</span>
+        <span>Created: {formatSessionDate(session.createdAt)}</span>
       </div>
     </GutterCard>
   );

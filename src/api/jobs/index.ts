@@ -6,6 +6,21 @@ export const JOB_STATUS = ["applied", "saved", "scheduled"] as const;
 
 export type TJobStatus = (typeof JOB_STATUS)[number];
 
+export type TJobSortKey =
+  | "default"
+  | "newest"
+  | "oldest"
+  | "deadline"
+  | "interview";
+
+const JOB_SORT_QUERY: Record<TJobSortKey, string | undefined> = {
+  default: undefined,
+  newest: "createdAt:desc",
+  oldest: "createdAt:asc",
+  deadline: "deadline:asc",
+  interview: "interviewDate:asc",
+};
+
 interface ICommonFields {
   title: string;
   roleId?: number | null;
@@ -15,12 +30,16 @@ interface ICommonFields {
   source?: string | null;
 }
 
-export interface IJobExtractionResult extends ICommonFields {
+export interface IJobExtractionResult {
+  title?: string;
   companyName?: string | null;
+  roleId?: number | null;
+  topicIds?: number[];
+  location?: string | null;
+  source?: string | null;
   deadline: string | null;
   interviewDate: string | null;
-  appliedAt: string | null;
-  status: TJobStatus | null;
+  status: TJobStatus;
 }
 
 export interface ICreateJobDto extends ICommonFields {
@@ -66,10 +85,15 @@ export const useGetJob = (id: string) =>
     queryKey: queryKeys.jobs.detail(id),
   });
 
-export const useGetJobs = () =>
+export const useGetJobs = (sort: TJobSortKey = "default") =>
   useSuspenseQuery({
-    queryFn: async () => await api.get<IJob[]>("/jobs"),
-    queryKey: [...queryKeys.jobs.all, "all"],
+    queryFn: async () => {
+      const sortQuery = JOB_SORT_QUERY[sort];
+      return await api.get<IJob[]>(
+        sortQuery ? `/jobs?sort=${sortQuery}` : "/jobs"
+      );
+    },
+    queryKey: queryKeys.jobs.list({ sort }),
     staleTime: Number.POSITIVE_INFINITY,
     gcTime: Number.POSITIVE_INFINITY,
   });

@@ -1,5 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { KeyIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
+import {
+  KeyIcon,
+  PencilIcon,
+  ShieldCheckIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
+import { cn } from "cn";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -31,9 +37,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog.tsx";
+import { useAppStore } from "@/store/appStore.ts";
 
 interface Props {
   apiKey: IApiKey;
+  isPrimary?: boolean;
 }
 
 const editSchema = z.object({
@@ -43,12 +51,19 @@ const editSchema = z.object({
 
 type EditFormData = z.infer<typeof editSchema>;
 
-export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
+export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
   const { mutateAsync: activateKey } = useActivateApiKey();
   const { mutateAsync: deleteKey } = useDeleteApiKey();
   const { mutateAsync: updateKey } = useUpdateApiKey();
   const [editOpen, setEditOpen] = useState(false);
   const isActive = apiKey.isActive === true;
+
+  const setDefaultAiProvider = useAppStore(
+    (state) => state.setDefaultAiProvider
+  );
+
+  const handleSetPrimary = () =>
+    setDefaultAiProvider({ provider: apiKey.provider, model: apiKey.model });
 
   const form = useForm<EditFormData>({
     defaultValues: {
@@ -91,7 +106,23 @@ export const ApiKeyCard = ({ apiKey }: Readonly<Props>) => {
         </CardDescription>
         <CardAction className="flex items-center gap-3 pt-3">
           {isActive ? (
-            <Badge>Active</Badge>
+            <div className={cn("flex items-center gap-1")}>
+              {isPrimary ? (
+                <ShieldCheckIcon
+                  className="size-4 text-signal-success"
+                  weight="fill"
+                />
+              ) : (
+                <Button
+                  onClick={handleSetPrimary}
+                  size="xs"
+                  variant="secondary"
+                >
+                  Set Primary
+                </Button>
+              )}
+              <Badge>Active</Badge>
+            </div>
           ) : (
             <Button
               disabled={isActive}

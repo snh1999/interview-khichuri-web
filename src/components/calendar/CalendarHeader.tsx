@@ -5,7 +5,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useScheduleStore } from "@/store/scheduleStore.ts";
 import {
   DEFAULT_CLICK_DURATION_MINUTES,
-  getWeekDays,
+  getWeekBoundary,
   toAnchorDate,
 } from "./calendar.helpers";
 import type { TViewMode } from "./calendar.types";
@@ -36,11 +36,10 @@ export const CalendarHeader = () => {
       return format(date, "MMMM d, yyyy");
     }
     if (viewMode === "week") {
-      const weekDays = getWeekDays(date);
-      return `${format(weekDays[0], "MMM d")} — ${format(
-        weekDays[6],
-        "MMM d, yyyy"
-      )}`;
+      const { start, end } = getWeekBoundary(date);
+      return start.getFullYear() === end.getFullYear()
+        ? `${format(start, "MMM d")} — ${format(end, "MMM d, yyyy")}`
+        : `${format(start, "MMM d, yyyy")} — ${format(end, "MMM d, yyyy")}`;
     }
     return format(date, "MMMM yyyy");
   };
@@ -63,23 +62,33 @@ export const CalendarHeader = () => {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-2">
-        <Button onClick={goToToday} size="sm" variant="outline">
+        <Button onClick={goToToday} variant="outline">
           Today
         </Button>
-        <Button onClick={goToPrev} size="icon" variant="outline">
+        <Button
+          aria-label="Previous period"
+          onClick={goToPrev}
+          size="icon"
+          variant="outline"
+        >
           <CaretLeftIcon className="size-4" />
         </Button>
         <h2 className="font-semibold">{getTitle()}</h2>
 
-        <Button onClick={goToNext} size="icon" variant="outline">
+        <Button
+          aria-label="Next period"
+          onClick={goToNext}
+          size="icon"
+          variant="outline"
+        >
           <CaretRightIcon className="size-4" />
         </Button>
       </div>
 
       <div className="flex items-center gap-3">
         <ToggleGroup
+          className="mr-2"
           onValueChange={handleViewModeChange}
-          size="sm"
           value={[viewMode]}
         >
           <ToggleGroupItem value="month">Month</ToggleGroupItem>
@@ -87,13 +96,9 @@ export const CalendarHeader = () => {
           <ToggleGroupItem value="day">Day</ToggleGroupItem>
         </ToggleGroup>
 
-        <Button
-          className="size-8"
-          onClick={handleAddEventClick}
-          size="icon"
-          variant="outline"
-        >
-          <PlusIcon className="size-4" />
+        <Button onClick={handleAddEventClick} variant="outline">
+          <PlusIcon />
+          Add event
         </Button>
 
         <EventFilters onToggle={toggleVisibility} visibility={visibility} />

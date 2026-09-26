@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { PROFILE_PAGE, SETTINGS_PAGE } from "@/app.constants.ts";
+import { AuthActionButton } from "@/components/auth/AuthActionButton.tsx";
 import { ProfileCard } from "@/components/common/ProfileCard.tsx";
 import {
   DropdownMenu,
@@ -32,12 +33,14 @@ const ProfileDropdown = ({
   const navigateToSettings = () => navigate(SETTINGS_PAGE);
   const logout = async () => {
     await clearLocalCache();
+    return signOut();
+  };
+  const logoutKeepData = async () => {
     const result = await signOut();
     if (result.error) {
       toast.error(result.error.message ?? "Something went wrong");
-    } else {
-      toast.success("Logged out, Redirecting");
     }
+    return result;
   };
 
   return (
@@ -52,19 +55,13 @@ const ProfileDropdown = ({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            className="gap-2 px-4 py-2.5 text-base"
-            onClick={navigateToProfile}
-          >
-            <UserIcon className="size-5 text-foreground" />
+        <DropdownMenuGroup className="*:gap-2 *:px-4 *:py-2.5 *:text-md">
+          <DropdownMenuItem onClick={navigateToProfile}>
+            <UserIcon className="size-4" />
             <span>My account</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="gap-2 px-4 py-2.5 text-base"
-            onClick={navigateToSettings}
-          >
-            <GearIcon className="size-5 text-foreground" />
+          <DropdownMenuItem onClick={navigateToSettings}>
+            <GearIcon className="size-4" />
             <span>Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -72,14 +69,27 @@ const ProfileDropdown = ({
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            className="gap-2 px-4 py-2.5 text-base"
-            onClick={logout}
+          <AuthActionButton
+            action={logout}
+            actionLabel="Log out & clear data"
+            cancelLabel="Log out"
+            dialogDescription={`"Logout & Clear data" wipes the local cache (ATS scores, recommendations, tailoring notes) before logging out. Use "Logout" to keep this browser's cached ATS data and just logs out.`}
+            dialogTitle="Log out?"
+            onCancel={logoutKeepData}
+            renderNode={
+              <DropdownMenuItem
+                className="gap-2 px-4 py-2.5 text-md"
+                closeOnClick={false}
+                variant="destructive"
+              >
+                <SignOutIcon className="size-4" />
+                Log out
+              </DropdownMenuItem>
+            }
+            requireConfirmation
+            successMessage="Logged out. Redirecting…"
             variant="destructive"
-          >
-            <SignOutIcon className="size-5" />
-            Logout
-          </DropdownMenuItem>
+          />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -13,6 +13,7 @@ import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import type { IResume } from "@/api/resumes";
 import { PUBLIC_RESUME_PAGE } from "@/app.constants.ts";
+import { AiActionButton } from "@/components/common/ai/AiActionButton.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { ActionButton } from "@/components/ui/button/ActionButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -26,15 +27,21 @@ import {
 interface IProps {
   resume: IResume;
   isSettingPrimary: boolean;
+  isExtracting: boolean;
   onView: (resume: IResume) => void;
   onSetPrimary: (id: string) => void;
   onDelete: (id: string) => Promise<void>;
-  onFillProfile: (resume: IResume) => void;
+  onFillProfile: (
+    resume: IResume,
+    provider?: string,
+    model?: string
+  ) => Promise<void>;
 }
 
 export const ResumeListItem = ({
   resume,
   isSettingPrimary,
+  isExtracting,
   onView,
   onSetPrimary,
   onDelete,
@@ -70,6 +77,9 @@ export const ResumeListItem = ({
 
   const handleView = () => onView(resume);
   const handleSetPrimary = () => onSetPrimary(resume.id);
+
+  const handleExecute = (provider: string, model?: string) =>
+    onFillProfile(resume, provider, model);
 
   const handleFillProfile = () => onFillProfile(resume);
 
@@ -120,9 +130,24 @@ export const ResumeListItem = ({
           <DropdownMenuItem onClick={handleNavigate}>
             <ArrowSquareOutIcon className="size-4" /> Visit
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleFillProfile}>
-            <FileArrowDownIcon className="size-4" /> Fill profile
-          </DropdownMenuItem>
+          {resume.content ? (
+            <DropdownMenuItem onClick={handleFillProfile}>
+              <FileArrowDownIcon className="size-4" /> Fill profile
+            </DropdownMenuItem>
+          ) : (
+            <AiActionButton
+              description="Extract your profile data from this PDF resume. Only sections found in the resume will be updated."
+              execute={handleExecute}
+              executeLabel="Fill profile"
+              hideTarget
+              icon={<FileArrowDownIcon className="size-4" />}
+              isLoading={isExtracting}
+              title="Extract Resume Data"
+              toastErrorMessage="Failed to extract resume"
+              toastSuccessMessage="Profile extracted — review and save"
+              variant="ghost"
+            />
+          )}
 
           {!resume.isPrimary && (
             <DropdownMenuItem

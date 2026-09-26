@@ -1,3 +1,4 @@
+import { ShieldCheckIcon } from "@phosphor-icons/react";
 import {
   type IApiKey,
   PROVIDER_LABELS,
@@ -21,6 +22,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty.tsx";
+import { useAppStore } from "@/store/appStore.ts";
 
 const groupKeysByProvider = (
   keys: IApiKey[]
@@ -45,6 +47,8 @@ const KeysCard = () => {
 
   const grouped = apiKeys ? groupKeysByProvider(apiKeys) : new Map();
 
+  const defaultAiProvider = useAppStore((state) => state.defaultAiProvider);
+
   return (
     <Card>
       <CardHeader>
@@ -61,11 +65,24 @@ const KeysCard = () => {
           <div className="space-y-6">
             {Array.from(grouped.entries()).map(([provider, keys]) => (
               <div className="space-y-3" key={provider}>
-                <CardTitle className="pt-3 text-sm">
-                  {PROVIDER_LABELS[provider as TApiKeyProvider]}
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex gap-2 pt-3 text-md">
+                    {PROVIDER_LABELS[provider as TApiKeyProvider]}
+                    {defaultAiProvider?.provider === provider ? (
+                      <ShieldCheckIcon
+                        className="text-signal-success"
+                        weight="fill"
+                      />
+                    ) : null}
+                  </CardTitle>
+                </div>
+
                 {keys.map((key: IApiKey) => (
-                  <ApiKeyCard apiKey={key} key={key.id} />
+                  <ApiKeyCard
+                    apiKey={key}
+                    isPrimary={defaultAiProvider?.provider === provider}
+                    key={key.id}
+                  />
                 ))}
               </div>
             ))}

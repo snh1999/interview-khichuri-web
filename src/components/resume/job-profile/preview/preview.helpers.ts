@@ -85,8 +85,6 @@ export const PREFERENCES_LABELS = {
   salaryExpected: "Salary Expected",
   currency: "Currency",
   titles: "Titles",
-  coverLetterTemplate: "Cover Letter Template",
-  coverLetterTone: "Cover Letter Tone",
 } as const;
 
 export const WORK_EXPERIENCE_LABELS = {

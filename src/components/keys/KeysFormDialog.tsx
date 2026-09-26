@@ -10,16 +10,17 @@ import { FormCheckbox } from "@/components/common/form/FormCheckbox.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
 import { ProviderInfoCard } from "@/components/keys/info/ProviderInfoCard.tsx";
+import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog.tsx";
+  DrawLogClose,
+  DrawLogContent,
+  DrawLogHeader,
+  DrawLogTitle,
+  DrawLogTrigger,
+} from "@/components/ui/custom/DrawLog.tsx";
+import { FormDrawLogAlert } from "@/components/ui/custom/FormDrawLogAlert.tsx";
 
 const API_PROVIDERS = Object.entries(PROVIDER_LABELS).map(([value, label]) => ({
   label,
@@ -34,12 +35,12 @@ const createKeySchema = z.object({
   provider: z.enum(ALL_PROVIDERS),
 });
 
-type CreateKeyFormData = z.infer<typeof createKeySchema>;
+type TCreateKeyFormData = z.infer<typeof createKeySchema>;
 
-const useKeysForm = (onSuccess: () => void) => {
-  const { mutateAsync: createKey, isPending } = useCreateApiKey();
+const useKeysForm = (onSuccess: () => void): TFormHook<TCreateKeyFormData> => {
+  const { mutateAsync: createKey, isPending: isLoading } = useCreateApiKey();
 
-  const form = useForm<CreateKeyFormData>({
+  const form = useForm<TCreateKeyFormData>({
     defaultValues: {
       isActive: false,
       key: "",
@@ -51,16 +52,19 @@ const useKeysForm = (onSuccess: () => void) => {
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await createKey(data, {
-      onSuccess: () => {
-        toast.success("API key saved");
-        form.reset();
-        onSuccess();
-      },
-    });
+    await createKey(
+      { ...data, model: data.model?.trim() || undefined },
+      {
+        onSuccess: () => {
+          toast.success("API key saved");
+          form.reset();
+          onSuccess();
+        },
+      }
+    );
   });
 
-  return { form, isPending, onSubmit };
+  return { form, isLoading, onSubmit };
 };
 
 export const KeysFormDialog = () => {
@@ -69,13 +73,20 @@ export const KeysFormDialog = () => {
     setOpen(false);
   };
 
-  const { form, onSubmit, isPending } = useKeysForm(closeDialog);
+  const { form, onSubmit, isLoading } = useKeysForm(closeDialog);
 
   const resetForm = () => form.reset();
 
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
-      <DialogTrigger
+    <FormDrawLogAlert
+      isDirty={form.formState.isDirty}
+      isEdit={false}
+      isLoading={isLoading}
+      onOpenChange={setOpen}
+      open={open}
+      type="key"
+    >
+      <DrawLogTrigger
         render={
           <Button variant="outline">
             <PlusCircleIcon />
@@ -83,13 +94,13 @@ export const KeysFormDialog = () => {
           </Button>
         }
       />
-      <DialogContent className="min-w-lg py-6">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-sm">
+      <DrawLogContent className="min-w-lg py-6">
+        <DrawLogHeader>
+          <DrawLogTitle className="flex items-center gap-2 text-sm">
             <KeyIcon />
             Add API Key
-          </DialogTitle>
-        </DialogHeader>
+          </DrawLogTitle>
+        </DrawLogHeader>
         <div className="no-scrollbar -mx-4 max-h-[79vh] overflow-y-auto px-4">
           <form className="space-y-4 px-4 pb-6" onSubmit={onSubmit}>
             <FormInput
@@ -131,12 +142,12 @@ export const KeysFormDialog = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <DialogClose
+                <DrawLogClose
                   onClick={resetForm}
                   render={<Button variant="outline">Cancel</Button>}
                 />
 
-                <AsyncButton isLoading={isPending} type="submit">
+                <AsyncButton isLoading={isLoading} type="submit">
                   Save
                 </AsyncButton>
               </div>
@@ -144,7 +155,7 @@ export const KeysFormDialog = () => {
           </form>
           <ProviderInfoCard provider={form.watch("provider")} />
         </div>
-      </DialogContent>
-    </Dialog>
+      </DrawLogContent>
+    </FormDrawLogAlert>
   );
 };

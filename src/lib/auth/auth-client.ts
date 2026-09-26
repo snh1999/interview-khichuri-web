@@ -8,7 +8,6 @@ import { createAuthClient } from "better-auth/react";
 import { CONFIRM_LOGIN_PAGE } from "@/app.constants.ts";
 import type { TOauthProviders } from "@/lib/auth/auth.helpers.tsx";
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const baseURL = import.meta.env.VITE_API_URL;
 
 if (!baseURL || typeof baseURL !== "string" || !/^https?:\/\//u.test(baseURL)) {

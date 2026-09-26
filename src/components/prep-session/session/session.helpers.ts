@@ -123,11 +123,3 @@ export const useCreateSessionForm = ({
     onSubmit,
   };
 };
-
-export const useNavigateToSessionPage = (id: string) => {
-  const navigate = useNavigate();
-
-  return () => {
-    navigate(generatePath(SESSION_DETAIL_PAGE, { sessionId: id }));
-  };
-};
