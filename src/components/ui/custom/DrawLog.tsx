@@ -62,7 +62,7 @@ function DrawLogContent({ className, showCloseButton, ...props }: DrawLogContent
   const Comp = isDesktop ? DialogContent : DrawerContent
   return (
     <Comp
-      className={cn("flex flex-col sm:max-w-xl",
+      className={cn("flex flex-col sm:max-w-xl no-scrollbar",
         isDesktop
           ? "max-h-[95vh]"
           : "max-h-[80vh] [&_form]:flex [&_form]:min-h-0 [&_form]:flex-1 [&_form]:flex-col",
