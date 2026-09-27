@@ -28,7 +28,7 @@ const ProfileDropdown = ({
   const navigate = useNavigate();
   const navigateToProfile = () => navigate(PROFILE_PAGE);
   const navigateToSettings = () => navigate(SETTINGS_PAGE);
-  const logout = () =>  signOut();
+  const logout = () => signOut();
 
   return (
     <DropdownMenu defaultOpen={defaultOpen}>
