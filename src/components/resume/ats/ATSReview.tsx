@@ -118,7 +118,7 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
             toastSuccessMessage="AI resume review generated"
           >
             {job ? (
-              <p className="text-muted-foreground text-sm">
+              <p className="text-sm">
                 Job: {job.title} @ {job.companyName}
               </p>
             ) : (
@@ -156,16 +156,14 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
             />
           )}
 
-          {job ? null : (
-            <AppCombobox
-              data={resumes}
-              label="Resume"
-              onChange={handleResumeChange}
-              placeholder="Select a resume..."
-              toOption={resumeToOption}
-              value={selectedResumeId}
-            />
-          )}
+          <AppCombobox
+            data={resumes}
+            label="Resume"
+            onChange={handleResumeChange}
+            placeholder="Select a resume..."
+            toOption={resumeToOption}
+            value={selectedResumeId}
+          />
         </div>
 
         {entries.length === 0 ? (

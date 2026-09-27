@@ -14,7 +14,7 @@ interface IProps
   extends Omit<ComponentProps<typeof SplitButton>, "primary" | "items">,
     Omit<
       ComponentProps<typeof AiDialog>,
-      "open" | "onOpenChange" | "onExecute"
+      "open" | "onOpenChange" | "onExecute" | "useSavedDefaults"
     > {
   execute: (provider: string, model?: string) => Promise<void> | void;
   executeLabel: string;
@@ -95,7 +95,7 @@ const AiActionButtonContent = ({
   };
 
   const handlePrimary = () => {
-    if (skipAiDialog && initialProvider && !executeDisabled) {
+    if (skipAiDialog && initialProvider && !executeDisabled && !children) {
       runDefault();
       return;
     }
@@ -158,6 +158,7 @@ const AiActionButtonContent = ({
         onOpenChange={setDialogOpen}
         open={dialogOpen}
         title={title}
+        useSavedDefaults={skipAiDialog && Boolean(children)}
       >
         {children}
       </AiDialog>
