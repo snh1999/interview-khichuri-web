@@ -47,19 +47,16 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
 
   const jobId = job ? job.id : selectedJobId;
 
-  const filter = useMemo<IAtsScoreFilter>(() => {
-    if (job) {
-      return { jobId: job.id };
-    }
-    return {
-      ...(selectedJobId ? { jobId: selectedJobId } : {}),
+  const filter = useMemo<IAtsScoreFilter>(
+    () => ({
+      ...(jobId ? { jobId } : {}),
       ...(selectedResumeId ? { resumeId: selectedResumeId } : {}),
-    };
-  }, [job, selectedJobId, selectedResumeId]);
+    }),
+    [jobId, selectedResumeId]
+  );
 
   const { data = [] } = useAtsScoreEntries(filter);
-  const hasFilter =
-    job !== undefined || selectedJobId !== null || selectedResumeId !== null;
+  const hasFilter = jobId !== null || selectedResumeId !== null;
   const entries = hasFilter ? data : data.slice(0, MAX_DEFAULT_ENTRIES);
 
   const jobMap = useMemo(() => new Map(jobs.map((j) => [j.id, j])), [jobs]);

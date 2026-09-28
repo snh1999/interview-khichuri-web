@@ -197,6 +197,18 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
 
   const comboValue = toComboValue(multiple === true, value, optionMap);
 
+  const createItem = async (itemLabel: string) => {
+    setIsCreating(true);
+    try {
+      await onCreateItem?.(itemLabel);
+      setInputValue("");
+    } catch {
+      setInputValue(itemLabel);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   const handleValueChange = async (
     next: IComboboxOption | IComboboxOption[] | null
   ) => {
@@ -216,13 +228,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
       const opt = Array.isArray(next) ? (next[0] ?? null) : next;
 
       if (opt?.isNew) {
-        setIsCreating(true);
-        try {
-          await onCreateItem?.(opt.label);
-          setInputValue("");
-        } finally {
-          setIsCreating(false);
-        }
+        await createItem(opt.label);
       } else {
         (onChange as (v: TValue | null) => void)(opt?.value ?? null);
       }

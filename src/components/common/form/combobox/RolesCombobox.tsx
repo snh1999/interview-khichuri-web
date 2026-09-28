@@ -1,5 +1,4 @@
 import type { FieldValues } from "react-hook-form";
-import { toast } from "sonner";
 import { type ILookupEntry, useCreateLookup, useRoles } from "@/api/lookups";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import {
@@ -29,12 +28,8 @@ const RolesComboboxContent = <T extends FieldValues>({
   const createRole = useCreateLookup("roles");
 
   const handleCreateRole = async (roleName: string) => {
-    try {
-      const created = await createRole.mutateAsync({ name: roleName });
-      form.setValue(name as never, created.id as never);
-    } catch {
-      toast.error("That role name isn't valid.");
-    }
+    const created = await createRole.mutateAsync({ name: roleName });
+    form.setValue(name as never, created.id as never);
   };
 
   const optionMapping = (item: ILookupEntry) => ({
