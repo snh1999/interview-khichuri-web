@@ -10,6 +10,7 @@ import {
   INTERVIEW_PAGE,
   JOB_DETAIL_PAGE,
   JOBS_PAGE,
+  LANDING_PAGE,
   LOGIN_PAGE,
   NOTES_PAGE,
   PROFILE_PAGE,
@@ -39,6 +40,7 @@ import { DashboardPage } from "@/pages/DashboardPage.tsx";
 import { EmptyPage } from "@/pages/EmptyPage.tsx";
 import { JobDetailPage } from "@/pages/JobDetailPage.tsx";
 import { JobsPage } from "@/pages/JobsPage.tsx";
+import { LandingPage } from "@/pages/LandingPage.tsx";
 import { NotesPage } from "@/pages/NotesPage.tsx";
 import { SchedulePage } from "@/pages/SchedulePage.tsx";
 import { SessionsPage } from "@/pages/SessionsPage.tsx";
@@ -103,6 +105,7 @@ const App = () => {
       <Route
         element={session ? <Navigate replace to={HOMEPAGE} /> : <Outlet />}
       >
+        <Route element={<LandingPage />} path={LANDING_PAGE} />
         <Route element={<LoginPage />} path={LOGIN_PAGE} />
         <Route element={<RegisterPage />} path={REGISTER_PAGE} />
         <Route element={<EmailRedirectPage />} path={EMAIL_REDIRECT_PAGE} />

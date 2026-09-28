@@ -33,7 +33,7 @@ export const PERSONA_STYLES: Record<string, IPersonaAppearance> = {
     clothingAccent: "#8B5CF6",
     hasGlasses: false,
     initials: "SJ",
-    accentGradient: "from-purple-600/20 to-pink-600/10",
+    accentGradient: "from-amber-600/20 to-amber-900/10",
   },
   jordan: {
     skinTone: "#D4A373",

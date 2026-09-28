@@ -38,6 +38,7 @@ export interface AiDialogProps {
   executeLabel?: string;
   isLoading?: boolean;
   executeDisabled?: boolean;
+  useSavedDefaults?: boolean;
   children?: ReactNode;
 }
 
@@ -56,6 +57,7 @@ const AiDialogContent = ({
   executeLabel = "Send",
   isLoading = false,
   executeDisabled = false,
+  useSavedDefaults = false,
   children,
 }: Readonly<AiDialogProps>) => {
   const {
@@ -88,8 +90,9 @@ const AiDialogContent = ({
   }, [open, providers]);
 
   const providerChanged =
-    provider !== defaultAiProvider?.provider ||
-    model.trim() !== (defaultAiProvider?.model ?? "");
+    !useSavedDefaults &&
+    (provider !== defaultAiProvider?.provider ||
+      model.trim() !== (defaultAiProvider?.model ?? ""));
 
   const handleDefaultChange = (checked: boolean) => {
     if (checked && provider) {
@@ -134,37 +137,46 @@ const AiDialogContent = ({
         <DrawLogBody>
           {hasProviders ? (
             <div className="space-y-3 *:text-muted-foreground *:text-sm">
-              <div className="space-y-1.5">
-                <div>AI Provider</div>
-                <Select
-                  items={providerItems}
-                  onValueChange={handleSelect}
-                  value={provider}
-                >
-                  <SelectTrigger className="w-full" disabled={isLoading}>
-                    <SelectValue placeholder="Select a provider" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {providers.map((p) => (
-                        <SelectItem key={p} value={p}>
-                          {PROVIDER_LABELS[p]}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
+              {useSavedDefaults ? (
+                <p className="text-muted-foreground text-sm">
+                  Runs on your default provider {provider?PROVIDER_LABELS[provider]: ""}
+                  {model ? ` (${model})` : ""}.
+                </p>
+              ) : (
+                <>
+                  <div className="space-y-1.5">
+                    <div>AI Provider</div>
+                    <Select
+                      items={providerItems}
+                      onValueChange={handleSelect}
+                      value={provider}
+                    >
+                      <SelectTrigger className="w-full" disabled={isLoading}>
+                        <SelectValue placeholder="Select a provider" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {providers.map((p) => (
+                            <SelectItem key={p} value={p}>
+                              {PROVIDER_LABELS[p]}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <div className="space-y-1.5">
-                <div>Model Name</div>
-                <Input
-                  disabled={isLoading}
-                  onChange={handleModelChange}
-                  placeholder="Name of specific model (optional)"
-                  value={model}
-                />
-              </div>
+                  <div className="space-y-1.5">
+                    <div>Model Name</div>
+                    <Input
+                      disabled={isLoading}
+                      onChange={handleModelChange}
+                      placeholder="Name of specific model (optional)"
+                      value={model}
+                    />
+                  </div>
+                </>
+              )}
 
               {children}
             </div>
