@@ -55,15 +55,16 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
     [jobId, selectedResumeId]
   );
 
-  const { data = [] } = useAtsScoreEntries(filter);
-  const hasFilter = jobId !== null || selectedResumeId !== null;
-  const entries = hasFilter ? data : data.slice(0, MAX_DEFAULT_ENTRIES);
-
   const jobMap = useMemo(() => new Map(jobs.map((j) => [j.id, j])), [jobs]);
   const resumeMap = useMemo(
     () => new Map(resumes.map((r) => [r.id, r])),
     [resumes]
   );
+
+  const { data = [] } = useAtsScoreEntries(filter);
+  const hasFilter = jobId !== null || selectedResumeId !== null;
+  const owned = data.filter((entry) => resumeMap.has(entry.resumeId));
+  const entries = hasFilter ? owned : owned.slice(0, MAX_DEFAULT_ENTRIES);
 
   const handleGenerate = async (provider: string, model?: string) => {
     if (!(jobId && selectedResumeId)) {
