@@ -64,7 +64,7 @@ const NotesContent = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-1 flex-col">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-semibold text-xl">Notes</h1>
         <Button onClick={openCreateDialog} variant="outline">
@@ -74,7 +74,7 @@ const NotesContent = () => {
       </div>
 
       <Tabs
-        className="space-y-2"
+        className="flex-1"
         onValueChange={handleTabChange}
         value={currentTab}
       >
@@ -89,7 +89,7 @@ const NotesContent = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="notes">
+        <TabsContent className="flex flex-col" value="notes">
           <AppErrorSuspense>
             <NotesTab
               onEdit={openEditDialog}
@@ -99,7 +99,7 @@ const NotesContent = () => {
           </AppErrorSuspense>
         </TabsContent>
 
-        <TabsContent value="questions">
+        <TabsContent className="flex flex-col" value="questions">
           <AppErrorSuspense>
             <QuestionsTab onCreateNote={openBankDialog} />
           </AppErrorSuspense>

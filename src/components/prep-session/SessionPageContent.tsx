@@ -81,7 +81,7 @@ export const SessionPageContent = ({ search = "", onNewSession }: IProps) => {
 
   if (filteredSessions.length === 0) {
     return (
-      <Empty>
+      <Empty fullHeight>
         <EmptyHeader>
           <EmptyTitle>
             {sessions.length === 0

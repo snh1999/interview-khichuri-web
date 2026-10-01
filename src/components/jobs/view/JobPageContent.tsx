@@ -83,7 +83,7 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
   return (
     <>
       {jobs.length === 0 ? (
-        <Empty>
+        <Empty fullHeight>
           <EmptyHeader>
             <EmptyTitle>No jobs found</EmptyTitle>
             <EmptyDescription>

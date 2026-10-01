@@ -17,7 +17,7 @@ export const SidebarLayout = () => {
           <div className="flex min-h-full">
             <AppSidebar />
             <div className="flex min-w-0 flex-1 flex-col">
-              <main className="mx-auto w-full flex-1 px-4 py-6 sm:px-6">
+              <main className="mx-auto flex w-full flex-1 flex-col px-4 py-6 sm:px-6">
                 <Outlet />
               </main>
 
