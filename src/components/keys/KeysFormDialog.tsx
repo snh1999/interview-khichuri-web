@@ -1,10 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyIcon, PlusCircleIcon } from "@phosphor-icons/react";
-import { useState } from "react";
+import type { VariantProps } from "class-variance-authority";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { ALL_PROVIDERS, PROVIDER_LABELS, useCreateApiKey } from "@/api/keys";
+import {
+  ALL_PROVIDERS,
+  PROVIDER_LABELS,
+  type TApiKeyProvider,
+  useCreateApiKey,
+} from "@/api/keys";
 import { MAX_NAME_LENGTH, MAX_SHORT_LENGTH } from "@/app.constants.ts";
 import { FormCheckbox } from "@/components/common/form/FormCheckbox.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
@@ -12,7 +18,7 @@ import FormSelect from "@/components/common/form/FormSelect.tsx";
 import { ProviderInfoCard } from "@/components/keys/info/ProviderInfoCard.tsx";
 import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
-import { Button } from "@/components/ui/button.tsx";
+import { Button, type buttonVariants } from "@/components/ui/button.tsx";
 import {
   DrawLogClose,
   DrawLogContent,
@@ -37,12 +43,18 @@ const createKeySchema = z.object({
 
 type TCreateKeyFormData = z.infer<typeof createKeySchema>;
 
-const useKeysForm = (onSuccess: () => void): TFormHook<TCreateKeyFormData> => {
+const useKeysForm = ({
+  onSuccess,
+  isActive,
+}: {
+  onSuccess: () => void;
+  isActive: boolean;
+}): TFormHook<TCreateKeyFormData> => {
   const { mutateAsync: createKey, isPending: isLoading } = useCreateApiKey();
 
   const form = useForm<TCreateKeyFormData>({
     defaultValues: {
-      isActive: false,
+      isActive,
       key: "",
       model: "",
       name: "",
@@ -67,13 +79,34 @@ const useKeysForm = (onSuccess: () => void): TFormHook<TCreateKeyFormData> => {
   return { form, isLoading, onSubmit };
 };
 
-export const KeysFormDialog = () => {
+export const KeysFormDialog = ({
+  label = "Add",
+  variant = "outline",
+  isActive = false,
+  getIsActive,
+}: {
+  label?: string;
+  variant?: VariantProps<typeof buttonVariants>["variant"];
+  isActive?: boolean;
+  getIsActive?: (type: TApiKeyProvider) => boolean;
+}) => {
   const [open, setOpen] = useState(false);
   const closeDialog = () => {
     setOpen(false);
   };
 
-  const { form, onSubmit, isLoading } = useKeysForm(closeDialog);
+  const { form, onSubmit, isLoading } = useKeysForm({
+    onSuccess: closeDialog,
+    isActive,
+  });
+
+  const provider = form.watch("provider");
+  useEffect(() => {
+    if (!getIsActive) {
+      return;
+    }
+    form.setValue("isActive", getIsActive(provider));
+  }, [provider, getIsActive, form]);
 
   const resetForm = () => form.reset();
 
@@ -88,9 +121,9 @@ export const KeysFormDialog = () => {
     >
       <DrawLogTrigger
         render={
-          <Button variant="outline">
+          <Button variant={variant}>
             <PlusCircleIcon />
-            Add
+            {label}
           </Button>
         }
       />
@@ -153,7 +186,7 @@ export const KeysFormDialog = () => {
               </div>
             </div>
           </form>
-          <ProviderInfoCard provider={form.watch("provider")} />
+          <ProviderInfoCard provider={provider} />
         </div>
       </DrawLogContent>
     </FormDrawLogAlert>

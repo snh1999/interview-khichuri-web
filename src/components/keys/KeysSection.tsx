@@ -46,6 +46,7 @@ const KeysCard = () => {
   const { data: apiKeys } = useApiKeys();
 
   const grouped = apiKeys ? groupKeysByProvider(apiKeys) : new Map();
+  const getIsActive = (type: TApiKeyProvider) => !grouped.get(type);
 
   const defaultAiProvider = useAppStore((state) => state.defaultAiProvider);
 
@@ -57,7 +58,7 @@ const KeysCard = () => {
           Manage your AI provider API keys for question generation.
         </CardDescription>
         <CardAction>
-          <KeysFormDialog />
+          <KeysFormDialog getIsActive={getIsActive} />
         </CardAction>
       </CardHeader>
       <CardContent>

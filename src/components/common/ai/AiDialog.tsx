@@ -1,9 +1,11 @@
+import { ArrowSquareOutIcon } from "@phosphor-icons/react";
 import { type ReactNode, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { PROVIDER_LABELS, type TApiKeyProvider } from "@/api/keys";
 import { SETTINGS_PAGE } from "@/app.constants.ts";
 import { useAIProvider } from "@/components/common/ai/ai.hook.ts";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
+import { KeysFormDialog } from "@/components/keys/KeysFormDialog.tsx";
 import { Button } from "@/components/ui/button";
 import { AsyncButton } from "@/components/ui/button/AsyncButton";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,6 +19,13 @@ import {
   DrawLogHeader,
   DrawLogTitle,
 } from "@/components/ui/custom/DrawLog.tsx";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty.tsx";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -139,7 +148,8 @@ const AiDialogContent = ({
             <div className="space-y-3 *:text-muted-foreground *:text-sm">
               {useSavedDefaults ? (
                 <p className="text-muted-foreground text-sm">
-                  Runs on your default provider {provider?PROVIDER_LABELS[provider]: ""}
+                  Runs on your default provider{" "}
+                  {provider ? PROVIDER_LABELS[provider] : ""}
                   {model ? ` (${model})` : ""}.
                 </p>
               ) : (
@@ -181,39 +191,60 @@ const AiDialogContent = ({
               {children}
             </div>
           ) : (
-            <p>
-              No AI providers available.{" "}
-              <Link className="underline" to={SETTINGS_PAGE}>
-                Add an API key in Settings
-              </Link>
-            </p>
+            <Empty>
+              <EmptyHeader>
+                <EmptyTitle>No AI providers available. </EmptyTitle>
+                <EmptyDescription>
+                  <Link
+                    className="flex underline"
+                    to={`${SETTINGS_PAGE}?tab=keys`}
+                  >
+                    Manage API keys from Settings
+                    <ArrowSquareOutIcon />
+                  </Link>
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <KeysFormDialog
+                  isActive
+                  label="Add New Key"
+                  variant="default"
+                />
+              </EmptyContent>
+            </Empty>
           )}
         </DrawLogBody>
 
         <DrawLogFooter className="justify-between! pt-2">
-          <div className="space-y-4 pl-2">
-            {providerChanged ? (
+          {hasProviders ? (
+            <div className="space-y-4 pl-2">
+              {providerChanged ? (
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    disabled={isLoading}
+                    id="ai-set-default"
+                    onCheckedChange={handleDefaultChange}
+                  />
+                  <Label htmlFor="ai-set-default">
+                    Set provider as default
+                  </Label>
+                </div>
+              ) : null}
               <div className="flex items-center gap-2">
                 <Checkbox
+                  checked={skipAiDialog}
                   disabled={isLoading}
-                  id="ai-set-default"
-                  onCheckedChange={handleDefaultChange}
+                  id="ai-skip-dialog"
+                  onCheckedChange={setSkipAiDialog}
                 />
-                <Label htmlFor="ai-set-default">Set provider as default</Label>
+                <Label htmlFor="ai-skip-dialog">
+                  Do not show dialog for AI tasks
+                </Label>
               </div>
-            ) : null}
-            <div className="flex items-center gap-2">
-              <Checkbox
-                checked={skipAiDialog}
-                disabled={isLoading}
-                id="ai-skip-dialog"
-                onCheckedChange={setSkipAiDialog}
-              />
-              <Label htmlFor="ai-skip-dialog">
-                Do not show dialog for AI tasks
-              </Label>
             </div>
-          </div>
+          ) : (
+            <div />
+          )}
 
           <div className="flex items-end gap-2">
             <DrawLogClose render={<Button variant="outline">Cancel</Button>} />
