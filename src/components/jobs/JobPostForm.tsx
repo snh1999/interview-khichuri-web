@@ -83,6 +83,8 @@ export const JobPostForm = ({
       {
         ...result,
         companyName: result.companyName ?? "",
+        roleId: result.roleId ?? null,
+        topicNames: result.topicNames ?? [],
         deadline: stringToDate(result.deadline),
         interviewDate: stringToDate(result.interviewDate),
       },

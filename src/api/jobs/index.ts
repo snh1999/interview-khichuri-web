@@ -34,7 +34,7 @@ export interface IJobExtractionResult {
   title?: string;
   companyName?: string | null;
   roleId?: number | null;
-  topicIds?: number[];
+  topicNames?: string[];
   location?: string | null;
   source?: string | null;
   deadline: string | null;
@@ -133,4 +133,5 @@ export const useExtractJob = () =>
       await api.post<IJobExtractionResult>("/jobs/extract", data, {
         timeoutMs: 120_000,
       }),
+    meta: { invalidates: queryKeys.lookups.roles },
   });
