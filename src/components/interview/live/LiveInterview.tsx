@@ -28,6 +28,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
+import { interviewEvaluationCopyPrompt } from "@/lib/ai/prompts.ts";
 import { streamPost } from "@/lib/api-client";
 import type {
   IInterviewTranscriptItem,
@@ -325,6 +326,11 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
       </div>
 
       <AiDialog
+        copyPrompt={
+          items.some((item) => item.answer.trim().length > 0)
+            ? interviewEvaluationCopyPrompt({ transcript: items })
+            : undefined
+        }
         description="Choose an AI provider to evaluate your interview."
         executeLabel="Evaluate"
         isLoading={isEvaluating}

@@ -10,6 +10,7 @@ import {
 import { AiActionButton } from "@/components/common/ai/AiActionButton.tsx";
 import { AppCombobox } from "@/components/common/form/combobox/AppCombobox.tsx";
 import { ATSReviewCard } from "@/components/resume/ats/ATSReviewCard.tsx";
+import { resumeToText } from "@/components/resume/utils.ts";
 import {
   Card,
   CardAction,
@@ -18,6 +19,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
+import { useIndustryMap, useTopicsMap } from "@/hooks/useLookupMap";
+import { atsScoreCopyPrompt } from "@/lib/ai/prompts.ts";
 import type { IAtsCacheEntry, IAtsScoreFilter } from "@/lib/indexdb.ts";
 
 interface IProps {
@@ -37,6 +40,8 @@ const toFullScore = (entry: IAtsCacheEntry): TAtsScore => ({
 
 export const ATSReview = ({ job }: Readonly<IProps>) => {
   const { data: jobsData } = useGetJobs();
+  const topicNames = useTopicsMap();
+  const industryNames = useIndustryMap();
   const { data: resumesData } = useGetResumes();
   const jobs = jobsData ?? [];
   const resumes = resumesData ?? [];
@@ -96,6 +101,30 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
 
   const resumeToOption = (r: IResume) => ({ value: r.id, label: r.name });
 
+  const copyPrompt = useMemo(() => {
+    if (!(jobId && selectedResumeId)) {
+      return;
+    }
+    const target = jobMap.get(jobId) ?? job;
+    return atsScoreCopyPrompt({
+      companyName: target?.companyName,
+      jobDescription: target?.description,
+      jobTitle: target?.title,
+      resumeText: resumeToText(resumeMap.get(selectedResumeId)?.content, {
+        topics: topicNames,
+        industries: industryNames,
+      }),
+    });
+  }, [
+    job,
+    jobId,
+    jobMap,
+    resumeMap,
+    selectedResumeId,
+    topicNames,
+    industryNames,
+  ]);
+
   return (
     <Card className="px-1">
       <CardHeader className="border-b">
@@ -106,6 +135,7 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
         </CardDescription>
         <CardAction>
           <AiActionButton
+            copyPrompt={copyPrompt}
             description={
               job
                 ? `Score this resume against ${job.title} @ ${job.companyName}.`
@@ -122,8 +152,8 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
             toastSuccessMessage="AI resume review generated"
           >
             {job ? (
-              <p className="text-sm">
-                Job: {job.title} @ {job.companyName}
+              <p className="text-foreground text-sm">
+                Job: {job.title} at {job.companyName}
               </p>
             ) : (
               <AppCombobox

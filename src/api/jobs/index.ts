@@ -1,4 +1,4 @@
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client";
 
@@ -83,6 +83,13 @@ export const useGetJob = (id: string) =>
   useSuspenseQuery({
     queryFn: async () => await api.get<IJobWithTopics>(`/jobs/${id}`),
     queryKey: queryKeys.jobs.detail(id),
+  });
+
+export const useJobQuery = (id?: string | null) =>
+  useQuery({
+    enabled: Boolean(id),
+    queryFn: async () => await api.get<IJobWithTopics>(`/jobs/${id}`),
+    queryKey: queryKeys.jobs.detail(id ?? ""),
   });
 
 export const useGetJobs = (sort: TJobSortKey = "default") =>
