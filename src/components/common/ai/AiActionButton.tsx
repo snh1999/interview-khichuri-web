@@ -45,6 +45,7 @@ const AiActionButtonContent = ({
   isLoading = false,
   executeDisabled = false,
   disabled = false,
+  showInstruction = false,
   children,
   icon,
   toastDescription,
@@ -58,7 +59,7 @@ const AiActionButtonContent = ({
 
   const skipAiDialog = useAppStore((state) => state.skipAiDialog);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState<"default" | boolean>(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -97,13 +98,17 @@ const AiActionButtonContent = ({
   const openDialog = () => setDialogOpen(true);
 
   const runDefault = () => {
+    if (children) {
+      setDialogOpen("default");
+      return;
+    }
     if (initialProvider) {
       run(initialProvider, initialModel.trim() || undefined);
     }
   };
 
   const handlePrimary = () => {
-    if (skipAiDialog && initialProvider && !executeDisabled && !children) {
+    if (skipAiDialog && initialProvider && !executeDisabled) {
       runDefault();
       return;
     }
@@ -168,9 +173,10 @@ const AiActionButtonContent = ({
         isLoading={isLoading}
         onExecute={handleDialogExecute}
         onOpenChange={setDialogOpen}
-        open={dialogOpen}
+        open={Boolean(dialogOpen)}
+        showInstruction={showInstruction}
         title={title}
-        useSavedDefaults={skipAiDialog && Boolean(children)}
+        useSavedDefaults={dialogOpen === "default"}
       >
         {children}
       </AiDialog>
