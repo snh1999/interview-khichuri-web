@@ -36,18 +36,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useAppStore } from "@/store/appStore.ts";
+
+const MAX_INSTRUCTION_LENGTH = 1000;
 
 export interface AiDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onExecute: (provider: string, model?: string) => void;
+  onExecute: (provider: string, model?: string, instruction?: string) => void;
   title: string;
   description?: string;
   executeLabel?: string;
   isLoading?: boolean;
   executeDisabled?: boolean;
   useSavedDefaults?: boolean;
+  showInstruction?: boolean;
   children?: ReactNode;
 }
 
@@ -67,6 +71,7 @@ const AiDialogContent = ({
   isLoading = false,
   executeDisabled = false,
   useSavedDefaults = false,
+  showInstruction = false,
   children,
 }: Readonly<AiDialogProps>) => {
   const {
@@ -89,6 +94,8 @@ const AiDialogContent = ({
 
   const [model, setModel] = useState<string>(initialModel);
 
+  const [instruction, setInstruction] = useState("");
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <re-seed only on open/provider-set changes>
   useEffect(() => {
     if (!open) {
@@ -96,6 +103,7 @@ const AiDialogContent = ({
     }
     setProvider(initialProvider);
     setModel(initialModel);
+    setInstruction("");
   }, [open, providers]);
 
   const providerChanged =
@@ -118,7 +126,11 @@ const AiDialogContent = ({
     if (!provider) {
       return;
     }
-    onExecute(provider, model.trim() || undefined);
+    onExecute(
+      provider,
+      model.trim() || undefined,
+      instruction.trim() || undefined
+    );
   };
 
   const handleSelect = (v: TApiKeyProvider | null) => {
@@ -131,9 +143,12 @@ const AiDialogContent = ({
   const handleModelChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setModel(e.target.value);
 
+  const handleInstructionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+    setInstruction(e.target.value);
+
   return (
     <DrawLog onOpenChange={onOpenChange} open={open}>
-      <DrawLogContent>
+      <DrawLogContent showCloseButton={false}>
         <DrawLogHeader>
           <DrawLogTitle className="flex items-center gap-2">
             {title}
@@ -146,6 +161,7 @@ const AiDialogContent = ({
         <DrawLogBody>
           {hasProviders ? (
             <div className="space-y-3 *:text-muted-foreground *:text-sm">
+              <div className="space-y-3">{children}</div>
               {useSavedDefaults ? (
                 <p className="text-muted-foreground text-sm">
                   Runs on your default provider{" "}
@@ -177,7 +193,7 @@ const AiDialogContent = ({
                   </div>
 
                   <div className="space-y-1.5">
-                    <div>Model Name</div>
+                    <Label>Model Name</Label>
                     <Input
                       disabled={isLoading}
                       onChange={handleModelChange}
@@ -188,7 +204,18 @@ const AiDialogContent = ({
                 </>
               )}
 
-              {children}
+              {showInstruction ? (
+                <div className="space-y-2">
+                  <Label>Additional instructions (optional)</Label>
+                  <Textarea
+                    disabled={isLoading}
+                    maxLength={MAX_INSTRUCTION_LENGTH}
+                    onChange={handleInstructionChange}
+                    placeholder="Your priorities or additional instructions for the app"
+                    value={instruction}
+                  />
+                </div>
+              ) : null}
             </div>
           ) : (
             <Empty>

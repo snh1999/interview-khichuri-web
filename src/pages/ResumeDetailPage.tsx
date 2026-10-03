@@ -61,8 +61,17 @@ const ResumeDetailContent = () => {
   const cachedReview = cachedReviewEntry ? { ...cachedReviewEntry } : null;
   const reviewMutation = useReviewResumeStandalone();
 
-  const handleExecute = async (provider: string, model?: string) => {
-    await reviewMutation.mutateAsync({ resumeId, provider, model });
+  const handleExecute = async (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
+    await reviewMutation.mutateAsync({
+      resumeId,
+      provider,
+      model,
+      instruction,
+    });
   };
 
   const handleNavigateBack = () => navigate(RESUMES_PAGE);
@@ -119,6 +128,7 @@ const ResumeDetailContent = () => {
                 execute={handleExecute}
                 executeLabel={cachedReview ? "Re-run" : "Generate Review"}
                 isLoading={reviewMutation.isPending}
+                showInstruction
                 size="sm"
                 title="AI Resume Review"
                 toastErrorMessage="Failed to review resume. Please try again."

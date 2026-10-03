@@ -16,7 +16,11 @@ interface IProps
       ComponentProps<typeof AiDialog>,
       "open" | "onOpenChange" | "onExecute" | "useSavedDefaults"
     > {
-  execute: (provider: string, model?: string) => Promise<void> | void;
+  execute: (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => Promise<void> | void;
   executeLabel: string;
   icon?: ReactNode;
   disabled?: boolean;
@@ -59,12 +63,16 @@ const AiActionButtonContent = ({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const run = async (provider: string, model?: string) => {
+  const run = async (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
     const id = toast.loading(toastDescription ?? `${executeLabel} with AI…`, {
       description: title,
     });
     try {
-      await execute(provider, model);
+      await execute(provider, model, instruction);
       toast.success(toastSuccessMessage ?? "Done", {
         id,
         action: hideTarget
@@ -102,9 +110,13 @@ const AiActionButtonContent = ({
     openDialog();
   };
 
-  const handleDialogExecute = (provider: string, model?: string) => {
+  const handleDialogExecute = (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
     setDialogOpen(false);
-    run(provider, model);
+    run(provider, model, instruction);
   };
 
   const canRunDefault = Boolean(initialProvider) && !executeDisabled;

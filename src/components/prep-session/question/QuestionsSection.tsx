@@ -91,7 +91,11 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
     [questions, search, filter]
   );
 
-  const handleGenerateQuestions = async (provider: string, model?: string) => {
+  const handleGenerateQuestions = async (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
     await generateQuestions({
       id: sessionId,
       provider,
@@ -99,6 +103,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
       count: questionCountSchema.catch(5).parse(count),
       avoidRepeat,
       includeJobDescription,
+      instruction,
     });
   };
 
@@ -194,6 +199,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
       "Choose an AI provider to generate questions for this session.",
     executeLabel: "Generate",
     isLoading: isQuestionPending,
+    showInstruction: true,
     toastSuccessMessage: "Questions generated",
     toastErrorMessage: "Failed to generate questions",
   } as const;

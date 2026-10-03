@@ -66,7 +66,11 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
   const owned = data.filter((entry) => resumeMap.has(entry.resumeId));
   const entries = hasFilter ? owned : owned.slice(0, MAX_DEFAULT_ENTRIES);
 
-  const handleGenerate = async (provider: string, model?: string) => {
+  const handleGenerate = async (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
     if (!(jobId && selectedResumeId)) {
       return;
     }
@@ -75,6 +79,7 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
       resumeId: selectedResumeId,
       provider,
       model,
+      instruction,
     });
   };
 
@@ -110,6 +115,7 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
             executeDisabled={!(jobId && selectedResumeId)}
             executeLabel="New Review"
             isLoading={scoreMutation.isPending}
+            showInstruction
             size="sm"
             title="Generate AI Resume Review"
             toastErrorMessage="Failed to generate AI resume review"
