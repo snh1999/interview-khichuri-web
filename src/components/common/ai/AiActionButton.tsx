@@ -1,4 +1,4 @@
-import { CheckIcon } from "@phosphor-icons/react";
+import { CheckIcon, CopySimpleIcon } from "@phosphor-icons/react";
 import type { ComponentProps, ReactNode } from "react";
 import { useState } from "react";
 import { type To, useLocation, useNavigate } from "react-router";
@@ -8,6 +8,7 @@ import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
 import { useAIProvider } from "@/components/common/ai/ai.hook.ts";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SplitButton } from "@/components/ui/button/SplitButton";
+import { copyText } from "@/lib/clipboard.ts";
 import { useAppStore } from "@/store/appStore.ts";
 
 interface IProps
@@ -22,6 +23,7 @@ interface IProps
     instruction?: string
   ) => Promise<void> | void;
   executeLabel: string;
+  copyPrompt?: string;
   icon?: ReactNode;
   disabled?: boolean;
   toastDescription?: string;
@@ -46,6 +48,7 @@ const AiActionButtonContent = ({
   executeDisabled = false,
   disabled = false,
   showInstruction = false,
+  copyPrompt,
   children,
   icon,
   toastDescription,
@@ -149,6 +152,15 @@ const AiActionButtonContent = ({
             className: skipAiDialog ? "bg-muted border" : "",
             icon: skipAiDialog ? <CheckIcon /> : null,
           },
+          ...(copyPrompt
+            ? [
+                {
+                  label: "Copy prompt",
+                  onClick: () => copyText(copyPrompt),
+                  icon: <CopySimpleIcon />,
+                },
+              ]
+            : []),
           ...(providers.length === 0
             ? [
                 {
@@ -167,6 +179,7 @@ const AiActionButtonContent = ({
       />
 
       <AiDialog
+        copyPrompt={copyPrompt}
         description={description}
         executeDisabled={executeDisabled}
         executeLabel={executeLabel}

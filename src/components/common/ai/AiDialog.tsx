@@ -1,4 +1,4 @@
-import { ArrowSquareOutIcon } from "@phosphor-icons/react";
+import { ArrowSquareOutIcon, CopySimpleIcon } from "@phosphor-icons/react";
 import { type ReactNode, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { PROVIDER_LABELS, type TApiKeyProvider } from "@/api/keys";
@@ -37,6 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { copyText } from "@/lib/clipboard.ts";
 import { useAppStore } from "@/store/appStore.ts";
 
 const MAX_INSTRUCTION_LENGTH = 1000;
@@ -52,6 +53,7 @@ export interface AiDialogProps {
   executeDisabled?: boolean;
   useSavedDefaults?: boolean;
   showInstruction?: boolean;
+  copyPrompt?: string;
   children?: ReactNode;
 }
 
@@ -72,6 +74,7 @@ const AiDialogContent = ({
   executeDisabled = false,
   useSavedDefaults = false,
   showInstruction = false,
+  copyPrompt,
   children,
 }: Readonly<AiDialogProps>) => {
   const {
@@ -146,13 +149,27 @@ const AiDialogContent = ({
   const handleInstructionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
     setInstruction(e.target.value);
 
+  const handleCopyPrompt = () => copyText(copyPrompt ?? "");
+
   return (
     <DrawLog onOpenChange={onOpenChange} open={open}>
       <DrawLogContent showCloseButton={false}>
         <DrawLogHeader>
-          <DrawLogTitle className="flex items-center gap-2">
-            {title}
-          </DrawLogTitle>
+          <div className="flex items-center justify-between">
+            <DrawLogTitle className="flex items-center gap-2">
+              {title}
+            </DrawLogTitle>
+            {copyPrompt ? (
+              <Button
+                aria-label={`Copy prompt for ${title}`}
+                onClick={handleCopyPrompt}
+                title="Copy Prompt"
+                variant="outline"
+              >
+                <CopySimpleIcon className="size-4" />
+              </Button>
+            ) : null}
+          </div>
           {description ? (
             <DrawLogDescription>{description}</DrawLogDescription>
           ) : null}

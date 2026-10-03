@@ -1,9 +1,14 @@
 import { useMemo } from "react";
-import type { ILookupEntry } from "@/api/lookups";
+import {
+  type ILookupEntry,
+  useIndustries,
+  useRoles,
+  useTopics,
+} from "@/api/lookups";
 
 const lookupCache = new WeakMap<ILookupEntry[], Map<number, ILookupEntry>>();
 
-export const useLookupMap = (data: ILookupEntry[]) =>
+const useLookupMap = (data: ILookupEntry[]) =>
   useMemo(() => {
     let map = lookupCache.get(data);
     if (!map) {
@@ -12,3 +17,9 @@ export const useLookupMap = (data: ILookupEntry[]) =>
     }
     return map;
   }, [data]);
+
+export const useTopicsMap = () => useLookupMap(useTopics().data);
+
+export const useIndustryMap = () => useLookupMap(useIndustries().data);
+
+export const useRolesMap = () => useLookupMap(useRoles().data);

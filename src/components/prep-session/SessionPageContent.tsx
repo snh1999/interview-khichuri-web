@@ -1,6 +1,5 @@
 import { PlusCircleIcon } from "@phosphor-icons/react";
 import { useCallback, useDeferredValue, useMemo } from "react";
-import { useRoles } from "@/api/lookups";
 import { type IPrepSession, useSessions } from "@/api/sessions";
 import { useViewToggle } from "@/components/common/ViewToggle.tsx";
 import { useJobFilter } from "@/components/prep-session/JobFilter.tsx";
@@ -16,7 +15,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { ItemGroup } from "@/components/ui/item.tsx";
-import { useLookupMap } from "@/hooks/useLookupMap.ts";
+import { useRolesMap } from "@/hooks/useLookupMap.ts";
 import { useStrictSafeAutoAnimate } from "@/hooks/useStrictSafeAutoAnimate";
 import { createSessionSearch } from "@/lib/search";
 
@@ -42,7 +41,7 @@ interface IProps {
 
 export const SessionPageContent = ({ search = "", onNewSession }: IProps) => {
   const { data: sessions } = useSessions();
-  const rolesMap = useLookupMap(useRoles().data);
+  const rolesMap = useRolesMap();
 
   const { currentView } = useViewToggle("grid");
   const { jobFilter } = useJobFilter();
