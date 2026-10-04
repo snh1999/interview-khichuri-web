@@ -1,7 +1,7 @@
 import { CheckCircleIcon } from "@phosphor-icons/react";
-import { Badge } from "@/components/ui/badge.tsx";
 import type { IScreenshot } from "@/components/landing/ScreenshotFrame.tsx";
 import { ScreenshotFrame } from "@/components/landing/ScreenshotFrame.tsx";
+import { Badge } from "@/components/ui/badge.tsx";
 
 interface IDive {
   readonly description: string;
