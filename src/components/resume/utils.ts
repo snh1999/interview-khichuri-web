@@ -116,7 +116,6 @@ export const resumeToText = (
   return objectToString(withNames(content, names), {
     omit: ["id"],
     omitPaths: [
-      "preferences",
       "references",
       "professional.skillNames",
       "professional.industriesNames",

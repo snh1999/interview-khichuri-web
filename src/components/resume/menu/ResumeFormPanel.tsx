@@ -5,7 +5,7 @@ import { EducationInformation } from "@/components/job-profile/sections/educatio
 import { WorkExperience } from "@/components/job-profile/sections/experience/WorkExperience.tsx";
 import { LinksSection } from "@/components/job-profile/sections/links/LinksSection.tsx";
 import { PersonalInformation } from "@/components/job-profile/sections/personal/PersonalInformation.tsx";
-import { PreferencesInformation } from "@/components/job-profile/sections/preferences/PreferencesInformation.tsx";
+
 import { ProfessionalInformation } from "@/components/job-profile/sections/professional/ProfessionalInformation.tsx";
 import { ProjectsSection } from "@/components/job-profile/sections/projects/ProjectsSection.tsx";
 import { PublicationsSection } from "@/components/job-profile/sections/publications/PublicationsSection.tsx";
@@ -29,7 +29,6 @@ const TABS = [
   { key: "projects", label: "Projects" },
   { key: "references", label: "References" },
   { key: "activities", label: "Activities" },
-  { key: "preferences", label: "Preferences" },
   { key: "links", label: "Links" },
   { key: "skillGroups", label: "Skill Groups" },
 ] as const;
@@ -91,7 +90,6 @@ export const ResumeFormPanel = ({
           <ProjectsSection sectionId={getSectionId("projects")} />
           <ReferencesSection sectionId={getSectionId("references")} />
           <ActivitiesSection sectionId={getSectionId("activities")} />
-          <PreferencesInformation sectionId={getSectionId("preferences")} />
           <LinksSection sectionId={getSectionId("links")} />
           <SkillGroupsSection sectionId={getSectionId("skillGroups")} />
         </div>

@@ -6,7 +6,6 @@ import { apiClient, queryKeys } from "@/api";
 import type {
   TActivityDto,
   TEducationDto,
-  TJobPreferencesDto,
   TProfessionalInfoDto,
   TProfileLinkDto,
   TProfilePersonalDto,
@@ -56,9 +55,6 @@ export interface TExtractionResult {
   };
   workExperience: Partial<TWorkExperienceDto>[];
   education: Partial<TEducationDto>[];
-  preferences: Partial<Omit<TJobPreferencesDto, "titles">> & {
-    titles?: number[];
-  };
   links: TProfileLinkDto[];
   publications: Partial<TPublicationDto>[];
   projects: Partial<TProjectDto>[];

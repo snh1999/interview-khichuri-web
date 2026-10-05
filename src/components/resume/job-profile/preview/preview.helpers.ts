@@ -47,7 +47,6 @@ export interface IRow {
 export interface IRowGroups {
   personalRows: IRow[];
   professionalRows: IRow[];
-  preferencesRows: IRow[];
   workExperienceRows: IRow[];
   educationRows: IRow[];
   linkRows: IRow[];
@@ -76,15 +75,6 @@ export const PROFESSIONAL_LABELS = {
   skillNames: "Skill Names",
   industries: "Industries",
   industriesNames: "Industry Names",
-} as const;
-
-export const PREFERENCES_LABELS = {
-  workType: "Work Type",
-  preferredLocation: "Preferred Location",
-  salaryLower: "Salary Lower",
-  salaryExpected: "Salary Expected",
-  currency: "Currency",
-  titles: "Titles",
 } as const;
 
 export const WORK_EXPERIENCE_LABELS = {
@@ -215,12 +205,6 @@ export const buildRowGroups = (
     before?.professional,
     data.professional,
     PROFESSIONAL_LABELS
-  ),
-  preferencesRows: scalarRows(
-    "preferences",
-    before?.preferences,
-    data.preferences,
-    PREFERENCES_LABELS
   ),
   workExperienceRows: arrayRows(
     "workExperience",

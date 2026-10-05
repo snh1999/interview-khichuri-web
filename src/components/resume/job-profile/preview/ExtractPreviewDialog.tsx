@@ -157,11 +157,6 @@ export const ExtractPreviewDialog = ({
                 {...shared}
               />
             ) : null}
-            <Section
-              rows={groups.preferencesRows}
-              title="Preferences"
-              {...shared}
-            />
             {groups.linkRows.length > 0 ? (
               <Section
                 emptyHint="No links on either side"

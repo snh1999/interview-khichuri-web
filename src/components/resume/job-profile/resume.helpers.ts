@@ -3,7 +3,6 @@ import {
   activitySchema,
   educationSchema,
   personalSchema,
-  preferencesSchema,
   professionalSchema,
   profileFormSchema,
   profileLinkSchema,
@@ -28,7 +27,6 @@ export type TSkillGroupDto = z.infer<typeof skillGroupSchema>;
 export const resumeExtractionSchema = z.object({
   personal: personalSchema.extend({ phone: z.string().nullish() }).partial(),
   professional: professionalSchema.partial(),
-  preferences: preferencesSchema.partial(),
   workExperience: z.array(
     workExperienceSchema
       .extend({ endDate: dateOrNull, startDate: dateOrNull })
@@ -55,9 +53,13 @@ export const resumeExtractionSchema = z.object({
 
 export type TResumeContent = z.infer<typeof resumeExtractionSchema>;
 
-export const resumeFormSchema = profileFormSchema.extend({
-  skillGroups: z.array(skillGroupSchema).max(MAX_SKILL_GROUPS).optional(),
-});
+export const resumeFormSchema = profileFormSchema
+  .omit({
+    preferences: true,
+  })
+  .extend({
+    skillGroups: z.array(skillGroupSchema).max(MAX_SKILL_GROUPS).optional(),
+  });
 
 export type TResumeFormData = z.infer<typeof resumeFormSchema>;
 
@@ -66,7 +68,6 @@ export const EMPTY_FORM: TResumeFormData = {
   education: [],
   links: [],
   personal: { email: "", firstName: "", lastName: "" },
-  preferences: {},
   professional: {
     industries: [],
     industriesNames: [],
@@ -129,10 +130,6 @@ export const mergeIntoFormData = (
         professional: {
           ...base.professional,
           ...pickDefined(extraction.professional),
-        },
-        preferences: {
-          ...base.preferences,
-          ...pickDefined(extraction.preferences),
         },
         workExperience: normalizeEntries(extraction.workExperience),
         education: normalizeEntries(extraction.education),
