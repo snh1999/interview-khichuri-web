@@ -1,4 +1,4 @@
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client";
 
@@ -34,7 +34,7 @@ export interface IJobExtractionResult {
   title?: string;
   companyName?: string | null;
   roleId?: number | null;
-  topicIds?: number[];
+  topicNames?: string[];
   location?: string | null;
   source?: string | null;
   deadline: string | null;
@@ -49,9 +49,9 @@ export interface ICreateJobDto extends ICommonFields {
   status: TJobStatus;
   links?: string | null;
   isFavorite?: boolean;
-  deadline?: Date;
-  interviewDate?: Date;
-  appliedAt?: Date;
+  deadline?: Date | null;
+  interviewDate?: Date | null;
+  appliedAt?: Date | null;
 }
 
 export interface IUpdateJobDto extends Partial<ICreateJobDto> {}
@@ -83,6 +83,13 @@ export const useGetJob = (id: string) =>
   useSuspenseQuery({
     queryFn: async () => await api.get<IJobWithTopics>(`/jobs/${id}`),
     queryKey: queryKeys.jobs.detail(id),
+  });
+
+export const useJobQuery = (id?: string | null) =>
+  useQuery({
+    enabled: Boolean(id),
+    queryFn: async () => await api.get<IJobWithTopics>(`/jobs/${id}`),
+    queryKey: queryKeys.jobs.detail(id ?? ""),
   });
 
 export const useGetJobs = (sort: TJobSortKey = "default") =>
@@ -133,4 +140,5 @@ export const useExtractJob = () =>
       await api.post<IJobExtractionResult>("/jobs/extract", data, {
         timeoutMs: 120_000,
       }),
+    meta: { invalidates: queryKeys.lookups.roles },
   });

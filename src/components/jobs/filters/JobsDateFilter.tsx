@@ -97,10 +97,10 @@ export const JobsDateFilter = () => {
     setDateChange({ kind: "preset", type: draft.type, key });
   };
 
-  const handleCustomFromChange = (date?: Date) =>
-    setDraft((d) => ({ ...d, from: date }));
-  const handleCustomToChange = (date?: Date) =>
-    setDraft((d) => ({ ...d, to: date }));
+  const handleCustomFromChange = (date?: Date | null) =>
+    setDraft((d) => ({ ...d, from: date ?? undefined }));
+  const handleCustomToChange = (date?: Date | null) =>
+    setDraft((d) => ({ ...d, to: date ?? undefined }));
 
   const handleCustomApply = () => {
     if (draft.from || draft.to) {

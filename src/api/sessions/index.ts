@@ -158,6 +158,7 @@ export const useGenerateQuestions = () =>
       count,
       avoidRepeat,
       includeJobDescription,
+      instruction,
     }: {
       id: string;
       provider: string;
@@ -165,10 +166,18 @@ export const useGenerateQuestions = () =>
       count?: number;
       avoidRepeat?: boolean;
       includeJobDescription?: boolean;
+      instruction?: string;
     }) =>
       await api.post<ISessionWithQuestions>(
         `/prep-session/${id}/generate`,
-        { provider, model, count, avoidRepeat, includeJobDescription },
+        {
+          provider,
+          model,
+          count,
+          avoidRepeat,
+          includeJobDescription,
+          instruction,
+        },
         { timeoutMs: 120_000 }
       ),
     meta: {

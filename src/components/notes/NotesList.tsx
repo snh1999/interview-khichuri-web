@@ -36,9 +36,9 @@ export const NotesList = ({
   const [listParent] = useStrictSafeAutoAnimate();
 
   return (
-    <div className="overflow-hidden rounded-md">
+    <div className="flex h-full flex-col overflow-hidden rounded-md">
       {notes.length === 0 ? (
-        <Empty>
+        <Empty fullHeight>
           <EmptyHeader>
             <EmptyTitle>No notes found.</EmptyTitle>
             <EmptyDescription>

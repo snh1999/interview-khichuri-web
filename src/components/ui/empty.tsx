@@ -2,12 +2,17 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "cn";
 
-function Empty({ className, ...props }: React.ComponentProps<"div">) {
+interface IEmptyProps extends React.ComponentProps<"div"> {
+  fullHeight?: boolean;
+}
+
+function Empty({ className, fullHeight = false, ...props }: IEmptyProps) {
   return (
     <div
       data-slot="empty"
       className={cn(
-        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center text-balance",
+        "flex w-full min-w-0 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center text-balance",
+        fullHeight && "flex-1",
         className
       )}
       {...props}

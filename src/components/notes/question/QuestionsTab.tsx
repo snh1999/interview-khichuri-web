@@ -54,7 +54,7 @@ export const QuestionsTab = ({
   });
 
   return (
-    <div className="space-y-4">
+    <div className="flex-1 space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <div className="w-full sm:min-w-60 sm:flex-1">
           <InputGroup>
@@ -82,7 +82,7 @@ export const QuestionsTab = ({
       </div>
 
       {items.length === 0 ? (
-        <Empty>
+        <Empty fullHeight>
           <EmptyHeader>
             <EmptyTitle>
               {QUESTION_BANK.length === 0

@@ -1,4 +1,4 @@
-import { CheckIcon } from "@phosphor-icons/react";
+import { CheckIcon, CopySimpleIcon } from "@phosphor-icons/react";
 import type { ComponentProps, ReactNode } from "react";
 import { useState } from "react";
 import { type To, useLocation, useNavigate } from "react-router";
@@ -8,6 +8,7 @@ import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
 import { useAIProvider } from "@/components/common/ai/ai.hook.ts";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SplitButton } from "@/components/ui/button/SplitButton";
+import { copyText } from "@/lib/clipboard.ts";
 import { useAppStore } from "@/store/appStore.ts";
 
 interface IProps
@@ -16,8 +17,13 @@ interface IProps
       ComponentProps<typeof AiDialog>,
       "open" | "onOpenChange" | "onExecute" | "useSavedDefaults"
     > {
-  execute: (provider: string, model?: string) => Promise<void> | void;
+  execute: (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => Promise<void> | void;
   executeLabel: string;
+  copyPrompt?: string;
   icon?: ReactNode;
   disabled?: boolean;
   toastDescription?: string;
@@ -41,6 +47,8 @@ const AiActionButtonContent = ({
   isLoading = false,
   executeDisabled = false,
   disabled = false,
+  showInstruction = false,
+  copyPrompt,
   children,
   icon,
   toastDescription,
@@ -54,17 +62,21 @@ const AiActionButtonContent = ({
 
   const skipAiDialog = useAppStore((state) => state.skipAiDialog);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState<"default" | boolean>(false);
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  const run = async (provider: string, model?: string) => {
+  const run = async (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
     const id = toast.loading(toastDescription ?? `${executeLabel} with AI…`, {
       description: title,
     });
     try {
-      await execute(provider, model);
+      await execute(provider, model, instruction);
       toast.success(toastSuccessMessage ?? "Done", {
         id,
         action: hideTarget
@@ -89,22 +101,30 @@ const AiActionButtonContent = ({
   const openDialog = () => setDialogOpen(true);
 
   const runDefault = () => {
+    if (children) {
+      setDialogOpen("default");
+      return;
+    }
     if (initialProvider) {
       run(initialProvider, initialModel.trim() || undefined);
     }
   };
 
   const handlePrimary = () => {
-    if (skipAiDialog && initialProvider && !executeDisabled && !children) {
+    if (skipAiDialog && initialProvider && !executeDisabled) {
       runDefault();
       return;
     }
     openDialog();
   };
 
-  const handleDialogExecute = (provider: string, model?: string) => {
+  const handleDialogExecute = (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
     setDialogOpen(false);
-    run(provider, model);
+    run(provider, model, instruction);
   };
 
   const canRunDefault = Boolean(initialProvider) && !executeDisabled;
@@ -132,6 +152,15 @@ const AiActionButtonContent = ({
             className: skipAiDialog ? "bg-muted border" : "",
             icon: skipAiDialog ? <CheckIcon /> : null,
           },
+          ...(copyPrompt
+            ? [
+                {
+                  label: "Copy prompt",
+                  onClick: () => copyText(copyPrompt),
+                  icon: <CopySimpleIcon />,
+                },
+              ]
+            : []),
           ...(providers.length === 0
             ? [
                 {
@@ -150,15 +179,17 @@ const AiActionButtonContent = ({
       />
 
       <AiDialog
+        copyPrompt={copyPrompt}
         description={description}
         executeDisabled={executeDisabled}
         executeLabel={executeLabel}
         isLoading={isLoading}
         onExecute={handleDialogExecute}
         onOpenChange={setDialogOpen}
-        open={dialogOpen}
+        open={Boolean(dialogOpen)}
+        showInstruction={showInstruction}
         title={title}
-        useSavedDefaults={skipAiDialog && Boolean(children)}
+        useSavedDefaults={dialogOpen === "default"}
       >
         {children}
       </AiDialog>

@@ -1,5 +1,5 @@
 import { PenIcon, ReadCvLogoIcon } from "@phosphor-icons/react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { generatePath, useNavigate } from "react-router";
 import {
   type TStandaloneCategoryKey,
@@ -18,6 +18,7 @@ import {
   getScoreTone,
   SCORE_TEXT_CLASS,
 } from "@/components/resume/resume.helpers.ts";
+import { resumeToText } from "@/components/resume/utils.ts";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,6 +31,8 @@ import {
 import { CircularProgress } from "@/components/ui/custom/CircularProgress.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useResumeId } from "@/hooks/useId.ts";
+import { useIndustryMap, useTopicsMap } from "@/hooks/useLookupMap";
+import { standaloneReviewCopyPrompt } from "@/lib/ai/prompts.ts";
 import { useAppStore } from "@/store/appStore.ts";
 
 export const REVIEW_SECTION_LABEL: Record<TStandaloneCategoryKey, string> = {
@@ -49,6 +52,8 @@ const ResumeDetailContent = () => {
   const resumeId = useResumeId();
   const navigate = useNavigate();
   const { data: resume } = useGetResumeById(resumeId);
+  const topicNames = useTopicsMap();
+  const industryNames = useIndustryMap();
   const isGenerated = Boolean(resume?.template);
   const hasPdfFile = Boolean(resume?.url);
   const setPageHeader = useAppStore((state) => state.setPageHeader);
@@ -61,8 +66,28 @@ const ResumeDetailContent = () => {
   const cachedReview = cachedReviewEntry ? { ...cachedReviewEntry } : null;
   const reviewMutation = useReviewResumeStandalone();
 
-  const handleExecute = async (provider: string, model?: string) => {
-    await reviewMutation.mutateAsync({ resumeId, provider, model });
+  const copyPrompt = useMemo(
+    () =>
+      standaloneReviewCopyPrompt({
+        resumeText: resumeToText(resume?.content, {
+          topics: topicNames,
+          industries: industryNames,
+        }),
+      }),
+    [resume?.content, topicNames, industryNames]
+  );
+
+  const handleExecute = async (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
+    await reviewMutation.mutateAsync({
+      resumeId,
+      provider,
+      model,
+      instruction,
+    });
   };
 
   const handleNavigateBack = () => navigate(RESUMES_PAGE);
@@ -115,10 +140,12 @@ const ResumeDetailContent = () => {
 
             <CardAction>
               <AiActionButton
+                copyPrompt={copyPrompt}
                 description="A standalone review of your resume across tone & style, content, structure, and skills. Results are cached locally."
                 execute={handleExecute}
                 executeLabel={cachedReview ? "Re-run" : "Generate Review"}
                 isLoading={reviewMutation.isPending}
+                showInstruction
                 size="sm"
                 title="AI Resume Review"
                 toastErrorMessage="Failed to review resume. Please try again."

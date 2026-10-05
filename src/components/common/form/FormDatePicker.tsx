@@ -35,13 +35,13 @@ export const FormDatePicker = <T extends FieldValues>({
 
   const value: Date | undefined = field.value;
 
-  const handleDateChange = (date?: Date) => {
-    if (!withTime) {
-      field.onChange(date);
+  const handleDateChange = (date?: Date | null) => {
+    if (!date) {
+      field.onChange(null);
       return;
     }
-    if (!date) {
-      field.onChange(undefined);
+    if (!withTime) {
+      field.onChange(date);
       return;
     }
     const next = new Date(date);

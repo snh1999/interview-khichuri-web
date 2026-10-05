@@ -38,7 +38,7 @@ export const SessionsPage = () => {
 
   return (
     <AppErrorSuspense fallback={SessionsPageSkeleton}>
-      <div className="w-full">
+      <div className="flex w-full flex-1 flex-col">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
           <h1 className="font-semibold text-xl">Sessions</h1>
           <div className="flex flex-wrap items-center gap-2">

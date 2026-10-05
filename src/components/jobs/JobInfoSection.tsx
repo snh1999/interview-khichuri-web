@@ -48,7 +48,7 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
           <CardContent className="flex flex-col gap-1 pt-4">
             {formattedLinks.map((link) => (
               <Button
-                className="break-all text-sm"
+                className="justify-start! h-auto break-all py-0 text-sm"
                 key={link}
                 render={
                   <a href={link} rel="noopener noreferrer" target="_blank" />

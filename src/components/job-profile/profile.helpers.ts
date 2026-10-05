@@ -131,6 +131,7 @@ export const projectSchema = z.object({
   link: optionalUrlSchema,
   name: z.string().trim().min(1).max(MAX_SHORT_LENGTH),
   skills: z.array(z.number().int().positive()).optional(),
+  skillNames: z.array(z.string().trim().min(1).max(MAX_TINY_LENGTH)).optional(),
   type: projectTypeSchema,
 });
 export type TProjectDto = z.infer<typeof projectSchema>;
@@ -148,7 +149,7 @@ export const referenceSchema = z.object({
 export type TReferenceDto = z.infer<typeof referenceSchema>;
 
 export const activitySchema = z.object({
-  endDate: z.date().optional(),
+  endDate: z.date().nullish(),
   id: z.number().int().positive().optional(),
   isCurrent: z.boolean(),
   name: z.string().trim().min(1).max(MAX_NAME_LENGTH),
@@ -220,6 +221,7 @@ export const profileToFormData = (
       id: project.id,
       link: project.link ?? undefined,
       name: project.name,
+      skillNames: (project.skills ?? []).map((skill) => skill.topic.name),
       skills: (project.skills ?? []).map((skill) => skill.topicId),
       type: project.type ?? "project",
     })),

@@ -24,7 +24,7 @@ import {
   profileToFormData,
 } from "@/components/job-profile/profile.helpers.ts";
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
-import { formatSectionLabel, stripNulls } from "@/lib/utils.ts";
+import { formatSectionLabel, stripEmptyString } from "@/lib/utils.ts";
 
 const formatSectionNames = (names: string[]) =>
   names.map(formatSectionLabel).join(", ");
@@ -68,7 +68,7 @@ export const getUseJobProfileForm = () => {
   const { reset } = form;
 
   const onSubmit = form.handleSubmit(async (rawData: TProfileFormData) => {
-    const data = stripNulls(rawData) as TProfileFormData;
+    const data = stripEmptyString(rawData) as TProfileFormData;
 
     try {
       const mutations: {

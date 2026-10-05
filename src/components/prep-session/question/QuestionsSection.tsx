@@ -9,6 +9,7 @@ import {
 import { type ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { z } from "zod";
+import { useJobQuery } from "@/api/jobs";
 import {
   type IPrepSession,
   useGenerateQuestions,
@@ -17,6 +18,7 @@ import {
 import { AiActionButton } from "@/components/common/ai/AiActionButton.tsx";
 import { QuestionCard } from "@/components/prep-session/question/QuestionCard.tsx";
 import { QuestionForm } from "@/components/prep-session/question/QuestionForm.tsx";
+import { getSessionTopicIds } from "@/components/prep-session/session.helpers.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
@@ -43,7 +45,9 @@ import {
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx";
+import { useTopicsMap } from "@/hooks/useLookupMap";
 import { useStrictSafeAutoAnimate } from "@/hooks/useStrictSafeAutoAnimate";
+import { generateQuestionsCopyPrompt } from "@/lib/ai/prompts.ts";
 
 const questionCountSchema = z.coerce.number().int().min(1).max(50);
 
@@ -59,6 +63,8 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
   const { data: questions } = useQuestions(sessionId);
   const { mutateAsync: generateQuestions, isPending: isQuestionPending } =
     useGenerateQuestions();
+  const { data: job } = useJobQuery(session.jobId);
+  const topicsMap = useTopicsMap();
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
@@ -72,6 +78,7 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
   const [includeJobDescription, setIncludeJobDescription] =
     useState<boolean>(false);
 
+  const questionCount = questionCountSchema.catch(5).parse(count);
   const visibleQuestions = useMemo(
     () =>
       questions.filter((question) => {
@@ -91,14 +98,19 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
     [questions, search, filter]
   );
 
-  const handleGenerateQuestions = async (provider: string, model?: string) => {
+  const handleGenerateQuestions = async (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
     await generateQuestions({
       id: sessionId,
       provider,
       model,
-      count: questionCountSchema.catch(5).parse(count),
+      count: questionCount,
       avoidRepeat,
       includeJobDescription,
+      instruction,
     });
   };
 
@@ -187,13 +199,31 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
     </>
   );
 
+  const copyPrompt = useMemo(
+    () =>
+      generateQuestionsCopyPrompt({
+        count: questionCount,
+        description: session.description,
+        experience: session.experience,
+        includeJobDescription,
+        jobDescription: job?.description,
+        title: session.title,
+        topics: getSessionTopicIds(session)
+          .map((id) => topicsMap.get(id)?.name)
+          .filter((name): name is string => Boolean(name)),
+      }),
+    [includeJobDescription, job?.description, questionCount, session, topicsMap]
+  );
+
   const dialogProps = {
+    copyPrompt,
     execute: handleGenerateQuestions,
     title: "Generate Questions",
     description:
       "Choose an AI provider to generate questions for this session.",
     executeLabel: "Generate",
     isLoading: isQuestionPending,
+    showInstruction: true,
     toastSuccessMessage: "Questions generated",
     toastErrorMessage: "Failed to generate questions",
   } as const;

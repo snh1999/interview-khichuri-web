@@ -28,6 +28,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
+import { interviewEvaluationCopyPrompt } from "@/lib/ai/prompts.ts";
 import { streamPost } from "@/lib/api-client";
 import type {
   IInterviewTranscriptItem,
@@ -224,10 +225,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
   };
 
   const handleEvaluate = async (provider: string, model?: string) => {
-    const answered = (storedDraft?.items ?? []).filter(
-      (item) => item.answer.trim().length > 0
-    );
-    if (!storedDraft || answered.length === 0) {
+    if (!storedDraft?.items.some((item) => item.answer.trim().length > 0)) {
       toast.error("No answers recorded yet");
       return;
     }
@@ -237,7 +235,10 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
         id: interview.id,
         provider,
         model,
-        transcript: answered,
+        transcript: items.map((item) => ({
+          ...item,
+          answer: item.answer.trim() || "(no answer)",
+        })),
         elapsedSeconds: elapsedClock(),
       });
       await archiveLocalDraft(storedDraft);
@@ -325,6 +326,11 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
       </div>
 
       <AiDialog
+        copyPrompt={
+          items.some((item) => item.answer.trim().length > 0)
+            ? interviewEvaluationCopyPrompt({ transcript: items })
+            : undefined
+        }
         description="Choose an AI provider to evaluate your interview."
         executeLabel="Evaluate"
         isLoading={isEvaluating}

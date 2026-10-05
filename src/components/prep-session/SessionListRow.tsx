@@ -1,5 +1,4 @@
 import { BriefcaseIcon, CaretRightIcon } from "@phosphor-icons/react";
-import { useTopics } from "@/api/lookups";
 import type { IPrepSession } from "@/api/sessions";
 import { useUpdateSession } from "@/api/sessions";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
@@ -15,7 +14,7 @@ import {
   ItemContent,
   ItemTitle,
 } from "@/components/ui/item.tsx";
-import { useLookupMap } from "@/hooks/useLookupMap.ts";
+import { useTopicsMap } from "@/hooks/useLookupMap.ts";
 
 interface IProps {
   session: IPrepSession;
@@ -31,7 +30,7 @@ export const SessionListRow = ({
 }: Readonly<IProps>) => {
   const navigateToPage = useNavigateToSessionPage(session.id);
   const updateSession = useUpdateSession();
-  const topicMap = useLookupMap(useTopics().data);
+  const topicMap = useTopicsMap();
 
   const metaLabel = getMetaLabel(session, topicMap, subtitle);
 

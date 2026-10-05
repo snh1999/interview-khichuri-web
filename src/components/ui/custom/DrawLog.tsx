@@ -96,7 +96,7 @@ function DrawLogDescription({className, ...props}: ComponentProps<typeof DialogD
   const isDesktop = useDrawLogContext()
   const Comp = isDesktop ? DialogDescription : DrawerDescription
   return <Comp
-    className={cn("min-w-0 text-sm", className)}
+    className={cn("min-w-0 w-full text-sm text-left", className)}
     {...props} />
 }
 

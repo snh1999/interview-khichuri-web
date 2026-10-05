@@ -38,7 +38,7 @@ export const NotesTab = ({
   const handleToggleFavoritesFilter = () => setFavoritesOnly((prev) => !prev);
 
   return (
-    <div className="overflow-hidden rounded-md">
+    <div className="h-full overflow-hidden rounded-md">
       <div className="flex items-center gap-2 px-2 pb-4">
         <InputGroup className="w-full">
           <InputGroupAddon align="inline-start">

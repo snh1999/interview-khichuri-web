@@ -12,7 +12,6 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { type IJobWithTopics, useDeleteJob } from "@/api/jobs";
-import { useRoles, useTopics } from "@/api/lookups";
 import { JOBS_PAGE } from "@/app.constants.ts";
 import { JobPostForm } from "@/components/jobs/JobPostForm.tsx";
 import {
@@ -26,13 +25,13 @@ import { Button } from "@/components/ui/button.tsx";
 import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
-import { useLookupMap } from "@/hooks/useLookupMap.ts";
+import { useRolesMap, useTopicsMap } from "@/hooks/useLookupMap.ts";
 import { isUrgent } from "@/lib/utils";
 
 export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
   const navigate = useNavigate();
-  const rolesMap = useLookupMap(useRoles().data);
-  const topicsMap = useLookupMap(useTopics().data);
+  const rolesMap = useRolesMap();
+  const topicsMap = useTopicsMap();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const deleteJob = useDeleteJob();

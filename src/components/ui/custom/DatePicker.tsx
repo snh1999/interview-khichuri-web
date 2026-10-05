@@ -1,4 +1,4 @@
-import { CalendarIcon } from "@phosphor-icons/react";
+import { CalendarIcon, XIcon } from "@phosphor-icons/react";
 import {
   type ChangeEvent,
   type KeyboardEvent,
@@ -50,7 +50,7 @@ interface IProps extends ICommonInputValues{
   value?: unknown;
   name?: string;
   onBlur?: () => void;
-  onChange: (value?: Date) => void;
+  onChange: (value?: Date | null) => void;
 }
 
 export const DatePicker = ({
@@ -108,6 +108,13 @@ export const DatePicker = ({
     setOpen(false);
   };
 
+  const handleClear = () => {
+    onChange(null);
+    setInputValue("");
+    setMonth(undefined);
+    setOpen(false);
+  };
+
   return (
       <InputGroup>
         <InputGroupInput
@@ -124,6 +131,17 @@ export const DatePicker = ({
           value={inputValue}
         />
         <InputGroupAddon align="inline-end">
+          {toDate(value) ? (
+            <InputGroupButton
+              aria-label="Clear date"
+              disabled={disabled}
+              onClick={handleClear}
+              size="icon-xs"
+              variant="ghost"
+            >
+              <XIcon />
+            </InputGroupButton>
+          ) : null}
           <Popover onOpenChange={setOpen} open={open}>
             <PopoverTrigger
               disabled={disabled}

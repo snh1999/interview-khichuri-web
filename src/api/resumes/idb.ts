@@ -57,6 +57,7 @@ interface IScoreResumeDto {
   resumeId: string;
   provider: TApiKeyProvider | string;
   model?: string | null;
+  instruction?: string;
 }
 
 export type TStandaloneCategoryKey =
@@ -80,6 +81,7 @@ interface IReviewResumeDto {
   resumeId: string;
   provider: TApiKeyProvider | string;
   model?: string | null;
+  instruction?: string;
 }
 
 export const useAtsScoreEntries = (filter?: IAtsScoreFilter) =>

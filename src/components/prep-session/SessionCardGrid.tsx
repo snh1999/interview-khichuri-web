@@ -1,4 +1,3 @@
-import { useTopics } from "@/api/lookups";
 import type { IPrepSession } from "@/api/sessions";
 import { useUpdateSession } from "@/api/sessions";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
@@ -8,7 +7,7 @@ import {
   useNavigateToSessionPage,
 } from "@/components/prep-session/session.helpers.ts";
 import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
-import { useLookupMap } from "@/hooks/useLookupMap.ts";
+import { useTopicsMap } from "@/hooks/useLookupMap.ts";
 
 interface IProps {
   session: IPrepSession;
@@ -28,7 +27,7 @@ const getSessionVariant = (session: IPrepSession) => {
 export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
   const navigateToPage = useNavigateToSessionPage(session.id);
   const updateSession = useUpdateSession();
-  const topicMap = useLookupMap(useTopics().data);
+  const topicMap = useTopicsMap();
 
   const variant = getSessionVariant(session);
 

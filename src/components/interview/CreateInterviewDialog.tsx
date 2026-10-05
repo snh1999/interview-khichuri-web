@@ -1,5 +1,6 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useController } from "react-hook-form";
+import { useJobQuery } from "@/api/jobs";
 import type { ISessionWithQuestions } from "@/api/sessions";
 import {
   FOCUS_TYPE_OPTIONS,
@@ -13,6 +14,7 @@ import { CheckboxGroup, CheckboxGroupItem } from "@/components/ui/checkbox.tsx";
 import { Field, FieldLabel } from "@/components/ui/field.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx";
+import { generateQuestionsCopyPrompt } from "@/lib/ai/prompts.ts";
 import { useCreateInterviewForm } from "./interview.helpers.ts";
 
 export interface ICreateInterviewDialogProps {
@@ -44,6 +46,29 @@ export const CreateInterviewDialog = ({
     name: "focusTypes",
   });
 
+  const { data: job } = useJobQuery(session.jobId);
+  const selectedTopicNames = form.watch("topicNames");
+  const questionCount = Number(form.watch("questionCount")) || undefined;
+  const copyPrompt = useMemo(
+    () =>
+      generateQuestionsCopyPrompt({
+        count: questionCount,
+        description: session.description,
+        experience: session.experience,
+        includeJobDescription: focusField.value.includes("job_description"),
+        jobDescription: job?.description,
+        title: session.title,
+        topics: selectedTopicNames,
+      }),
+    [
+      focusField.value,
+      job?.description,
+      questionCount,
+      selectedTopicNames,
+      session,
+    ]
+  );
+
   const handleModeChange = useCallback(
     (values: string[]) => modeField.onChange(values[0] as TInterviewMode),
     [modeField]
@@ -56,6 +81,7 @@ export const CreateInterviewDialog = ({
 
   return (
     <AiDialog
+      copyPrompt={copyPrompt}
       description="Generate a fresh set of questions for this attempt. Questions are stored locally and scored by AI at the end."
       executeLabel="Start"
       isLoading={isLoading}
