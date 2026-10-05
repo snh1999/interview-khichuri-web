@@ -50,7 +50,7 @@ interface IProps extends ICommonInputValues{
   value?: unknown;
   name?: string;
   onBlur?: () => void;
-  onChange: (value?: Date) => void;
+  onChange: (value?: Date | null) => void;
 }
 
 export const DatePicker = ({
@@ -109,7 +109,7 @@ export const DatePicker = ({
   };
 
   const handleClear = () => {
-    onChange(undefined);
+    onChange(null);
     setInputValue("");
     setMonth(undefined);
     setOpen(false);

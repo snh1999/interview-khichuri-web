@@ -73,6 +73,29 @@ export const stripNulls = (value: unknown): unknown => {
   return value;
 };
 
+
+export const stripEmptyString = (value: unknown): unknown => {
+  if (typeof value === "string") {
+    return value.trim() || undefined;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(stripEmptyString);
+  }
+
+  if (value === null || value instanceof Date) {
+    return value;
+  }
+
+  if (typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([k, v]) => [k, stripEmptyString(v)])
+    );
+  }
+
+  return value;
+};
+
 const CAMEL_CASE_SEPARATOR = /([a-z])([A-Z])/g;
 const FIRST_CHAR = /^./;
 

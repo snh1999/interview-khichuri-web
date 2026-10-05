@@ -225,10 +225,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
   };
 
   const handleEvaluate = async (provider: string, model?: string) => {
-    const answered = (storedDraft?.items ?? []).filter(
-      (item) => item.answer.trim().length > 0
-    );
-    if (!storedDraft || answered.length === 0) {
+    if (!storedDraft?.items.some((item) => item.answer.trim().length > 0)) {
       toast.error("No answers recorded yet");
       return;
     }
@@ -238,7 +235,10 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
         id: interview.id,
         provider,
         model,
-        transcript: answered,
+        transcript: items.map((item) => ({
+          ...item,
+          answer: item.answer.trim() || "(no answer)",
+        })),
         elapsedSeconds: elapsedClock(),
       });
       await archiveLocalDraft(storedDraft);

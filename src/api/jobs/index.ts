@@ -49,9 +49,9 @@ export interface ICreateJobDto extends ICommonFields {
   status: TJobStatus;
   links?: string | null;
   isFavorite?: boolean;
-  deadline?: Date;
-  interviewDate?: Date;
-  appliedAt?: Date;
+  deadline?: Date | null;
+  interviewDate?: Date | null;
+  appliedAt?: Date | null;
 }
 
 export interface IUpdateJobDto extends Partial<ICreateJobDto> {}

@@ -101,12 +101,13 @@ export const KeysFormDialog = ({
   });
 
   const provider = form.watch("provider");
+  const isActiveDefault = getIsActive?.(provider);
   useEffect(() => {
-    if (!getIsActive) {
+    if (isActiveDefault === undefined) {
       return;
     }
-    form.setValue("isActive", getIsActive(provider));
-  }, [provider, getIsActive, form]);
+    form.setValue("isActive", isActiveDefault);
+  }, [isActiveDefault, form]);
 
   const resetForm = () => form.reset();
 
