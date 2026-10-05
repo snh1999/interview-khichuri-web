@@ -59,6 +59,7 @@ export const ProjectCard = ({ index, onRemove }: Readonly<IProps>) => {
             form={form}
             idsName={`projects.${index}.skills`}
             label="Skills"
+            names={`projects.${index}.skillNames`}
             placeholder="Add skills"
           />
         </div>

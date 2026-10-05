@@ -15,10 +15,11 @@ import {
 
 interface IProps {
   sectionId: string;
+  hideCombobox?: boolean;
 }
 
 export const ProfessionalInformation = memo(
-  ({ sectionId }: Readonly<IProps>) => {
+  ({ sectionId, hideCombobox = false }: Readonly<IProps>) => {
     const form = useFormContext<TProfileFormData>();
 
     return (
@@ -53,23 +54,25 @@ export const ProfessionalInformation = memo(
             />
           </div>
 
-          <div className="col-span-1 flex flex-col gap-4 md:col-span-2">
-            <LookupCombobox
-              form={form}
-              idsName="professional.skills"
-              label="Skills"
-              names="professional.skillNames"
-            />
+          {hideCombobox ? null : (
+            <div className="col-span-1 flex flex-col gap-4 md:col-span-2">
+              <LookupCombobox
+                form={form}
+                idsName="professional.skills"
+                label="Skills"
+                names="professional.skillNames"
+              />
 
-            <LookupCombobox
-              form={form}
-              idsName="professional.industries"
-              label="Industries"
-              names="professional.industriesNames"
-              placeholder="Search or type to add industries"
-              schema="industries"
-            />
-          </div>
+              <LookupCombobox
+                form={form}
+                idsName="professional.industries"
+                label="Industries"
+                names="professional.industriesNames"
+                placeholder="Search or type to add industries"
+                schema="industries"
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
     );

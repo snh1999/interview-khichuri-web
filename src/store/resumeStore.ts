@@ -28,42 +28,15 @@ export const DEFAULT_SECTION_CONFIGS: ISectionConfig[] = [
   { id: "activities", title: "Activities", enabled: true },
 ];
 
-export interface ISkillGroup {
-  id: string;
-  label: string;
-  keywords: string;
-}
-
 interface ResumeState {
   sections: Partial<Record<TTemplateKey, ISectionConfig[]>>;
   setSections: (templateId: TTemplateKey, sections: ISectionConfig[]) => void;
   resetSections: (templateId: TTemplateKey) => void;
-  skillGroups: ISkillGroup[];
-  setSkillGroups: (groups: ISkillGroup[]) => void;
-  updateSkillGroup: (
-    id: string,
-    patch: Partial<Pick<ISkillGroup, "label" | "keywords">>
-  ) => void;
-  addSkillGroup: () => void;
-  removeSkillGroup: (id: string) => void;
 }
 
 export const useResumeStore = create<ResumeState>()(
   persist(
     (set) => ({
-      addSkillGroup: () =>
-        set((state) => ({
-          skillGroups: [
-            ...state.skillGroups,
-            { id: crypto.randomUUID(), keywords: "", label: "New Group" },
-          ],
-        })),
-
-      removeSkillGroup: (id) =>
-        set((state) => ({
-          skillGroups: state.skillGroups.filter((group) => group.id !== id),
-        })),
-
       resetSections: (templateId) =>
         set((state) => {
           const next = { ...state.sections };
@@ -75,17 +48,6 @@ export const useResumeStore = create<ResumeState>()(
       setSections: (templateId, sections) =>
         set((state) => ({
           sections: { ...state.sections, [templateId]: sections },
-        })),
-
-      setSkillGroups: (groups) => set({ skillGroups: groups }),
-
-      skillGroups: [],
-
-      updateSkillGroup: (id, patch) =>
-        set((state) => ({
-          skillGroups: state.skillGroups.map((group) =>
-            group.id === id ? { ...group, ...patch } : group
-          ),
         })),
     }),
     {

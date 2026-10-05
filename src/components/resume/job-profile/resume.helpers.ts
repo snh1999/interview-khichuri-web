@@ -1,11 +1,11 @@
 import { z } from "zod";
-import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import {
   activitySchema,
   educationSchema,
   personalSchema,
   preferencesSchema,
   professionalSchema,
+  profileFormSchema,
   profileLinkSchema,
   projectSchema,
   publicationSchema,
@@ -15,6 +15,15 @@ import {
 import { stringToDate } from "@/lib/utils.ts";
 
 const dateOrNull = z.coerce.date().nullish();
+
+export const MAX_SKILL_GROUPS = 5;
+
+export const skillGroupSchema = z.object({
+  id: z.string(),
+  label: z.string().trim().max(1000),
+  keywords: z.string().trim().min(1).max(200),
+});
+export type TSkillGroupDto = z.infer<typeof skillGroupSchema>;
 
 export const resumeExtractionSchema = z.object({
   personal: personalSchema.extend({ phone: z.string().nullish() }).partial(),
@@ -40,12 +49,19 @@ export const resumeExtractionSchema = z.object({
   projects: z.array(projectSchema.partial()).optional(),
   publications: z.array(publicationSchema.partial()).optional(),
   references: z.array(referenceSchema.partial()).optional(),
+  skillGroups: z.array(skillGroupSchema).max(MAX_SKILL_GROUPS).optional(),
   links: z.array(profileLinkSchema.partial()).optional(),
 });
 
 export type TResumeContent = z.infer<typeof resumeExtractionSchema>;
 
-export const EMPTY_FORM: TProfileFormData = {
+export const resumeFormSchema = profileFormSchema.extend({
+  skillGroups: z.array(skillGroupSchema).max(MAX_SKILL_GROUPS).optional(),
+});
+
+export type TResumeFormData = z.infer<typeof resumeFormSchema>;
+
+export const EMPTY_FORM: TResumeFormData = {
   activities: [],
   education: [],
   links: [],
@@ -61,6 +77,7 @@ export const EMPTY_FORM: TProfileFormData = {
   projects: [],
   publications: [],
   references: [],
+  skillGroups: [],
   workExperience: [],
 };
 
@@ -103,8 +120,8 @@ const normalizeEntries = <T extends TDateEntry>(
 
 export const mergeIntoFormData = (
   extraction?: TResumeContent | null,
-  base: TProfileFormData = EMPTY_FORM
-): TProfileFormData =>
+  base: TResumeFormData = EMPTY_FORM
+): TResumeFormData =>
   extraction
     ? ({
         ...base,
@@ -130,5 +147,8 @@ export const mergeIntoFormData = (
           ? extraction.references
           : base.references,
         activities: normalizeEntries(extraction.activities),
-      } as TProfileFormData)
+        skillGroups: extraction.skillGroups?.length
+          ? extraction.skillGroups
+          : base.skillGroups,
+      } as TResumeFormData)
     : base;

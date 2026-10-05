@@ -1,15 +1,9 @@
-import { type FC, useEffect, useMemo, useRef } from "react";
-import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
+import { type FC, useMemo } from "react";
+import type { TResumeFormData } from "@/components/resume/job-profile/resume.helpers.ts";
+import { resolveSkillGroups } from "@/components/resume/template.helpers.ts";
 import type { ResumeTemplateConfig } from "@/components/resume/template-registry.ts";
-import {
-  dateRange,
-  filterSkills,
-  HARDCODED_CATEGORIES,
-  HARDCODED_TOPICS,
-  stripProtocol,
-  useResumeLookup,
-} from "@/components/resume/utils.ts";
-import { type ISectionConfig, useResumeStore } from "@/store/resumeStore.ts";
+import { dateRange, stripProtocol } from "@/components/resume/utils.ts";
+import type { ISectionConfig } from "@/store/resumeStore.ts";
 import {
   Document,
   Link,
@@ -240,7 +234,7 @@ function buildStyles(settings: PdfSettings) {
 
 interface ISectionProps {
   title: string;
-  data: TProfileFormData;
+  data: TResumeFormData;
   styles: ReturnType<typeof buildStyles>;
 }
 
@@ -388,56 +382,8 @@ function TechnicalExperienceSection({ title, data, styles }: ISectionProps) {
 }
 
 function SkillsSection({ title, data, styles }: ISectionProps) {
-  const skillGroups = useResumeStore((state) => state.skillGroups);
-  const setSkillGroups = useResumeStore((state) => state.setSkillGroups);
-  const topicsMap = useResumeLookup(HARDCODED_TOPICS);
-  const categoriesMap = useResumeLookup(HARDCODED_CATEGORIES);
-
-  const seeded = useRef(skillGroups.length > 0);
-
-  useEffect(() => {
-    if (seeded.current) {
-      return;
-    }
-    seeded.current = true;
-    const skillIds = data.professional?.skills ?? [];
-
-    setSkillGroups([
-      {
-        id: "languages",
-        keywords: filterSkills(
-          skillIds,
-          topicsMap,
-          categoriesMap,
-          new Set(["languages"])
-        ).join(", "),
-        label: "Languages",
-      },
-      {
-        id: "libraries",
-        keywords: filterSkills(
-          skillIds,
-          topicsMap,
-          categoriesMap,
-          new Set(["libraries", "frameworks"])
-        ).join(", "),
-        label: "Libraries & Frameworks",
-      },
-      {
-        id: "tools",
-        keywords: filterSkills(
-          skillIds,
-          topicsMap,
-          categoriesMap,
-          new Set(["tools", "platforms"])
-        ).join(", "),
-        label: "Tools & Platforms",
-      },
-    ]);
-  }, [data.professional?.skills, setSkillGroups, topicsMap, categoriesMap]);
-
-  const visibleGroups = skillGroups.filter((group) => group.keywords.trim());
-  if (visibleGroups.length === 0) {
+  const groups = resolveSkillGroups(data);
+  if (groups.length === 0) {
     return null;
   }
 
@@ -447,16 +393,12 @@ function SkillsSection({ title, data, styles }: ISectionProps) {
         <Text style={styles.sectionTitle}>{title.toUpperCase()}</Text>
       </View>
 
-      {visibleGroups.map((group) => (
+      {groups.map((group) => (
         <View key={group.id} style={styles.skillsRow}>
-          <Text style={styles.skillsCategory}>{group.label.trim()}</Text>
-          <Text style={styles.skillsList}>
-            {group.keywords
-              .split(",")
-              .map((keyword) => keyword.trim())
-              .filter(Boolean)
-              .join(", ")}
-          </Text>
+          {group.label ? (
+            <Text style={styles.skillsCategory}>{group.label}</Text>
+          ) : null}
+          <Text style={styles.skillsList}>{group.keywords}</Text>
         </View>
       ))}
     </View>
@@ -516,7 +458,7 @@ export function DataScienceTechTemplate({
   data,
   sections,
 }: {
-  data: TProfileFormData;
+  data: TResumeFormData;
   sections: ISectionConfig[];
 }) {
   const settings = usePdfSettings();

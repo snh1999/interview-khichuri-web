@@ -8,7 +8,6 @@ import type {
   TEducationDto,
   TJobPreferencesDto,
   TProfessionalInfoDto,
-  TProfileFormData,
   TProfileLinkDto,
   TProfilePersonalDto,
   TProjectDto,
@@ -16,7 +15,10 @@ import type {
   TReferenceDto,
   TWorkExperienceDto,
 } from "@/components/job-profile/profile.helpers.ts";
-import type { TResumeContent } from "@/components/resume/job-profile/resume.helpers.ts";
+import type {
+  TResumeContent,
+  TResumeFormData,
+} from "@/components/resume/job-profile/resume.helpers.ts";
 import { api } from "@/lib/api-client.ts";
 import {
   deleteAtsScoresByResumeId,
@@ -86,7 +88,7 @@ export const useCreateResume = () =>
   useMutation({
     mutationFn: async (dto: {
       name: string;
-      content: TProfileFormData;
+      content: TResumeFormData;
       template?: string;
     }) => await api.post<IResume>("/resume/create", dto),
     meta: { invalidates: queryKeys.resumes.list() },
@@ -113,7 +115,7 @@ export const useUpdateResume = () =>
     mutationFn: async (dto: {
       id: string;
       name?: string;
-      content?: TProfileFormData;
+      content?: TResumeFormData;
       template?: string;
       isPublic?: boolean;
     }) => {
