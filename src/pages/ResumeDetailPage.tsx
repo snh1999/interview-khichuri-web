@@ -31,7 +31,6 @@ import {
 import { CircularProgress } from "@/components/ui/custom/CircularProgress.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useResumeId } from "@/hooks/useId.ts";
-import { useIndustryMap, useTopicsMap } from "@/hooks/useLookupMap";
 import { standaloneReviewCopyPrompt } from "@/lib/ai/prompts.ts";
 import { useAppStore } from "@/store/appStore.ts";
 
@@ -52,8 +51,6 @@ const ResumeDetailContent = () => {
   const resumeId = useResumeId();
   const navigate = useNavigate();
   const { data: resume } = useGetResumeById(resumeId);
-  const topicNames = useTopicsMap();
-  const industryNames = useIndustryMap();
   const isGenerated = Boolean(resume?.template);
   const hasPdfFile = Boolean(resume?.url);
   const setPageHeader = useAppStore((state) => state.setPageHeader);
@@ -69,12 +66,9 @@ const ResumeDetailContent = () => {
   const copyPrompt = useMemo(
     () =>
       standaloneReviewCopyPrompt({
-        resumeText: resumeToText(resume?.content, {
-          topics: topicNames,
-          industries: industryNames,
-        }),
+        resumeText: resumeToText(resume?.content),
       }),
-    [resume?.content, topicNames, industryNames]
+    [resume?.content]
   );
 
   const handleExecute = async (

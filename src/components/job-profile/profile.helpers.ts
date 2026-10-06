@@ -63,12 +63,18 @@ export const workExperienceSchema = z.object({
   isCurrent: z.boolean(),
   location: z.string().nullish(),
   responsibilities: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
-  startDate: z.date().nullish(),
+  startDate: z
+    .date()
+    .nullish()
+    .refine(
+      (value) => value !== null && value !== undefined,
+      "Start date is required"
+    ),
   // companyId: z.number().int().positive().optional(),
   title: z.string().trim().min(1).max(MAX_NAME_LENGTH),
 });
 
-export type TWorkExperienceDto = z.infer<typeof workExperienceSchema>;
+export type TWorkExperienceDto = z.input<typeof workExperienceSchema>;
 
 export const educationSchema = z.object({
   coursework: z.array(z.string()).max(10).nullish(),
@@ -173,7 +179,7 @@ export const profileFormSchema = z.object({
   workExperience: z.array(workExperienceSchema),
 });
 
-export type TProfileFormData = z.infer<typeof profileFormSchema>;
+export type TProfileFormData = z.input<typeof profileFormSchema>;
 export type TProfileFormSections = keyof TProfileFormData;
 
 export const profileToFormData = (

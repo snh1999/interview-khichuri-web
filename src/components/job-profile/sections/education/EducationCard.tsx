@@ -64,7 +64,7 @@ export const EducationCard = ({ index, onRemove }: Readonly<IProps>) => {
         <FormInput
           form={form}
           label="Field of Study"
-          name={`education.${index}.institution`}
+          name={`education.${index}.fieldOfStudy`}
         />
 
         <FormInput

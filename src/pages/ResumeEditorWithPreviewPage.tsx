@@ -74,7 +74,7 @@ const ResumeEditorContent = () => {
         name: trimmedName || undefined,
         template: templateId,
       });
-      form.reset(data, { keepValues: true });
+      form.reset(data);
       toast.success("Resume saved successfully");
     } catch {
       toast.error("Failed to save resume");
