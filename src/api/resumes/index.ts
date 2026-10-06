@@ -4,19 +4,9 @@ export * from "./idb.ts";
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { apiClient, queryKeys } from "@/api";
 import type {
-  TActivityDto,
-  TEducationDto,
-  TJobPreferencesDto,
-  TProfessionalInfoDto,
-  TProfileFormData,
-  TProfileLinkDto,
-  TProfilePersonalDto,
-  TProjectDto,
-  TPublicationDto,
-  TReferenceDto,
-  TWorkExperienceDto,
-} from "@/components/job-profile/profile.helpers.ts";
-import type { TResumeContent } from "@/components/resume/job-profile/resume.helpers.ts";
+  TResumeContent,
+  TResumeFormData,
+} from "@/components/resume/job-profile/resume.helpers.ts";
 import { api } from "@/lib/api-client.ts";
 import {
   deleteAtsScoresByResumeId,
@@ -46,24 +36,6 @@ export interface IResume {
   updatedAt: string;
 }
 
-export interface TExtractionResult {
-  personal: Partial<TProfilePersonalDto>;
-  professional: Partial<Omit<TProfessionalInfoDto, "skills" | "industries">> & {
-    skills?: number[];
-    industries?: number[];
-  };
-  workExperience: Partial<TWorkExperienceDto>[];
-  education: Partial<TEducationDto>[];
-  preferences: Partial<Omit<TJobPreferencesDto, "titles">> & {
-    titles?: number[];
-  };
-  links: TProfileLinkDto[];
-  publications: Partial<TPublicationDto>[];
-  projects: Partial<TProjectDto>[];
-  references: Partial<TReferenceDto>[];
-  activities: Partial<TActivityDto>[];
-}
-
 export const useGetResumes = () =>
   useSuspenseQuery({
     queryFn: async () => await api.get<IResume[]>("/resume"),
@@ -86,7 +58,7 @@ export const useCreateResume = () =>
   useMutation({
     mutationFn: async (dto: {
       name: string;
-      content: TProfileFormData;
+      content: TResumeFormData;
       template?: string;
     }) => await api.post<IResume>("/resume/create", dto),
     meta: { invalidates: queryKeys.resumes.list() },
@@ -113,7 +85,7 @@ export const useUpdateResume = () =>
     mutationFn: async (dto: {
       id: string;
       name?: string;
-      content?: TProfileFormData;
+      content?: TResumeFormData;
       template?: string;
       isPublic?: boolean;
     }) => {
@@ -145,7 +117,7 @@ export const useExtractResume = () =>
       provider: string;
       model?: string;
     }) =>
-      await api.post<TExtractionResult>(
+      await api.post<TResumeContent>(
         `/resume/${id}/extract`,
         { provider, model },
         { timeoutMs: 120_000 }

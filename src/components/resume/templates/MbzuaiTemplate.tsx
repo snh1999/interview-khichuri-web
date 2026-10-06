@@ -1,18 +1,15 @@
-import { type FC, useEffect, useMemo, useRef } from "react";
-import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
-import type { ResumeTemplateConfig } from "@/components/resume/template-registry.ts";
+import { type FC, useMemo } from "react";
+import type { TResumeFormData } from "@/components/resume/job-profile/resume.helpers.ts";
 import {
-  dateRange,
-  filterSkills,
-  HARDCODED_CATEGORIES,
-  HARDCODED_TOPICS,
-  useResumeLookup,
-} from "@/components/resume/utils.ts";
+  resolveSkillGroups,
+  toSkillList,
+} from "@/components/resume/template.helpers.ts";
+import type { ResumeTemplateConfig } from "@/components/resume/template-registry.ts";
+import { dateRange } from "@/components/resume/utils.ts";
 import {
   DEFAULT_SECTION_CONFIGS,
   type ISectionConfig,
   type TSectionIds,
-  useResumeStore,
 } from "@/store/resumeStore.ts";
 import {
   Document,
@@ -136,7 +133,7 @@ const LINK_LABELS: Record<string, string> = {
 
 interface ISectionProps {
   title: string;
-  data: TProfileFormData;
+  data: TResumeFormData;
   styles: ReturnType<typeof buildStyles>;
 }
 
@@ -258,8 +255,6 @@ function PublicationsSection({ title, data, styles }: ISectionProps) {
 }
 
 function ProjectsSection({ title, data, styles }: ISectionProps) {
-  const topicsMap = useResumeLookup(HARDCODED_TOPICS);
-
   const { projects } = data;
   if (!projects || projects.length === 0) {
     return null;
@@ -269,7 +264,7 @@ function ProjectsSection({ title, data, styles }: ISectionProps) {
       <Text style={styles.sectionTitle}>{title}</Text>
       {projects.map((proj, i) => {
         const bulletsList = proj.description?.split("\n") ?? [];
-        const projectSkills = proj.skills ?? [];
+        const projectSkills = toSkillList(proj.skills);
         return (
           <View key={proj.id ?? i} style={styles.entryBlock}>
             <Text style={styles.blueItem}>
@@ -289,10 +284,7 @@ function ProjectsSection({ title, data, styles }: ISectionProps) {
             {projectSkills.length > 0 && (
               <Text style={styles.para}>
                 <Text style={styles.bold}>Tech Stack: </Text>
-                {projectSkills
-                  .map((id) => topicsMap.get(id)?.name)
-                  .filter((name): name is string => Boolean(name))
-                  .join(", ")}
+                {projectSkills.join(", ")}
               </Text>
             )}
           </View>
@@ -303,70 +295,20 @@ function ProjectsSection({ title, data, styles }: ISectionProps) {
 }
 
 function SkillsSection({ title, data, styles }: ISectionProps) {
-  const skillGroups = useResumeStore((state) => state.skillGroups);
-  const setSkillGroups = useResumeStore((state) => state.setSkillGroups);
-  const topicsMap = useResumeLookup(HARDCODED_TOPICS);
-  const categoriesMap = useResumeLookup(HARDCODED_CATEGORIES);
-
-  const seeded = useRef(skillGroups.length > 0);
-
-  useEffect(() => {
-    if (seeded.current) {
-      return;
-    }
-    seeded.current = true;
-    const skillIds = data.professional?.skills ?? [];
-
-    setSkillGroups([
-      {
-        id: "languages",
-        keywords: filterSkills(
-          skillIds,
-          topicsMap,
-          categoriesMap,
-          new Set(["languages"])
-        ).join(", "),
-        label: "Languages",
-      },
-      {
-        id: "libraries",
-        keywords: filterSkills(
-          skillIds,
-          topicsMap,
-          categoriesMap,
-          new Set(["libraries", "frameworks"])
-        ).join(", "),
-        label: "Libraries & Frameworks",
-      },
-      {
-        id: "tools",
-        keywords: filterSkills(
-          skillIds,
-          topicsMap,
-          categoriesMap,
-          new Set(["tools", "platforms"])
-        ).join(", "),
-        label: "Tools & Platforms",
-      },
-    ]);
-  }, [data.professional?.skills, setSkillGroups, topicsMap, categoriesMap]);
-
-  const visibleGroups = skillGroups.filter((group) => group.keywords.trim());
-  if (visibleGroups.length === 0) {
+  const groups = resolveSkillGroups(data);
+  if (groups.length === 0) {
     return null;
   }
 
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
-      {visibleGroups.map((group) => (
+      {groups.map((group) => (
         <Text key={group.id} style={styles.para}>
-          <Text style={styles.bold}>{group.label.trim()}: </Text>
-          {group.keywords
-            .split(",")
-            .map((keyword) => keyword.trim())
-            .filter(Boolean)
-            .join(", ")}
+          {group.label ? (
+            <Text style={styles.bold}>{group.label}: </Text>
+          ) : null}
+          {group.keywords}
         </Text>
       ))}
     </View>
@@ -422,7 +364,7 @@ function ActivitiesSection({ title, data, styles }: ISectionProps) {
 }
 
 function ReferencesSection({ title, data, styles }: ISectionProps) {
-  const references: TProfileFormData["references"] = data.references;
+  const references: TResumeFormData["references"] = data.references;
   if (!references || references.length === 0) {
     return null;
   }
@@ -431,7 +373,7 @@ function ReferencesSection({ title, data, styles }: ISectionProps) {
       <Text style={styles.sectionTitle}>{title}</Text>
       <View style={styles.referencesRow}>
         {references.map(
-          (ref: NonNullable<TProfileFormData["references"]>[number], i) => (
+          (ref: NonNullable<TResumeFormData["references"]>[number], i) => (
             <View key={ref.id ?? i} style={styles.referenceCol}>
               <Text style={styles.bold}>{ref.name}</Text>
               {ref.title ? <Text>{ref.title}</Text> : null}
@@ -461,7 +403,7 @@ export function MbzuaiTemplate({
   data,
   sections,
 }: {
-  data: TProfileFormData;
+  data: TResumeFormData;
   sections: ISectionConfig[];
 }) {
   const settings = usePdfSettings();

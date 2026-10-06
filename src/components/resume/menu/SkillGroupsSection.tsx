@@ -1,4 +1,10 @@
 import { PlusIcon, TrashIcon } from "@phosphor-icons/react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { FormInput } from "@/components/common/form/FormInput.tsx";
+import {
+  MAX_SKILL_GROUPS,
+  type TResumeFormData,
+} from "@/components/resume/job-profile/resume.helpers.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
@@ -8,18 +14,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { Input } from "@/components/ui/input.tsx";
-import { type ISkillGroup, useResumeStore } from "@/store/resumeStore.ts";
 
 interface IProps {
   sectionId: string;
 }
 
-const MAX_GROUPS = 5;
-
 export const SkillGroupsSection = ({ sectionId }: Readonly<IProps>) => {
-  const skillGroups = useResumeStore((state) => state.skillGroups);
-  const addSkillGroup = useResumeStore((state) => state.addSkillGroup);
+  const form = useFormContext<TResumeFormData>();
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "skillGroups",
+  });
+
+  const addSkillGroup = () =>
+    append({ id: crypto.randomUUID(), keywords: "", label: "" });
 
   return (
     <Card className="px-1" id={sectionId}>
@@ -31,7 +39,7 @@ export const SkillGroupsSection = ({ sectionId }: Readonly<IProps>) => {
         <CardAction className="pt-2 pr-1">
           <Button
             className="rounded-full bg-primary/50"
-            disabled={skillGroups.length >= MAX_GROUPS}
+            disabled={fields.length >= MAX_SKILL_GROUPS}
             onClick={addSkillGroup}
             size="icon-sm"
           >
@@ -40,48 +48,43 @@ export const SkillGroupsSection = ({ sectionId }: Readonly<IProps>) => {
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {skillGroups.length === 0 && (
+        {fields.map((group, index) => (
+          <SkillGroup index={index} key={group.id} onRemove={remove} />
+        ))}
+
+        {fields.length === 0 && (
           <p className="text-center text-muted-foreground text-xs italic">
-            No skill groups defined. Add a group to get started.
+            No skill groups defined.
           </p>
         )}
-        {skillGroups.map((group) => (
-          <SkillGroup group={group} key={group.id} />
-        ))}
       </CardContent>
     </Card>
   );
 };
 
 interface IGroupProps {
-  group: ISkillGroup;
+  index: number;
+  onRemove: (index: number) => void;
 }
-const SkillGroup = ({ group }: Readonly<IGroupProps>) => {
-  const updateSkillGroup = useResumeStore((state) => state.updateSkillGroup);
-  const removeSkillGroup = useResumeStore((state) => state.removeSkillGroup);
 
-  const handleLabelChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    updateSkillGroup(group.id, { label: event.target.value });
-  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    updateSkillGroup(group.id, { keywords: event.target.value });
-
-  const handleRemove = () => removeSkillGroup(group.id);
+const SkillGroup = ({ onRemove, index }: Readonly<IGroupProps>) => {
+  const form = useFormContext<TResumeFormData>();
+  const onRemoveClick = () => onRemove(index);
 
   return (
     <div className="flex items-center gap-2">
-      <Input
-        className="w-1/3"
-        onChange={handleLabelChange}
+      <FormInput
+        form={form}
+        name={`skillGroups.${index}.label`}
         placeholder="Label"
-        value={group.label}
       />
-      <Input
-        className="flex-1"
-        onChange={handleKeywordChange}
+
+      <FormInput
+        form={form}
+        name={`skillGroups.${index}.keywords`}
         placeholder="Comma-separated skills"
-        value={group.keywords}
       />
-      <Button onClick={handleRemove} variant="destructive">
+      <Button onClick={onRemoveClick} variant="destructive">
         <TrashIcon />
       </Button>
     </div>

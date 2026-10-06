@@ -7,9 +7,9 @@ import {
   XIcon,
 } from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
-import type { TExtractionResult } from "@/api/resumes";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import { Section } from "@/components/resume/job-profile/preview/Section.tsx";
+import type { TResumeContent } from "@/components/resume/job-profile/resume.helpers.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {
   DrawLog,
@@ -32,7 +32,7 @@ import {
 
 interface IProps {
   before?: TProfileFormData;
-  data: TExtractionResult;
+  data: TResumeContent;
   onClose: () => void;
   onMerge: (data: TProfileFormData) => void;
   onOverride: (data: TProfileFormData) => void;
@@ -157,11 +157,6 @@ export const ExtractPreviewDialog = ({
                 {...shared}
               />
             ) : null}
-            <Section
-              rows={groups.preferencesRows}
-              title="Preferences"
-              {...shared}
-            />
             {groups.linkRows.length > 0 ? (
               <Section
                 emptyHint="No links on either side"

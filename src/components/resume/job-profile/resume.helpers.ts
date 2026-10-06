@@ -1,11 +1,11 @@
 import { z } from "zod";
-import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
+import { MAX_LARGE_LENGTH, MAX_SHORT_LENGTH } from "@/app.constants.ts";
 import {
   activitySchema,
   educationSchema,
   personalSchema,
-  preferencesSchema,
   professionalSchema,
+  profileFormSchema,
   profileLinkSchema,
   projectSchema,
   publicationSchema,
@@ -16,10 +16,33 @@ import { stringToDate } from "@/lib/utils.ts";
 
 const dateOrNull = z.coerce.date().nullish();
 
+export const MAX_SKILL_GROUPS = 5;
+
+export const skillGroupSchema = z.object({
+  id: z.string(),
+  label: z.string().trim().max(MAX_SHORT_LENGTH),
+  keywords: z.string().trim().max(MAX_LARGE_LENGTH),
+});
+
+export const skillGroupFormSchema = skillGroupSchema.extend({
+  keywords: z.string().trim().min(1, "Enter at least one skill"),
+});
+export type TSkillGroupDto = z.infer<typeof skillGroupSchema>;
+
+const resumeProfessionalSchema = professionalSchema.omit({
+  industries: true,
+  industriesNames: true,
+  skillNames: true,
+  skills: true,
+});
+
+const resumeProjectSchema = projectSchema.omit({ skillNames: true }).extend({
+  skills: z.string().trim().max(MAX_LARGE_LENGTH).optional(),
+});
+
 export const resumeExtractionSchema = z.object({
   personal: personalSchema.extend({ phone: z.string().nullish() }).partial(),
-  professional: professionalSchema.partial(),
-  preferences: preferencesSchema.partial(),
+  professional: resumeProfessionalSchema.partial(),
   workExperience: z.array(
     workExperienceSchema
       .extend({ endDate: dateOrNull, startDate: dateOrNull })
@@ -37,30 +60,41 @@ export const resumeExtractionSchema = z.object({
         .partial()
     )
     .optional(),
-  projects: z.array(projectSchema.partial()).optional(),
+  projects: z.array(resumeProjectSchema.partial()).optional(),
   publications: z.array(publicationSchema.partial()).optional(),
   references: z.array(referenceSchema.partial()).optional(),
+  skillGroups: z.array(skillGroupSchema).max(MAX_SKILL_GROUPS).optional(),
   links: z.array(profileLinkSchema.partial()).optional(),
 });
 
 export type TResumeContent = z.infer<typeof resumeExtractionSchema>;
 
-export const EMPTY_FORM: TProfileFormData = {
+export const resumeFormSchema = profileFormSchema
+  .omit({
+    preferences: true,
+    professional: true,
+    projects: true,
+  })
+  .extend({
+    professional: resumeProfessionalSchema,
+    projects: z.array(resumeProjectSchema),
+    skillGroups: z.array(skillGroupFormSchema).max(MAX_SKILL_GROUPS).optional(),
+  });
+
+export type TResumeFormData = z.infer<typeof resumeFormSchema>;
+
+export const EMPTY_FORM: TResumeFormData = {
   activities: [],
   education: [],
   links: [],
   personal: { email: "", firstName: "", lastName: "" },
-  preferences: {},
   professional: {
-    industries: [],
-    industriesNames: [],
-    skillNames: [],
-    skills: [],
     title: "",
   },
   projects: [],
   publications: [],
   references: [],
+  skillGroups: [],
   workExperience: [],
 };
 
@@ -103,8 +137,8 @@ const normalizeEntries = <T extends TDateEntry>(
 
 export const mergeIntoFormData = (
   extraction?: TResumeContent | null,
-  base: TProfileFormData = EMPTY_FORM
-): TProfileFormData =>
+  base: TResumeFormData = EMPTY_FORM
+): TResumeFormData =>
   extraction
     ? ({
         ...base,
@@ -112,10 +146,6 @@ export const mergeIntoFormData = (
         professional: {
           ...base.professional,
           ...pickDefined(extraction.professional),
-        },
-        preferences: {
-          ...base.preferences,
-          ...pickDefined(extraction.preferences),
         },
         workExperience: normalizeEntries(extraction.workExperience),
         education: normalizeEntries(extraction.education),
@@ -130,5 +160,8 @@ export const mergeIntoFormData = (
           ? extraction.references
           : base.references,
         activities: normalizeEntries(extraction.activities),
-      } as TProfileFormData)
+        skillGroups: extraction.skillGroups?.length
+          ? extraction.skillGroups
+          : base.skillGroups,
+      } as TResumeFormData)
     : base;

@@ -27,6 +27,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs.tsx";
+import { useTopicsMap } from "@/hooks/useLookupMap.ts";
 
 interface IProps {
   count: number;
@@ -37,6 +38,7 @@ export const AddResume = ({ count, onSuccess }: Readonly<IProps>) => {
   const { data: profileData } = useProfile();
   const { mutate: uploadResume, isPending: isUploading } = useUploadResume();
   const { mutate: createResume, isPending: isCreating } = useCreateResume();
+  const topicsMap = useTopicsMap();
 
   const navigate = useNavigate();
 
@@ -70,9 +72,32 @@ export const AddResume = ({ count, onSuccess }: Readonly<IProps>) => {
     if (!profileFormData) {
       return;
     }
+    const keywords = (profileFormData.professional.skills ?? [])
+      .map((id) => topicsMap.get(id)?.name)
+      .filter(Boolean)
+      .join(", ");
+
     createResume(
       {
-        content: profileFormData,
+        content: {
+          ...profileFormData,
+          projects: profileFormData.projects.map(
+            ({ skillNames, skills, ...project }) => ({
+              ...project,
+              skills: [
+                ...new Set([
+                  ...(skillNames ?? []),
+                  ...(skills ?? [])
+                    .map((id) => topicsMap.get(id)?.name)
+                    .filter(Boolean),
+                ]),
+              ].join(", "),
+            })
+          ),
+          skillGroups: keywords
+            ? [{ id: crypto.randomUUID(), keywords, label: "Others" }]
+            : [],
+        },
         name: resumeName.trim(),
         template: templateId,
       },
@@ -90,6 +115,7 @@ export const AddResume = ({ count, onSuccess }: Readonly<IProps>) => {
     profileFormData,
     resumeName,
     templateId,
+    topicsMap,
   ]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) =>

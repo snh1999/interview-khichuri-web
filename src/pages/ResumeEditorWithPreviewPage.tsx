@@ -6,9 +6,11 @@ import { useParams } from "react-router";
 import { toast } from "sonner";
 import { useGetResumeById, useUpdateResume } from "@/api/resumes";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
-import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
-import { profileFormSchema } from "@/components/job-profile/profile.helpers.ts";
-import { mergeIntoFormData } from "@/components/resume/job-profile/resume.helpers.ts";
+import {
+  mergeIntoFormData,
+  resumeFormSchema,
+  type TResumeFormData,
+} from "@/components/resume/job-profile/resume.helpers.ts";
 import { ResumeFormPanel } from "@/components/resume/menu/ResumeFormPanel.tsx";
 import {
   ResumeSettingsMenu,
@@ -48,9 +50,9 @@ const ResumeEditorContent = () => {
 
   const [name, setName] = useState(resume.name);
 
-  const form = useForm<TProfileFormData>({
+  const form = useForm<TResumeFormData>({
     defaultValues: mergeIntoFormData(resume.content),
-    resolver: zodResolver(profileFormSchema),
+    resolver: zodResolver(resumeFormSchema),
   });
 
   const watchedData = form.watch();

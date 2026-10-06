@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
+import type { TResumeFormData } from "@/components/resume/job-profile/resume.helpers.ts";
 import type { ISectionConfig } from "@/store/resumeStore.ts";
 import type { PdfSettings } from "./PDFAdapter.tsx";
 import {
@@ -21,7 +21,7 @@ export interface ResumeTemplateConfig {
 }
 
 export interface ResumeTemplateEntry {
-  component: FC<{ data: TProfileFormData; sections: ISectionConfig[] }>;
+  component: FC<{ data: TResumeFormData; sections: ISectionConfig[] }>;
   config: ResumeTemplateConfig;
 }
 

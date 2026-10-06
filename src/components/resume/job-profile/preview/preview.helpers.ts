@@ -1,5 +1,5 @@
-import type { TExtractionResult } from "@/api/resumes";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
+import type { TResumeContent } from "@/components/resume/job-profile/resume.helpers.ts";
 import { formatToString } from "@/components/resume/utils.ts";
 
 export type TValue =
@@ -47,7 +47,6 @@ export interface IRow {
 export interface IRowGroups {
   personalRows: IRow[];
   professionalRows: IRow[];
-  preferencesRows: IRow[];
   workExperienceRows: IRow[];
   educationRows: IRow[];
   linkRows: IRow[];
@@ -72,19 +71,6 @@ export const PROFESSIONAL_LABELS = {
   experienceLevel: "Experience Level",
   yearsOfExperience: "Years of Experience",
   summary: "Summary",
-  skills: "Skills",
-  skillNames: "Skill Names",
-  industries: "Industries",
-  industriesNames: "Industry Names",
-} as const;
-
-export const PREFERENCES_LABELS = {
-  workType: "Work Type",
-  preferredLocation: "Preferred Location",
-  salaryLower: "Salary Lower",
-  salaryExpected: "Salary Expected",
-  currency: "Currency",
-  titles: "Titles",
 } as const;
 
 export const WORK_EXPERIENCE_LABELS = {
@@ -130,7 +116,6 @@ export const PROJECT_LABELS = {
   type: "Type",
   description: "Description",
   link: "Link",
-  skills: "Skills",
 } as const;
 
 export const REFERENCE_LABELS = {
@@ -202,7 +187,7 @@ const arrayRows = (
 
 export const buildRowGroups = (
   before: TProfileFormData | undefined,
-  data: TExtractionResult
+  data: TResumeContent
 ): IRowGroups => ({
   personalRows: scalarRows(
     "personal",
@@ -215,12 +200,6 @@ export const buildRowGroups = (
     before?.professional,
     data.professional,
     PROFESSIONAL_LABELS
-  ),
-  preferencesRows: scalarRows(
-    "preferences",
-    before?.preferences,
-    data.preferences,
-    PREFERENCES_LABELS
   ),
   workExperienceRows: arrayRows(
     "workExperience",
@@ -338,7 +317,7 @@ export const buildMergedData = (
   selections: Record<string, TPick>,
   edits: Record<string, string>,
   before: TProfileFormData | undefined,
-  data: TExtractionResult
+  data: TResumeContent
 ): TProfileFormData => {
   const result = structuredClone(before ?? {}) as TProfileFormData;
 
