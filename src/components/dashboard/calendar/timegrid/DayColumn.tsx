@@ -7,9 +7,9 @@ import {
   getEventsForDay,
   HOUR_HEIGHT_PX,
   timeToY,
-} from "../calendar.helpers";
-import type { TCustomEvent, TJobEvent } from "../calendar.types";
-import type { DayChipLayout } from "./timeGrid.layout";
+} from "../calendar.helpers.ts";
+import type { TCustomEvent, TJobEvent } from "../calendar.types.ts";
+import type { DayChipLayout } from "./timeGrid.layout.ts";
 
 const HOURS = Array.from(
   { length: DAY_END_HOUR - DAY_START_HOUR },

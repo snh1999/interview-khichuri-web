@@ -4,8 +4,8 @@ import {
   getEffectiveEndDate,
   spansMultipleDays,
   timeToY,
-} from "../calendar.helpers";
-import type { TCustomEvent } from "../calendar.types";
+} from "../calendar.helpers.ts";
+import type { TCustomEvent } from "../calendar.types.ts";
 
 interface ClippedTimedEvent {
   event: TCustomEvent;

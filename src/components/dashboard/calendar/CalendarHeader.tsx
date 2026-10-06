@@ -1,26 +1,26 @@
 import { CaretLeftIcon, CaretRightIcon, PlusIcon } from "@phosphor-icons/react";
 import { addMinutes, format } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useScheduleStore } from "@/store/scheduleStore.ts";
+import { Button } from "@/components/ui/button.tsx";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx";
+import { useCalendarStore } from "@/store/calendarStore.ts";
 import {
   DEFAULT_CLICK_DURATION_MINUTES,
   getWeekBoundary,
   toAnchorDate,
-} from "./calendar.helpers";
-import type { TViewMode } from "./calendar.types";
-import { EventFilters } from "./EventFilters";
+} from "./calendar.helpers.ts";
+import type { TViewMode } from "./calendar.types.ts";
+import { EventFilters } from "./EventFilters.tsx";
 
 export const CalendarHeader = () => {
-  const anchor = useScheduleStore((s) => s.anchor);
-  const viewMode = useScheduleStore((s) => s.viewMode);
-  const visibility = useScheduleStore((s) => s.visibility);
-  const goToNext = useScheduleStore((s) => s.goToNext);
-  const goToPrev = useScheduleStore((s) => s.goToPrev);
-  const goToToday = useScheduleStore((s) => s.goToToday);
-  const setViewMode = useScheduleStore((s) => s.setViewMode);
-  const toggleVisibility = useScheduleStore((s) => s.toggleVisibility);
-  const openCreateDrawer = useScheduleStore((s) => s.openCreateDrawer);
+  const anchor = useCalendarStore((s) => s.anchor);
+  const viewMode = useCalendarStore((s) => s.viewMode);
+  const visibility = useCalendarStore((s) => s.visibility);
+  const goToNext = useCalendarStore((s) => s.goToNext);
+  const goToPrev = useCalendarStore((s) => s.goToPrev);
+  const goToToday = useCalendarStore((s) => s.goToToday);
+  const setViewMode = useCalendarStore((s) => s.setViewMode);
+  const toggleVisibility = useCalendarStore((s) => s.toggleVisibility);
+  const openCreateDrawer = useCalendarStore((s) => s.openCreateDrawer);
 
   const date = toAnchorDate(anchor.year, anchor.month, anchor.day);
 

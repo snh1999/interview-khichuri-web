@@ -8,13 +8,16 @@ import {
   isAllDayEvent,
   spansMultipleDays,
   yToTime,
-} from "../calendar.helpers";
-import type { TCustomEvent, TJobEvent } from "../calendar.types";
-import { AllDayRow } from "./AllDayRow";
-import { DayColumn } from "./DayColumn";
-import { SpanningBarsOverlay } from "./SpanningBarsOverlay";
-import { buildDayChipLayouts, buildSpanningSegments } from "./timeGrid.layout";
-import { useTimeGridDrag } from "./useTimeGridDrag";
+} from "../calendar.helpers.ts";
+import type { TCustomEvent, TJobEvent } from "../calendar.types.ts";
+import { AllDayRow } from "./AllDayRow.tsx";
+import { DayColumn } from "./DayColumn.tsx";
+import { SpanningBarsOverlay } from "./SpanningBarsOverlay.tsx";
+import {
+  buildDayChipLayouts,
+  buildSpanningSegments,
+} from "./timeGrid.layout.ts";
+import { useTimeGridDrag } from "./useTimeGridDrag.ts";
 
 const HOURS = Array.from(
   { length: DAY_END_HOUR - DAY_START_HOUR },

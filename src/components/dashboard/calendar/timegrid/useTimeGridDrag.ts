@@ -1,5 +1,8 @@
 import { useCallback, useRef, useState } from "react";
-import { DEFAULT_CLICK_DURATION_MINUTES, yToTime } from "../calendar.helpers";
+import {
+  DEFAULT_CLICK_DURATION_MINUTES,
+  yToTime,
+} from "../calendar.helpers.ts";
 
 export interface DragState {
   startDayIndex: number;

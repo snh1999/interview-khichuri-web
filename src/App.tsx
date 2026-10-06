@@ -20,7 +20,6 @@ import {
   RESUME_DETAIL_PAGE,
   RESUME_EDITOR_PAGE,
   RESUMES_PAGE,
-  SCHEDULE_PAGE,
   SESSION_DETAIL_PAGE,
   SESSIONS_PAGE,
   SETTINGS_PAGE,
@@ -42,7 +41,6 @@ import { JobDetailPage } from "@/pages/JobDetailPage.tsx";
 import { JobsPage } from "@/pages/JobsPage.tsx";
 import { LandingPage } from "@/pages/LandingPage.tsx";
 import { NotesPage } from "@/pages/NotesPage.tsx";
-import { SchedulePage } from "@/pages/SchedulePage.tsx";
 import { SessionsPage } from "@/pages/SessionsPage.tsx";
 import SettingsPage from "@/pages/SettingsPage.tsx";
 import { SidebarLayout } from "@/pages/SidebarLayout.tsx";
@@ -133,7 +131,6 @@ const App = () => {
             path={INTERVIEW_PAGE}
           />
           <Route element={<NotesPage />} path={NOTES_PAGE} />
-          <Route element={<SchedulePage />} path={SCHEDULE_PAGE} />
           <Route
             element={
               <Suspense fallback={<Spinner />}>

@@ -8,8 +8,8 @@ import { format } from "date-fns";
 import { generatePath, useNavigate } from "react-router";
 import { useDeleteCalendarEvent } from "@/api/calendar";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
-import { Button } from "@/components/ui/button";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import {
   DrawLog,
   DrawLogBody,
@@ -17,21 +17,21 @@ import {
   DrawLogDescription,
   DrawLogHeader,
   DrawLogTitle,
-} from "@/components/ui/custom/DrawLog";
+} from "@/components/ui/custom/DrawLog.tsx";
 import {
   Item,
   ItemActions,
   ItemContent,
   ItemTitle,
-} from "@/components/ui/item";
-import { useScheduleStore } from "@/store/scheduleStore.ts";
-import { getEventColors } from "./calendar.helpers";
-import type { TCustomEvent, TJobEvent } from "./calendar.types";
-import { EVENT_LABELS } from "./calendar.types";
+} from "@/components/ui/item.tsx";
+import { useCalendarStore } from "@/store/calendarStore.ts";
+import { getEventColors } from "./calendar.helpers.ts";
+import type { TCustomEvent, TJobEvent } from "./calendar.types.ts";
+import { EVENT_LABELS } from "./calendar.types.ts";
 
 export const EventDrawlog = () => {
-  const eventList = useScheduleStore((s) => s.eventList);
-  const closeEventList = useScheduleStore((s) => s.closeEventList);
+  const eventList = useCalendarStore((s) => s.eventList);
+  const closeEventList = useCalendarStore((s) => s.closeEventList);
 
   const open = !!eventList;
   const date = eventList?.date;
@@ -79,8 +79,8 @@ interface IProps {
 
 const EventListItem = ({ event }: IProps) => {
   const navigate = useNavigate();
-  const openEditDrawer = useScheduleStore((s) => s.openEditDrawer);
-  const closeEventList = useScheduleStore((s) => s.closeEventList);
+  const openEditDrawer = useCalendarStore((s) => s.openEditDrawer);
+  const closeEventList = useCalendarStore((s) => s.closeEventList);
   const { mutateAsync: deleteBackendEvent } = useDeleteCalendarEvent();
 
   const colors = getEventColors(event);

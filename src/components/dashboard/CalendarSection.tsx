@@ -1,37 +1,37 @@
 import { useCallback, useMemo } from "react";
 import { useCalendarEvents as useBackendCalendarEvents } from "@/api/calendar";
-import { CalendarHeader } from "@/components/calendar/CalendarHeader";
+import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
+import { SkeletonCard } from "@/components/common/boundary/SkeletonCard.tsx";
+import { CalendarHeader } from "@/components/dashboard/calendar/CalendarHeader.tsx";
 import type {
   TCustomEvent,
   TEventColor,
   TJobEvent,
-} from "@/components/calendar/calendar.types";
-import { DayView } from "@/components/calendar/DayView";
-import { EventDrawlog } from "@/components/calendar/EventDrawlog.tsx";
-import { MonthGrid } from "@/components/calendar/MonthGrid";
-import { UpsertEventForm } from "@/components/calendar/upsertEvent/UpsertEventForm.tsx";
-import { useGetJobEvents } from "@/components/calendar/useGetJobEvents.ts";
-import { WeekView } from "@/components/calendar/WeekView";
-import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
-import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
+} from "@/components/dashboard/calendar/calendar.types.ts";
+import { DayView } from "@/components/dashboard/calendar/DayView.tsx";
+import { EventDrawlog } from "@/components/dashboard/calendar/EventDrawlog.tsx";
+import { MonthGrid } from "@/components/dashboard/calendar/MonthGrid.tsx";
+import { UpsertEventForm } from "@/components/dashboard/calendar/upsertEvent/UpsertEventForm.tsx";
+import { useGetJobEvents } from "@/components/dashboard/calendar/useGetJobEvents.ts";
+import { WeekView } from "@/components/dashboard/calendar/WeekView.tsx";
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
-} from "@/components/ui/empty";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useScheduleStore } from "@/store/scheduleStore.ts";
+} from "@/components/ui/empty.tsx";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useCalendarStore } from "@/store/calendarStore.ts";
 
-export const SchedulePage = () => (
-  <AppErrorSuspense fallback={SchedulePageSkeleton}>
+export const CalendarSection = () => (
+  <AppErrorSuspense fallback={CalendarSkeleton}>
     <ScheduleContent />
   </AppErrorSuspense>
 );
 
 const ScheduleContent = () => {
   const { viewMode, visibility, openCreateDrawer, openEventList } =
-    useScheduleStore();
+    useCalendarStore();
 
   const jobEvents = useGetJobEvents(visibility);
   const { data: calendarEvents } = useBackendCalendarEvents();
@@ -103,10 +103,6 @@ const ScheduleContent = () => {
 
   return (
     <div className="w-full">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-semibold text-xl">Schedule</h1>
-      </div>
-
       <div className="rounded-lg border bg-card p-6">
         <CalendarHeader />
 
@@ -130,7 +126,7 @@ const ScheduleContent = () => {
   );
 };
 
-const SchedulePageSkeleton = () => (
+const CalendarSkeleton = () => (
   <div className="w-full">
     <div className="mb-6">
       <Skeleton className="h-8 w-32" />

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useScheduleStore } from "@/store/scheduleStore.ts";
-import { CalendarEvent } from "./CalendarEvent";
+import { useCalendarStore } from "@/store/calendarStore.ts";
+import { CalendarEvent } from "./CalendarEvent.tsx";
 import {
   getEventsForDay,
   getMonthGrid,
@@ -8,9 +8,9 @@ import {
   MONTH_BAR_AREA_TOP_PX,
   MONTH_BAR_ROW_GAP_PX,
   MONTH_BAR_ROW_HEIGHT_PX,
-} from "./calendar.helpers";
-import type { TCustomEvent, TJobEvent } from "./calendar.types";
-import { DayCell } from "./DayCell";
+} from "./calendar.helpers.ts";
+import type { TCustomEvent, TJobEvent } from "./calendar.types.ts";
+import { DayCell } from "./DayCell.tsx";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -25,7 +25,7 @@ export const MonthGrid = ({
   onCustomEventClick,
   onDateRangeSelect,
 }: Props) => {
-  const anchor = useScheduleStore((s) => s.anchor);
+  const anchor = useCalendarStore((s) => s.anchor);
   const days = useMemo(
     () => getMonthGrid(anchor.year, anchor.month),
     [anchor.year, anchor.month]
