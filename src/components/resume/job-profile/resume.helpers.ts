@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MAX_LARGE_LENGTH, MAX_SHORT_LENGTH } from "@/app.constants.ts";
 import {
   activitySchema,
   educationSchema,
@@ -19,14 +20,29 @@ export const MAX_SKILL_GROUPS = 5;
 
 export const skillGroupSchema = z.object({
   id: z.string(),
-  label: z.string().trim().max(1000),
-  keywords: z.string().trim().min(1).max(200),
+  label: z.string().trim().max(MAX_SHORT_LENGTH),
+  keywords: z.string().trim().max(MAX_LARGE_LENGTH),
+});
+
+export const skillGroupFormSchema = skillGroupSchema.extend({
+  keywords: z.string().trim().min(1, "Enter at least one skill"),
 });
 export type TSkillGroupDto = z.infer<typeof skillGroupSchema>;
 
+const resumeProfessionalSchema = professionalSchema.omit({
+  industries: true,
+  industriesNames: true,
+  skillNames: true,
+  skills: true,
+});
+
+const resumeProjectSchema = projectSchema.omit({ skillNames: true }).extend({
+  skills: z.string().trim().max(MAX_LARGE_LENGTH).optional(),
+});
+
 export const resumeExtractionSchema = z.object({
   personal: personalSchema.extend({ phone: z.string().nullish() }).partial(),
-  professional: professionalSchema.partial(),
+  professional: resumeProfessionalSchema.partial(),
   workExperience: z.array(
     workExperienceSchema
       .extend({ endDate: dateOrNull, startDate: dateOrNull })
@@ -44,7 +60,7 @@ export const resumeExtractionSchema = z.object({
         .partial()
     )
     .optional(),
-  projects: z.array(projectSchema.partial()).optional(),
+  projects: z.array(resumeProjectSchema.partial()).optional(),
   publications: z.array(publicationSchema.partial()).optional(),
   references: z.array(referenceSchema.partial()).optional(),
   skillGroups: z.array(skillGroupSchema).max(MAX_SKILL_GROUPS).optional(),
@@ -56,9 +72,13 @@ export type TResumeContent = z.infer<typeof resumeExtractionSchema>;
 export const resumeFormSchema = profileFormSchema
   .omit({
     preferences: true,
+    professional: true,
+    projects: true,
   })
   .extend({
-    skillGroups: z.array(skillGroupSchema).max(MAX_SKILL_GROUPS).optional(),
+    professional: resumeProfessionalSchema,
+    projects: z.array(resumeProjectSchema),
+    skillGroups: z.array(skillGroupFormSchema).max(MAX_SKILL_GROUPS).optional(),
   });
 
 export type TResumeFormData = z.infer<typeof resumeFormSchema>;
@@ -69,10 +89,6 @@ export const EMPTY_FORM: TResumeFormData = {
   links: [],
   personal: { email: "", firstName: "", lastName: "" },
   professional: {
-    industries: [],
-    industriesNames: [],
-    skillNames: [],
-    skills: [],
     title: "",
   },
   projects: [],

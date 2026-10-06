@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
 import { useProfile } from "@/api/profile";
-import type { IResume, TExtractionResult } from "@/api/resumes";
+import type { IResume } from "@/api/resumes";
 import {
   useDeleteResume,
   useExtractResume,
@@ -20,6 +20,7 @@ import {
   EMPTY_FORM,
   mergeIntoFormData,
   resumeExtractionSchema,
+  type TResumeContent,
 } from "@/components/resume/job-profile/resume.helpers.ts";
 import { ViewResume } from "@/components/resume/job-profile/ViewResume.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -45,7 +46,7 @@ export const ResumeCard = () => {
 
   const [viewingResume, setViewingResume] = useState<IResume | null>(null);
   const [open, setOpen] = useState(false);
-  const [extraction, setExtraction] = useState<TExtractionResult | null>(null);
+  const [extraction, setExtraction] = useState<TResumeContent | null>(null);
   const { mutateAsync: deleteResume } = useDeleteResume();
   const { mutate: setPrimary, isPending: isSettingPrimary } =
     useSetPrimaryResume();

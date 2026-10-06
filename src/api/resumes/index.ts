@@ -4,17 +4,6 @@ export * from "./idb.ts";
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { apiClient, queryKeys } from "@/api";
 import type {
-  TActivityDto,
-  TEducationDto,
-  TProfessionalInfoDto,
-  TProfileLinkDto,
-  TProfilePersonalDto,
-  TProjectDto,
-  TPublicationDto,
-  TReferenceDto,
-  TWorkExperienceDto,
-} from "@/components/job-profile/profile.helpers.ts";
-import type {
   TResumeContent,
   TResumeFormData,
 } from "@/components/resume/job-profile/resume.helpers.ts";
@@ -45,21 +34,6 @@ export interface IResume {
   slug: string | null;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface TExtractionResult {
-  personal: Partial<TProfilePersonalDto>;
-  professional: Partial<Omit<TProfessionalInfoDto, "skills" | "industries">> & {
-    skills?: number[];
-    industries?: number[];
-  };
-  workExperience: Partial<TWorkExperienceDto>[];
-  education: Partial<TEducationDto>[];
-  links: TProfileLinkDto[];
-  publications: Partial<TPublicationDto>[];
-  projects: Partial<TProjectDto>[];
-  references: Partial<TReferenceDto>[];
-  activities: Partial<TActivityDto>[];
 }
 
 export const useGetResumes = () =>
@@ -143,7 +117,7 @@ export const useExtractResume = () =>
       provider: string;
       model?: string;
     }) =>
-      await api.post<TExtractionResult>(
+      await api.post<TResumeContent>(
         `/resume/${id}/extract`,
         { provider, model },
         { timeoutMs: 120_000 }

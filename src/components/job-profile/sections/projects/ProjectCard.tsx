@@ -10,9 +10,14 @@ import { Button } from "@/components/ui/button.tsx";
 interface IProps {
   index: number;
   onRemove: (index: number) => void;
+  skillsAsText?: boolean;
 }
 
-export const ProjectCard = ({ index, onRemove }: Readonly<IProps>) => {
+export const ProjectCard = ({
+  index,
+  onRemove,
+  skillsAsText = false,
+}: Readonly<IProps>) => {
   const form = useFormContext<TProfileFormData>();
 
   const onRemoveClick = () => onRemove(index);
@@ -55,13 +60,22 @@ export const ProjectCard = ({ index, onRemove }: Readonly<IProps>) => {
           />
         </div>
         <div className="md:col-span-2">
-          <LookupCombobox
-            form={form}
-            idsName={`projects.${index}.skills`}
-            label="Skills"
-            names={`projects.${index}.skillNames`}
-            placeholder="Add skills"
-          />
+          {skillsAsText ? (
+            <FormInput
+              form={form}
+              label="Skills"
+              name={`projects.${index}.skills`}
+              placeholder="Comma-separated skills"
+            />
+          ) : (
+            <LookupCombobox
+              form={form}
+              idsName={`projects.${index}.skills`}
+              label="Skills"
+              names={`projects.${index}.skillNames`}
+              placeholder="Add skills"
+            />
+          )}
         </div>
       </div>
     </div>

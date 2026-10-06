@@ -1,5 +1,5 @@
-import type { TExtractionResult } from "@/api/resumes";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
+import type { TResumeContent } from "@/components/resume/job-profile/resume.helpers.ts";
 import { formatToString } from "@/components/resume/utils.ts";
 
 export type TValue =
@@ -71,10 +71,6 @@ export const PROFESSIONAL_LABELS = {
   experienceLevel: "Experience Level",
   yearsOfExperience: "Years of Experience",
   summary: "Summary",
-  skills: "Skills",
-  skillNames: "Skill Names",
-  industries: "Industries",
-  industriesNames: "Industry Names",
 } as const;
 
 export const WORK_EXPERIENCE_LABELS = {
@@ -120,7 +116,6 @@ export const PROJECT_LABELS = {
   type: "Type",
   description: "Description",
   link: "Link",
-  skills: "Skills",
 } as const;
 
 export const REFERENCE_LABELS = {
@@ -192,7 +187,7 @@ const arrayRows = (
 
 export const buildRowGroups = (
   before: TProfileFormData | undefined,
-  data: TExtractionResult
+  data: TResumeContent
 ): IRowGroups => ({
   personalRows: scalarRows(
     "personal",
@@ -322,7 +317,7 @@ export const buildMergedData = (
   selections: Record<string, TPick>,
   edits: Record<string, string>,
   before: TProfileFormData | undefined,
-  data: TExtractionResult
+  data: TResumeContent
 ): TProfileFormData => {
   const result = structuredClone(before ?? {}) as TProfileFormData;
 

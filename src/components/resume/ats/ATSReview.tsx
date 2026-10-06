@@ -19,7 +19,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { useIndustryMap, useTopicsMap } from "@/hooks/useLookupMap";
 import { atsScoreCopyPrompt } from "@/lib/ai/prompts.ts";
 import type { IAtsCacheEntry, IAtsScoreFilter } from "@/lib/indexdb.ts";
 
@@ -40,8 +39,6 @@ const toFullScore = (entry: IAtsCacheEntry): TAtsScore => ({
 
 export const ATSReview = ({ job }: Readonly<IProps>) => {
   const { data: jobsData } = useGetJobs();
-  const topicNames = useTopicsMap();
-  const industryNames = useIndustryMap();
   const { data: resumesData } = useGetResumes();
   const jobs = jobsData ?? [];
   const resumes = resumesData ?? [];
@@ -110,20 +107,9 @@ export const ATSReview = ({ job }: Readonly<IProps>) => {
       companyName: target?.companyName,
       jobDescription: target?.description,
       jobTitle: target?.title,
-      resumeText: resumeToText(resumeMap.get(selectedResumeId)?.content, {
-        topics: topicNames,
-        industries: industryNames,
-      }),
+      resumeText: resumeToText(resumeMap.get(selectedResumeId)?.content),
     });
-  }, [
-    job,
-    jobId,
-    jobMap,
-    resumeMap,
-    selectedResumeId,
-    topicNames,
-    industryNames,
-  ]);
+  }, [job, jobId, jobMap, resumeMap, selectedResumeId]);
 
   return (
     <Card className="px-1">

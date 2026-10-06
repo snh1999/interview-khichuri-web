@@ -15,9 +15,11 @@ import { ProjectCard } from "./ProjectCard.tsx";
 
 interface IProps {
   sectionId: string;
+  skillsAsText?: boolean;
 }
 
-export const ProjectsSection = memo(({ sectionId }: Readonly<IProps>) => {
+export const ProjectsSection = memo((props: Readonly<IProps>) => {
+  const { sectionId, skillsAsText = false } = props;
   const form = useFormContext<TProfileFormData>();
 
   const {
@@ -30,7 +32,6 @@ export const ProjectsSection = memo(({ sectionId }: Readonly<IProps>) => {
     appendProject({
       link: undefined,
       name: "",
-      skills: [],
       type: "project",
     });
 
@@ -54,7 +55,12 @@ export const ProjectsSection = memo(({ sectionId }: Readonly<IProps>) => {
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {fields.map((field, index) => (
-          <ProjectCard index={index} key={field.id} onRemove={removeProject} />
+          <ProjectCard
+            index={index}
+            key={field.id}
+            onRemove={removeProject}
+            skillsAsText={skillsAsText}
+          />
         ))}
         {fields.length === 0 && (
           <p className="text-center text-muted-foreground text-xs italic">

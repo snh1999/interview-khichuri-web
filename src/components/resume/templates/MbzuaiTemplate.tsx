@@ -1,6 +1,9 @@
 import { type FC, useMemo } from "react";
 import type { TResumeFormData } from "@/components/resume/job-profile/resume.helpers.ts";
-import { resolveSkillGroups } from "@/components/resume/template.helpers.ts";
+import {
+  resolveSkillGroups,
+  toSkillList,
+} from "@/components/resume/template.helpers.ts";
 import type { ResumeTemplateConfig } from "@/components/resume/template-registry.ts";
 import { dateRange } from "@/components/resume/utils.ts";
 import {
@@ -261,7 +264,7 @@ function ProjectsSection({ title, data, styles }: ISectionProps) {
       <Text style={styles.sectionTitle}>{title}</Text>
       {projects.map((proj, i) => {
         const bulletsList = proj.description?.split("\n") ?? [];
-        const projectSkills = proj.skillNames ?? [];
+        const projectSkills = toSkillList(proj.skills);
         return (
           <View key={proj.id ?? i} style={styles.entryBlock}>
             <Text style={styles.blueItem}>

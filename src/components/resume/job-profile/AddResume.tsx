@@ -72,20 +72,31 @@ export const AddResume = ({ count, onSuccess }: Readonly<IProps>) => {
     if (!profileFormData) {
       return;
     }
+    const keywords = (profileFormData.professional.skills ?? [])
+      .map((id) => topicsMap.get(id)?.name)
+      .filter(Boolean)
+      .join(", ");
+
     createResume(
       {
         content: {
           ...profileFormData,
-          skillGroups: [
-            {
-              id: crypto.randomUUID(),
-              label: "Others",
-              keywords: (profileFormData.professional.skills ?? [])
-                .map((id) => topicsMap.get(id)?.name)
-                .filter(Boolean)
-                .join(", "),
-            },
-          ],
+          projects: profileFormData.projects.map(
+            ({ skillNames, skills, ...project }) => ({
+              ...project,
+              skills: [
+                ...new Set([
+                  ...(skillNames ?? []),
+                  ...(skills ?? [])
+                    .map((id) => topicsMap.get(id)?.name)
+                    .filter(Boolean),
+                ]),
+              ].join(", "),
+            })
+          ),
+          skillGroups: keywords
+            ? [{ id: crypto.randomUUID(), keywords, label: "Others" }]
+            : [],
         },
         name: resumeName.trim(),
         template: templateId,
