@@ -10,7 +10,8 @@ export const COMMUNICATION_QUESTION_BANK: IQuestionBankItem[] = [
       "Describe a time you had to simplify technical or complex information.",
       "How do you communicate complex information clearly?",
     ],
-    suggestions: "Start with the audience's needs and existing knowledge. Use plain language, relevant examples, and check understanding rather than simply reducing terminology.",
+    suggestions:
+      "Start with the audience's needs and existing knowledge. Use plain language, relevant examples, and check understanding rather than simply reducing terminology.",
   },
   {
     id: "miscommunication",
@@ -21,7 +22,8 @@ export const COMMUNICATION_QUESTION_BANK: IQuestionBankItem[] = [
       "When has communication gone wrong and how did you fix it?",
       "Tell me about a time your message was misunderstood.",
     ],
-    suggestions: "Explain what caused the misunderstanding, how you recognized it, what you did to correct it, and what communication practice you changed afterward.",
+    suggestions:
+      "Explain what caused the misunderstanding, how you recognized it, what you did to correct it, and what communication practice you changed afterward.",
   },
   {
     id: "written-communication",
@@ -32,7 +34,8 @@ export const COMMUNICATION_QUESTION_BANK: IQuestionBankItem[] = [
       "Describe a situation where documentation mattered.",
       "How do you communicate effectively in writing?",
     ],
-    suggestions: "Explain how you tailor structure, detail, tone, and action items to the audience. Give a concrete example where clarity mattered.",
+    suggestions:
+      "Explain how you tailor structure, detail, tone, and action items to the audience. Give a concrete example where clarity mattered.",
   },
   {
     id: "difficult-conversation",
@@ -43,7 +46,8 @@ export const COMMUNICATION_QUESTION_BANK: IQuestionBankItem[] = [
       "When have you had to address a sensitive issue directly?",
       "How do you approach difficult conversations?",
     ],
-    suggestions: "Explain how you prepared, chose the right setting, stated the issue clearly, listened, and worked toward a constructive next step.",
+    suggestions:
+      "Explain how you prepared, chose the right setting, stated the issue clearly, listened, and worked toward a constructive next step.",
   },
   {
     id: "presentation",
@@ -54,6 +58,7 @@ export const COMMUNICATION_QUESTION_BANK: IQuestionBankItem[] = [
       "How do you prepare for an important presentation?",
       "Tell me about a presentation that didn't go as planned.",
     ],
-    suggestions: "Focus on audience, objective, preparation, delivery, and outcome. If something went wrong, explain how you adapted.",
+    suggestions:
+      "Focus on audience, objective, preparation, delivery, and outcome. If something went wrong, explain how you adapted.",
   },
 ];

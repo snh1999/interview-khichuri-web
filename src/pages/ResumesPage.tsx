@@ -17,6 +17,9 @@ const ResumePageContent = () => {
 
   return (
     <div className="w-full">
+      <div className="mb-6">
+        <h1 className="font-semibold text-xl">Resumes</h1>
+      </div>
       <div className="flex flex-col gap-6">
         <FormProvider {...form}>
           <ResumeCard />

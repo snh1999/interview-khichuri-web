@@ -1,7 +1,7 @@
-import { useScheduleStore } from "@/store/scheduleStore.ts";
-import { toAnchorDate } from "./calendar.helpers";
-import type { TCustomEvent, TJobEvent } from "./calendar.types";
-import { TimeGrid } from "./timegrid/TimeGrid";
+import { useCalendarStore } from "@/store/calendarStore.ts";
+import { toAnchorDate } from "./calendar.helpers.ts";
+import type { TCustomEvent, TJobEvent } from "./calendar.types.ts";
+import { TimeGrid } from "./timegrid/TimeGrid.tsx";
 
 interface Props {
   events: (TJobEvent | TCustomEvent)[];
@@ -14,7 +14,7 @@ export const DayView = ({
   onSlotSelect,
   onCustomEventClick,
 }: Props) => {
-  const anchor = useScheduleStore((s) => s.anchor);
+  const anchor = useCalendarStore((s) => s.anchor);
 
   return (
     <TimeGrid

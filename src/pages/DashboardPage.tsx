@@ -1,6 +1,7 @@
 import { useGetJobs } from "@/api/jobs";
 import { useAllInterviews } from "@/api/sessions/interviews";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
+import { CalendarSection } from "@/components/dashboard/CalendarSection.tsx";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
 import {
   avgScore,
@@ -14,7 +15,6 @@ import { RecentNotesSection } from "@/components/dashboard/RecentNotesSection";
 import { RecentSessionsSection } from "@/components/dashboard/RecentSessionsSection";
 import { SavedJobsSection } from "@/components/dashboard/SavedJobsSection";
 import { ScoreProgress } from "@/components/dashboard/ScoreProgress";
-import { UpcomingList } from "@/components/dashboard/UpcomingList";
 import { Skeleton } from "@/components/ui/skeleton";
 import { daysUntil, isUrgent } from "@/lib/utils";
 
@@ -50,15 +50,12 @@ const DashboardContent = () => {
   return (
     <div className="space-y-6">
       <DashboardStats stats={stats} />
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <ScoreProgress points={scoreHistory} />
-        <UpcomingList jobs={jobs} />
-      </div>
+      <CalendarSection />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <div className="lg:col-span-7">
+        <div className="space-y-4 lg:col-span-7">
           <RecentSessionsSection />
+          <ScoreProgress points={scoreHistory} />
         </div>
         <div className="space-y-4 lg:col-span-5">
           <SavedJobsSection jobs={jobs} />

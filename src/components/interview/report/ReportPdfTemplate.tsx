@@ -109,6 +109,7 @@ const renderMarkdownLine = (line: string, index: number): ReactNode => {
     );
   }
   const numberedMatch = NUMBERED_LIST_RE.exec(line);
+  // biome-ignore lint/suspicious/noUnnecessaryConditions: <explanation>
   if (numberedMatch) {
     return (
       <PdfText key={index} style={{ marginLeft: 8 }}>

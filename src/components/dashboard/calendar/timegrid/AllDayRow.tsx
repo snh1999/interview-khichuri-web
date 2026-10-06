@@ -1,6 +1,6 @@
-import { CalendarEvent } from "../CalendarEvent";
-import { coversWholeDay, getEventsForDay } from "../calendar.helpers";
-import type { TCustomEvent, TJobEvent } from "../calendar.types";
+import { CalendarEvent } from "../CalendarEvent.tsx";
+import { coversWholeDay, getEventsForDay } from "../calendar.helpers.ts";
+import type { TCustomEvent, TJobEvent } from "../calendar.types.ts";
 
 interface Props {
   days: Date[];

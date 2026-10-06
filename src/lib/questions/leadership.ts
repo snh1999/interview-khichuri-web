@@ -10,7 +10,8 @@ export const LEADERSHIP_QUESTION_BANK: IQuestionBankItem[] = [
       "How do you set direction for a team?",
       "What principles guide how you lead?",
     ],
-    suggestions: "Describe behaviors rather than labels. Explain how you set direction, make decisions, and adapt to different situations and people.",
+    suggestions:
+      "Describe behaviors rather than labels. Explain how you set direction, make decisions, and adapt to different situations and people.",
   },
   {
     id: "decision-making-leader",
@@ -21,6 +22,7 @@ export const LEADERSHIP_QUESTION_BANK: IQuestionBankItem[] = [
       "When have you had to make a decision that affected others?",
       "How do you make difficult decisions for a team?",
     ],
-    suggestions: "Explain the information, constraints, stakeholders, alternatives, and consequences you considered. Be clear about what you personally decided and why.",
+    suggestions:
+      "Explain the information, constraints, stakeholders, alternatives, and consequences you considered. Be clear about what you personally decided and why.",
   },
 ];

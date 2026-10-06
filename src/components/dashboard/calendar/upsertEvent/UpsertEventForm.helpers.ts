@@ -13,7 +13,7 @@ import type { IFormHook } from "@/components/common/form/form.types.ts";
 import {
   DEFAULT_CLICK_DURATION_MINUTES,
   isAllDayEvent,
-} from "../calendar.helpers";
+} from "../calendar.helpers.ts";
 import {
   EVENT_COLOR_KEYS,
   type TCustomEvent,

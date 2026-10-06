@@ -7,9 +7,9 @@ import {
   type TArchivedValues,
 } from "@/lib/storageArchive";
 import { useAppStore } from "@/store/appStore";
+import { useCalendarStore } from "@/store/calendarStore.ts";
 import { useInterviewStore } from "@/store/interviewStore";
 import { useResumeStore } from "@/store/resumeStore";
-import { useScheduleStore } from "@/store/scheduleStore";
 import { useJobsStore } from "@/store/useJobsStore";
 
 /**
@@ -87,7 +87,7 @@ const USER_SCOPED_STORES: TUserScopedStore[] = [
   userScopedStore(APP_STORE_KEY, useAppStore),
   userScopedStore("interview-panes", useInterviewStore),
   userScopedStore("resume-store", useResumeStore),
-  userScopedStore("schedule-ui", useScheduleStore),
+  userScopedStore("schedule-ui", useCalendarStore),
   userScopedStore("job-filters-sort", useJobsStore),
 ];
 

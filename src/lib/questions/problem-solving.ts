@@ -10,7 +10,8 @@ export const PROBLEM_SOLVING_QUESTION_BANK: IQuestionBankItem[] = [
       "How do you solve unfamiliar problems?",
       "What steps do you take when you don't know the answer?",
     ],
-    suggestions: "Explain a repeatable process: define the problem, gather relevant information, identify constraints, consider options, test assumptions, decide, and evaluate the result.",
+    suggestions:
+      "Explain a repeatable process: define the problem, gather relevant information, identify constraints, consider options, test assumptions, decide, and evaluate the result.",
   },
   {
     id: "root-cause",
@@ -21,7 +22,8 @@ export const PROBLEM_SOLVING_QUESTION_BANK: IQuestionBankItem[] = [
       "Describe a problem where the obvious cause wasn't the real cause.",
       "How do you avoid treating symptoms instead of causes?",
     ],
-    suggestions: "Use an example showing investigation rather than guesswork. Explain what evidence led you from symptoms to the underlying cause.",
+    suggestions:
+      "Use an example showing investigation rather than guesswork. Explain what evidence led you from symptoms to the underlying cause.",
   },
   {
     id: "tradeoff",
@@ -32,7 +34,8 @@ export const PROBLEM_SOLVING_QUESTION_BANK: IQuestionBankItem[] = [
       "How do you make decisions when every option has drawbacks?",
       "Tell me about a time you had to balance competing priorities.",
     ],
-    suggestions: "Identify the competing objectives and constraints, explain how you evaluated them, and make the consequences of your choice explicit.",
+    suggestions:
+      "Identify the competing objectives and constraints, explain how you evaluated them, and make the consequences of your choice explicit.",
   },
   {
     id: "data-driven",
@@ -43,6 +46,7 @@ export const PROBLEM_SOLVING_QUESTION_BANK: IQuestionBankItem[] = [
       "Describe a time data changed your approach.",
       "Tell me about a time you used analysis to solve a problem.",
     ],
-    suggestions: "Explain what information mattered, how you evaluated its reliability, and how it changed the decision. Don't imply that data automatically makes every decision correct.",
+    suggestions:
+      "Explain what information mattered, how you evaluated its reliability, and how it changed the decision. Don't imply that data automatically makes every decision correct.",
   },
 ];

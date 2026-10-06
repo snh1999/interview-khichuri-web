@@ -81,7 +81,7 @@ export const resumeFormSchema = profileFormSchema
     skillGroups: z.array(skillGroupFormSchema).max(MAX_SKILL_GROUPS).optional(),
   });
 
-export type TResumeFormData = z.infer<typeof resumeFormSchema>;
+export type TResumeFormData = z.input<typeof resumeFormSchema>;
 
 export const EMPTY_FORM: TResumeFormData = {
   activities: [],

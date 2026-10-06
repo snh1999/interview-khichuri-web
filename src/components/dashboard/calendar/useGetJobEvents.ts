@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { TEventSource } from "@/api/calendar";
 import { type IJob, useGetJobs } from "@/api/jobs";
-import type { TEventVisibility, TJobEvent } from "./calendar.types";
+import type { TEventVisibility, TJobEvent } from "./calendar.types.ts";
 
 const jobToCalendarEvent = (
   job: IJob,

@@ -8,7 +8,7 @@ import type {
   TEventVisibility,
   TJobEvent,
   TViewMode,
-} from "@/components/calendar/calendar.types";
+} from "@/components/dashboard/calendar/calendar.types";
 
 const INITIAL_VISIBILITY: TEventVisibility = {
   applied: true,
@@ -75,7 +75,7 @@ const shiftAnchor = (
   return toAnchor(addDays(date, step * direction));
 };
 
-export const useScheduleStore = create<IScheduleState>()(
+export const useCalendarStore = create<IScheduleState>()(
   persist(
     (set, get) => ({
       anchor: toAnchor(new Date()),

@@ -1,6 +1,6 @@
 import { FunnelIcon } from "@phosphor-icons/react";
 import type { TEventSource } from "@/api/calendar";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button.tsx";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -9,9 +9,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import type { TEventVisibility } from "./calendar.types";
-import { EVENT_COLORS, EVENT_LABELS } from "./calendar.types";
+} from "@/components/ui/dropdown-menu.tsx";
+import type { TEventVisibility } from "./calendar.types.ts";
+import { EVENT_COLORS, EVENT_LABELS } from "./calendar.types.ts";
 
 const SOURCES: TEventSource[] = ["deadline", "interview", "applied", "custom"];
 

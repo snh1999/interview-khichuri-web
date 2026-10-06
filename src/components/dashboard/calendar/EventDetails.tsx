@@ -10,8 +10,8 @@ import { format, isSameDay } from "date-fns";
 import { generatePath, useNavigate } from "react-router";
 import { useDeleteCalendarEvent } from "@/api/calendar";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
-import { Button } from "@/components/ui/button";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import {
   DrawLog,
   DrawLogBody,
@@ -20,13 +20,13 @@ import {
   DrawLogDescription,
   DrawLogHeader,
   DrawLogTitle,
-} from "@/components/ui/custom/DrawLog";
-import { getEventColors } from "./calendar.helpers";
+} from "@/components/ui/custom/DrawLog.tsx";
+import { getEventColors } from "./calendar.helpers.ts";
 import {
   EVENT_LABELS,
   type TCustomEvent,
   type TJobEvent,
-} from "./calendar.types";
+} from "./calendar.types.ts";
 
 interface Props {
   event: TJobEvent | TCustomEvent;

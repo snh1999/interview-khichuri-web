@@ -1,13 +1,13 @@
 import { cn } from "cn";
 import { format, isSameMonth, isToday } from "date-fns";
 import { useCallback } from "react";
-import { CalendarEvent } from "./CalendarEvent";
+import { CalendarEvent } from "./CalendarEvent.tsx";
 import {
   MONTH_BAR_ROW_GAP_PX,
   MONTH_BAR_ROW_HEIGHT_PX,
   spansMultipleDays,
-} from "./calendar.helpers";
-import type { TCustomEvent, TJobEvent } from "./calendar.types";
+} from "./calendar.helpers.ts";
+import type { TCustomEvent, TJobEvent } from "./calendar.types.ts";
 
 const MAX_VISIBLE_EVENTS = 3;
 

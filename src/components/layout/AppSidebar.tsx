@@ -1,7 +1,5 @@
 import {
   BriefcaseIcon,
-  CalendarDotsIcon,
-  FrameCornersIcon,
   GearIcon,
   HouseIcon,
   LightbulbFilamentIcon,
@@ -11,12 +9,11 @@ import {
 } from "@phosphor-icons/react";
 import { Link, useLocation } from "react-router";
 import {
+  BUILDER_PAGE,
   HOMEPAGE,
   JOBS_PAGE,
   NOTES_PAGE,
   PROFILE_PAGE,
-  RESUMES_PAGE,
-  SCHEDULE_PAGE,
   SESSIONS_PAGE,
   SETTINGS_PAGE,
 } from "@/app.constants.ts";
@@ -32,13 +29,15 @@ import {
 
 const SIDEBAR_MENU = [
   { name: "Dashboard", icon: PresentationChartIcon, url: HOMEPAGE },
-  { name: "Schedule", icon: CalendarDotsIcon, url: SCHEDULE_PAGE },
   { name: "Jobs", icon: BriefcaseIcon, url: JOBS_PAGE },
   { name: "Preparation", icon: LightbulbFilamentIcon, url: SESSIONS_PAGE },
   { name: "Notes", icon: NotebookIcon, url: NOTES_PAGE },
   { name: "Profile", icon: ReadCvLogoIcon, url: PROFILE_PAGE },
-  { name: "Resume", icon: ReadCvLogoIcon, url: RESUMES_PAGE },
-  { name: "Portfolio", icon: FrameCornersIcon, url: "#" },
+  {
+    name: "Builder",
+    icon: ReadCvLogoIcon,
+    url: BUILDER_PAGE,
+  },
   { name: "Settings", icon: GearIcon, url: SETTINGS_PAGE },
 ] as const;
 

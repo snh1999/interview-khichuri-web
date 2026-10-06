@@ -10,7 +10,8 @@ export const TEAMWORK_QUESTION_BANK: IQuestionBankItem[] = [
       "What do effective teams do differently?",
       "What does good teamwork mean to you?",
     ],
-    suggestions: "Discuss concrete behaviors such as shared goals, clear ownership, communication, trust, constructive disagreement, and accountability.",
+    suggestions:
+      "Discuss concrete behaviors such as shared goals, clear ownership, communication, trust, constructive disagreement, and accountability.",
   },
   {
     id: "team-failure",
@@ -21,7 +22,8 @@ export const TEAMWORK_QUESTION_BANK: IQuestionBankItem[] = [
       "What caused a team project to struggle?",
       "Tell me about a difficult team dynamic.",
     ],
-    suggestions: "Avoid blaming individuals. Explain the underlying dynamic, your contribution to improving it, and what you learned about effective teamwork.",
+    suggestions:
+      "Avoid blaming individuals. Explain the underlying dynamic, your contribution to improving it, and what you learned about effective teamwork.",
   },
   {
     id: "collaboration-tools",
@@ -32,6 +34,7 @@ export const TEAMWORK_QUESTION_BANK: IQuestionBankItem[] = [
       "How do you make sure everyone knows what is happening?",
       "How do you manage collaboration across a team?",
     ],
-    suggestions: "Describe concrete practices for visibility, decisions, ownership, status, and escalation. Adapt the answer to the team's size and working style.",
+    suggestions:
+      "Describe concrete practices for visibility, decisions, ownership, status, and escalation. Adapt the answer to the team's size and working style.",
   },
 ];

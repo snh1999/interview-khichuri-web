@@ -13,12 +13,12 @@ import {
   DrawLogHeader,
   DrawLogTitle,
 } from "@/components/ui/custom/DrawLog.tsx";
-import { useScheduleStore } from "@/store/scheduleStore.ts";
+import { useCalendarStore } from "@/store/calendarStore.ts";
 import {
   EVENT_COLOR_KEYS,
   EVENT_COLOR_OPTIONS,
   type TEventColor,
-} from "../calendar.types";
+} from "../calendar.types.ts";
 import { useUpsertEventForm } from "./UpsertEventForm.helpers.ts";
 
 const DURATION_PRESETS = [
@@ -86,10 +86,10 @@ const PresetButton = ({ minutes, onPreset }: PresetButtonProps) => {
 };
 
 export const UpsertEventForm = () => {
-  const drawerOpen = useScheduleStore((s) => s.drawerOpen);
-  const drawerPrefill = useScheduleStore((s) => s.drawerPrefill);
-  const editingEvent = useScheduleStore((s) => s.editingEvent);
-  const closeDrawer = useScheduleStore((s) => s.closeDrawer);
+  const drawerOpen = useCalendarStore((s) => s.drawerOpen);
+  const drawerPrefill = useCalendarStore((s) => s.drawerPrefill);
+  const editingEvent = useCalendarStore((s) => s.editingEvent);
+  const closeDrawer = useCalendarStore((s) => s.closeDrawer);
 
   const event = editingEvent;
 

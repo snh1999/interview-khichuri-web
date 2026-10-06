@@ -10,7 +10,8 @@ export const SYSTEM_DESIGN_QUESTION_BANK: IQuestionBankItem[] = [
       "Walk me through how you'd build a system at scale.",
       "How would you architect a high-traffic service?",
     ],
-    suggestions: "Start with requirements and scale assumptions, then outline APIs and data flow before choosing storage, caching, queues, partitioning, and reliability mechanisms. Explain tradeoffs rather than naming technologies.",
+    suggestions:
+      "Start with requirements and scale assumptions, then outline APIs and data flow before choosing storage, caching, queues, partitioning, and reliability mechanisms. Explain tradeoffs rather than naming technologies.",
   },
   {
     id: "design-url-shortener",
@@ -21,7 +22,8 @@ export const SYSTEM_DESIGN_QUESTION_BANK: IQuestionBankItem[] = [
       "Design a service that turns long URLs into short links.",
       "How would you architect a URL shortener at scale?",
     ],
-    suggestions: "Clarify expected traffic, link lifetime, uniqueness, redirects, analytics, and availability. Then discuss ID generation, storage, caching, abuse controls, and scaling.",
+    suggestions:
+      "Clarify expected traffic, link lifetime, uniqueness, redirects, analytics, and availability. Then discuss ID generation, storage, caching, abuse controls, and scaling.",
   },
   {
     id: "design-chat",
@@ -32,7 +34,8 @@ export const SYSTEM_DESIGN_QUESTION_BANK: IQuestionBankItem[] = [
       "Design a messaging application.",
       "How would you architect a chat platform?",
     ],
-    suggestions: "Clarify message delivery guarantees, ordering, presence, scale, and offline behavior. Discuss connections, message storage, fan-out, delivery, and failure handling.",
+    suggestions:
+      "Clarify message delivery guarantees, ordering, presence, scale, and offline behavior. Discuss connections, message storage, fan-out, delivery, and failure handling.",
   },
   {
     id: "design-file-storage",
@@ -43,7 +46,8 @@ export const SYSTEM_DESIGN_QUESTION_BANK: IQuestionBankItem[] = [
       "Design a service for uploading and downloading large files.",
       "How would you architect scalable file storage?",
     ],
-    suggestions: "Clarify file size, durability, access patterns, sharing, and consistency. Separate metadata from large object storage and discuss uploads, downloads, authorization, and reliability.",
+    suggestions:
+      "Clarify file size, durability, access patterns, sharing, and consistency. Separate metadata from large object storage and discuss uploads, downloads, authorization, and reliability.",
   },
   {
     id: "design-notification",
@@ -54,6 +58,7 @@ export const SYSTEM_DESIGN_QUESTION_BANK: IQuestionBankItem[] = [
       "Design a multi-channel notification platform.",
       "How would you architect notifications at scale?",
     ],
-    suggestions: "Clarify channels, delivery guarantees, retries, preferences, rate limits, and ordering. Discuss queues, workers, idempotency, provider failures, and observability.",
+    suggestions:
+      "Clarify channels, delivery guarantees, retries, preferences, rate limits, and ordering. Discuss queues, workers, idempotency, provider failures, and observability.",
   },
 ];

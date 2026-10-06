@@ -10,7 +10,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What would you do if your team rejected your recommendation?",
       "How would you respond if senior stakeholders blocked your plan?",
     ],
-    suggestions: "Start by understanding the reasons for resistance. Use evidence and discussion to test the idea, adapt where warranted, and commit fully once a decision is made — even when it isn't your proposal.",
+    suggestions:
+      "Start by understanding the reasons for resistance. Use evidence and discussion to test the idea, adapt where warranted, and commit fully once a decision is made — even when it isn't your proposal.",
   },
   {
     id: "missed-deadline",
@@ -21,7 +22,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What would you do if a project were falling behind schedule?",
       "How would you respond if you couldn't deliver on time?",
     ],
-    suggestions: "Raise the risk early, identify the cause and remaining work, propose options, and renegotiate scope or timing when necessary. Do not wait until the deadline has passed.",
+    suggestions:
+      "Raise the risk early, identify the cause and remaining work, propose options, and renegotiate scope or timing when necessary. Do not wait until the deadline has passed.",
   },
   {
     id: "mistake-before-launch",
@@ -32,7 +34,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if you found a serious problem shortly before delivery?",
       "What would you do if fixing a mistake meant missing the deadline?",
     ],
-    suggestions: "Assess severity and consequences first. Communicate immediately, contain the risk, and choose between fixing, reducing scope, delaying, or proceeding based on impact rather than panic.",
+    suggestions:
+      "Assess severity and consequences first. Communicate immediately, contain the risk, and choose between fixing, reducing scope, delaying, or proceeding based on impact rather than panic.",
   },
   {
     id: "changing-goals",
@@ -43,7 +46,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if your priorities changed halfway through a project?",
       "How would you respond to a last-minute change in direction?",
     ],
-    suggestions: "Clarify the new objective, identify what work remains useful, assess the cost of the change, and realign scope and expectations.",
+    suggestions:
+      "Clarify the new objective, identify what work remains useful, assess the cost of the change, and realign scope and expectations.",
   },
   {
     id: "angry-customer",
@@ -54,7 +58,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "How would you respond to an irate client?",
       "How would you deal with a customer who blamed you for a problem?",
     ],
-    suggestions: "Listen without escalating, clarify the actual issue, acknowledge the impact without making unsupported promises, and explain the next concrete step.",
+    suggestions:
+      "Listen without escalating, clarify the actual issue, acknowledge the impact without making unsupported promises, and explain the next concrete step.",
   },
   {
     id: "manager-unreasonable",
@@ -65,7 +70,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if your manager expected more work than could reasonably be completed?",
       "How would you handle an impossible deadline?",
     ],
-    suggestions: "Clarify the objective and constraints, estimate the work, explain the tradeoffs, and offer options such as reduced scope, additional resources, or a revised deadline.",
+    suggestions:
+      "Clarify the objective and constraints, estimate the work, explain the tradeoffs, and offer options such as reduced scope, additional resources, or a revised deadline.",
   },
   {
     id: "colleague-not-contributing",
@@ -76,7 +82,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if someone on your team wasn't doing their share?",
       "How would you respond to an underperforming teammate?",
     ],
-    suggestions: "Start with direct, respectful communication and clarify expectations. Offer help where appropriate, then involve the relevant manager or process if the issue persists.",
+    suggestions:
+      "Start with direct, respectful communication and clarify expectations. Offer help where appropriate, then involve the relevant manager or process if the issue persists.",
   },
   {
     id: "unclear-task",
@@ -87,7 +94,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if your manager gave you a vague request?",
       "How would you proceed if you didn't know what success looked like?",
     ],
-    suggestions: "Identify the missing decisions, ask targeted questions, propose a reasonable interpretation, and confirm priorities before investing heavily in the work.",
+    suggestions:
+      "Identify the missing decisions, ask targeted questions, propose a reasonable interpretation, and confirm priorities before investing heavily in the work.",
   },
   {
     id: "new-team",
@@ -98,7 +106,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if nobody explained how the team works?",
       "How would you get up to speed in an unfamiliar environment?",
     ],
-    suggestions: "Observe first, learn the team's goals and norms, review available documentation, ask focused questions, and look for a small useful contribution while building context.",
+    suggestions:
+      "Observe first, learn the team's goals and norms, review available documentation, ask focused questions, and look for a small useful contribution while building context.",
   },
   {
     id: "conflicting-instructions",
@@ -109,7 +118,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if two people asked you to do incompatible things?",
       "How would you resolve competing requests from leaders?",
     ],
-    suggestions: "Clarify the underlying goals and urgency, make the conflict visible, and ask the relevant stakeholders to agree on priority rather than silently choosing one.",
+    suggestions:
+      "Clarify the underlying goals and urgency, make the conflict visible, and ask the relevant stakeholders to agree on priority rather than silently choosing one.",
   },
   {
     id: "ethical-request",
@@ -120,7 +130,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if you were asked to break a rule to get results?",
       "How would you handle an ethical concern involving a manager?",
     ],
-    suggestions: "Clarify the request and applicable policy or law, refuse inappropriate actions, document or escalate through appropriate channels when necessary, and protect relevant people or information.",
+    suggestions:
+      "Clarify the request and applicable policy or law, refuse inappropriate actions, document or escalate through appropriate channels when necessary, and protect relevant people or information.",
   },
   {
     id: "negative-feedback",
@@ -131,7 +142,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if you strongly disagreed with feedback you received?",
       "How would you handle criticism you felt was unfair?",
     ],
-    suggestions: "Listen and separate tone from substance. Ask for specific examples, consider what is actionable, respond professionally, and seek clarification or escalation only when necessary.",
+    suggestions:
+      "Listen and separate tone from substance. Ask for specific examples, consider what is actionable, respond professionally, and seek clarification or escalation only when necessary.",
   },
   {
     id: "low-motivation-team",
@@ -142,7 +154,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if your teammates seemed burned out or uninterested?",
       "How would you help a team regain momentum?",
     ],
-    suggestions: "First understand the cause rather than assuming motivation is the problem. Address workload, clarity, obstacles, recognition, or other concrete causes and involve leadership when needed.",
+    suggestions:
+      "First understand the cause rather than assuming motivation is the problem. Address workload, clarity, obstacles, recognition, or other concrete causes and involve leadership when needed.",
   },
   {
     id: "new-priority",
@@ -153,7 +166,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if your manager's new priority conflicted with a commitment you made to someone else?",
       "How would you react to an urgent new task?",
     ],
-    suggestions: "Clarify why the priority changed, identify what can safely pause, communicate the impact on existing commitments, and update the plan.",
+    suggestions:
+      "Clarify why the priority changed, identify what can safely pause, communicate the impact on existing commitments, and update the plan.",
   },
   {
     id: "no-experience",
@@ -164,7 +178,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if you didn't have the skills needed for an assignment?",
       "How would you handle a task outside your experience?",
     ],
-    suggestions: "Break the problem down, identify the knowledge gap, research or seek guidance, validate your approach early, and communicate risks rather than pretending to know what you don't.",
+    suggestions:
+      "Break the problem down, identify the knowledge gap, research or seek guidance, validate your approach early, and communicate risks rather than pretending to know what you don't.",
   },
   {
     id: "project-failure",
@@ -175,7 +190,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if you realized your plan wasn't working?",
       "How would you recover a failing project?",
     ],
-    suggestions: "Stop and diagnose rather than doubling down automatically. Identify root causes, stabilize the highest risks, communicate the situation, and revise scope, resources, or approach.",
+    suggestions:
+      "Stop and diagnose rather than doubling down automatically. Identify root causes, stabilize the highest risks, communicate the situation, and revise scope, resources, or approach.",
   },
   {
     id: "team-disagreement",
@@ -186,7 +202,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if two colleagues were in conflict and it affected the work?",
       "How would you help resolve a team dispute?",
     ],
-    suggestions: "Understand each position separately, bring the discussion back to shared objectives and evidence, and establish a decision or escalation path.",
+    suggestions:
+      "Understand each position separately, bring the discussion back to shared objectives and evidence, and establish a decision or escalation path.",
   },
   {
     id: "customer-request-impossible",
@@ -197,7 +214,8 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if a customer demanded an unrealistic solution?",
       "How would you respond when you can't give a customer what they want?",
     ],
-    suggestions: "Clarify the underlying need, explain constraints honestly, and offer viable alternatives or escalation paths instead of making promises you cannot keep.",
+    suggestions:
+      "Clarify the underlying need, explain constraints honestly, and offer viable alternatives or escalation paths instead of making promises you cannot keep.",
   },
   {
     id: "priority-vs-quality",
@@ -208,6 +226,7 @@ export const SITUATIONAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What if the deadline forced you to reduce quality?",
       "How would you decide what quality level is acceptable under pressure?",
     ],
-    suggestions: "Identify the risks of each tradeoff and determine the minimum acceptable quality based on consequences. Make the tradeoff explicit to stakeholders.",
+    suggestions:
+      "Identify the risks of each tradeoff and determine the minimum acceptable quality based on consequences. Make the tradeoff explicit to stakeholders.",
   },
 ];

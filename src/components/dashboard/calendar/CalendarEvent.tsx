@@ -1,6 +1,6 @@
 import { cn } from "cn";
-import { getEventColors } from "./calendar.helpers";
-import type { TCustomEvent, TJobEvent } from "./calendar.types";
+import { getEventColors } from "./calendar.helpers.ts";
+import type { TCustomEvent, TJobEvent } from "./calendar.types.ts";
 
 interface Props {
   event: TJobEvent | TCustomEvent;

@@ -15,12 +15,12 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
-import type { TCustomEvent, TJobEvent } from "./calendar.types";
+import type { TCustomEvent, TJobEvent } from "./calendar.types.ts";
 import {
   EVENT_COLOR_OPTIONS,
   EVENT_COLORS,
   type TEventColor,
-} from "./calendar.types";
+} from "./calendar.types.ts";
 
 export const HOUR_HEIGHT_PX = 48;
 export const SNAP_MINUTES = 15;

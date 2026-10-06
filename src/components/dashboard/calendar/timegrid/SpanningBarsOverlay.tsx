@@ -1,8 +1,8 @@
 import { cn } from "cn";
 import { format } from "date-fns";
-import { getEventColors, getEventsForDay } from "../calendar.helpers";
-import type { TCustomEvent, TJobEvent } from "../calendar.types";
-import type { SpanningSegmentLayout } from "./timeGrid.layout";
+import { getEventColors, getEventsForDay } from "../calendar.helpers.ts";
+import type { TCustomEvent, TJobEvent } from "../calendar.types.ts";
+import type { SpanningSegmentLayout } from "./timeGrid.layout.ts";
 
 interface Props {
   segments: SpanningSegmentLayout[];
