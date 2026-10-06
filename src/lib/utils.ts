@@ -73,7 +73,6 @@ export const stripNulls = (value: unknown): unknown => {
   return value;
 };
 
-
 export const stripEmptyString = (value: unknown): unknown => {
   if (typeof value === "string") {
     return value.trim() || undefined;

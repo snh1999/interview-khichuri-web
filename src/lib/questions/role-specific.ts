@@ -10,7 +10,8 @@ export const ROLE_SPECIFIC_QUESTION_BANK: IQuestionBankItem[] = [
       "What do you think you'll be doing in this role?",
       "What do you see as the most important part of this job?",
     ],
-    suggestions: "Demonstrate that you've read the role description and connect its major responsibilities to your experience. Mention uncertainties as questions rather than inventing details.",
+    suggestions:
+      "Demonstrate that you've read the role description and connect its major responsibilities to your experience. Mention uncertainties as questions rather than inventing details.",
   },
   {
     id: "first-90-days",
@@ -21,7 +22,8 @@ export const ROLE_SPECIFIC_QUESTION_BANK: IQuestionBankItem[] = [
       "What would your priorities be when you start?",
       "How would you get up to speed in this role?",
     ],
-    suggestions: "Focus first on learning goals, relationships, expectations, and small useful contributions. Avoid presenting an elaborate transformation plan before understanding the environment.",
+    suggestions:
+      "Focus first on learning goals, relationships, expectations, and small useful contributions. Avoid presenting an elaborate transformation plan before understanding the environment.",
   },
   {
     id: "first-priority",
@@ -32,7 +34,8 @@ export const ROLE_SPECIFIC_QUESTION_BANK: IQuestionBankItem[] = [
       "Where would you start if you got the job?",
       "What would you want to accomplish first?",
     ],
-    suggestions: "Tie your answer to understanding goals, stakeholders, constraints, and current problems before committing to a solution.",
+    suggestions:
+      "Tie your answer to understanding goals, stakeholders, constraints, and current problems before committing to a solution.",
   },
   {
     id: "success-role",
@@ -43,7 +46,8 @@ export const ROLE_SPECIFIC_QUESTION_BANK: IQuestionBankItem[] = [
       "How would you know you were doing well after six months?",
       "What outcomes would tell you you're succeeding?",
     ],
-    suggestions: "Use the role's actual responsibilities to identify outcomes, quality, relationships, and learning. Avoid inventing metrics you have no basis for.",
+    suggestions:
+      "Use the role's actual responsibilities to identify outcomes, quality, relationships, and learning. Avoid inventing metrics you have no basis for.",
   },
   {
     id: "role-challenge",
@@ -54,7 +58,8 @@ export const ROLE_SPECIFIC_QUESTION_BANK: IQuestionBankItem[] = [
       "Which responsibility would require the most development for you?",
       "What would be your biggest challenge if hired?",
     ],
-    suggestions: "Identify a realistic challenge without undermining your candidacy. Explain how you would approach the learning curve or constraint.",
+    suggestions:
+      "Identify a realistic challenge without undermining your candidacy. Explain how you would approach the learning curve or constraint.",
   },
   {
     id: "questions-for-us",
@@ -65,6 +70,7 @@ export const ROLE_SPECIFIC_QUESTION_BANK: IQuestionBankItem[] = [
       "Is there anything you'd like to ask?",
       "What would you like to know about the role or company?",
     ],
-    suggestions: "Prepare several questions about success, priorities, team dynamics, challenges, decision-making, and the role's expectations. Avoid questions answered clearly by the job description.",
+    suggestions:
+      "Prepare several questions about success, priorities, team dynamics, challenges, decision-making, and the role's expectations. Avoid questions answered clearly by the job description.",
   },
 ];

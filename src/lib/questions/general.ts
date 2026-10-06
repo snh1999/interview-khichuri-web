@@ -10,7 +10,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What attracted you to our organization?",
       "Why are you interested in working for us?",
     ],
-    suggestions: "Connect specific aspects of the organization to your interests and experience. Show that you understand what the company does rather than giving a generic answer.",
+    suggestions:
+      "Connect specific aspects of the organization to your interests and experience. Show that you understand what the company does rather than giving a generic answer.",
   },
   {
     id: "why-this-role",
@@ -21,7 +22,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What attracted you to this job?",
       "Why did you apply for this position?",
     ],
-    suggestions: "Connect the responsibilities of the role to your experience, interests, and next step. Focus on what you can contribute and what you want to develop.",
+    suggestions:
+      "Connect the responsibilities of the role to your experience, interests, and next step. Focus on what you can contribute and what you want to develop.",
   },
   {
     id: "why-hire-you",
@@ -32,7 +34,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What makes you a strong fit for this position?",
       "Why do you think you'd succeed here?",
     ],
-    suggestions: "Summarize two or three capabilities that directly match the role and support each with evidence. Keep it focused on the employer's needs rather than generic self-praise.",
+    suggestions:
+      "Summarize two or three capabilities that directly match the role and support each with evidence. Keep it focused on the employer's needs rather than generic self-praise.",
   },
   {
     id: "strengths",
@@ -43,7 +46,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What are you particularly good at?",
       "Which strengths would you bring to this role?",
     ],
-    suggestions: "Choose strengths relevant to the role and support them with brief evidence. Specific behaviors and outcomes are more convincing than a list of adjectives.",
+    suggestions:
+      "Choose strengths relevant to the role and support them with brief evidence. Specific behaviors and outcomes are more convincing than a list of adjectives.",
   },
   {
     id: "weaknesses",
@@ -54,7 +58,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What would you like to get better at?",
       "What is one professional weakness you're working on?",
     ],
-    suggestions: "Choose a genuine, manageable development area and explain what you are doing about it. Avoid disguised strengths and avoid weaknesses that directly undermine an essential job requirement.",
+    suggestions:
+      "Choose a genuine, manageable development area and explain what you are doing about it. Avoid disguised strengths and avoid weaknesses that directly undermine an essential job requirement.",
   },
   {
     id: "five-years",
@@ -65,7 +70,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "Where would you like your career to be in five years?",
       "What do you hope to be doing several years from now?",
     ],
-    suggestions: "Describe a plausible direction rather than a rigid prediction. Connect your development goals to the kind of responsibilities and contribution you want to grow toward.",
+    suggestions:
+      "Describe a plausible direction rather than a rigid prediction. Connect your development goals to the kind of responsibilities and contribution you want to grow toward.",
   },
   {
     id: "career-goals",
@@ -76,7 +82,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What are you working toward professionally?",
       "What are your long-term professional ambitions?",
     ],
-    suggestions: "Give a clear direction and explain why it matters to you. Keep the answer compatible with the role without pretending to have your entire career mapped out.",
+    suggestions:
+      "Give a clear direction and explain why it matters to you. Keep the answer compatible with the role without pretending to have your entire career mapped out.",
   },
   {
     id: "why-leaving",
@@ -87,7 +94,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "Why are you looking for a new opportunity?",
       "What prompted you to start looking for another job?",
     ],
-    suggestions: "Stay factual and professional. Focus on what you are moving toward rather than criticizing your current or former employer.",
+    suggestions:
+      "Stay factual and professional. Focus on what you are moving toward rather than criticizing your current or former employer.",
   },
   {
     id: "employment-gap",
@@ -98,7 +106,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What were you doing during your employment gap?",
       "Can you tell me about the period when you weren't working?",
     ],
-    suggestions: "Answer directly and briefly. Explain what you were doing during the period and mention relevant learning, responsibilities, or circumstances without becoming defensive.",
+    suggestions:
+      "Answer directly and briefly. Explain what you were doing during the period and mention relevant learning, responsibilities, or circumstances without becoming defensive.",
   },
   {
     id: "education",
@@ -109,7 +118,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "Why did you choose your field of study?",
       "How has your education prepared you for this role?",
     ],
-    suggestions: "Highlight the parts of your education that are relevant to the role and explain choices or transitions when useful. Avoid reciting your entire academic history.",
+    suggestions:
+      "Highlight the parts of your education that are relevant to the role and explain choices or transitions when useful. Avoid reciting your entire academic history.",
   },
   {
     id: "career-change",
@@ -120,7 +130,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What prompted your career change?",
       "Why are you pursuing a different type of role?",
     ],
-    suggestions: "Explain the transition as a coherent story: what you learned from the previous path, what attracted you to the new one, and what you've done to prepare.",
+    suggestions:
+      "Explain the transition as a coherent story: what you learned from the previous path, what attracted you to the new one, and what you've done to prepare.",
   },
   {
     id: "overqualified",
@@ -131,7 +142,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "Would this role be too junior for you?",
       "Why this role given your background?",
     ],
-    suggestions: "Address the concern directly and explain why the actual responsibilities, environment, subject matter, or growth path make the role appropriate for you.",
+    suggestions:
+      "Address the concern directly and explain why the actual responsibilities, environment, subject matter, or growth path make the role appropriate for you.",
   },
   {
     id: "underqualified",
@@ -142,7 +154,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "You lack experience in X. How would you approach that?",
       "What makes you a fit despite the gaps in your background?",
     ],
-    suggestions: "Acknowledge the gap without apologizing for it. Connect transferable experience to the requirement and explain how you would close the remaining gap.",
+    suggestions:
+      "Acknowledge the gap without apologizing for it. Connect transferable experience to the requirement and explain how you would close the remaining gap.",
   },
   {
     id: "salary-expectations",
@@ -153,7 +166,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What salary range would you consider?",
       "What are your compensation expectations for this role?",
     ],
-    suggestions: "Research the market and role beforehand. Give a reasonable range when appropriate and consider the full compensation package and role scope rather than focusing only on a single number.",
+    suggestions:
+      "Research the market and role beforehand. Give a reasonable range when appropriate and consider the full compensation package and role scope rather than focusing only on a single number.",
   },
   {
     id: "start-date",
@@ -164,7 +178,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "How soon could you join?",
       "When would you be available to begin?",
     ],
-    suggestions: "Give your realistic availability. If you have notice, commitments, or constraints, state them clearly and avoid promising a date you cannot meet.",
+    suggestions:
+      "Give your realistic availability. If you have notice, commitments, or constraints, state them clearly and avoid promising a date you cannot meet.",
   },
   {
     id: "relocation",
@@ -175,7 +190,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "Are you open to moving?",
       "Would location be an issue for you?",
     ],
-    suggestions: "State your actual flexibility and any important constraints. If conditional, explain what would make relocation workable.",
+    suggestions:
+      "State your actual flexibility and any important constraints. If conditional, explain what would make relocation workable.",
   },
   {
     id: "remote-hybrid",
@@ -186,7 +202,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "How do you feel about hybrid work?",
       "Would you be willing to work from the office?",
     ],
-    suggestions: "Answer according to your actual preferences while showing how you maintain communication, accountability, and productivity in the proposed arrangement.",
+    suggestions:
+      "Answer according to your actual preferences while showing how you maintain communication, accountability, and productivity in the proposed arrangement.",
   },
   {
     id: "work-authorization",
@@ -197,7 +214,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "Do you have the right to work in this country?",
       "What is your work authorization status?",
     ],
-    suggestions: "Answer the legal or administrative question directly and accurately. Provide only the information relevant to the employer's question.",
+    suggestions:
+      "Answer the legal or administrative question directly and accurately. Provide only the information relevant to the employer's question.",
   },
   {
     id: "job-search",
@@ -208,7 +226,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "Are you considering other offers?",
       "What other opportunities are you exploring?",
     ],
-    suggestions: "Be truthful without oversharing confidential details. You can describe the types of roles or stages involved without turning the answer into a negotiation tactic.",
+    suggestions:
+      "Be truthful without oversharing confidential details. You can describe the types of roles or stages involved without turning the answer into a negotiation tactic.",
   },
   {
     id: "how-found-us",
@@ -219,7 +238,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "Where did you see this job?",
       "What made you come across our company?",
     ],
-    suggestions: "Give the actual source and, if useful, briefly mention what prompted you to investigate the opportunity further.",
+    suggestions:
+      "Give the actual source and, if useful, briefly mention what prompted you to investigate the opportunity further.",
   },
   {
     id: "what-do-you-know",
@@ -230,7 +250,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What have you learned about the organization?",
       "How familiar are you with our company?",
     ],
-    suggestions: "Demonstrate basic research about the company's products, customers, market, or mission. Focus on accurate, relevant facts rather than memorized trivia.",
+    suggestions:
+      "Demonstrate basic research about the company's products, customers, market, or mission. Focus on accurate, relevant facts rather than memorized trivia.",
   },
   {
     id: "company-interest",
@@ -241,7 +262,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What do you find interesting about our organization?",
       "What specifically attracted you to us?",
     ],
-    suggestions: "Choose one or two specific aspects and explain why they matter to you. Avoid repeating marketing language without showing your own reasoning.",
+    suggestions:
+      "Choose one or two specific aspects and explain why they matter to you. Avoid repeating marketing language without showing your own reasoning.",
   },
   {
     id: "culture-fit",
@@ -252,7 +274,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What environment brings out your best work?",
       "What do you value in a workplace?",
     ],
-    suggestions: "Describe concrete working conditions and behaviors that help you perform well. Avoid simply listing fashionable culture words.",
+    suggestions:
+      "Describe concrete working conditions and behaviors that help you perform well. Avoid simply listing fashionable culture words.",
   },
   {
     id: "ideal-manager",
@@ -263,7 +286,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "How do you like to be managed?",
       "What makes a good manager for you?",
     ],
-    suggestions: "Describe the communication, autonomy, feedback, and support you work best with. Show adaptability rather than requiring one exact management style.",
+    suggestions:
+      "Describe the communication, autonomy, feedback, and support you work best with. Show adaptability rather than requiring one exact management style.",
   },
   {
     id: "ideal-job",
@@ -274,7 +298,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What are you looking for in your next job?",
       "What would make a job a great fit for you?",
     ],
-    suggestions: "Prioritize responsibilities, learning, collaboration, and impact that genuinely matter to you. Keep the answer compatible with the role you are discussing.",
+    suggestions:
+      "Prioritize responsibilities, learning, collaboration, and impact that genuinely matter to you. Keep the answer compatible with the role you are discussing.",
   },
   {
     id: "motivates-you",
@@ -285,7 +310,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What kind of work are you genuinely excited by?",
       "What motivates you to do your best work?",
     ],
-    suggestions: "Name a few genuine drivers — the work you find energizing and the outcomes you care about — and connect them to situations where they produced strong work. Avoid a generic answer that only sounds impressive, and don't lean on external rewards unless they are genuinely central.",
+    suggestions:
+      "Name a few genuine drivers — the work you find energizing and the outcomes you care about — and connect them to situations where they produced strong work. Avoid a generic answer that only sounds impressive, and don't lean on external rewards unless they are genuinely central.",
   },
   {
     id: "what-demotivates",
@@ -296,7 +322,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What makes it difficult for you to stay engaged?",
       "What workplace situations do you find demotivating?",
     ],
-    suggestions: "Choose a manageable workplace issue and explain how you handle it constructively. Avoid presenting ordinary job responsibilities as beneath you.",
+    suggestions:
+      "Choose a manageable workplace issue and explain how you handle it constructively. Avoid presenting ordinary job responsibilities as beneath you.",
   },
   {
     id: "definition-success",
@@ -307,7 +334,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What does professional success look like to you?",
       "How do you know when you've done a good job?",
     ],
-    suggestions: "Give a definition grounded in outcomes, learning, contribution, or other genuine values, then support it with an example.",
+    suggestions:
+      "Give a definition grounded in outcomes, learning, contribution, or other genuine values, then support it with an example.",
   },
   {
     id: "definition-failure",
@@ -318,7 +346,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "When do you consider a project unsuccessful?",
       "How do you evaluate failure?",
     ],
-    suggestions: "Distinguish between an undesirable outcome and a failure to learn or respond. Explain how you use setbacks to improve future decisions.",
+    suggestions:
+      "Distinguish between an undesirable outcome and a failure to learn or respond. Explain how you use setbacks to improve future decisions.",
   },
   {
     id: "why-you",
@@ -329,7 +358,8 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What is distinctive about your background?",
       "What sets you apart?",
     ],
-    suggestions: "Focus on a specific combination of experience, perspective, or capability that is relevant to the role. Avoid making claims about other candidates.",
+    suggestions:
+      "Focus on a specific combination of experience, perspective, or capability that is relevant to the role. Avoid making claims about other candidates.",
   },
   {
     id: "career-priority",
@@ -340,6 +370,7 @@ export const GENERAL_QUESTION_BANK: IQuestionBankItem[] = [
       "What are you looking for in your next employer?",
       "What would make you accept an offer?",
     ],
-    suggestions: "Identify a few genuine priorities and distinguish essentials from preferences. Consider responsibilities, growth, environment, and practical constraints.",
+    suggestions:
+      "Identify a few genuine priorities and distinguish essentials from preferences. Consider responsibilities, growth, environment, and practical constraints.",
   },
 ];
