@@ -9,11 +9,11 @@ import {
 } from "@phosphor-icons/react";
 import { Link, useLocation } from "react-router";
 import {
-  BUILDER_PAGE,
   HOMEPAGE,
   JOBS_PAGE,
   NOTES_PAGE,
   PROFILE_PAGE,
+  RESUMES_PAGE,
   SESSIONS_PAGE,
   SETTINGS_PAGE,
 } from "@/app.constants.ts";
@@ -36,7 +36,7 @@ const SIDEBAR_MENU = [
   {
     name: "Builder",
     icon: ReadCvLogoIcon,
-    url: BUILDER_PAGE,
+    url: RESUMES_PAGE,
   },
   { name: "Settings", icon: GearIcon, url: SETTINGS_PAGE },
 ] as const;
