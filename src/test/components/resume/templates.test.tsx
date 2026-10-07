@@ -20,6 +20,7 @@ const PORTFOLIO_RE = /Portfolio/;
 const HACKATHON_RE = /Hackathon/;
 const LANG_RE = /Languages:/;
 const COURSEWORK_RE = /Relevant Coursework/;
+const ENGINEER_RE = /Engineer/;
 
 const DATA = {
   activities: [
@@ -294,7 +295,7 @@ describe("templates with minimal item fields", () => {
       </RenderProvider>
     );
 
-    expect(getAllByText(/Engineer/).length).toBeGreaterThan(0);
+    expect(getAllByText(ENGINEER_RE).length).toBeGreaterThan(0);
     expect(getByText("Thing")).toBeInTheDocument();
   });
 
@@ -309,6 +310,132 @@ describe("templates with minimal item fields", () => {
     );
 
     expect(getByText("Kim Ng")).toBeInTheDocument();
-    expect(getAllByText(/Engineer/).length).toBeGreaterThan(0);
+    expect(getAllByText(ENGINEER_RE).length).toBeGreaterThan(0);
+  });
+});
+
+const RICH = {
+  activities: [
+    {
+      endDate: new Date(2019, 1, 1),
+      isCurrent: false,
+      name: "Conf",
+      notes: "Talk",
+      organization: "Org",
+      position: "Speaker",
+      startDate: new Date(2019, 0, 1),
+    },
+  ],
+  education: [
+    {
+      coursework: ["ML"],
+      degreeName: "MSc",
+      endDate: new Date(2012, 0, 1),
+      fieldOfStudy: "AI",
+      institution: "MIT",
+      isCurrent: false,
+      location: "Cambridge",
+      notes: "Hons",
+      startDate: new Date(2010, 0, 1),
+      thesis: "On learning",
+    },
+  ],
+  links: [
+    { type: "github", url: "https://github.com/ray" },
+    { url: "https://blog.ray.dev" },
+  ],
+  personal: {
+    email: "ray@example.com",
+    firstName: "Ray",
+    lastName: "Mon",
+    location: "Boston",
+    nationality: "US",
+    phone: "555-0123",
+  },
+  professional: { summary: "Researcher." },
+  projects: [
+    {
+      description: "One\nTwo",
+      name: "Research Thing",
+      skills: "Python, R",
+      type: "research",
+    },
+  ],
+  publications: [
+    {
+      authors: ["R Mon"],
+      link: "https://doi.org/y",
+      notes: "Cited",
+      publicationType: "Conference",
+      title: "Paper",
+    },
+  ],
+  references: [
+    {
+      company: "Uni",
+      email: "who@example.com",
+      name: "Dr Who",
+      phone: "555-1",
+      title: "Prof",
+    },
+  ],
+  skillGroups: [
+    { label: "Langs", keywords: "Python" },
+    { keywords: "Docker", label: "" },
+  ],
+  workExperience: [
+    {
+      company: "Globex",
+      endDate: new Date(2022, 0, 1),
+      isCurrent: false,
+      location: "Remote",
+      responsibilities: "Did X\nDid Y",
+      startDate: new Date(2020, 0, 1),
+      title: "Engineer",
+    },
+  ],
+} as unknown as TResumeFormData;
+
+describe("templates with rich optional detail", () => {
+  it("renders MbzuaiTemplate with every optional field", () => {
+    const { getByText } = render(
+      <RenderProvider mode="web">
+        <MbzuaiTemplate
+          data={RICH}
+          sections={mbzuaiTemplateConfig.sections ?? []}
+        />
+      </RenderProvider>
+    );
+
+    expect(getByText("Ray Mon")).toBeInTheDocument();
+    expect(getByText("Nationality: US")).toBeInTheDocument();
+    expect(getByText("Dr Who")).toBeInTheDocument();
+    expect(getByText("On learning")).toBeInTheDocument();
+  });
+
+  it("renders DataScienceTechTemplate with every optional field", () => {
+    const { getByText } = render(
+      <RenderProvider mode="web">
+        <DataScienceTechTemplate
+          data={RICH}
+          sections={dataScienceTemplateConfig.sections ?? []}
+        />
+      </RenderProvider>
+    );
+
+    expect(getByText("Ray Mon")).toBeInTheDocument();
+  });
+
+  it("renders JakeResumeTemplate with every optional field", () => {
+    const { getByText } = render(
+      <RenderProvider mode="web">
+        <JakeResumeTemplate
+          data={RICH}
+          sections={jakesTemplateConfig.sections ?? []}
+        />
+      </RenderProvider>
+    );
+
+    expect(getByText("Ray Mon")).toBeInTheDocument();
   });
 });

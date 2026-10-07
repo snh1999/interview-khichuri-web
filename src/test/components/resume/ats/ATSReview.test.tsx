@@ -127,4 +127,40 @@ describe("ATSReview", () => {
     expect(await view.findByText("Resume Review")).toBeInTheDocument();
     expect(await screen.findByText(FILTERED_EMPTY_PATTERN)).toBeInTheDocument();
   });
+
+  it("filters by the selected job and resume", async () => {
+    const view = render(<ATSReview />);
+
+    await view.user.click((await screen.findAllByRole("combobox"))[0]);
+    await view.user.click(
+      await screen.findByRole("option", { name: "Staff Engineer @ Acme" })
+    );
+
+    await view.user.click(screen.getAllByRole("combobox")[1]);
+    await view.user.click(
+      await screen.findByRole("option", { name: "Main resume" })
+    );
+
+    expect(await screen.findByText(FILTERED_EMPTY_PATTERN)).toBeInTheDocument();
+  });
+
+  it("falls back to the job prop when the job list lacks it", async () => {
+    server.use(http.get("*/api/v1/jobs", () => envelope([])));
+    await seed(makeEntry());
+    const view = render(<ATSReview job={job} />);
+
+    await view.user.click((await screen.findAllByRole("combobox"))[0]);
+    await view.user.click(
+      await screen.findByRole("option", { name: "Main resume" })
+    );
+
+    expect(await view.findByText("Main resume")).toBeInTheDocument();
+  });
+
+  it("ignores saved entries whose resume is unknown", async () => {
+    await seed(makeEntry({ resumeId: "res-unknown" }));
+    const view = render(<ATSReview />);
+    expect(await view.findByText(PICK_PROMPT_PATTERN)).toBeInTheDocument();
+    expect(screen.queryByText(SAVED_CARD_PATTERN)).not.toBeInTheDocument();
+  });
 });
