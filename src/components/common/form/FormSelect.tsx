@@ -40,7 +40,7 @@ const FormSelect = <T extends FieldValues>({
         items={selectData}
         name={field.name}
         onValueChange={field.onChange}
-        value={field.value}
+        value={field.value ?? ""}
       >
         <SelectTrigger className="w-full" id={field.name}>
           <SelectValue placeholder={placeholder} />
