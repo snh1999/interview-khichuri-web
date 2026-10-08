@@ -46,7 +46,11 @@ export interface IInterviewFormHook {
   // biome-ignore lint/suspicious/noExplicitAny: <>
   form: UseFormReturn<FormInput, any, FormOutput>;
   isLoading: boolean;
-  onSubmit: (provider: string, model?: string) => Promise<void>;
+  onSubmit: (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => Promise<void>;
 }
 
 const buildDefaultValues = (): DefaultValues<FormInput> => ({
@@ -79,7 +83,11 @@ export const useCreateInterviewForm = ({
     form.reset(buildDefaultValues());
   }, [open, form]);
 
-  const onSubmit = async (provider: string, model?: string) => {
+  const onSubmit = async (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
     await form.handleSubmit(async (data) => {
       try {
         const created = await createInterview.mutateAsync({
@@ -87,6 +95,7 @@ export const useCreateInterviewForm = ({
           sessionId: session.id,
           provider,
           model: model?.trim() || undefined,
+          instruction: instruction?.trim() || undefined,
         });
 
         const questions: IInterviewQuestion[] = created.questions.map(

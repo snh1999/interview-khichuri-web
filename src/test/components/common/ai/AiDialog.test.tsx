@@ -83,10 +83,7 @@ describe("AiDialog", () => {
       screen.getByPlaceholderText("Name of specific model (optional)"),
       "gpt-4o"
     );
-    await user.type(
-      screen.getByPlaceholderText(PRIORITIES_RE),
-      "Be concise"
-    );
+    await user.type(screen.getByPlaceholderText(PRIORITIES_RE), "Be concise");
     await user.click(screen.getByRole("button", { name: "Send" }));
 
     await waitFor(() =>

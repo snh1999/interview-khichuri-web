@@ -25,7 +25,7 @@ import {
 } from "@/components/jobs/filters/jobDatePresets.ts";
 import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
-import { daysUntil, stringToDate, stripEmptyString } from "@/lib/utils.ts";
+import { daysUntil, stringToDate } from "@/lib/utils.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
 
 export const STATUS_LABEL: Record<TJobStatus, string> = {
@@ -175,7 +175,7 @@ export const useJobPostForm = ({
   const onSubmit = form.handleSubmit(async (rawData: TJobFormData) => {
     const { links, topicNames, ...data } = rawData;
     const topicIds = await resolveTopics("topicIds", "topicNames");
-    const payload = stripEmptyString({
+    const payload = {
       ...data,
       ...(topicIds ? { topicIds } : {}),
       links: links
@@ -184,7 +184,7 @@ export const useJobPostForm = ({
             .filter(Boolean)
             .join("\n")
         : "",
-    }) as ICreateJobDto;
+    } as ICreateJobDto;
 
     try {
       if (job) {

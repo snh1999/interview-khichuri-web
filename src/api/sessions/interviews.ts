@@ -41,6 +41,7 @@ export interface ICreateInterviewDto {
   mode: TInterviewMode;
   provider: string;
   model?: string | null;
+  instruction?: string;
   focusTypes?: TInterviewFocusType[];
   topicNames?: string[];
   questionCount?: number;

@@ -49,7 +49,7 @@ export const professionalSchema = z.object({
     .optional(),
   skillNames: z.array(z.string().trim().min(1).max(MAX_TINY_LENGTH)).optional(),
   skills: z.array(z.number().int().positive()).optional(),
-  summary: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
+  summary: z.string().max(MAX_LARGE_LENGTH).nullish(),
   title: z.string().trim().min(1, "Job title Can not be empty"),
   yearsOfExperience: z.number().int().min(0).nullish(),
 });

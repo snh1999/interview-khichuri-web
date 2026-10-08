@@ -6,7 +6,6 @@ import {
   getSystemTheme,
   isUrgent,
   stringToDate,
-  stripEmptyString,
   stripNulls,
 } from "@/lib/utils.ts";
 
@@ -70,24 +69,6 @@ describe("stripNulls", () => {
     expect(stripNulls(date)).toBe(date);
     expect(stripNulls("")).toBeUndefined();
     expect(stripNulls(0)).toBe(0);
-  });
-});
-
-describe("stripEmptyString", () => {
-  it("turns blank strings into undefined and trims the rest", () => {
-    expect(stripEmptyString("   ")).toBeUndefined();
-    expect(stripEmptyString(" a ")).toBe("a");
-    expect(stripEmptyString(["a", " "])).toEqual(["a", undefined]);
-    expect(stripEmptyString(null)).toBeNull();
-    expect(stripEmptyString(5)).toBe(5);
-  });
-
-  it("recurses into objects and keeps dates", () => {
-    const date = new Date(2024, 0, 1);
-    expect(stripEmptyString({ a: "", b: date })).toEqual({
-      a: undefined,
-      b: date,
-    });
   });
 });
 
