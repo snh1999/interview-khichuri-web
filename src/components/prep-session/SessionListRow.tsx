@@ -39,16 +39,18 @@ export const SessionListRow = ({
       isFavorite: !session.isFavorite,
     });
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      navigateToPage();
+    }
+  };
+
   return (
     <Item
       className="rounded-sm bg-muted/60"
       onClick={navigateToPage}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          navigateToPage();
-        }
-      }}
+      onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
     >

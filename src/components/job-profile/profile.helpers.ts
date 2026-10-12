@@ -5,6 +5,7 @@ import {
   MAX_LARGE_LENGTH,
   MAX_NAME_LENGTH,
   MAX_SHORT_LENGTH,
+  MAX_TEMPLATE_LENGTH,
   MAX_TINY_LENGTH,
   MAX_URL_LENGTH,
 } from "@/app.constants.ts";
@@ -93,7 +94,10 @@ export const educationSchema = z.object({
 export type TEducationDto = z.infer<typeof educationSchema>;
 
 export const preferencesSchema = z.object({
+  coverLetterTemplate: z.string().max(MAX_TEMPLATE_LENGTH).nullish(),
   currency: z.string().length(3).nullish(),
+  linkedinDmTemplate: z.string().max(MAX_TEMPLATE_LENGTH).nullish(),
+  outreachEmailTemplate: z.string().max(MAX_TEMPLATE_LENGTH).nullish(),
   preferredLocation: z.string().max(MAX_SHORT_LENGTH).nullish(),
   salaryExpected: z.number().int().min(0).nullish(),
   salaryLower: z.number().int().min(0).nullish(),

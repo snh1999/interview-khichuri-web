@@ -84,6 +84,43 @@ export const PreferencesInformation = memo(
               selectData={CURRENCIES}
             />
           </div>
+
+          <div className="grid grid-cols-1 gap-3 border-t pt-4">
+            <div>
+              <p className="font-medium text-sm">Your voice (optional)</p>
+              <p className="text-muted-foreground text-xs">
+                Paste a cover letter or outreach email you like. AI drafts will
+                match its tone and phrasing.
+              </p>
+            </div>
+
+            <FormInput
+              form={form}
+              label="Cover Letter Template"
+              name="preferences.coverLetterTemplate"
+              placeholder="Paste an example cover letter…"
+              rows={8}
+              textArea
+            />
+
+            <FormInput
+              form={form}
+              label="Outreach Email Template"
+              name="preferences.outreachEmailTemplate"
+              placeholder="Paste an example outreach email…"
+              rows={8}
+              textArea
+            />
+
+            <FormInput
+              form={form}
+              label="LinkedIn DM Template"
+              name="preferences.linkedinDmTemplate"
+              placeholder="Paste an example LinkedIn message…"
+              rows={5}
+              textArea
+            />
+          </div>
         </CardContent>
       </Card>
     );

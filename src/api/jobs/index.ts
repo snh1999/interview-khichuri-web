@@ -142,3 +142,38 @@ export const useExtractJob = () =>
       }),
     meta: { invalidates: queryKeys.lookups.roles },
   });
+
+interface IGenerateLetterDto {
+  provider: string;
+  model?: string;
+  instruction?: string;
+  resumeId?: string;
+}
+
+export interface IGeneratedLetter {
+  markdown: string;
+}
+
+export const useGenerateCoverLetter = () =>
+  useMutation({
+    mutationFn: async ({ id, ...dto }: IGenerateLetterDto & { id: string }) =>
+      await api.post<IGeneratedLetter>(`/jobs/${id}/cover-letter`, dto, {
+        timeoutMs: 120_000,
+      }),
+  });
+
+export const useGenerateOutreachEmail = () =>
+  useMutation({
+    mutationFn: async ({ id, ...dto }: IGenerateLetterDto & { id: string }) =>
+      await api.post<IGeneratedLetter>(`/jobs/${id}/outreach`, dto, {
+        timeoutMs: 120_000,
+      }),
+  });
+
+export const useGenerateLinkedInDm = () =>
+  useMutation({
+    mutationFn: async ({ id, ...dto }: IGenerateLetterDto & { id: string }) =>
+      await api.post<IGeneratedLetter>(`/jobs/${id}/linkedin-dm`, dto, {
+        timeoutMs: 120_000,
+      }),
+  });

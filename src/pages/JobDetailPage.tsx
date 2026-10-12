@@ -4,6 +4,7 @@ import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense"
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
 import { JobDetailHeader } from "@/components/jobs/JobDetailHeader.tsx";
 import { JobInfoSection } from "@/components/jobs/JobInfoSection.tsx";
+import { JobLetterActions } from "@/components/jobs/JobLetterActions.tsx";
 import { LinkedSessionsSection } from "@/components/jobs/LinkedSessionsSection.tsx";
 import { ATSReview } from "@/components/resume/ats/ATSReview.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -52,7 +53,10 @@ const JobDetailContent = () => {
           </TabsList>
 
           <TabsContent value="overview">
-            <JobInfoSection job={job} sectionId="details" />
+            <div className="space-y-4">
+              <JobLetterActions job={job} />
+              <JobInfoSection job={job} sectionId="details" />
+            </div>
           </TabsContent>
 
           <TabsContent value="ats">
