@@ -16,7 +16,8 @@ export type TAtsCategoryKey =
   | "skillsMatch"
   | "keywordHitRate"
   | "experienceFit"
-  | "roleAlignment";
+  | "roleAlignment"
+  | "applicationSpecificity";
 
 export type TTipType = "good" | "improve";
 

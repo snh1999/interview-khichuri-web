@@ -52,6 +52,7 @@ const categories: TAtsCategory[] = [
   { key: "keywordHitRate", score: 70, tips: [] },
   { key: "experienceFit", score: 75, tips: [] },
   { key: "roleAlignment", score: 65, tips: [] },
+  { key: "applicationSpecificity", score: 60, tips: [] },
 ];
 
 const makeEntry = (
@@ -106,6 +107,7 @@ describe("ATSReview", () => {
     );
 
     expect(await screen.findByText("Skills Match")).toBeInTheDocument();
+    expect(screen.getByText("Application Specificity")).toBeInTheDocument();
     expect(screen.getByText("React")).toBeInTheDocument();
     expect(screen.getByText("Add metrics")).toBeInTheDocument();
     expect(screen.getByText("Tailor to fintech")).toBeInTheDocument();

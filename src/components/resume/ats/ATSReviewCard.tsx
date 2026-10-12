@@ -11,6 +11,7 @@ const CATEGORY_LABELS: Record<TAtsCategoryKey, string> = {
   keywordHitRate: "Keyword Hit Rate",
   experienceFit: "Experience Fit",
   roleAlignment: "Role Alignment",
+  applicationSpecificity: "Application Specificity",
 };
 
 interface IResumeReviewCardProps {
