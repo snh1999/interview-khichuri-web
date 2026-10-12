@@ -20,14 +20,12 @@ export type TProfileLink = TProfileLinkDto & {
 
 interface IWorkOverviewSkill {
   id: number;
-  topic: { id: number; name: string };
   topicId: number;
   workId: number;
 }
 
 interface IWorkOverviewIndustry {
   id: number;
-  industry: { id: number; name: string };
   industryId: number;
   workId: number;
 }

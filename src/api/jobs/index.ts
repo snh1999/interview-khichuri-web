@@ -6,6 +6,10 @@ export const JOB_STATUS = ["applied", "saved", "scheduled"] as const;
 
 export type TJobStatus = (typeof JOB_STATUS)[number];
 
+export const JOB_WORK_TYPES = ["remote", "hybrid", "onsite"] as const;
+
+export type TJobWorkType = (typeof JOB_WORK_TYPES)[number];
+
 export type TJobSortKey =
   | "default"
   | "newest"
@@ -28,15 +32,17 @@ interface ICommonFields {
   notes?: string | null;
   location?: string | null;
   source?: string | null;
+  workType?: TJobWorkType | null;
+  salaryLower?: number | null;
+  salaryUpper?: number | null;
+  currency?: string | null;
+  experienceRequired?: number | null;
 }
 
-export interface IJobExtractionResult {
+export interface IJobExtractionResult extends Omit<ICommonFields, "title"> {
   title?: string;
   companyName?: string | null;
-  roleId?: number | null;
   topicNames?: string[];
-  location?: string | null;
-  source?: string | null;
   deadline: string | null;
   interviewDate: string | null;
   status: TJobStatus;

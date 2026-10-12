@@ -17,6 +17,7 @@ import {
   MAX_TINY_LENGTH,
   MAX_URL_LENGTH,
 } from "@/app.constants.ts";
+import { workTypeSchema } from "@/components/job-profile/profile.helpers.ts";
 import {
   DATE_TYPE_SELECTIONS,
   getDatePreset,
@@ -74,17 +75,21 @@ const jobPostSchema = z
       .trim()
       .min(1, "Company name is required")
       .max(MAX_SHORT_LENGTH),
+    currency: z.string().length(3).nullish(),
     deadline: z.date().nullish(),
     description: z
       .string()
       .trim()
       .min(10, "Description too short")
       .max(DEFAULT_MAX_STRING_LENGTH),
+    experienceRequired: z.number().int().positive().nullish(),
     interviewDate: z.date().nullish(),
     links: z.array(z.object({ value: z.url().max(MAX_URL_LENGTH) })).nullish(),
     location: z.string().max(MAX_SHORT_LENGTH).nullish(),
     notes: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
     roleId: z.number().int().positive().nullish(),
+    salaryLower: z.number().int().positive().nullish(),
+    salaryUpper: z.number().int().positive().nullish(),
     source: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
     status: z.enum(JOB_STATUS),
     title: z
@@ -96,6 +101,7 @@ const jobPostSchema = z
     topicNames: z
       .array(z.string().trim().min(1).max(MAX_TINY_LENGTH))
       .optional(),
+    workType: workTypeSchema.nullish(),
   })
   .superRefine((data, ctx) => {
     if (
