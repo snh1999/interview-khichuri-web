@@ -44,8 +44,8 @@ export interface ICreateInterviewDto {
   instruction?: string;
   focusTypes?: TInterviewFocusType[];
   topicNames?: string[];
-  questionCount?: number;
-  maxDurationMinutes?: number;
+  questionCount?: number | null;
+  maxDurationMinutes?: number | null;
 }
 
 export interface ICreateInterviewResponse {

@@ -129,7 +129,7 @@ export const publicationSchema = z.object({
   notes: z.string().max(MAX_LARGE_LENGTH).optional(),
   publicationType: z.string().max(MAX_NAME_LENGTH).optional(),
   title: z.string().trim().min(1).max(MAX_NAME_LENGTH),
-  year: z.number().int().optional(),
+  year: z.number().int().nullish(),
 });
 export type TPublicationDto = z.infer<typeof publicationSchema>;
 

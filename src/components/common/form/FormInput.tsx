@@ -1,3 +1,4 @@
+import { type ChangeEvent, useCallback } from "react";
 import { type FieldValues, useController } from "react-hook-form";
 import type { IFormInputProps } from "@/components/common/form/form.types.ts";
 import {
@@ -12,6 +13,14 @@ import {
   InputGroupInput,
   InputGroupTextarea,
 } from "@/components/ui/input-group.tsx";
+
+const toNumberOrNull = (raw: string): number | null => {
+  if (raw === "") {
+    return null;
+  }
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) ? parsed : null;
+};
 
 export const FormInput = <T extends FieldValues>({
   form,
@@ -29,6 +38,17 @@ export const FormInput = <T extends FieldValues>({
     control: form.control,
     name,
   });
+
+  const handleChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      field.onChange(
+        type === "number"
+          ? toNumberOrNull(event.target.value)
+          : event.target.value
+      );
+    },
+    [field, type]
+  );
 
   return (
     <Field data-invalid={fieldState.invalid}>
@@ -50,6 +70,7 @@ export const FormInput = <T extends FieldValues>({
             aria-invalid={fieldState.invalid}
             className="text-xs"
             id={field.name}
+            onChange={handleChange}
             placeholder={placeholder}
             type={type}
             value={field.value ?? ""}

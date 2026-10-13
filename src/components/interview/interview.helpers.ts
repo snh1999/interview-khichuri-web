@@ -22,21 +22,12 @@ const FOCUS_TYPE_ENUM = z.enum([
   "question_bank",
 ]);
 
-const emptyStringToUndefined = (value: unknown) =>
-  typeof value === "string" && value.trim() === "" ? undefined : value;
-
 const createInterviewSchema = z.object({
   mode: z.enum(["qa_flow", "interview_flow"]),
   focusTypes: z.array(FOCUS_TYPE_ENUM),
   topicNames: z.array(z.string().trim().min(1)),
-  questionCount: z.preprocess(
-    emptyStringToUndefined,
-    z.coerce.number().int().min(1).max(50).optional()
-  ),
-  maxDurationMinutes: z.preprocess(
-    emptyStringToUndefined,
-    z.coerce.number().int().min(1).max(180).optional()
-  ),
+  questionCount: z.number().int().min(1).max(50).nullish(),
+  maxDurationMinutes: z.number().int().min(1).max(180).nullish(),
 });
 
 type FormInput = z.input<typeof createInterviewSchema>;
@@ -57,8 +48,8 @@ const buildDefaultValues = (): DefaultValues<FormInput> => ({
   mode: "qa_flow",
   focusTypes: [],
   topicNames: [],
-  questionCount: undefined,
-  maxDurationMinutes: undefined,
+  questionCount: null,
+  maxDurationMinutes: null,
 });
 
 export const useCreateInterviewForm = ({
