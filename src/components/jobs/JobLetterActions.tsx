@@ -2,6 +2,7 @@ import {
   EnvelopeSimpleIcon,
   FileTextIcon,
   LinkedinLogoIcon,
+  SparkleIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import {
@@ -15,6 +16,13 @@ import { useGetResumes } from "@/api/resumes";
 import { AiActionButton } from "@/components/common/ai/AiActionButton.tsx";
 import { AiResultDrawLog } from "@/components/common/ai/AiResultDrawLog.tsx";
 import { AppCombobox } from "@/components/common/form/combobox/AppCombobox.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu.tsx";
+import { Separator } from "../ui/separator";
 
 interface IAiDraft {
   description: string;
@@ -111,52 +119,74 @@ export const JobLetterActions = ({ job }: Readonly<{ job: IJob }>) => {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-end gap-2">
-        <AiActionButton
-          description={`Tailored cover letter for ${job.title} @ ${job.companyName}.`}
-          execute={handleDraftCoverLetter}
-          executeLabel="Cover Letter"
-          hideTarget
-          icon={<FileTextIcon />}
-          isLoading={coverLetter.isPending}
-          showInstruction
-          size="sm"
-          title="Draft Cover Letter"
-          toastSuccessMessage="Cover letter drafted"
-        >
-          {resumePicker}
-        </AiActionButton>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button size="sm" variant="outline">
+              <SparkleIcon className="size-3" />
+              Generate
+            </Button>
+          }
+        />
+        <DropdownMenuContent align="end" className="w-56 p-2">
+          <div className="flex flex-col gap-1">
+            <AiActionButton
+              className="w-full hover:bg-primary/30"
+              description={`Tailored cover letter for ${job.title} @ ${job.companyName}.`}
+              execute={handleDraftCoverLetter}
+              executeLabel="Cover Letter"
+              hideTarget
+              icon={<FileTextIcon />}
+              isLoading={coverLetter.isPending}
+              showInstruction
+              size="sm"
+              title="Draft Cover Letter"
+              toastSuccessMessage="Cover letter drafted"
+              variant="ghost"
+            >
+              {resumePicker}
+            </AiActionButton>
 
-        <AiActionButton
-          description={`Short outreach email for ${job.title} @ ${job.companyName}.`}
-          execute={handleDraftOutreachEmail}
-          executeLabel="Outreach"
-          hideTarget
-          icon={<EnvelopeSimpleIcon />}
-          isLoading={outreachEmail.isPending}
-          showInstruction
-          size="sm"
-          title="Draft Outreach Email"
-          toastSuccessMessage="Outreach email drafted"
-        >
-          {resumePicker}
-        </AiActionButton>
+            <Separator />
 
-        <AiActionButton
-          description={`Short LinkedIn message for ${job.title} @ ${job.companyName}.`}
-          execute={handleDraftLinkedInDm}
-          executeLabel="LinkedIn DM"
-          hideTarget
-          icon={<LinkedinLogoIcon />}
-          isLoading={linkedInDm.isPending}
-          showInstruction
-          size="sm"
-          title="Draft LinkedIn DM"
-          toastSuccessMessage="LinkedIn DM drafted"
-        >
-          {resumePicker}
-        </AiActionButton>
-      </div>
+            <AiActionButton
+              className="w-full hover:bg-primary/30"
+              description={`Short outreach email for ${job.title} @ ${job.companyName}.`}
+              execute={handleDraftOutreachEmail}
+              executeLabel="Outreach"
+              hideTarget
+              icon={<EnvelopeSimpleIcon />}
+              isLoading={outreachEmail.isPending}
+              showInstruction
+              size="sm"
+              title="Draft Outreach Email"
+              toastSuccessMessage="Outreach email drafted"
+              variant="ghost"
+            >
+              {resumePicker}
+            </AiActionButton>
+
+            <Separator />
+
+            <AiActionButton
+              className="w-full hover:bg-primary/30"
+              description={`Short LinkedIn message for ${job.title} @ ${job.companyName}.`}
+              execute={handleDraftLinkedInDm}
+              executeLabel="LinkedIn DM"
+              hideTarget
+              icon={<LinkedinLogoIcon />}
+              isLoading={linkedInDm.isPending}
+              showInstruction
+              size="sm"
+              title="Draft LinkedIn DM"
+              toastSuccessMessage="LinkedIn DM drafted"
+              variant="ghost"
+            >
+              {resumePicker}
+            </AiActionButton>
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <AiResultDrawLog
         description={draft?.description}

@@ -10,6 +10,8 @@ import { useJobsStore } from "@/store/useJobsStore.ts";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
+const FIT_CIRCLE = /profile fit [a-f]\+?/i;
+
 const makeJob = (overrides: Partial<IJob> = {}): IJob => ({
   id: "job-1",
   title: "Staff Engineer",
@@ -24,10 +26,19 @@ const makeJob = (overrides: Partial<IJob> = {}): IJob => ({
   ...overrides,
 });
 
-const useJobsResponse = (jobs: IJob[]) =>
+const emptyProfile = {
+  jobPreferences: [],
+  workExperiences: [],
+  workOverviews: [],
+};
+
+const useJobsResponse = (jobs: IJob[], profile: unknown = emptyProfile) =>
   server.use(
     http.get("*/api/v1/jobs", () =>
       HttpResponse.json({ statusCode: 200, message: "OK", data: jobs })
+    ),
+    http.get("*/api/v1/profile", () =>
+      HttpResponse.json({ statusCode: 200, message: "OK", data: profile })
     )
   );
 
@@ -92,5 +103,19 @@ describe("JobPageContent", () => {
     const view = renderList();
     await view.findByText("Alpha");
     expect(screen.queryByText("Beta")).not.toBeInTheDocument();
+  });
+
+  it("shows the profile fit circle on a card", async () => {
+    useJobsResponse([makeJob({ id: "j1", title: "Alpha", topicIds: [1] })], {
+      jobPreferences: [],
+      workExperiences: [],
+      workOverviews: [
+        { id: 1, experienceLevel: "senior", skills: [{ topicId: 1 }] },
+      ],
+    });
+    const view = render(
+      <JobPageContent currentSort="default" onCreate={vi.fn()} />
+    );
+    expect(await view.findByTitle(FIT_CIRCLE)).toBeInTheDocument();
   });
 });
