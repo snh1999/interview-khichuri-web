@@ -4,6 +4,7 @@ import type { IJob } from "@/api/jobs";
 import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
+import { FitCircle } from "@/components/jobs/FitCircle.tsx";
 import {
   getDateInfo,
   JOB_STATUS_VARIANT,
@@ -13,7 +14,7 @@ import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import { isUrgent } from "@/lib/utils";
 
-export const JobCardGrid = ({ job }: { job: IJob }) => {
+export const JobCardGrid = ({ job, fit }: { job: IJob; fit?: number }) => {
   const navigate = useNavigate();
   const updateJob = useUpdateJob();
   const urgent = job.interviewDate
@@ -52,14 +53,17 @@ export const JobCardGrid = ({ job }: { job: IJob }) => {
         </div>
       </div>
 
-      <p
-        className={cn(
-          "mt-2 text-xs",
-          urgent ? "text-destructive" : "text-muted-foreground"
-        )}
-      >
-        {getDateInfo(job)}
-      </p>
+      <div className="mt-2 flex items-end justify-between gap-3">
+        <p
+          className={cn(
+            "text-xs",
+            urgent ? "text-destructive" : "text-muted-foreground"
+          )}
+        >
+          {getDateInfo(job)}
+        </p>
+        {fit ? <FitCircle score={fit} /> : null}
+      </div>
     </GutterCard>
   );
 };

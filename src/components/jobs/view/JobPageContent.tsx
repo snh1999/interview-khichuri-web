@@ -7,6 +7,7 @@ import {
   type TJobStatus,
   useGetJobs,
 } from "@/api/jobs";
+import { useProfile } from "@/api/profile/profiles";
 import { useViewToggle } from "@/components/common/ViewToggle.tsx";
 import {
   matchesJobDateFilters,
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/empty";
 import { ItemGroup } from "@/components/ui/item.tsx";
 import { useStrictSafeAutoAnimate } from "@/hooks/useStrictSafeAutoAnimate";
+import { profileFacts, scoreJob } from "@/lib/deterministic-score.ts";
 import { createJobSearch } from "@/lib/search.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
 
@@ -54,6 +56,13 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
     () => createJobSearch(allJobsRaw ?? []),
     [allJobsRaw]
   );
+
+  const { data: profile } = useProfile();
+  const profileFactSet = useMemo(() => profileFacts(profile), [profile]);
+  const scoreFor = (job: IJob) => {
+    const score = scoreJob(profileFactSet, job);
+    return score.hasSignal ? score.overall : undefined;
+  };
 
   const deferredSearch = useDeferredValue(search);
 
@@ -106,7 +115,7 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
       {currentView === "grid" ? (
         <div className="grid gap-2.5 sm:grid-cols-2" ref={gridParent}>
           {jobs.map((job: IJob) => (
-            <JobCardGrid job={job} key={job.id} />
+            <JobCardGrid fit={scoreFor(job)} job={job} key={job.id} />
           ))}
         </div>
       ) : (
@@ -115,7 +124,7 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
           ref={listParent}
         >
           {jobs.map((job: IJob) => (
-            <JobListRow job={job} key={job.id} />
+            <JobListRow fit={scoreFor(job)} job={job} key={job.id} />
           ))}
         </ItemGroup>
       )}
