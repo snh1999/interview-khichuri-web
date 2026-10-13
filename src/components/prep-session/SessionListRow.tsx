@@ -39,18 +39,20 @@ export const SessionListRow = ({
       isFavorite: !session.isFavorite,
     });
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      navigateToPage();
+    }
+  };
+
   return (
     <Item
       className="rounded-sm bg-muted/60"
       onClick={navigateToPage}
+      onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          navigateToPage();
-        }
-      }}
     >
       <ItemContent className="min-w-0 gap-0.5 space-y-1.5">
         <ItemTitle className="min-w-0 flex-1 truncate text-sm">

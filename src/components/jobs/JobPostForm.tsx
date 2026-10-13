@@ -13,6 +13,10 @@ import { FormDatePicker } from "@/components/common/form/FormDatePicker";
 import { FormInput } from "@/components/common/form/FormInput";
 import FormSelect from "@/components/common/form/FormSelect";
 import {
+  CURRENCIES,
+  REMOTE_PREFERENCES,
+} from "@/components/job-profile/profile.data.ts";
+import {
   STATUS_OPTIONS,
   useJobPostForm,
 } from "@/components/jobs/jobs.helpers.ts";
@@ -165,6 +169,44 @@ export const JobPostForm = ({
                 label="Source"
                 name="source"
                 placeholder="e.g. LinkedIn, Company website or link"
+              />
+
+              <FormSelect
+                form={form}
+                label="Work Type"
+                name="workType"
+                selectData={REMOTE_PREFERENCES}
+              />
+
+              <FormInput
+                form={form}
+                label="Minimum Salary"
+                name="salaryLower"
+                placeholder="e.g. 120000"
+                type="number"
+              />
+
+              <FormInput
+                form={form}
+                label="Maximum Salary"
+                name="salaryUpper"
+                placeholder="e.g. 150000"
+                type="number"
+              />
+
+              <FormInput
+                form={form}
+                label="Experience Required (years)"
+                name="experienceRequired"
+                placeholder="e.g. 5"
+                type="number"
+              />
+
+              <FormSelect
+                form={form}
+                label="Salary Currency"
+                name="currency"
+                selectData={CURRENCIES}
               />
 
               <FormSelect

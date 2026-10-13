@@ -19,7 +19,7 @@ import {
   useLocalInterviewState,
   useSetLocalInterviewState,
 } from "@/api/sessions/interviews.ts";
-import type { ILocalInterviewState } from "@/lib/interviewStorage";
+import type { ILocalInterviewState } from "@/lib/storage/interviewStorage";
 import { server } from "@/test/msw/server.ts";
 
 const API = "*/api/v1";

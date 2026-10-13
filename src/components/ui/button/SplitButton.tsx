@@ -57,7 +57,7 @@ export const SplitButton = ({
     <ButtonGroup className={className}>
       <Button
         {...primaryProps}
-        className={primaryProps.className}
+        className={cn("flex-1 justify-start!", primaryProps.className)}
         onClick={primaryProps.onClick}
         size={size}
         variant={variant}

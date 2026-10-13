@@ -11,7 +11,7 @@ import { api } from "@/lib/api-client.ts";
 import {
   deleteAtsScoresByResumeId,
   deleteStandaloneReview,
-} from "@/lib/indexdb";
+} from "@/lib/storage/indexdb.ts";
 
 export interface IUploadResponse {
   success: boolean;

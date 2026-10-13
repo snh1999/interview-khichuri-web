@@ -3,6 +3,7 @@ import { useGetJob } from "@/api/jobs";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
 import { JobDetailHeader } from "@/components/jobs/JobDetailHeader.tsx";
+import { JobFitScore } from "@/components/jobs/JobFitScore.tsx";
 import { JobInfoSection } from "@/components/jobs/JobInfoSection.tsx";
 import { LinkedSessionsSection } from "@/components/jobs/LinkedSessionsSection.tsx";
 import { ATSReview } from "@/components/resume/ats/ATSReview.tsx";
@@ -52,7 +53,10 @@ const JobDetailContent = () => {
           </TabsList>
 
           <TabsContent value="overview">
-            <JobInfoSection job={job} sectionId="details" />
+            <div className="space-y-4">
+              <JobFitScore job={job} />
+              <JobInfoSection job={job} sectionId="details" />
+            </div>
           </TabsContent>
 
           <TabsContent value="ats">

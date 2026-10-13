@@ -12,7 +12,9 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { type IJobWithTopics, useDeleteJob } from "@/api/jobs";
+import { useProfile } from "@/api/profile/profiles";
 import { JOBS_PAGE } from "@/app.constants.ts";
+import { JobLetterActions } from "@/components/jobs/JobLetterActions.tsx";
 import { JobPostForm } from "@/components/jobs/JobPostForm.tsx";
 import {
   getDateInfo,
@@ -26,12 +28,16 @@ import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { useRolesMap, useTopicsMap } from "@/hooks/useLookupMap.ts";
+import { profileFacts } from "@/lib/deterministic-score";
 import { isUrgent } from "@/lib/utils";
 
 export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
   const navigate = useNavigate();
   const rolesMap = useRolesMap();
   const topicsMap = useTopicsMap();
+  // TODO: profile should be optional here - if /profile is down the whole detail page breaks even though we only need it for topic highlighting.
+  const { data: profile } = useProfile();
+  const skillIds = new Set(profileFacts(profile).skillIds);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const deleteJob = useDeleteJob();
@@ -65,9 +71,9 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
     { label: "Deadline", value: fmt(job.deadline) },
   ].filter((t) => t.value);
 
-  const topicNames = job.topicIds
-    .map((id) => topicsMap.get(id)?.name)
-    .filter(Boolean);
+  const topics = job.topicIds
+    .map((id) => ({ id, name: topicsMap.get(id)?.name }))
+    .filter((topic) => Boolean(topic.name));
 
   const openDialog = () => setDialogOpen(true);
   const closeDialog = () => setDialogOpen(false);
@@ -99,6 +105,7 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <StatusBadge label={STATUS_LABEL[job.status]} status={job.status} />
+            <JobLetterActions job={job} />
             <Button onClick={openDialog} size="sm" variant="outline">
               <PencilLineIcon className="size-3" />
               Edit
@@ -116,11 +123,18 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
           </div>
         </div>
 
-        {topicNames.length > 0 && (
+        {topics.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {topicNames.map((name) => (
-              <Badge key={name} variant="secondary">
-                {name}
+            {topics.map((topic) => (
+              <Badge
+                key={topic.id}
+                variant={
+                  skillIds.size > 0 && skillIds.has(topic.id)
+                    ? "secondary"
+                    : "destructive"
+                }
+              >
+                {topic.name}
               </Badge>
             ))}
           </div>

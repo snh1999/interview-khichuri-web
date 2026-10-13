@@ -2,7 +2,7 @@ import type {
   IInterviewQuestion,
   TInterviewMode,
 } from "@/api/sessions/interviews.ts";
-import { ARCHIVE_STORE, DRAFT_STORE, getDb } from "@/lib/indexdb";
+import { ARCHIVE_STORE, DRAFT_STORE, getDb } from "@/lib/storage/indexdb.ts";
 
 export interface IInterviewTranscriptItem {
   questionId: number;

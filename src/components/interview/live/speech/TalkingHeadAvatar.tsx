@@ -109,8 +109,8 @@ export const TalkingHeadAvatar = ({
   );
 
   useEffect(() => {
-    let openTimer: ReturnType<typeof window.setTimeout> | undefined;
-    let closeTimer: ReturnType<typeof window.setTimeout> | undefined;
+    let openTimer: number | undefined;
+    let closeTimer: number | undefined;
     const cycle = () => {
       setIsBlinking(true);
       closeTimer = window.setTimeout(() => {

@@ -5,6 +5,7 @@ import {
   MAX_LARGE_LENGTH,
   MAX_NAME_LENGTH,
   MAX_SHORT_LENGTH,
+  MAX_TEMPLATE_LENGTH,
   MAX_TINY_LENGTH,
   MAX_URL_LENGTH,
 } from "@/app.constants.ts";
@@ -49,7 +50,7 @@ export const professionalSchema = z.object({
     .optional(),
   skillNames: z.array(z.string().trim().min(1).max(MAX_TINY_LENGTH)).optional(),
   skills: z.array(z.number().int().positive()).optional(),
-  summary: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
+  summary: z.string().max(MAX_LARGE_LENGTH).nullish(),
   title: z.string().trim().min(1, "Job title Can not be empty"),
   yearsOfExperience: z.number().int().min(0).nullish(),
 });
@@ -93,7 +94,10 @@ export const educationSchema = z.object({
 export type TEducationDto = z.infer<typeof educationSchema>;
 
 export const preferencesSchema = z.object({
+  coverLetterTemplate: z.string().max(MAX_TEMPLATE_LENGTH).nullish(),
   currency: z.string().length(3).nullish(),
+  linkedinDmTemplate: z.string().max(MAX_TEMPLATE_LENGTH).nullish(),
+  outreachEmailTemplate: z.string().max(MAX_TEMPLATE_LENGTH).nullish(),
   preferredLocation: z.string().max(MAX_SHORT_LENGTH).nullish(),
   salaryExpected: z.number().int().min(0).nullish(),
   salaryLower: z.number().int().min(0).nullish(),
@@ -125,7 +129,7 @@ export const publicationSchema = z.object({
   notes: z.string().max(MAX_LARGE_LENGTH).optional(),
   publicationType: z.string().max(MAX_NAME_LENGTH).optional(),
   title: z.string().trim().min(1).max(MAX_NAME_LENGTH),
-  year: z.number().int().optional(),
+  year: z.number().int().nullish(),
 });
 export type TPublicationDto = z.infer<typeof publicationSchema>;
 

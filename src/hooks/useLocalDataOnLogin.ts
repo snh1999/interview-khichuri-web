@@ -5,7 +5,7 @@ import {
   getArchivedValues,
   putArchivedValues,
   type TArchivedValues,
-} from "@/lib/storageArchive";
+} from "@/lib/storage/storageArchive.ts";
 import { useAppStore } from "@/store/appStore";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import { useInterviewStore } from "@/store/interviewStore";

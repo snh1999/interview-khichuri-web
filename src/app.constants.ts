@@ -34,5 +34,6 @@ export const MAX_NAME_LENGTH = 127;
 export const MAX_LARGE_LENGTH = 1023;
 export const MAX_URL_LENGTH = 512;
 export const DEFAULT_MAX_STRING_LENGTH = 5000;
+export const MAX_TEMPLATE_LENGTH = 10_000;
 
 export const URGENT_DAYS_THRESHOLD = 3;

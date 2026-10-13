@@ -111,6 +111,28 @@ describe("resume mutations", () => {
     expect(seen).toEqual(["/api/v1/resume/r-1"]);
   });
 
+  it("keeps an emptied professional summary in the payload", async () => {
+    const bodies: unknown[] = [];
+    server.use(
+      http.patch(`${API}/resume/r-1`, async ({ request }) => {
+        bodies.push(await request.json());
+        return envelope(null);
+      })
+    );
+    const { result } = renderHook(() => useUpdateResume(), { wrapper });
+    await act(async () => {
+      await result.current.mutateAsync({
+        content: {
+          professional: { summary: "", title: "Engineer" },
+        } as never,
+        id: "r-1",
+      });
+    });
+    expect(bodies).toEqual([
+      { content: { professional: { summary: "", title: "Engineer" } } },
+    ]);
+  });
+
   it("extracts a resume", async () => {
     const seen: string[] = [];
     put("/resume/r-1/extract", "post")(seen);

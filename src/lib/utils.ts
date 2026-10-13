@@ -73,28 +73,6 @@ export const stripNulls = (value: unknown): unknown => {
   return value;
 };
 
-export const stripEmptyString = (value: unknown): unknown => {
-  if (typeof value === "string") {
-    return value.trim() || undefined;
-  }
-
-  if (Array.isArray(value)) {
-    return value.map(stripEmptyString);
-  }
-
-  if (value === null || value instanceof Date) {
-    return value;
-  }
-
-  if (typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value).map(([k, v]) => [k, stripEmptyString(v)])
-    );
-  }
-
-  return value;
-};
-
 const CAMEL_CASE_SEPARATOR = /([a-z])([A-Z])/g;
 const FIRST_CHAR = /^./;
 
@@ -102,3 +80,20 @@ export const formatSectionLabel = (key: string): string =>
   key
     .replace(CAMEL_CASE_SEPARATOR, "$1 $2")
     .replace(FIRST_CHAR, (char) => char.toUpperCase());
+
+export const generateSafeId = (prefix = ""): string => {
+  let rand = "";
+  try {
+    if (
+      typeof crypto !== "undefined" &&
+      typeof crypto.randomUUID === "function"
+    ) {
+      rand = crypto.randomUUID().slice(0, 8);
+    } else {
+      rand = Math.random().toString(36).slice(2, 10);
+    }
+  } catch {
+    rand = Math.random().toString(36).slice(2, 10);
+  }
+  return prefix ? `${prefix}-${rand}` : rand;
+};

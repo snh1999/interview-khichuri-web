@@ -22,21 +22,12 @@ const FOCUS_TYPE_ENUM = z.enum([
   "question_bank",
 ]);
 
-const emptyStringToUndefined = (value: unknown) =>
-  typeof value === "string" && value.trim() === "" ? undefined : value;
-
 const createInterviewSchema = z.object({
   mode: z.enum(["qa_flow", "interview_flow"]),
   focusTypes: z.array(FOCUS_TYPE_ENUM),
   topicNames: z.array(z.string().trim().min(1)),
-  questionCount: z.preprocess(
-    emptyStringToUndefined,
-    z.coerce.number().int().min(1).max(50).optional()
-  ),
-  maxDurationMinutes: z.preprocess(
-    emptyStringToUndefined,
-    z.coerce.number().int().min(1).max(180).optional()
-  ),
+  questionCount: z.number().int().min(1).max(50).nullish(),
+  maxDurationMinutes: z.number().int().min(1).max(180).nullish(),
 });
 
 type FormInput = z.input<typeof createInterviewSchema>;
@@ -46,15 +37,19 @@ export interface IInterviewFormHook {
   // biome-ignore lint/suspicious/noExplicitAny: <>
   form: UseFormReturn<FormInput, any, FormOutput>;
   isLoading: boolean;
-  onSubmit: (provider: string, model?: string) => Promise<void>;
+  onSubmit: (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => Promise<void>;
 }
 
 const buildDefaultValues = (): DefaultValues<FormInput> => ({
   mode: "qa_flow",
   focusTypes: [],
   topicNames: [],
-  questionCount: undefined,
-  maxDurationMinutes: undefined,
+  questionCount: null,
+  maxDurationMinutes: null,
 });
 
 export const useCreateInterviewForm = ({
@@ -79,7 +74,11 @@ export const useCreateInterviewForm = ({
     form.reset(buildDefaultValues());
   }, [open, form]);
 
-  const onSubmit = async (provider: string, model?: string) => {
+  const onSubmit = async (
+    provider: string,
+    model?: string,
+    instruction?: string
+  ) => {
     await form.handleSubmit(async (data) => {
       try {
         const created = await createInterview.mutateAsync({
@@ -87,6 +86,7 @@ export const useCreateInterviewForm = ({
           sessionId: session.id,
           provider,
           model: model?.trim() || undefined,
+          instruction: instruction?.trim() || undefined,
         });
 
         const questions: IInterviewQuestion[] = created.questions.map(

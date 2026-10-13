@@ -87,3 +87,27 @@ describe.each(MUTATIONS)("$path", ({ dto, hook, path }) => {
     expect(seen).toEqual([`/api/v1${path}`]);
   });
 });
+
+describe("useUpdateWorkOverview", () => {
+  it("carries the professional summary in the PUT body", async () => {
+    const bodies: unknown[] = [];
+    server.use(
+      http.put(`${API}/profile/work-overview`, async ({ request }) => {
+        bodies.push(await request.json());
+        return envelope(null);
+      })
+    );
+
+    const { result } = renderHook(() => useUpdateWorkOverview(), { wrapper });
+    await act(async () => {
+      await result.current.mutateAsync({
+        summary: "Backend engineer",
+        title: "Engineer",
+      } as never);
+    });
+
+    expect(bodies).toEqual([
+      { summary: "Backend engineer", title: "Engineer" },
+    ]);
+  });
+});

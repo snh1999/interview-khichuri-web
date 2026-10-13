@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { IInterview } from "@/api/sessions/interviews.ts";
 import { InterviewItem } from "@/components/interview/InterviewItem.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
-import { setLocalInterviewState } from "@/lib/interviewStorage";
+import { setLocalInterviewState } from "@/lib/storage/interviewStorage";
 import { render } from "@/test/render.tsx";
 
 const CREATED_PATTERN = /^Created · /;

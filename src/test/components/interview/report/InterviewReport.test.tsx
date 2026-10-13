@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { IInterview } from "@/api/sessions/interviews.ts";
 import { InterviewReport } from "@/components/interview/report/InterviewReport.tsx";
-import { archiveLocalInterviewState } from "@/lib/interviewStorage";
+import { archiveLocalInterviewState } from "@/lib/storage/interviewStorage";
 import { render } from "@/test/render.tsx";
 
 const EXPORT_PATTERN = /Export/;

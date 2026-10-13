@@ -17,6 +17,7 @@ import {
   MAX_TINY_LENGTH,
   MAX_URL_LENGTH,
 } from "@/app.constants.ts";
+import { workTypeSchema } from "@/components/job-profile/profile.helpers.ts";
 import {
   DATE_TYPE_SELECTIONS,
   getDatePreset,
@@ -25,7 +26,7 @@ import {
 } from "@/components/jobs/filters/jobDatePresets.ts";
 import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
-import { daysUntil, stringToDate, stripEmptyString } from "@/lib/utils.ts";
+import { daysUntil, stringToDate } from "@/lib/utils.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
 
 export const STATUS_LABEL: Record<TJobStatus, string> = {
@@ -74,17 +75,21 @@ const jobPostSchema = z
       .trim()
       .min(1, "Company name is required")
       .max(MAX_SHORT_LENGTH),
+    currency: z.string().length(3).nullish(),
     deadline: z.date().nullish(),
     description: z
       .string()
       .trim()
       .min(10, "Description too short")
       .max(DEFAULT_MAX_STRING_LENGTH),
+    experienceRequired: z.number().int().nonnegative().nullish(),
     interviewDate: z.date().nullish(),
     links: z.array(z.object({ value: z.url().max(MAX_URL_LENGTH) })).nullish(),
     location: z.string().max(MAX_SHORT_LENGTH).nullish(),
     notes: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
     roleId: z.number().int().positive().nullish(),
+    salaryLower: z.number().int().positive().nullish(),
+    salaryUpper: z.number().int().positive().nullish(),
     source: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
     status: z.enum(JOB_STATUS),
     title: z
@@ -96,6 +101,7 @@ const jobPostSchema = z
     topicNames: z
       .array(z.string().trim().min(1).max(MAX_TINY_LENGTH))
       .optional(),
+    workType: workTypeSchema.nullish(),
   })
   .superRefine((data, ctx) => {
     if (
@@ -175,7 +181,7 @@ export const useJobPostForm = ({
   const onSubmit = form.handleSubmit(async (rawData: TJobFormData) => {
     const { links, topicNames, ...data } = rawData;
     const topicIds = await resolveTopics("topicIds", "topicNames");
-    const payload = stripEmptyString({
+    const payload = {
       ...data,
       ...(topicIds ? { topicIds } : {}),
       links: links
@@ -184,7 +190,7 @@ export const useJobPostForm = ({
             .filter(Boolean)
             .join("\n")
         : "",
-    }) as ICreateJobDto;
+    } as ICreateJobDto;
 
     try {
       if (job) {

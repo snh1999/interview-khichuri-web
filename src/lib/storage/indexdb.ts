@@ -1,6 +1,6 @@
 import { type DBSchema, type IDBPDatabase, openDB } from "idb";
 import type { TAtsCategory, TStandaloneCategory } from "@/api/resumes";
-import type { ILocalInterviewState } from "@/lib/interviewStorage";
+import type { ILocalInterviewState } from "@/lib/storage/interviewStorage.ts";
 
 const INDEX_DB_NAME = "interview-khichuri-db";
 const DB_VERSION = 1;

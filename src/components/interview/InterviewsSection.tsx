@@ -23,7 +23,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty.tsx";
-import { retryLocalEntryCleanup } from "@/lib/indexdb.ts";
+import { retryLocalEntryCleanup } from "@/lib/storage/indexdb.ts";
 import { CreateInterviewDialog } from "./CreateInterviewDialog.tsx";
 
 interface IProps {

@@ -10,13 +10,14 @@ import {
   type IStandaloneReviewCacheEntry,
   setAtsScore,
   setStandaloneReview,
-} from "@/lib/indexdb";
+} from "@/lib/storage/indexdb.ts";
 
 export type TAtsCategoryKey =
   | "skillsMatch"
   | "keywordHitRate"
   | "experienceFit"
-  | "roleAlignment";
+  | "roleAlignment"
+  | "applicationSpecificity";
 
 export type TTipType = "good" | "improve";
 

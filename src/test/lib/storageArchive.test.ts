@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { getArchivedValues, putArchivedValues } from "@/lib/storageArchive.ts";
+import {
+  getArchivedValues,
+  putArchivedValues,
+} from "@/lib/storage/storageArchive.ts";
 
 describe("storageArchive", () => {
   it("round-trips archived values per user", async () => {

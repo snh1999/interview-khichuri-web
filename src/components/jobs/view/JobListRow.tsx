@@ -5,6 +5,7 @@ import type { IJob } from "@/api/jobs";
 import { useUpdateJob } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
+import { FitCircle } from "@/components/jobs/FitCircle.tsx";
 import { getDateInfo, STATUS_LABEL } from "@/components/jobs/jobs.helpers";
 import { Button } from "@/components/ui/button.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
@@ -19,9 +20,11 @@ import { isUrgent } from "@/lib/utils";
 export const JobListRow = ({
   job,
   hideFavorite = false,
+  fit,
 }: {
   job: IJob;
   hideFavorite?: boolean;
+  fit?: number;
 }) => {
   const navigate = useNavigate();
   const updateJob = useUpdateJob();
@@ -68,6 +71,7 @@ export const JobListRow = ({
         </span>
       </ItemContent>
       <ItemActions>
+        {fit ? <FitCircle score={fit} /> : null}
         {hideFavorite ? null : (
           <FavoriteButton
             icon="pin"

@@ -88,6 +88,7 @@ export const CreateInterviewDialog = ({
       onExecute={onSubmit}
       onOpenChange={onOpenChange}
       open={open}
+      showInstruction
       title="Start Mock Interview"
     >
       <div className="space-y-6">

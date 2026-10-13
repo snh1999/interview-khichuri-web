@@ -54,6 +54,17 @@ export const ProfessionalInformation = memo(
             />
           </div>
 
+          <div className="col-span-1 md:col-span-2">
+            <FormInput
+              form={form}
+              label="Summary"
+              name="professional.summary"
+              placeholder="Short summary of your background and focus"
+              rows={3}
+              textArea
+            />
+          </div>
+
           {hideCombobox ? null : (
             <div className="col-span-1 flex flex-col gap-4 md:col-span-2">
               <LookupCombobox
