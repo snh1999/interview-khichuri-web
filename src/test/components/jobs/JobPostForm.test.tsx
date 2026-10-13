@@ -177,4 +177,61 @@ describe("JobPostForm", () => {
       title: "Staff Frontend",
     });
   });
+
+  it("submits number fields as numbers", async () => {
+    let posted: Record<string, unknown> | null = null;
+    server.use(
+      http.post("*/api/v1/jobs", async ({ request }) => {
+        posted = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(
+          {
+            data: { ...editJob, createdAt: CREATED_AT, updatedAt: CREATED_AT },
+            message: "Created",
+            statusCode: 201,
+          },
+          { status: 201 }
+        );
+      })
+    );
+    const { user } = renderForm();
+
+    await user.type(screen.getByLabelText("Description"), DESCRIPTION);
+    await user.type(screen.getByLabelText("Title"), "Senior Frontend");
+    await pickCompany(user);
+    await user.type(screen.getByLabelText("Minimum Salary"), "120000");
+    await user.type(screen.getByLabelText("Experience Required (years)"), "5");
+    await user.click(screen.getByRole("button", { name: "Create" }));
+
+    expect(await screen.findByText("Job created")).toBeInTheDocument();
+    expect(posted).toMatchObject({
+      experienceRequired: 5,
+      salaryLower: 120_000,
+    });
+  });
+
+  it("sends null when a number field is cleared on update", async () => {
+    let patched: Record<string, unknown> | null = null;
+    server.use(
+      http.patch("*/api/v1/jobs/:id", async ({ request }) => {
+        patched = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({
+          data: {
+            ...editJob,
+            createdAt: CREATED_AT,
+            updatedAt: CREATED_AT,
+            userId: "user-1",
+          },
+          message: "OK",
+          statusCode: 200,
+        });
+      })
+    );
+    const { user } = renderForm({ ...editJob, salaryLower: 90_000 });
+
+    await user.clear(screen.getByLabelText("Minimum Salary"));
+    await user.click(screen.getByRole("button", { name: "Update" }));
+
+    expect(await screen.findByText("Job updated")).toBeInTheDocument();
+    expect(patched).toMatchObject({ salaryLower: null });
+  });
 });
