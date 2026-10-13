@@ -35,6 +35,7 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
   const navigate = useNavigate();
   const rolesMap = useRolesMap();
   const topicsMap = useTopicsMap();
+  // TODO: profile should be optional here - if /profile is down the whole detail page breaks even though we only need it for topic highlighting.
   const { data: profile } = useProfile();
   const skillIds = new Set(profileFacts(profile).skillIds);
   const [dialogOpen, setDialogOpen] = useState(false);

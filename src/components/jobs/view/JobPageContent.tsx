@@ -57,6 +57,7 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
     [allJobsRaw]
   );
 
+  // TODO: profile should be optional here - if /profile is down the whole job list breaks even though we only need it for fit scores.
   const { data: profile } = useProfile();
   const profileFactSet = useMemo(() => profileFacts(profile), [profile]);
   const scoreFor = (job: IJob) => {

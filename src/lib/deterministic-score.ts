@@ -183,8 +183,7 @@ const matchLocation = (
 const currenciesComparable = (
   jobCurrency?: string | null,
   candidateCurrency?: string | null
-): boolean =>
-  !(jobCurrency && candidateCurrency) || jobCurrency === candidateCurrency;
+): boolean => (jobCurrency ?? null) === (candidateCurrency ?? null);
 
 // A stated lower/upper pair is a range; a lone bound is treated as a fixed
 // point on both sides so "from 80k" is not read as an 80k ceiling.

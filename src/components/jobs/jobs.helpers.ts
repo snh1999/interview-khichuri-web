@@ -82,7 +82,7 @@ const jobPostSchema = z
       .trim()
       .min(10, "Description too short")
       .max(DEFAULT_MAX_STRING_LENGTH),
-    experienceRequired: z.number().int().positive().nullish(),
+    experienceRequired: z.number().int().nonnegative().nullish(),
     interviewDate: z.date().nullish(),
     links: z.array(z.object({ value: z.url().max(MAX_URL_LENGTH) })).nullish(),
     location: z.string().max(MAX_SHORT_LENGTH).nullish(),
