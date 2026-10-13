@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { TPermissionOptions } from "@/api/auth/admin.ts";
-import type { IAtsScoreFilter } from "@/lib/indexdb";
+import type { IAtsScoreFilter } from "@/lib/storage/indexdb.ts";
 
 type TQueryFn =
   | QueryKey

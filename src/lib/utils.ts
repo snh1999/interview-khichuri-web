@@ -80,3 +80,20 @@ export const formatSectionLabel = (key: string): string =>
   key
     .replace(CAMEL_CASE_SEPARATOR, "$1 $2")
     .replace(FIRST_CHAR, (char) => char.toUpperCase());
+
+export const generateSafeId = (prefix = ""): string => {
+  let rand = "";
+  try {
+    if (
+      typeof crypto !== "undefined" &&
+      typeof crypto.randomUUID === "function"
+    ) {
+      rand = crypto.randomUUID().slice(0, 8);
+    } else {
+      rand = Math.random().toString(36).slice(2, 10);
+    }
+  } catch {
+    rand = Math.random().toString(36).slice(2, 10);
+  }
+  return prefix ? `${prefix}-${rand}` : rand;
+};

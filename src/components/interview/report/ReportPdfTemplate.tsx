@@ -6,7 +6,7 @@ import {
 } from "@react-pdf/renderer";
 import type { ReactNode } from "react";
 import type { IInterview } from "@/api/sessions/interviews.ts";
-import type { ILocalInterviewState } from "@/lib/interviewStorage.ts";
+import type { ILocalInterviewState } from "@/lib/storage/interviewStorage.ts";
 
 export const SECTION_OPTIONS = [
   { key: "scores", label: "Overall scores" },
@@ -109,7 +109,7 @@ const renderMarkdownLine = (line: string, index: number): ReactNode => {
     );
   }
   const numberedMatch = NUMBERED_LIST_RE.exec(line);
-  // biome-ignore lint/suspicious/noUnnecessaryConditions: <explanation>
+  // biome-ignore lint/suspicious/noUnnecessaryConditions: <false flag>
   if (numberedMatch) {
     return (
       <PdfText key={index} style={{ marginLeft: 8 }}>

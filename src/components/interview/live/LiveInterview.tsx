@@ -33,8 +33,8 @@ import { streamPost } from "@/lib/api-client";
 import type {
   IInterviewTranscriptItem,
   ILocalInterviewState,
-} from "@/lib/interviewStorage";
-import { getLocalInterviewState } from "@/lib/interviewStorage";
+} from "@/lib/storage/interviewStorage.ts";
+import { getLocalInterviewState } from "@/lib/storage/interviewStorage.ts";
 import { useInterviewStore } from "@/store/interviewStore";
 import { useInterviewTiming } from "./QuestionClock";
 

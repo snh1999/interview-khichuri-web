@@ -20,7 +20,7 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 import { atsScoreCopyPrompt } from "@/lib/ai/prompts.ts";
-import type { IAtsCacheEntry, IAtsScoreFilter } from "@/lib/indexdb.ts";
+import type { IAtsCacheEntry, IAtsScoreFilter } from "@/lib/storage/indexdb.ts";
 
 interface IProps {
   job?: IJob;

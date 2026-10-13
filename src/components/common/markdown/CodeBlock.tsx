@@ -7,6 +7,7 @@ const TRAILING_NEWLINE_REGEX = /\n$/;
 
 export function CodeBlock({ className, children }: ComponentProps<"code">) {
   const match = LANGUAGE_REGEX.exec(className || "");
+  // biome-ignore lint/suspicious/noUnnecessaryConditions: <false flag>
   if (!match) {
     return <code className={className}>{children}</code>;
   }

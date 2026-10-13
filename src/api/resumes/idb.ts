@@ -10,7 +10,7 @@ import {
   type IStandaloneReviewCacheEntry,
   setAtsScore,
   setStandaloneReview,
-} from "@/lib/indexdb";
+} from "@/lib/storage/indexdb.ts";
 
 export type TAtsCategoryKey =
   | "skillsMatch"

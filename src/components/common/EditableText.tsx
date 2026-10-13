@@ -12,6 +12,9 @@ import { Textarea } from "@/components/ui/textarea.tsx";
 
 type TDataType = string | Date | number;
 
+const INLINE_FIELD_CLASS =
+  "border-0 bg-transparent px-1 text-xs shadow-none focus-visible:border-0 focus-visible:ring-1 focus-visible:ring-primary/40";
+
 interface IProps<T extends TDataType> {
   initialValue: T;
   onSave: (value: T) => void;
@@ -72,7 +75,7 @@ export const EditableText = <T extends TDataType>({
         type === "textarea" ? (
           <Textarea
             autoFocus
-            className="text-foreground text-xs"
+            className={`min-h-0 ${INLINE_FIELD_CLASS}`}
             onBlur={onBlur}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
@@ -90,7 +93,7 @@ export const EditableText = <T extends TDataType>({
         ) : (
           <Input
             autoFocus
-            className="text-foreground text-xs"
+            className={INLINE_FIELD_CLASS}
             onBlur={onBlur}
             onChange={handleChange}
             onKeyDown={handleKeyDown}

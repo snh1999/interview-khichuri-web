@@ -301,13 +301,13 @@ class SpeechService {
   private readonly googleAudioCache = new Map<string, string>();
   private readonly googlePrefetchInFlight = new Set<string>();
   private audio: HTMLAudioElement | null = null;
-  private visemeTimer: ReturnType<typeof window.setInterval> | null = null;
+  private visemeTimer: number | null = null;
   private visemeIndex = 0;
   private speakToken = 0;
   private settings: ISpeechSettings = loadSettings();
   private googleAvailable: boolean;
   private browserAvailable: boolean;
-  private persistTimer: ReturnType<typeof window.setTimeout> | null = null;
+  private persistTimer: number | null = null;
   private chunkPlaybackResolver: (() => void) | null = null;
 
   constructor() {
@@ -913,7 +913,7 @@ class SpeechService {
   private resolveDiagnosticStopped(
     resolve: (result: IDiagnosticTestResult) => void,
     unsubscribe: () => void,
-    timer: ReturnType<typeof window.setTimeout>,
+    timer: number,
     voicesCount: number
   ): void {
     window.clearTimeout(timer);

@@ -1,7 +1,10 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useLocalDataOnLogin } from "@/hooks/useLocalDataOnLogin.ts";
-import { getArchivedValues, putArchivedValues } from "@/lib/storageArchive.ts";
+import {
+  getArchivedValues,
+  putArchivedValues,
+} from "@/lib/storage/storageArchive.ts";
 import { useAppStore } from "@/store/appStore.ts";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import { useInterviewStore } from "@/store/interviewStore.ts";

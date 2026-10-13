@@ -9,7 +9,7 @@ import {
   getDb,
   type IAtsCacheEntry,
   SCORES_STORE,
-} from "@/lib/indexdb";
+} from "@/lib/storage/indexdb";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 

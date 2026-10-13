@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ISessionWithQuestions } from "@/api/sessions";
 import { CreateInterviewDialog } from "@/components/interview/CreateInterviewDialog.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
-import { getLocalInterviewState } from "@/lib/interviewStorage";
+import { getLocalInterviewState } from "@/lib/storage/interviewStorage";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 

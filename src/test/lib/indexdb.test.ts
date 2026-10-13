@@ -15,7 +15,7 @@ import {
   SCORES_STORE,
   setAtsScore,
   setStandaloneReview,
-} from "@/lib/indexdb.ts";
+} from "@/lib/storage/indexdb.ts";
 
 const score = (
   jobId: string,

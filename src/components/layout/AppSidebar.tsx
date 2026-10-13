@@ -34,7 +34,7 @@ const SIDEBAR_MENU = [
   { name: "Notes", icon: NotebookIcon, url: NOTES_PAGE },
   { name: "Profile", icon: ReadCvLogoIcon, url: PROFILE_PAGE },
   {
-    name: "Builder",
+    name: "Builders",
     icon: ReadCvLogoIcon,
     url: RESUMES_PAGE,
   },

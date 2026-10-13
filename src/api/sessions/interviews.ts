@@ -9,7 +9,7 @@ import {
   getLocalInterviewState,
   type ILocalInterviewState,
   setLocalInterviewState,
-} from "@/lib/interviewStorage";
+} from "@/lib/storage/interviewStorage.ts";
 
 const BACKEND_ROOT = "interviews";
 export const FOCUS_TYPE_OPTIONS = [
