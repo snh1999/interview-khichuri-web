@@ -18,6 +18,7 @@ export const useResolveLookupField = <T extends FieldValues>(
         | number[]
         | null
         | undefined;
+      // biome-ignore lint/suspicious/noUnnecessaryConditions: getValues can return undefined at runtime
       const names: string[] = form.getValues(namesName) ?? [];
 
       if (names.length === 0) {
