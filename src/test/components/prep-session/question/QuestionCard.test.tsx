@@ -24,6 +24,8 @@ const QUESTION: IQuestion = {
   updatedAt: "2024-01-01",
 };
 
+const BUTTON_RE_NAME = /pin/i;
+
 const renderCard = (
   props: Partial<Parameters<typeof QuestionCard>[0]> = {}
 ) => {
@@ -96,7 +98,7 @@ describe("QuestionCard", () => {
     );
     const { user } = renderCard();
 
-    await user.click(screen.getByRole("button", { name: /pin/i }));
+    await user.click(screen.getByRole("button", { name: BUTTON_RE_NAME }));
 
     await waitFor(() => expect(body).toMatchObject({ isFavorite: true }));
   });

@@ -118,7 +118,7 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
 
       {warning ? <p className="text-destructive text-md">{warning}</p> : null}
 
-      {suggestions && suggestions.length > 0 ? (
+      {suggestions.length > 0 ? (
         <div className="text-md text-muted-foreground">
           <p>Suggestions: </p>
           {suggestions.map((suggestion) => (

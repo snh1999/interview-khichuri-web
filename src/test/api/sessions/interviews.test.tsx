@@ -78,6 +78,7 @@ describe("interview queries", () => {
     let search = "";
     server.use(
       http.get(`${API}/interviews`, ({ request: { url } }) => {
+        // biome-ignore lint/style/useDestructuring: <false flag>
         search = new URL(url).search;
         return envelope([]);
       })
