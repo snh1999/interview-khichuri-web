@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/useNamingConvention: <comes from library> */
 import { describe, expect, it, vi } from "vitest";
 import type { IInterview } from "@/api/sessions/interviews.ts";
 import {

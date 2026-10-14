@@ -13,6 +13,7 @@ const COLOR_STRING_REGEX =
 export const parseOklch = (colorString: string): IOklchColor | null => {
   const match = COLOR_STRING_REGEX.exec(colorString.trim());
 
+  // biome-ignore lint/suspicious/noUnnecessaryConditions: <false flag>
   if (!match?.groups) {
     return null;
   }
