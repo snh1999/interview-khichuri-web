@@ -249,3 +249,20 @@ select:-webkit-autofill:focus {
 .md-editor-wrap[data-invalid="true"] .w-md-editor {
   --md-editor-box-shadow-color: var(--destructive);
 }
+
+/* Sandpack custom height overrides so preview is not cropped by code file height */
+.sp-wrapper,
+.sp-layout {
+  display: flex !important;
+  flex: 1 1 0% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+}
+
+.sp-preview,
+.sp-preview-container,
+.sp-preview-iframe {
+  flex: 1 1 0% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+}

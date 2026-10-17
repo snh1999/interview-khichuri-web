@@ -13,6 +13,7 @@ import {
   LANDING_PAGE,
   LOGIN_PAGE,
   NOTES_PAGE,
+  PORTFOLIO_EDITOR_PAGE,
   PROFILE_PAGE,
   PUBLIC_RESUME_PAGE,
   REGISTER_PAGE,
@@ -77,6 +78,12 @@ const ResumesPage = lazy(() =>
 );
 
 const JobProfilePage = lazy(() => import("@/pages/JobProfilePage.tsx"));
+
+const PortfolioEditorPage = lazy(() =>
+  import("@/pages/PortfolioEditorPage.tsx").then((m) => ({
+    default: m.PortfolioEditorPage,
+  }))
+);
 
 const App = () => {
   const { data: session, isPending } = useSession();
@@ -164,6 +171,14 @@ const App = () => {
             </Suspense>
           }
           path={RESUME_EDITOR_PAGE}
+        />
+        <Route
+          element={
+            <Suspense fallback={<Spinner />}>
+              <PortfolioEditorPage />
+            </Suspense>
+          }
+          path={PORTFOLIO_EDITOR_PAGE}
         />
       </Route>
 
