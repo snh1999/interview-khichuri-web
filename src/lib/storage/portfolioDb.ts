@@ -126,12 +126,8 @@ export const deleteStoredRow = (
     return Promise.resolve();
   }
   return serialise(async () => {
-    try {
-      const db = await getDb();
-      await db.delete(store, key);
-    } catch (err) {
-      console.warn("[portfolioDb] delete failed:", err);
-    }
+    const db = await getDb();
+    await db.delete(store, key);
   });
 };
 
@@ -182,16 +178,12 @@ export const putPortfolio = (portfolio: Portfolio): Promise<void> => {
     return Promise.resolve();
   }
   return serialise(async () => {
-    try {
-      const db = await getDb();
-      await db.put("portfolios", {
-        ...portfolio,
-        generatedDesigns: [],
-        userId,
-      });
-    } catch (err) {
-      console.warn("[portfolioDb] write failed:", err);
-    }
+    const db = await getDb();
+    await db.put("portfolios", {
+      ...portfolio,
+      generatedDesigns: [],
+      userId,
+    });
   });
 };
 

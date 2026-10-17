@@ -151,7 +151,9 @@ export const useBuilderStore = create<BuilderState>()(
           };
         });
         // Rows are upsert-only, so dropping a project is an explicit delete.
-        deleteStoredRow("builderProjects", id);
+        deleteStoredRow("builderProjects", id).catch((err) => {
+          console.warn("[builderStore] dropProject persist failed:", err);
+        });
       },
 
       cloneProject: (fromId: string, toId: string) => {

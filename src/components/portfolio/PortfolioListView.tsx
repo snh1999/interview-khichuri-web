@@ -49,8 +49,12 @@ export const PortfolioListView = () => {
         const record = await importPortfolio.mutateAsync(parsed);
         toast.success(`Imported "${parsed.title || "Untitled"}"`);
         navigate(PORTFOLIO_EDITOR_PAGE.replace(":portfolioId", record.id));
-      } catch {
-        toast.error("Failed to parse portfolio JSON file");
+      } catch (err) {
+        // Only parse failures are ours to report; a failed write is toasted by
+        // the shared mutation cache, so don't double-report or mislabel it.
+        if (err instanceof SyntaxError) {
+          toast.error("Failed to parse portfolio JSON file");
+        }
       }
     };
     reader.readAsText(file);

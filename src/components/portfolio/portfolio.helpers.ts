@@ -214,12 +214,20 @@ export const normalizeImportedPortfolio = (
         )
       : {};
 
+  const title = typeof incoming.title === "string" ? incoming.title : "";
+  const description =
+    typeof incoming.description === "string" ? incoming.description : "";
+  const createdAt =
+    typeof incoming.createdAt === "string"
+      ? incoming.createdAt
+      : new Date().toISOString();
+
   return {
-    id: existing || !incoming.id ? generateSafeId() : incoming.id,
+    id: generateSafeId(),
     title: existing
-      ? `${incoming.title || "Portfolio"} (Imported)`
-      : incoming.title || "Imported Portfolio",
-    description: incoming.description || "",
+      ? `${title || "Portfolio"} (Imported)`
+      : title || "Imported Portfolio",
+    description,
     elements: validElements,
     theme: { ...baseTheme, ...safeThemeOverride },
     moodboard: normalizedMoodboard,
@@ -230,7 +238,7 @@ export const normalizeImportedPortfolio = (
       incoming.viewport && typeof incoming.viewport.zoom === "number"
         ? incoming.viewport
         : { x: 0, y: 0, zoom: 1 },
-    createdAt: incoming.createdAt || new Date().toISOString(),
+    createdAt,
     updatedAt: new Date().toISOString(),
   };
 };
