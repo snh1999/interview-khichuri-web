@@ -55,6 +55,7 @@ export interface AiDialogProps {
   showInstruction?: boolean;
   copyPrompt?: string;
   children?: ReactNode;
+  hideSkipDialog?: boolean;
 }
 
 export const AiDialog = (props: Readonly<AiDialogProps>) => (
@@ -76,6 +77,8 @@ const AiDialogContent = ({
   showInstruction = false,
   copyPrompt,
   children,
+  hideSkipDialog,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <barely over>
 }: Readonly<AiDialogProps>) => {
   const {
     providers,
@@ -274,17 +277,19 @@ const AiDialogContent = ({
                   </Label>
                 </div>
               ) : null}
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={skipAiDialog}
-                  disabled={isLoading}
-                  id="ai-skip-dialog"
-                  onCheckedChange={setSkipAiDialog}
-                />
-                <Label htmlFor="ai-skip-dialog">
-                  Do not show dialog for AI tasks
-                </Label>
-              </div>
+              {hideSkipDialog ? null : (
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={skipAiDialog}
+                    disabled={isLoading}
+                    id="ai-skip-dialog"
+                    onCheckedChange={setSkipAiDialog}
+                  />
+                  <Label htmlFor="ai-skip-dialog">
+                    Do not show dialog for AI tasks
+                  </Label>
+                </div>
+              )}
             </div>
           ) : (
             <div />

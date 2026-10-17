@@ -50,31 +50,23 @@ export const FormInput = <T extends FieldValues>({
     [field, type]
   );
 
+  const options = {
+    ...field,
+    "aria-invalid": fieldState.invalid,
+    className: "text-xs",
+    id: field.name,
+    placeholder,
+    value: field.value ?? "",
+  };
+
   return (
     <Field data-invalid={fieldState.invalid}>
       {label ? <FieldLabel htmlFor={field.name}>{label}</FieldLabel> : null}
       <InputGroup>
         {textArea ? (
-          <InputGroupTextarea
-            {...field}
-            aria-invalid={fieldState.invalid}
-            className="text-xs"
-            id={field.name}
-            placeholder={placeholder}
-            rows={rows}
-            value={field.value ?? ""}
-          />
+          <InputGroupTextarea {...options} rows={rows} />
         ) : (
-          <InputGroupInput
-            {...field}
-            aria-invalid={fieldState.invalid}
-            className="text-xs"
-            id={field.name}
-            onChange={handleChange}
-            placeholder={placeholder}
-            type={type}
-            value={field.value ?? ""}
-          />
+          <InputGroupInput {...options} onChange={handleChange} type={type} />
         )}
         {StartComponent ? (
           <InputGroupAddon
