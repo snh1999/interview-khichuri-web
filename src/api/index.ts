@@ -140,6 +140,11 @@ export const queryKeys = {
   profile: {
     all: ["profile"] as const,
   },
+  portfolio: {
+    all: ["portfolio"] as const,
+    list: () => [...queryKeys.portfolio.all, "list"] as const,
+    detail: (id: string) => [...queryKeys.portfolio.all, "detail", id] as const,
+  },
   resumes: {
     all: ["resumes"] as const,
     list: () => [...queryKeys.resumes.all, "list"] as const,
