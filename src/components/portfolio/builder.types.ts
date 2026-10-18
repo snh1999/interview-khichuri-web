@@ -53,7 +53,7 @@ export interface BuilderState {
   openFile: (file: string) => void;
   closeFile: (file: string) => void;
   updateFileContent: (path: string, content: string) => void;
-  seedProjectFiles: (files: Record<string, string>) => void;
+  seedProjectFiles: (files: Record<string, string>, targetId?: string) => void;
   createFile: (path: string, content?: string) => boolean;
   deleteFile: (path: string) => void;
   renameFile: (oldPath: string, newPath: string) => boolean;
@@ -68,11 +68,13 @@ export interface BuilderState {
       message: string;
       applied: string[];
     },
-    projectId?: string
+    projectId?: string,
+    baselineFiles?: Record<string, string>
   ) => void;
   appendGeneratedFiles: (
     files: Record<string, string>,
-    message: string
+    message: string,
+    targetId?: string
   ) => void;
   exportProject: (name?: string) => void;
   resetToDemo: () => void;

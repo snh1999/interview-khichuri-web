@@ -178,6 +178,7 @@ export const Sidebar: React.FC = () => {
 
     try {
       const project = getActiveProject(useBuilderStore.getState());
+      const baselineFiles = { ...project.files };
       const context = selectBuilderContext(project.files, {
         prompt: promptText,
         activeFile: project.activeFile,
@@ -195,7 +196,7 @@ export const Sidebar: React.FC = () => {
         toast.info("AI result discarded: the signed-in account changed.");
         return;
       }
-      applyAiResult(result, projectId ?? undefined);
+      applyAiResult(result, projectId ?? undefined, baselineFiles);
     } catch (err: unknown) {
       console.error("[Sidebar] Failed to generate code:", err);
       toast.error(

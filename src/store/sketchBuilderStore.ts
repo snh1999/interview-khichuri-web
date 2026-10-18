@@ -66,12 +66,79 @@ export function cloneAndOffsetElements(
   return { clonedElements, idMap };
 }
 
+/**
+ * Keeps a line/arrow's stored endpoints (and a pen's point cloud) in step with
+ * its start/box. The renderer trusts `endX/endY` over `width/height`, so a pure
+ * box edit (resize handle, Geometry editor) would otherwise leave the visible
+ * shape untouched. Endpoints already present in `changes` are authoritative.
+ */
+export function withConsistentGeometry(
+  el: CanvasElement,
+  changes: ElementChanges
+): ElementChanges {
+  if (el.type === "line" || el.type === "arrow") {
+    if (changes.endX !== undefined || changes.endY !== undefined) {
+      return changes;
+    }
+    return withConsistentLine(el as LineElement, changes);
+  }
+  if (el.type === "pen") {
+    return translatePen(el as PenElement, changes);
+  }
+  return changes;
+}
+
+function withConsistentLine(
+  line: LineElement,
+  changes: ElementChanges
+): ElementChanges {
+  const nextX = changes.x ?? line.x;
+  const nextY = changes.y ?? line.y;
+  let endX = line.endX ?? line.x + line.width;
+  let endY = line.endY ?? line.y + line.height;
+
+  if (changes.x !== undefined) {
+    endX += changes.x - line.x;
+  }
+  if (changes.y !== undefined) {
+    endY += changes.y - line.y;
+  }
+  if (changes.width !== undefined && line.width !== 0) {
+    endX = nextX + (endX - nextX) * (changes.width / line.width);
+  }
+  if (changes.height !== undefined && line.height !== 0) {
+    endY = nextY + (endY - nextY) * (changes.height / line.height);
+  }
+
+  return { ...changes, endX, endY };
+}
+
+// Pen resizing is not modelled here; only pure translations move the cloud.
+function translatePen(
+  pen: PenElement,
+  changes: ElementChanges
+): ElementChanges {
+  const { x, y } = changes;
+  if (x === undefined && y === undefined) {
+    return changes;
+  }
+  if (changes.width !== undefined || changes.height !== undefined) {
+    return changes;
+  }
+  const { points } = pen;
+  const dx = x === undefined ? 0 : x - pen.x;
+  const dy = y === undefined ? 0 : y - pen.y;
+  return {
+    ...changes,
+    points: points.map((pt) => ({ x: pt.x + dx, y: pt.y + dy })),
+  };
+}
+
 interface HistorySnapshot {
   elements: CanvasElement[];
   theme: ThemeConfig;
   moodboard: MoodboardItem[];
 }
-
 interface SketchBuilderState {
   // The live canvas editing buffer for the portfolio at the current route.
   // Portfolio records + CRUD live in react-query (`api/portfolio/idb.ts`).
@@ -150,6 +217,9 @@ interface SketchBuilderState {
 
   setViewport: (viewport: { x: number; y: number; zoom: number }) => void;
   resetViewport: () => void;
+  /** Live pixel size of the canvas viewport, kept current by the Canvas itself. */
+  canvasSize: { width: number; height: number };
+  setCanvasSize: (size: { width: number; height: number }) => void;
 
   undo: () => void;
   redo: () => void;
@@ -166,7 +236,8 @@ interface SketchBuilderState {
   setActiveFrameForAi: (frameId: string | null) => void;
   applyGeneratedDesign: (
     design: GeneratedDesign,
-    mode?: "new" | "append"
+    mode?: "new" | "append",
+    targetId?: string
   ) => void;
   setActiveGeneratedDesign: (design: GeneratedDesign | null) => void;
 
@@ -211,6 +282,7 @@ export const useSketchBuilderStore = create<SketchBuilderState>()(
       draft: null,
       viewMode: "canvas",
       isSidebarOpen: true,
+      canvasSize: { width: 0, height: 0 },
 
       currentTool: "select",
       selectedStamp: "card",
@@ -464,7 +536,12 @@ export const useSketchBuilderStore = create<SketchBuilderState>()(
           get().recordHistory();
         }
         const updatedElements = draft.elements.map((el) =>
-          el.id === id ? ({ ...el, ...updates } as CanvasElement) : el
+          el.id === id
+            ? ({
+                ...el,
+                ...withConsistentGeometry(el, updates),
+              } as CanvasElement)
+            : el
         );
 
         patch((d) => ({
@@ -495,7 +572,11 @@ export const useSketchBuilderStore = create<SketchBuilderState>()(
 
         const updatedElements = draft.elements.map((el) => {
           if (updatesMap.has(el.id)) {
-            return { ...el, ...updatesMap.get(el.id) } as CanvasElement;
+            const changes = updatesMap.get(el.id);
+            return {
+              ...el,
+              ...(changes ? withConsistentGeometry(el, changes) : {}),
+            } as CanvasElement;
           }
           return el;
         });
@@ -652,68 +733,67 @@ export const useSketchBuilderStore = create<SketchBuilderState>()(
 
         get().recordHistory();
 
-        let targetVal = 0;
-        switch (alignment) {
-          case "left":
-            targetVal = Math.min(...selected.map((el) => el.x));
-            get().updateElements(
-              selected.map((el) => ({ id: el.id, changes: { x: targetVal } }))
-            );
-            break;
-          case "right":
-            targetVal = Math.max(...selected.map((el) => el.x + el.width));
-            get().updateElements(
-              selected.map((el) => ({
-                id: el.id,
-                changes: { x: targetVal - el.width },
-              }))
-            );
-            break;
-          case "center": {
-            const minX = Math.min(...selected.map((el) => el.x));
-            const maxX = Math.max(...selected.map((el) => el.x + el.width));
-            const centerX = minX + (maxX - minX) / 2;
-            get().updateElements(
-              selected.map((el) => ({
-                id: el.id,
-                changes: { x: centerX - el.width / 2 },
-              }))
-            );
-            break;
+        const minX = Math.min(...selected.map((el) => el.x));
+        const maxX = Math.max(...selected.map((el) => el.x + el.width));
+        const minY = Math.min(...selected.map((el) => el.y));
+        const maxY = Math.max(...selected.map((el) => el.y + el.height));
+
+        const deltaFor = (el: CanvasElement): { dx: number; dy: number } => {
+          switch (alignment) {
+            case "left":
+              return { dx: minX - el.x, dy: 0 };
+            case "right":
+              return { dx: maxX - (el.x + el.width), dy: 0 };
+            case "center":
+              return { dx: (minX + maxX) / 2 - (el.x + el.width / 2), dy: 0 };
+            case "top":
+              return { dx: 0, dy: minY - el.y };
+            case "bottom":
+              return { dx: 0, dy: maxY - (el.y + el.height) };
+            case "middle":
+              return { dx: 0, dy: (minY + maxY) / 2 - (el.y + el.height / 2) };
+            default:
+              return { dx: 0, dy: 0 };
           }
-          case "top":
-            targetVal = Math.min(...selected.map((el) => el.y));
-            get().updateElements(
-              selected.map((el) => ({ id: el.id, changes: { y: targetVal } }))
-            );
-            break;
-          case "bottom":
-            targetVal = Math.max(...selected.map((el) => el.y + el.height));
-            get().updateElements(
-              selected.map((el) => ({
-                id: el.id,
-                changes: { y: targetVal - el.height },
-              }))
-            );
-            break;
-          case "middle": {
-            const minY = Math.min(...selected.map((el) => el.y));
-            const maxY = Math.max(...selected.map((el) => el.y + el.height));
-            const centerY = minY + (maxY - minY) / 2;
-            get().updateElements(
-              selected.map((el) => ({
-                id: el.id,
-                changes: { y: centerY - el.height / 2 },
-              }))
-            );
-            break;
+        };
+
+        const selectedIds = new Set(selected.map((el) => el.id));
+        const updates = selected.map((el) => {
+          const { dx, dy } = deltaFor(el);
+          return { id: el.id, changes: { x: el.x + dx, y: el.y + dy } };
+        });
+
+        // Frames carry their contents: move each frame's children by the same
+        // delta so the artboard's contents stay inside it.
+        for (const el of selected) {
+          if (el.type !== "frame") {
+            continue;
           }
-          default:
-            break;
+          const { dx, dy } = deltaFor(el);
+          for (const child of getElementsWithContainedChildren(draft.elements, [
+            el.id,
+          ])) {
+            if (selectedIds.has(child.id)) {
+              continue;
+            }
+            updates.push({
+              id: child.id,
+              changes: { x: child.x + dx, y: child.y + dy },
+            });
+          }
         }
+
+        get().updateElements(updates);
       },
 
       setViewport: (viewport) => patch((d) => ({ ...d, viewport })),
+      setCanvasSize: (size) =>
+        set((state) =>
+          state.canvasSize.width === size.width &&
+          state.canvasSize.height === size.height
+            ? {}
+            : { canvasSize: size }
+        ),
 
       resetViewport: () => {
         get().setViewport({ x: 0, y: 0, zoom: 1 });
@@ -773,20 +853,24 @@ export const useSketchBuilderStore = create<SketchBuilderState>()(
 
       setActiveFrameForAi: (frameId) => set({ activeFrameIdForAi: frameId }),
 
-      applyGeneratedDesign: (design, mode = "new") => {
+      applyGeneratedDesign: (design, mode, targetId) => {
         // Seed the portfolio's editable code project so the generated site is
         // actually visible in the Code Builder (the two stores are linked here).
         // "new" replaces the project with the generated file map; "append" merges
-        // the new route files in without dropping the existing pages.
+        // the new route files in without dropping the existing pages. The target
+        // is captured when generation starts so a navigation mid-run cannot land
+        // the result in another portfolio.
         const { draft } = get();
         const builder = useBuilderStore.getState();
+        const projectId = targetId ?? draft?.id;
         if (mode === "append") {
           builder.appendGeneratedFiles(
             design.files,
-            `Added ${design.routes.join(", ")}`
+            `Added ${design.routes.join(", ")}`,
+            projectId
           );
-        } else if (draft) {
-          builder.seedGeneratedFiles(draft.id, design.files);
+        } else if (projectId) {
+          builder.seedGeneratedFiles(projectId, design.files);
         }
         set({ activeGeneratedDesign: design, viewMode: "preview" });
       },

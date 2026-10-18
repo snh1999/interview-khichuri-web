@@ -27,14 +27,27 @@ beforeEach(() => {
 });
 
 describe("PortfolioSketchPage", () => {
-  it("shows the canvas placeholder in canvas mode", () => {
+  it("shows the real canvas in canvas mode", () => {
     render(<PortfolioSketchPage />);
 
+    expect(screen.getByText("Canvas is Empty")).toBeInTheDocument();
     expect(
-      screen.getByText("Canvas will be added in the next PR.")
+      screen.getByRole("button", { name: "Add Desktop Artboard" })
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Generate Portfolio" })
+    ).toBeInTheDocument();
+  });
+
+  it("opens the AI transform dialog from the navbar trigger", async () => {
+    const { user } = render(<PortfolioSketchPage />);
+
+    await user.click(
+      screen.getByRole("button", { name: "Generate Portfolio" })
+    );
+
+    expect(
+      await screen.findByText("Transform Wireframe to Portfolio Design")
     ).toBeInTheDocument();
   });
 

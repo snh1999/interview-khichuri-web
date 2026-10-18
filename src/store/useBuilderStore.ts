@@ -43,6 +43,33 @@ const EMPTY_PROJECT_FILES: ProjectFiles = {
   "/App.js": "export default function App() {\n  return null;\n}\n",
 };
 
+// Merge a server reply into the current files. `baselineFiles` is the content
+// sent with the request; a file that no longer matches it was edited locally
+// while the request ran, so the stale server copy is dropped instead of
+// clobbering newer keystrokes. Deletions arrive only in `applied`.
+const mergeAiFiles = (
+  currentFiles: ProjectFiles,
+  resultFiles: Record<string, string>,
+  edits: IAppliedEdit[],
+  baselineFiles?: Record<string, string>
+): ProjectFiles => {
+  const nextFiles = { ...currentFiles };
+  for (const [path, content] of Object.entries(resultFiles)) {
+    const baseline = baselineFiles?.[path];
+    const editedInFlight =
+      baseline !== undefined && currentFiles[path] !== baseline;
+    if (!editedInFlight) {
+      nextFiles[path] = content;
+    }
+  }
+  for (const edit of edits) {
+    if (edit.op === "deleted") {
+      delete nextFiles[edit.path];
+    }
+  }
+  return nextFiles;
+};
+
 const nowTime = (): string =>
   new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
@@ -278,26 +305,35 @@ export const useBuilderStore = create<BuilderState>()(
       // Seeds files streamed from the genesis flow, one file at a time as each
       // completes; merging (not replacing) keeps sibling files and lets the
       // preview compile incrementally.
-      seedProjectFiles: (files: Record<string, string>) => {
-        set((state) =>
-          patchProject(state, (p) => {
-            const nextOpen = [...p.openFiles];
-            for (const path of Object.keys(files)) {
-              if (!nextOpen.includes(path)) {
-                nextOpen.push(path);
-              }
+      seedProjectFiles: (files, targetId) => {
+        const seed = (p: BuilderProject): BuilderProject => {
+          const nextOpen = [...p.openFiles];
+          for (const path of Object.keys(files)) {
+            if (!nextOpen.includes(path)) {
+              nextOpen.push(path);
             }
-            return {
-              ...p,
-              files: { ...p.files, ...files },
-              openFiles: nextOpen,
-              activeFile: files["/App.js"] ? "/App.js" : p.activeFile,
-              isCodePaneOpen: true,
-              viewMode: "split",
-              lastSaved: nowTime(),
-            };
-          })
-        );
+          }
+          return {
+            ...p,
+            files: { ...p.files, ...files },
+            openFiles: nextOpen,
+            activeFile: files["/App.js"] ? "/App.js" : p.activeFile,
+            isCodePaneOpen: true,
+            viewMode: "split",
+            lastSaved: nowTime(),
+          };
+        };
+        // Streamed chunks must land on the project that started the run, not
+        // whichever portfolio is active when each chunk resolves. Unlike the
+        // append path, genesis may target a project that does not exist yet.
+        set((state) => {
+          const id = targetId ?? state.activePortfolioId;
+          if (!id) {
+            return {};
+          }
+          const current = state.projects[id] ?? createEmptyProject();
+          return { projects: { ...state.projects, [id]: seed(current) } };
+        });
       },
 
       // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: verbatim source function; complexity acceptable at this boundary
@@ -525,7 +561,8 @@ export default function ${capitalizedName || "CustomComponent"}() {
           message: string;
           applied: string[];
         },
-        projectId?: string
+        projectId?: string,
+        baselineFiles?: Record<string, string>
       ): void => {
         if (projectId !== undefined && !get().projects[projectId]) {
           toast.info("AI result discarded: the project no longer exists.");
@@ -540,15 +577,12 @@ export default function ${capitalizedName || "CustomComponent"}() {
           ),
         ];
         const patch = (project: BuilderProject): BuilderProject => {
-          // Merge the server's project rather than replacing it, so any local
-          // edits made while the request ran survive; deletions arrive only in
-          // `applied`, so drop those explicitly.
-          const nextFiles = { ...project.files, ...result.files };
-          for (const edit of edits) {
-            if (edit.op === "deleted") {
-              delete nextFiles[edit.path];
-            }
-          }
+          const nextFiles = mergeAiFiles(
+            project.files,
+            result.files,
+            edits,
+            baselineFiles
+          );
           // Tab list follows the surviving files: a deleted file must not linger
           // open, and the active tab must fall back to a file that still exists.
           const nextOpen = project.openFiles.filter(
@@ -596,12 +630,15 @@ export default function ${capitalizedName || "CustomComponent"}() {
       // Append a generated multi-page design into the current project: reuse the
       // builder-merge path so existing routes survive and shared files (router/nav)
       // are updated in place.
-      appendGeneratedFiles: (files, message) => {
-        get().applyAiResult({
-          files,
-          message,
-          applied: Object.keys(files).map((path) => `created ${path}`),
-        });
+      appendGeneratedFiles: (files, message, targetId) => {
+        get().applyAiResult(
+          {
+            files,
+            message,
+            applied: Object.keys(files).map((path) => `created ${path}`),
+          },
+          targetId
+        );
       },
 
       exportProject: (name?: string) => {

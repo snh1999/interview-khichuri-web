@@ -8,6 +8,17 @@ import type {
 } from "@/components/portfolio/sketch/types";
 import { api, streamPost } from "@/lib/api-client";
 
+// TODO(backend): the sketch endpoint has no way to receive the existing project,
+// so the BE cannot be feature-complete for two cases. Not implemented server-side;
+// revisit when the backend adds support. Remove these notes once it does.
+//
+// 1. Route-preserving "append" — the request carries only the selected artboards,
+//    so the returned file map (incl. the /App.js router) covers only the new
+//    pages; applying it overwrites the existing router and drops prior routes.
+//    BE needs to accept the existing files/routes and merge the new page into them.
+// 2. Inspiration images — uploaded images live in browser IndexedDB (`idb://`).
+//    The client now inlines them as data URLs before sending, but the BE must
+//    accept/read a data URL in frame.inspirationImageUrl (and size-limit it).
 export interface IGenerateSketchDto {
   prompt: string;
   frames: FrameElement[];
