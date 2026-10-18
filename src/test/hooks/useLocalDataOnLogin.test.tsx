@@ -9,6 +9,8 @@ import { useAppStore } from "@/store/appStore.ts";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import { useInterviewStore } from "@/store/interviewStore.ts";
 import { useResumeStore } from "@/store/resumeStore.ts";
+import { useSketchBuilderStore } from "@/store/sketchBuilderStore.ts";
+import { useBuilderStore } from "@/store/useBuilderStore.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
 
 const resetStores = () => {
@@ -17,6 +19,8 @@ const resetStores = () => {
   useResumeStore.setState(useResumeStore.getInitialState(), true);
   useCalendarStore.setState(useCalendarStore.getInitialState(), true);
   useJobsStore.setState(useJobsStore.getInitialState(), true);
+  useSketchBuilderStore.setState(useSketchBuilderStore.getInitialState(), true);
+  useBuilderStore.setState(useBuilderStore.getInitialState(), true);
 };
 
 const panes = (pane: string) => JSON.stringify({ state: { pane }, version: 1 });

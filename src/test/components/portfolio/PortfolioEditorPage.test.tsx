@@ -36,9 +36,7 @@ describe("PortfolioEditorPage", () => {
 
     renderAt("/portfolio/p1");
 
-    expect(
-      await screen.findByText("Canvas will be added in the next PR.")
-    ).toBeInTheDocument();
+    expect(await screen.findByText("Canvas is Empty")).toBeInTheDocument();
     expect(useSketchBuilderStore.getState().draft?.id).toBe("p1");
   });
 
