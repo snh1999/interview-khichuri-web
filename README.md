@@ -41,7 +41,8 @@ React 19 · TypeScript · Vite 8 · Tailwind CSS 4 · shadcn/ui on Base UI · re
 - **Job profile** — a normalised profile graph (experience, education, projects, publications,
   references, skills, preferences) that feeds resume generation and job matching.
 - **Prep sessions** — sessions, topics, question sets, and a client-side question bank.
-- **Live mock interview** — camera preview, a lip-synced talking avatar, TTS read-aloud, per-question
+- **Live mock interview** — camera preview, a lip-synced talking avatar, TTS read-aloud,
+  per-question
   timing, and streaming AI follow-up questions. Drafts survive reloads.
 - **Notes** — markdown notes with a single attachment and a streaming "learn more" AI explanation.
 - **Calendar** — a hand-rolled month/week/day grid merging job deadlines and interviews with custom
@@ -53,23 +54,23 @@ React 19 · TypeScript · Vite 8 · Tailwind CSS 4 · shadcn/ui on Base UI · re
 
 ## Stack
 
-| Concern | Choice |
-| --- | --- |
-| Framework | React 19.3 |
-| Build | Vite 8 (`@vitejs/plugin-react`, `@tailwindcss/vite`) |
-| Language | TypeScript 7, `strict` |
-| Routing | react-router 8 — **declarative** mode (`<BrowserRouter>`) |
-| Server state | TanStack Query 5 (`useSuspenseQuery`-first) |
-| Client state | Zustand 5 with `persist` |
-| Forms | react-hook-form + Zod 4 via `@hookform/resolvers` |
-| UI | shadcn/ui on **Base UI** (`@base-ui/react`) — no Radix |
-| Styling | Tailwind CSS 4, CSS-first config, `oklch()` tokens |
-| Icons | `@phosphor-icons/react` |
-| Auth | `better-auth` client + `@better-auth/passkey` |
-| Markdown | `react-markdown` + `remark-gfm` + `shiki` |
-| PDF | `@react-pdf/renderer` |
-| Local persistence | `idb`, `minisearch`, `date-fns` |
-| Lint / format | Biome 2 via `ultracite` (Prettier for editors only) |
+| Concern           | Choice                                                    |
+|-------------------|-----------------------------------------------------------|
+| Framework         | React 19.3                                                |
+| Build             | Vite 8 (`@vitejs/plugin-react`, `@tailwindcss/vite`)      |
+| Language          | TypeScript 7, `strict`                                    |
+| Routing           | react-router 8 — **declarative** mode (`<BrowserRouter>`) |
+| Server state      | TanStack Query 5 (`useSuspenseQuery`-first)               |
+| Client state      | Zustand 5 with `persist`                                  |
+| Forms             | react-hook-form + Zod 4 via `@hookform/resolvers`         |
+| UI                | shadcn/ui on **Base UI** (`@base-ui/react`) — no Radix    |
+| Styling           | Tailwind CSS 4, CSS-first config, `oklch()` tokens        |
+| Icons             | `@phosphor-icons/react`                                   |
+| Auth              | `better-auth` client + `@better-auth/passkey`             |
+| Markdown          | `react-markdown` + `remark-gfm` + `shiki`                 |
+| PDF               | `@react-pdf/renderer`                                     |
+| Local persistence | `idb`, `minisearch`, `date-fns`                           |
+| Lint / format     | Biome 2 via `ultracite` (Prettier for editors only)       |
 
 ## Getting started
 
@@ -102,16 +103,17 @@ for cross-site auth outside of `localhost`.
 
 ## Scripts
 
-| Script | What it does |
-| --- | --- |
-| `dev` | Vite dev server on port 5173 |
-| `build` | `tsc -b && vite build` |
-| `preview` | Serve the production build |
-| `typecheck` | `tsc --noEmit -p tsconfig.app.json` |
-| `check` | `ultracite check` — Biome lint, **no writes** |
-| `fix` | `ultracite fix` — Biome lint + auto-fix |
-
-There is no `test` script. See [Testing](#testing).
+| Script          | What it does                                  |
+|-----------------|-----------------------------------------------|
+| `dev`           | Vite dev server on port 5173                  |
+| `build`         | `tsc -b && vite build`                        |
+| `preview`       | Serve the production build                    |
+| `typecheck`     | `tsc --noEmit -p tsconfig.app.json`           |
+| `check`         | `ultracite check` — Biome lint, **no writes** |
+| `fix`           | `ultracite fix` — Biome lint + auto-fix       |
+| `test`          | Vitest, once — all unit tests                 |
+| `test:watch`    | Vitest watch mode                             |
+| `test:coverage` | Vitest + V8 coverage with the global gate     |
 
 ## Project layout
 
@@ -148,7 +150,7 @@ Path alias: `@` → `./src` (declared in both `tsconfig.app.json` and `vite.conf
 
 ## Conventions
 
-- **Co-located helper modules.** A form is `FooForm.tsx` + `FooForm.helpers.ts` (+ `*.types.ts`,
+- **Co-located helper modules.** A form is `FooForm.tsx` + `FooForm.helpers.ts` (+ `*.helpers.ts`,
   `*.data.ts`). The same pattern applies to components, stores, and API modules.
 - **Suspense-first data fetching.** `useSuspenseQuery` is the default; `<Spinner />` fallbacks and
   `AppErrorSuspense` handle the pending and failed states. Prefer it over `useQuery` for new code.
@@ -167,32 +169,32 @@ Auth gating uses wrapper elements, not loaders: a route inside the protected gro
 `<Navigate to={LOGIN_PAGE} />` when there is no session, and guest-only routes redirect the
 opposite way.
 
-| Path | Page | Access |
-| --- | --- | --- |
-| `/` | `LandingPage` | guest |
-| `/login` | `LoginPage` | guest |
-| `/register` | `RegisterPage` | guest |
-| `/forgot-password` | `ForgotPasswordPage` | guest |
-| `/reset-password` | `ResetPasswordPage` | public |
-| `/verify-email` | `VerifyEmailPage` | public |
-| `/email-redirect` | `EmailRedirectPage` | guest |
-| `/confirm-login` | `ConfirmLoginPage` (2FA) | guest |
-| `/r/:slug` | `PublicResumePage` | **public** |
-| `/dashboard` | `DashboardPage` | protected |
-| `/jobs` | `JobsPage` | protected |
-| `/jobs/:jobId` | `JobDetailPage` | protected |
-| `/sessions` | `SessionsPage` | protected |
-| `/sessions/:sessionId` | `SessionDetailPage` | protected |
-| `/interviews/:interviewId` | `InterviewPage` | protected |
-| `/notes` | `NotesPage` | protected |
-| `/schedule` | `SchedulePage` | protected |
-| `/profile` | `JobProfilePage` | protected |
-| `/resumes` | `ResumesPage` | protected |
-| `/resumes/:resumeId` | `ResumeDetailPage` | protected |
-| `/resumes/:resumeId/edit` | `ResumeEditorWithPreviewPage` | protected, full-screen (no sidebar) |
-| `/settings` | `SettingsPage` | protected |
-| `/admin` | `AdminPage` | protected, no sidebar |
-| `/*` | `EmptyPage` (404) | — |
+| Path                       | Page                          | Access                              |
+|----------------------------|-------------------------------|-------------------------------------|
+| `/`                        | `LandingPage`                 | guest                               |
+| `/login`                   | `LoginPage`                   | guest                               |
+| `/register`                | `RegisterPage`                | guest                               |
+| `/forgot-password`         | `ForgotPasswordPage`          | guest                               |
+| `/reset-password`          | `ResetPasswordPage`           | public                              |
+| `/verify-email`            | `VerifyEmailPage`             | public                              |
+| `/email-redirect`          | `EmailRedirectPage`           | guest                               |
+| `/confirm-login`           | `ConfirmLoginPage` (2FA)      | guest                               |
+| `/r/:slug`                 | `PublicResumePage`            | **public**                          |
+| `/dashboard`               | `DashboardPage`               | protected                           |
+| `/jobs`                    | `JobsPage`                    | protected                           |
+| `/jobs/:jobId`             | `JobDetailPage`               | protected                           |
+| `/sessions`                | `SessionsPage`                | protected                           |
+| `/sessions/:sessionId`     | `SessionDetailPage`           | protected                           |
+| `/interviews/:interviewId` | `InterviewPage`               | protected                           |
+| `/notes`                   | `NotesPage`                   | protected                           |
+| `/schedule`                | `SchedulePage`                | protected                           |
+| `/profile`                 | `JobProfilePage`              | protected                           |
+| `/resumes`                 | `ResumesPage`                 | protected                           |
+| `/resumes/:resumeId`       | `ResumeDetailPage`            | protected                           |
+| `/resumes/:resumeId/edit`  | `ResumeEditorWithPreviewPage` | protected, full-screen (no sidebar) |
+| `/settings`                | `SettingsPage`                | protected                           |
+| `/admin`                   | `AdminPage`                   | protected, no sidebar               |
+| `/*`                       | `EmptyPage` (404)             | —                                   |
 
 Six heavy routes are `React.lazy` + `<Suspense>`. `SidebarLayout` provides the sidebar chrome for
 the protected group; the resume editor and admin page opt out.
@@ -236,15 +238,15 @@ window focus and reconnect; mutations do not retry.
 Seven persisted Zustand stores in `src/store/`. Most use `skipHydration: true`, because
 `useLocalDataOnLogin` drives hydration explicitly.
 
-| Store | localStorage key | Holds |
-| --- | --- | --- |
-| `appStore` | `app-store` | Avatar variant, page header, default AI provider, current `userId` tag |
-| `themeStore` | `khichuri-theme` | Mode, preset variables, radius, user presets, import/export |
-| `resumeStore` | `resume-store` | Per-template section enable/order, skill groups |
-| `scheduleStore` | `schedule-ui` | Calendar anchor, view mode, event-source visibility, drawer state |
-| `useJobsStore` | `job-filters-sort` | Jobs list search, status, sort, date filters |
-| `interviewStore` | `interview-panes` | Live-interview pane visibility |
-| `resendStore` | `email-resend-timestamp` | Email-resend cooldown timestamp |
+| Store            | localStorage key         | Holds                                                                  |
+|------------------|--------------------------|------------------------------------------------------------------------|
+| `appStore`       | `app-store`              | Avatar variant, page header, default AI provider, current `userId` tag |
+| `themeStore`     | `khichuri-theme`         | Mode, preset variables, radius, user presets, import/export            |
+| `resumeStore`    | `resume-store`           | Per-template section enable/order, skill groups                        |
+| `scheduleStore`  | `schedule-ui`            | Calendar anchor, view mode, event-source visibility, drawer state      |
+| `useJobsStore`   | `job-filters-sort`       | Jobs list search, status, sort, date filters                           |
+| `interviewStore` | `interview-panes`        | Live-interview pane visibility                                         |
+| `resendStore`    | `email-resend-timestamp` | Email-resend cooldown timestamp                                        |
 
 ### Per-user local data — read this before adding local state
 
@@ -322,15 +324,15 @@ branch on `{ data, error }`.
 
 ## AI features
 
-| Feature | Where | Notes |
-| --- | --- | --- |
-| BYOK keys | `src/components/keys/`, `src/api/keys/` | Six providers: google, openai, groq, openrouter, mistral, cerebras |
-| AI dialog | `src/components/common/ai/` | Shared prompt/confirm flow; skippable per user |
-| ATS score | `src/components/resume/ats/` | 4 categories, cached in IndexedDB |
-| Standalone review | `src/components/resume/ats/` | 4 categories, cached in IndexedDB |
-| Resume suggestions | `src/components/resume/job-profile/preview/` | Word-level accept/reject diff via `diff` |
-| Live follow-ups | `src/components/interview/live/LiveInterview.tsx` | SSE via `streamPost` |
-| Notes "learn more" | `src/components/notes/question/` | SSE via `streamPost` |
+| Feature            | Where                                             | Notes                                                              |
+|--------------------|---------------------------------------------------|--------------------------------------------------------------------|
+| BYOK keys          | `src/components/keys/`, `src/api/keys/`           | Six providers: google, openai, groq, openrouter, mistral, cerebras |
+| AI dialog          | `src/components/common/ai/`                       | Shared prompt/confirm flow; skippable per user                     |
+| ATS score          | `src/components/resume/ats/`                      | 4 categories, cached in IndexedDB                                  |
+| Standalone review  | `src/components/resume/ats/`                      | 4 categories, cached in IndexedDB                                  |
+| Resume suggestions | `src/components/resume/job-profile/preview/`      | Word-level accept/reject diff via `diff`                           |
+| Live follow-ups    | `src/components/interview/live/LiveInterview.tsx` | SSE via `streamPost`                                               |
+| Notes "learn more" | `src/components/notes/question/`                  | SSE via `streamPost`                                               |
 
 **Speech** has two engines, selectable per interview (`auto` / `google` / `browser`): the browser's
 `speechSynthesis`, or Google TTS through the API. The talking avatar maps audio to 7 viseme mouth
@@ -375,16 +377,34 @@ edit with care.
 
 ## Testing
 
-There is **no test runner configured** — no Vitest/Jest/Playwright dependency and no `test` script.
-`biome.jsonc` extends `ultracite/biome/vitest`, but that is inherited preset boilerplate.
-
-Verify changes with:
+**Vitest 5** + Testing Library, with `msw` for network and `jsdom` for the DOM.
 
 ```bash
-npm run typecheck   # tsc --noEmit
-npm run check       # ultracite check
-npm run build       # tsc -b && vite build
+npm run test            # all unit tests, once
+npm run test:watch      # watch mode
+npm run test:coverage   # unit tests + V8 coverage with the global gate
+npx vitest run <path>   # a single file or suite while iterating
 ```
+
+The coverage gate is **85% lines/statements/functions and 80% branches** and is red until the suites
+cover enough code — it is intentional, not a failure to paper over. Coverage exclusions (tests,
+`src/test/**`, `src/main.tsx`, `src/components/ui/**`) are part of the gate contract.
+
+The rules that matter (full list in `AGENTS.md`):
+
+- Query user-visible output only (`getByRole`, `getByLabel`, `getByText`, `findBy*`/`waitFor`). No
+  class/id selectors, no snapshots.
+- Render through the shared helper in `src/test/render.tsx` (MemoryRouter + a fresh react-query
+  client + error/suspense boundary; returns `user` from `userEvent`).
+- Mock network via MSW — base handlers in `src/test/msw/handlers.ts`, overridden per test with
+  `server.use(...)`. `onUnhandledRequest` is `"error"`.
+- No mocking our own hooks/components. Third-party libs (e.g. `sonner`) may be stubbed.
+- Every test asserts something. `vitest` globals are off — import `describe`/`it`/`expect`.
+- Business-critical code covers four states (loading, empty, error, success) plus form validation.
+- No real OpenAI/Gemini calls anywhere, ever.
+
+Verify a change end to end with
+`npm run typecheck && npm run check && npm run test:coverage && npm run build`.
 
 `.rhf-test/` is a scratch harness, not part of the build: it bundles a single entry as an ES library
 to `/tmp/opencode` in order to reproduce a `react-hook-form` dirty-tracking bug in isolation. It is

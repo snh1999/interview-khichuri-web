@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { PersistStorage } from "zustand/middleware";
 import { apiClient } from "@/api";
+import { setActiveUserId } from "@/lib/storage/portfolioDb";
 import {
   getArchivedValues,
   putArchivedValues,
@@ -10,6 +11,7 @@ import { useAppStore } from "@/store/appStore";
 import { useCalendarStore } from "@/store/calendarStore.ts";
 import { useInterviewStore } from "@/store/interviewStore";
 import { useResumeStore } from "@/store/resumeStore";
+import { useBuilderStore } from "@/store/useBuilderStore";
 import { useJobsStore } from "@/store/useJobsStore";
 
 /**
@@ -82,6 +84,15 @@ const userScopedStore = <TState, TPersisted>(
   },
   rehydrate: () => store.persist.rehydrate(),
 });
+
+// The builder's code projects are per-user IndexedDB rows, so they are not
+// archived to localStorage with the rest. The store is still reset + rehydrated
+// on a swap, keyed by `activeUserId` in the IDB adapter instead of a swapped key.
+// (Portfolio records are react-query over IDB now, so they need no store swap;
+// `preparePortfolioStores` still stamps the active user for their queries.)
+const IDB_SCOPED_STORES: TUserScopedStore[] = [
+  userScopedStore("ai_site_builder_project_data_v4", useBuilderStore),
+];
 
 const USER_SCOPED_STORES: TUserScopedStore[] = [
   userScopedStore(APP_STORE_KEY, useAppStore),
@@ -158,11 +169,28 @@ const applyUserScopedValues = (incoming: TArchivedValues | null): void => {
   }
 };
 
-// zustand's `hydrate` already terminates in its own `.catch`, so this never
-// rejects. The guard is here so the gate cannot be wedged by a future zustand
-// change: a failed rehydrate leaves the stores at defaults, never stuck.
+// Points the IDB adapters (portfolio records + builder projects) at `userId`
+// and clears the IDB-scoped stores, with writes muted so the reset cannot
+// overwrite the incoming user's rows with defaults before their data is read
+// back.
+const preparePortfolioStores = (userId: string): void => {
+  setActiveUserId(userId);
+  for (const store of IDB_SCOPED_STORES) {
+    const restore = store.muteWrites(SILENT_STORAGE);
+    try {
+      store.resetToDefaults();
+    } finally {
+      restore();
+    }
+  }
+};
+
+// `hydrate` already terminates in its own `.catch`, so this never rejects. The
+// guard is here so the gate cannot be wedged by a future zustand change: a failed
+// rehydrate leaves the stores at defaults, never stuck.
 const rehydrateAll = async (): Promise<void> => {
-  await Promise.all(USER_SCOPED_STORES.map((store) => store.rehydrate())).catch(
+  const stores = [...USER_SCOPED_STORES, ...IDB_SCOPED_STORES];
+  await Promise.all(stores.map((store) => store.rehydrate())).catch(
     (error: unknown) => {
       console.error("[useLocalDataOnLogin/rehydrateAll]", error);
     }
@@ -180,6 +208,7 @@ const swapLocalDataFor = async (
   apiClient.clear();
 
   if (tag === userId) {
+    preparePortfolioStores(userId);
     await rehydrateAll();
     return !isStale();
   }
@@ -215,6 +244,7 @@ const swapLocalDataFor = async (
   }
 
   applyUserScopedValues(incoming);
+  preparePortfolioStores(userId);
   await rehydrateAll();
 
   // Re-checked after the await: a run that went stale while rehydrating must not
@@ -241,6 +271,9 @@ export const useLocalDataOnLogin = (
 
   useEffect(() => {
     if (!userId) {
+      // No signed-in user: drop the active-user stamp so nothing can write
+      // portfolio rows for a signed-out session.
+      setActiveUserId(undefined);
       return;
     }
 

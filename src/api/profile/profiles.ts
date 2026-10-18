@@ -1,4 +1,4 @@
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import type { TProfilePopulated } from "@/api/profile/profile.types.ts";
 import type {
@@ -17,6 +17,12 @@ import { api } from "@/lib/api-client.ts";
 
 export const useProfile = () =>
   useSuspenseQuery({
+    queryKey: queryKeys.profile.all,
+    queryFn: async () => await api.get<TProfilePopulated>("/profile"),
+  });
+
+export const useProfileQuery = () =>
+  useQuery({
     queryKey: queryKeys.profile.all,
     queryFn: async () => await api.get<TProfilePopulated>("/profile"),
   });
