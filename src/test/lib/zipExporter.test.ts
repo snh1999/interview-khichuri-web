@@ -37,6 +37,38 @@ describe("generateProjectZip", () => {
     expect(files["index.html"]).toContain('src="/src/main.jsx"');
   });
 
+  it("scaffolds a project whose .js JSX and router imports actually build", () => {
+    const files = readZip(
+      generateProjectZip("Site", {
+        "/App.js": "export default function App() { return <div />; }",
+        "/main.jsx":
+          "import { BrowserRouter } from 'react-router-dom';\nexport default BrowserRouter;",
+      })
+    );
+
+    expect(JSON.parse(files["package.json"]).dependencies).toHaveProperty(
+      "react-router-dom"
+    );
+    expect(files["vite.config.js"]).toContain("loader: 'jsx'");
+    expect(files["vite.config.js"]).toContain("/src\\/.*\\.jsx?$/");
+  });
+
+  it("adds Tailwind directives to a provided stylesheet that lacks them", () => {
+    const files = readZip(
+      generateProjectZip("Site", { "/styles.css": ".btn { color: red; }" })
+    );
+    expect(files["src/styles.css"]).toBe(
+      "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n.btn { color: red; }"
+    );
+  });
+
+  it("leaves a stylesheet that already has Tailwind directives untouched", () => {
+    const css =
+      "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n.custom{}";
+    const files = readZip(generateProjectZip("Site", { "/styles.css": css }));
+    expect(files["src/styles.css"]).toBe(css);
+  });
+
   it("falls back to a safe project name for an empty/symbol-only name", () => {
     const files = readZip(generateProjectZip("!!!", {}));
     expect(JSON.parse(files["package.json"]).name).toBe("portfolio-project");
@@ -58,13 +90,44 @@ describe("generateProjectZip", () => {
     );
 
     expect(files["package.json"]).toBe('{"name":"provided"}');
-    expect(files["src/main.jsx"]).toBe("// custom main");
-    expect(files["src/App.jsx"]).toBe("// app");
-    expect(files["src/styles.css"]).toBe(".x{}");
+    expect(files["src/main.jsx"]).toContain("// custom main");
+    expect(files["src/App.js"]).toBe("// app");
+    expect(files["src/styles.css"]).toContain("@tailwind base;");
+    expect(files["src/styles.css"]).toContain(".x{}");
     expect(files["tailwind.config.js"]).toBe("// tw");
     expect(files["vite.config.js"]).toBe("// vite");
     expect(files["src/components/Hero.jsx"]).toBe("hero");
     expect(files["public/robots.txt"]).toBe("robots");
+  });
+
+  it("loads the Tailwind stylesheet from a supplied entry", () => {
+    const injected = readZip(
+      generateProjectZip("S", {
+        "/index.js": 'import App from "./App";\nexport default App;',
+      })
+    );
+    expect(injected["src/main.jsx"]).toContain("import './styles.css';");
+
+    const already = readZip(
+      generateProjectZip("S", {
+        "/index.js": "import './styles.css';\nexport default null;",
+      })
+    );
+    expect(
+      already["src/main.jsx"].match(/import '\.\/styles\.css';/g)
+    ).toHaveLength(1);
+  });
+
+  it("keeps the entry's own .js imports resolvable", () => {
+    const files = readZip(
+      generateProjectZip("Site", {
+        "/index.js": 'import App from "./App.js";\nexport default App;',
+        "/App.js": "// app",
+      })
+    );
+
+    expect(files["src/App.js"]).toBe("// app");
+    expect(files["src/main.jsx"]).toContain('from "./App.js"');
   });
 
   it("injects the module script into provided html", () => {
@@ -103,7 +166,7 @@ describe("generateProjectZip", () => {
       })
     );
     // A provided main.jsx becomes the entry and index.html is normalized.
-    expect(files["src/main.jsx"]).toBe("// main");
+    expect(files["src/main.jsx"]).toContain("// main");
     expect(files["index.html"]).toBeDefined();
   });
 });

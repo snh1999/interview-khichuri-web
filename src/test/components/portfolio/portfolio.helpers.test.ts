@@ -231,6 +231,28 @@ describe("normalizeImportedPortfolio", () => {
     expect(result?.elements?.map((el) => el.id)).toEqual(["ok"]);
   });
 
+  it("drops image and frame elements whose asset URL is not a string", () => {
+    const result = normalizeImportedPortfolio(
+      {
+        elements: [
+          rect("ok"),
+          { id: "img-bad", type: "image", x: 0, y: 0, src: 123 },
+          {
+            id: "frame-bad",
+            type: "frame",
+            x: 0,
+            y: 0,
+            inspirationImageUrl: 7,
+          },
+          { id: "img-ok", type: "image", x: 0, y: 0, src: "idb://asset" },
+        ],
+      },
+      DEFAULT_THEMES[0]
+    );
+
+    expect(result?.elements?.map((el) => el.id)).toEqual(["ok", "img-ok"]);
+  });
+
   it("normalizes moodboard defaults", () => {
     const result = normalizeImportedPortfolio(
       { moodboard: [{}] },

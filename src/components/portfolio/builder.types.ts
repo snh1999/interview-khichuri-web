@@ -58,12 +58,18 @@ export interface BuilderState {
   deleteFile: (path: string) => void;
   renameFile: (oldPath: string, newPath: string) => boolean;
   duplicateFile: (path: string) => void;
-  addMessage: (message: Omit<ChatMessage, "id" | "timestamp">) => void;
-  applyAiResult: (result: {
-    files: Record<string, string>;
-    message: string;
-    applied: string[];
-  }) => void;
+  addMessage: (
+    message: Omit<ChatMessage, "id" | "timestamp">,
+    projectId?: string
+  ) => void;
+  applyAiResult: (
+    result: {
+      files: Record<string, string>;
+      message: string;
+      applied: string[];
+    },
+    projectId?: string
+  ) => void;
   appendGeneratedFiles: (
     files: Record<string, string>,
     message: string

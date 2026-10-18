@@ -296,6 +296,15 @@ describe("useBuilderStore file operations", () => {
     expect(useBuilderStore.getState().createFile("/New.js")).toBe(false);
   });
 
+  it("treats an existing empty file as a duplicate name", () => {
+    seedProject({ files: { "/App.js": "app", "/Empty.js": "" } });
+
+    expect(useBuilderStore.getState().createFile("/Empty.js", "code")).toBe(
+      false
+    );
+    expect(project().files["/Empty.js"]).toBe("");
+  });
+
   it("deletes eligible files and reassigns the active tab", () => {
     useBuilderStore.getState().createFile("/Hero.jsx");
     useBuilderStore.getState().deleteFile("/Hero.jsx");
@@ -308,6 +317,14 @@ describe("useBuilderStore file operations", () => {
     useBuilderStore.getState().deleteFile("/missing.js");
     useBuilderStore.getState().deleteFile("");
     expect(project().files["/App.js"]).toBeDefined();
+  });
+
+  it("deletes an empty file", () => {
+    seedProject({ files: { "/App.js": "app", "/Empty.js": "" } });
+
+    useBuilderStore.getState().deleteFile("/Empty.js");
+
+    expect(project().files["/Empty.js"]).toBeUndefined();
   });
 
   it("renames a file, keeping tabs and active selection in step", () => {
@@ -344,6 +361,18 @@ describe("useBuilderStore file operations", () => {
     ).toBe(false);
   });
 
+  it("treats an empty file as a taken name when renaming", () => {
+    seedProject({
+      files: { "/App.js": "app", "/Empty.js": "", "/Hero.jsx": "hero" },
+    });
+
+    expect(
+      useBuilderStore.getState().renameFile("/Hero.jsx", "/Empty.js")
+    ).toBe(false);
+    expect(project().files["/Empty.js"]).toBe("");
+    expect(project().files["/Hero.jsx"]).toBe("hero");
+  });
+
   it("duplicates a file with incrementing suffixes", () => {
     useBuilderStore.getState().updateFileContent("/App.js", "code");
     useBuilderStore.getState().duplicateFile("/App.js");
@@ -356,6 +385,15 @@ describe("useBuilderStore file operations", () => {
 
     useBuilderStore.getState().duplicateFile("/missing.js");
     expect(project().files["/missing-copy.js"]).toBeUndefined();
+  });
+
+  it("does not reuse an empty file's name when duplicating", () => {
+    seedProject({ files: { "/App.js": "code", "/App-copy.js": "" } });
+
+    useBuilderStore.getState().duplicateFile("/App.js");
+
+    expect(project().files["/App-copy.js"]).toBe("");
+    expect(project().files["/App-copy2.js"]).toBe("code");
   });
 
   it("ignores rename when there is no active portfolio", () => {
@@ -457,6 +495,64 @@ describe("useBuilderStore.applyAiResult", () => {
 
     expect(project().activeFile).toBe("/App.js");
     expect(project().messages.at(-1)?.filesModified).toEqual([]);
+  });
+
+  it("closes the deleted file's tab and moves the active tab to a survivor", () => {
+    seedProject({
+      files: { "/App.js": "app", "/Old.jsx": "obsolete" },
+      openFiles: ["/App.js", "/Old.jsx"],
+      activeFile: "/Old.jsx",
+    });
+
+    useBuilderStore.getState().applyAiResult({
+      files: {},
+      message: "removed it",
+      applied: ["deleted /Old.jsx"],
+    });
+
+    expect(project().files).toEqual({ "/App.js": "app" });
+    expect(project().openFiles).toEqual(["/App.js"]);
+    expect(project().activeFile).toBe("/App.js");
+  });
+
+  it("applies to the starting project, not whichever is active on resolve", () => {
+    seedProject({ files: { "/App.js": "old" } });
+    useBuilderStore.setState((state) => ({
+      projects: {
+        ...state.projects,
+        p2: { ...createEmptyProject(), files: { "/App.js": "p2" } },
+      },
+      activePortfolioId: "p2",
+    }));
+
+    useBuilderStore.getState().applyAiResult(
+      {
+        files: { "/App.js": "generated" },
+        message: "done",
+        applied: ["updated /App.js"],
+      },
+      PORTFOLIO
+    );
+
+    expect(project().files["/App.js"]).toBe("generated");
+    expect(project().messages.at(-1)?.content).toBe("done");
+    expect(useBuilderStore.getState().projects.p2.files["/App.js"]).toBe("p2");
+    expect(useBuilderStore.getState().projects.p2.messages).toHaveLength(0);
+  });
+
+  it("discards a result aimed at a project that no longer exists", () => {
+    seedProject();
+
+    useBuilderStore
+      .getState()
+      .applyAiResult(
+        { files: { "/App.js": "generated" }, message: "done", applied: [] },
+        "dropped"
+      );
+
+    expect(useBuilderStore.getState().projects.dropped).toBeUndefined();
+    expect(project().files).toEqual(EMPTY_PROJECT.files);
+    expect(project().messages).toHaveLength(0);
   });
 
   it("appends generated files through the merge path", () => {
@@ -562,6 +658,26 @@ describe("useBuilderStore persistence", () => {
     expect(restored?.state.projects[PORTFOLIO].files["/App.js"]).toBe(
       "persisted"
     );
+  });
+
+  it("keys each project by its own id even when it carries a stale portfolioId", async () => {
+    const options = useBuilderStore.persist.getOptions();
+    seedProject({
+      files: { "/App.js": "persisted" },
+      portfolioId: "stale",
+    } as Partial<BuilderProject>);
+
+    setActiveUserId("builder-stale-user");
+    await options.storage?.setItem("n", {
+      state: useBuilderStore.getState(),
+      version: 0,
+    });
+    const restored = await options.storage?.getItem("n");
+
+    expect(restored?.state.projects[PORTFOLIO].files["/App.js"]).toBe(
+      "persisted"
+    );
+    expect(restored?.state.projects.stale).toBeUndefined();
   });
 });
 

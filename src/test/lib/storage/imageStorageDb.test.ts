@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   cleanupOrphanAssetImages,
   cloneAssetImage,
@@ -9,6 +9,7 @@ import {
   saveAssetImage,
   saveMoodboardImage,
 } from "@/lib/storage/imageStorageDb";
+import { setActiveUserId } from "@/lib/storage/portfolioDb";
 
 const id = (() => {
   let n = 0;
@@ -20,6 +21,11 @@ const id = (() => {
 
 beforeEach(() => {
   // Each test writes fresh ids so rows can't bleed between tests.
+  setActiveUserId("user-1");
+});
+
+afterEach(() => {
+  setActiveUserId(undefined);
 });
 
 describe("imageStorageDb", () => {
@@ -70,6 +76,30 @@ describe("imageStorageDb", () => {
     await expect(getAssetImage(keep)).resolves.toBe("keep");
     await expect(getAssetImage(drop)).resolves.toBeNull();
     await expect(getAssetImage(alsoDrop)).resolves.toBeNull();
+  });
+
+  it("leaves another account's assets untouched", async () => {
+    const shared = id();
+    await saveAssetImage(shared, "a's image");
+
+    setActiveUserId("user-2");
+    const mine = id();
+    await saveAssetImage(mine, "b's image");
+
+    await cleanupOrphanAssetImages(new Set([mine]));
+
+    await expect(getAssetImage(shared)).resolves.toBe("a's image");
+    await expect(getAssetImage(mine)).resolves.toBe("b's image");
+  });
+
+  it("deletes nothing when there is no active user", async () => {
+    const key = id();
+    await saveAssetImage(key, "data:,keep");
+
+    setActiveUserId(undefined);
+    await cleanupOrphanAssetImages(new Set());
+
+    await expect(getAssetImage(key)).resolves.toBe("data:,keep");
   });
 
   it("exposes moodboard aliases", async () => {

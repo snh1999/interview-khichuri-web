@@ -13,6 +13,7 @@ import { DEFAULT_THEMES } from "@/components/portfolio/sketch/utils/defaultPortf
 import { cleanupOrphanAssetImages } from "@/lib/storage/imageStorageDb";
 import {
   deleteStoredRow,
+  getActiveUserId,
   getPortfolio,
   getPortfolios,
   putPortfolio,
@@ -47,7 +48,11 @@ export const useCreatePortfolio = () =>
       await putPortfolio(record);
       return record;
     },
-    onSuccess: (record) => {
+    onMutate: () => getActiveUserId(),
+    onSuccess: (record, _input, owner) => {
+      if (owner !== getActiveUserId()) {
+        return;
+      }
       apiClient.setQueryData<Portfolio[]>(
         queryKeys.portfolio.list(),
         (prev) => [...(prev ?? []), record]
@@ -62,7 +67,11 @@ export const useUpdatePortfolio = () =>
       await putPortfolio(record);
       return record;
     },
-    onSuccess: (record) => {
+    onMutate: () => getActiveUserId(),
+    onSuccess: (record, _variables, owner) => {
+      if (owner !== getActiveUserId()) {
+        return;
+      }
       apiClient.setQueryData(queryKeys.portfolio.detail(record.id), record);
       apiClient.setQueryData<Portfolio[]>(queryKeys.portfolio.list(), (prev) =>
         prev?.map((p) => (p.id === record.id ? record : p))
@@ -76,13 +85,31 @@ export const useDeletePortfolio = () =>
       await deleteStoredRow("portfolios", id);
       return id;
     },
-    onSuccess: async (id) => {
+    onMutate: () => getActiveUserId(),
+    onSuccess: async (id, _variables, owner) => {
+      if (owner !== getActiveUserId()) {
+        return;
+      }
       // The portfolio's code project goes with it.
       useBuilderStore.getState().dropProject(id);
       apiClient.removeQueries({ queryKey: queryKeys.portfolio.detail(id) });
 
       const { clipboard, history } = useSketchBuilderStore.getState();
-      const remaining = await getPortfolios();
+      let remaining: Portfolio[];
+      try {
+        remaining = await getPortfolios();
+      } catch {
+        // The read failed — do not run the orphan sweep against a false empty
+        // list; drop the deleted row from the cache and leave images alone.
+        apiClient.setQueryData<Portfolio[]>(
+          queryKeys.portfolio.list(),
+          (prev) => prev?.filter((p) => p.id !== id)
+        );
+        return;
+      }
+      if (owner !== getActiveUserId()) {
+        return;
+      }
       await cleanupOrphanAssetImages(
         extractAllValidAssetIds(remaining, clipboard, history)
       );
@@ -102,15 +129,23 @@ export const useDuplicatePortfolio = () =>
       id: string;
       copyCode?: boolean;
     }) => {
+      const owner = getActiveUserId();
       const target = await getPortfolio(id);
       if (!target) {
         throw new Error("Portfolio not found");
       }
       const clone = await buildDuplicatedPortfolio(target);
+      if (owner !== getActiveUserId()) {
+        throw new Error("Account changed while duplicating");
+      }
       await putPortfolio(clone);
       return { clone, copyCode: Boolean(copyCode), sourceId: id };
     },
-    onSuccess: ({ clone, copyCode, sourceId }) => {
+    onMutate: () => getActiveUserId(),
+    onSuccess: ({ clone, copyCode, sourceId }, _input, owner) => {
+      if (owner !== getActiveUserId()) {
+        return;
+      }
       // Opt-in: carry the source portfolio's code project over to the copy.
       if (copyCode) {
         useBuilderStore.getState().cloneProject(sourceId, clone.id);
@@ -126,6 +161,7 @@ export const useDuplicatePortfolio = () =>
 export const useImportPortfolio = () =>
   useMutation({
     mutationFn: async (imported: unknown) => {
+      const owner = getActiveUserId();
       const incomingId = (imported as { id?: string } | null)?.id;
       const existing = incomingId ? await getPortfolio(incomingId) : null;
       const record = normalizeImportedPortfolio(
@@ -136,10 +172,17 @@ export const useImportPortfolio = () =>
       if (!record) {
         throw new Error("Invalid portfolio");
       }
+      if (owner !== getActiveUserId()) {
+        throw new Error("Account changed while importing");
+      }
       await putPortfolio(record);
       return record;
     },
-    onSuccess: (record) => {
+    onMutate: () => getActiveUserId(),
+    onSuccess: (record, _imported, owner) => {
+      if (owner !== getActiveUserId()) {
+        return;
+      }
       apiClient.setQueryData<Portfolio[]>(
         queryKeys.portfolio.list(),
         (prev) => [...(prev ?? []), record]
@@ -174,7 +217,11 @@ export const usePersistDraft = () => {
 export const useCollectOrphanAssets = () => {
   useEffect(() => {
     const collect = async () => {
+      const owner = getActiveUserId();
       const portfolios = await getPortfolios();
+      if (owner !== getActiveUserId()) {
+        return;
+      }
       await cleanupOrphanAssetImages(extractAllValidAssetIds(portfolios));
     };
     collect().catch(() => undefined);

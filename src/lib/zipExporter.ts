@@ -1,6 +1,9 @@
 import { strToU8, zipSync } from "fflate";
 import type { ProjectFiles } from "@/components/portfolio/builder.types";
 
+const TAILWIND_DIRECTIVE = /@tailwind\s+(?:base|components|utilities)\b/;
+const STYLE_IMPORT_RE = /import\s+['"][^'"]*styles\.css['"]/;
+
 /**
  * Normalizes Sandpack virtual file paths and packages everything
  * into a standalone, runnable React + Vite project zip buffer.
@@ -33,6 +36,7 @@ export function generateProjectZip(
         dependencies: {
           react: "^18.3.1",
           "react-dom": "^18.3.1",
+          "react-router-dom": "^6.26.0",
           "lucide-react": "^0.475.0",
           "@phosphor-icons/react": "^2.1.7",
           clsx: "^2.1.1",
@@ -94,14 +98,21 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // The generator emits JSX components as .js (matching the sandbox); Vite
+  // only parses JSX in .jsx by default, so point esbuild at src/*.js too.
+  esbuild: { loader: 'jsx', include: /src\\/.*\\.jsx?$/, exclude: [] },
 });
 `;
 
   const styleImport = "import './styles.css';\n";
-  const mainJsxContent =
-    files["/index.js"] ||
-    files["/src/main.jsx"] ||
-    `import React from 'react';
+  // A supplied entry still needs the stylesheet the export writes, or the
+  // downloaded site renders unstyled (the preview loads Tailwind separately).
+  const withStyleImport = (entry: string): string =>
+    STYLE_IMPORT_RE.test(entry) ? entry : `${styleImport}${entry}`;
+  const providedEntry = files["/index.js"] || files["/src/main.jsx"];
+  const mainJsxContent = providedEntry
+    ? withStyleImport(providedEntry)
+    : `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 ${styleImport}
@@ -169,13 +180,16 @@ npm run build
   zipData["README.md"] = strToU8(readmeContent);
 
   zipData["src/main.jsx"] = strToU8(mainJsxContent);
-  if (
-    !(files["/styles.css"] || files["styles.css"] || files["/src/styles.css"])
-  ) {
-    zipData["src/styles.css"] = strToU8(
-      "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n"
-    );
-  }
+
+  const tailwindEntry =
+    "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n";
+  // The standalone project has no Tailwind CDN, so utilities only compile if a
+  // stylesheet carries the directives. The preview's styles.css is stripped of
+  // them, and a user stylesheet may never have had them, so ensure they exist.
+  const withTailwind = (css: string): string =>
+    TAILWIND_DIRECTIVE.test(css) ? css : `${tailwindEntry}${css}`;
+
+  zipData["src/styles.css"] = strToU8(tailwindEntry);
 
   for (const [filePath, content] of Object.entries(files)) {
     // Skip virtual entries we handled explicitly
@@ -191,19 +205,23 @@ npm run build
 
     let targetZipPath = filePath.startsWith("/") ? filePath.slice(1) : filePath;
 
-    if (targetZipPath === "App.js" || targetZipPath === "App.jsx") {
-      targetZipPath = "src/App.jsx";
-    } else if (targetZipPath === "styles.css") {
+    if (targetZipPath === "styles.css") {
       targetZipPath = "src/styles.css";
     } else if (targetZipPath === "main.jsx") {
       targetZipPath = "src/main.jsx";
     } else if (
       !(targetZipPath.startsWith("src/") || targetZipPath.startsWith("public/"))
     ) {
+      // Keep the original filename (including the .js/.jsx extension) so the
+      // project's own relative imports keep resolving; the scaffolded Vite
+      // config parses JSX in both.
       targetZipPath = `src/${targetZipPath}`;
     }
 
-    zipData[targetZipPath] = strToU8(content);
+    zipData[targetZipPath] =
+      targetZipPath === "src/styles.css"
+        ? strToU8(withTailwind(content))
+        : strToU8(content);
   }
 
   return zipSync(zipData, { level: 6 });

@@ -169,7 +169,12 @@ export const normalizeImportedPortfolio = (
             typeof el.x === "number" &&
             !Number.isNaN(el.x) &&
             typeof el.y === "number" &&
-            !Number.isNaN(el.y)
+            !Number.isNaN(el.y) &&
+            (el.type !== "image" ||
+              typeof (el as ImageElement).src === "string") &&
+            (el.type !== "frame" ||
+              typeof (el as FrameElement).inspirationImageUrl === "undefined" ||
+              typeof (el as FrameElement).inspirationImageUrl === "string")
         )
       )
     : [];

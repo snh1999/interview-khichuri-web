@@ -64,6 +64,8 @@ export const setActiveUserId = (userId: string | undefined): void => {
   activeUserId = userId;
 };
 
+export const getActiveUserId = (): string | undefined => activeUserId;
+
 // One queue for all portfolio writes: zustand fires `setItem` per change and IDB
 // writes are async, so without serialising an earlier state could land after a
 // later one. Reading and deleting share it, so a delete can't be overtaken by an
@@ -134,6 +136,8 @@ export const deleteStoredRow = (
 /**
  * Reads every portfolio row for the active user. Drains the write queue first
  * so a read reflects every write already issued (the editor flushes per edit).
+ * Rejects on a failed read: callers that delete unreferenced images must not
+ * mistake a read failure for an empty portfolio list and wipe every image.
  */
 export const getPortfolios = async (): Promise<Portfolio[]> => {
   const userId = activeUserId;
@@ -141,12 +145,7 @@ export const getPortfolios = async (): Promise<Portfolio[]> => {
     return [];
   }
   await queue.catch(() => undefined);
-  try {
-    return (await readItems("portfolios", userId)) as unknown as Portfolio[];
-  } catch (err) {
-    console.warn("[portfolioDb] read failed:", err);
-    return [];
-  }
+  return (await readItems("portfolios", userId)) as unknown as Portfolio[];
 };
 
 export const getPortfolio = async (id: string): Promise<Portfolio | null> => {

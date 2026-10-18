@@ -86,6 +86,23 @@ const patchProject = (
   return { projects: { ...state.projects, [id]: patch(current) } };
 };
 
+// Like `patchProject`, but targets an explicit project and never resurrects a
+// dropped one — for async results that must land on the project that started them, not whichever is active when they resolve.
+const patchProjectFor = (
+  state: BuilderState,
+  id: string | null,
+  patch: (project: BuilderProject) => BuilderProject
+): Partial<BuilderState> => {
+  if (!id) {
+    return {};
+  }
+  const current = state.projects[id];
+  if (!current) {
+    return {};
+  }
+  return { projects: { ...state.projects, [id]: patch(current) } };
+};
+
 // The subset of the builder store persisted to the `builderProjects` rows.
 interface TBuilderPersisted {
   projects: Record<string, BuilderProject>;
@@ -300,7 +317,7 @@ export const useBuilderStore = create<BuilderState>()(
         }
 
         const project = getActiveProject(get());
-        if (project.files[normalizedPath]) {
+        if (normalizedPath in project.files) {
           toast.error(`File "${normalizedPath}" already exists`);
           return false;
         }
@@ -380,7 +397,7 @@ export default function ${capitalizedName || "CustomComponent"}() {
           return;
         }
 
-        if (!getActiveProject(get()).files[path]) {
+        if (!(path in getActiveProject(get()).files)) {
           return;
         }
 
@@ -429,7 +446,7 @@ export default function ${capitalizedName || "CustomComponent"}() {
           return false;
         }
         const project = getActiveProject(get());
-        if (project.files[normalizedNewPath]) {
+        if (normalizedNewPath in project.files) {
           toast.error(`A file named "${normalizedNewPath}" already exists.`);
           return false;
         }
@@ -477,7 +494,7 @@ export default function ${capitalizedName || "CustomComponent"}() {
         const base = parts.join(".");
         let copyPath = `${base}-copy${ext}`;
         let counter = 2;
-        while (project.files[copyPath]) {
+        while (copyPath in project.files) {
           copyPath = `${base}-copy${counter}${ext}`;
           counter += 1;
         }
@@ -485,25 +502,35 @@ export default function ${capitalizedName || "CustomComponent"}() {
         get().createFile(copyPath, content);
       },
 
-      addMessage: (messageData) => {
+      addMessage: (messageData, projectId) => {
         const newMessage: ChatMessage = {
           id: generateSafeId("msg"),
           timestamp: nowTime(),
           ...messageData,
         };
+        const patch = (p: BuilderProject): BuilderProject => ({
+          ...p,
+          messages: [...p.messages, newMessage],
+        });
         set((state) =>
-          patchProject(state, (p) => ({
-            ...p,
-            messages: [...p.messages, newMessage],
-          }))
+          projectId === undefined
+            ? patchProject(state, patch)
+            : patchProjectFor(state, projectId, patch)
         );
       },
 
-      applyAiResult: (result: {
-        files: Record<string, string>;
-        message: string;
-        applied: string[];
-      }): void => {
+      applyAiResult: (
+        result: {
+          files: Record<string, string>;
+          message: string;
+          applied: string[];
+        },
+        projectId?: string
+      ): void => {
+        if (projectId !== undefined && !get().projects[projectId]) {
+          toast.info("AI result discarded: the project no longer exists.");
+          return;
+        }
         const edits = parseAppliedEdits(result.applied);
         const changedFiles = [
           ...new Set(
@@ -512,41 +539,56 @@ export default function ${capitalizedName || "CustomComponent"}() {
               .map((edit) => edit.path)
           ),
         ];
-        set((state) =>
-          patchProject(state, (project) => {
-            // Merge the server's project rather than replacing it, so any local
-            // edits made while the request ran survive; deletions arrive only in
-            // `applied`, so drop those explicitly.
-            const nextFiles = { ...project.files, ...result.files };
-            for (const edit of edits) {
-              if (edit.op === "deleted") {
-                delete nextFiles[edit.path];
-              }
+        const patch = (project: BuilderProject): BuilderProject => {
+          // Merge the server's project rather than replacing it, so any local
+          // edits made while the request ran survive; deletions arrive only in
+          // `applied`, so drop those explicitly.
+          const nextFiles = { ...project.files, ...result.files };
+          for (const edit of edits) {
+            if (edit.op === "deleted") {
+              delete nextFiles[edit.path];
             }
-            const nextOpen = [...project.openFiles];
-            for (const f of changedFiles) {
-              if (!nextOpen.includes(f)) {
-                nextOpen.push(f);
-              }
+          }
+          // Tab list follows the surviving files: a deleted file must not linger
+          // open, and the active tab must fall back to a file that still exists.
+          const nextOpen = project.openFiles.filter(
+            (file) => file in nextFiles
+          );
+          for (const file of changedFiles) {
+            if (file in nextFiles && !nextOpen.includes(file)) {
+              nextOpen.push(file);
             }
+          }
 
-            return {
-              ...project,
-              files: nextFiles,
-              openFiles: nextOpen,
-              activeFile: changedFiles[0] ?? project.activeFile,
-              isCodePaneOpen: true,
-              viewMode: "split",
-              lastSaved: nowTime(),
-            };
-          })
+          return {
+            ...project,
+            files: nextFiles,
+            openFiles: nextOpen,
+            activeFile:
+              changedFiles.find((file) => file in nextFiles) ??
+              (project.activeFile in nextFiles
+                ? project.activeFile
+                : nextOpen[0]) ??
+              project.activeFile,
+            isCodePaneOpen: true,
+            viewMode: "split",
+            lastSaved: nowTime(),
+          };
+        };
+        set((state) =>
+          projectId === undefined
+            ? patchProject(state, patch)
+            : patchProjectFor(state, projectId, patch)
         );
 
-        get().addMessage({
-          sender: "assistant",
-          content: result.message,
-          filesModified: changedFiles,
-        });
+        get().addMessage(
+          {
+            sender: "assistant",
+            content: result.message,
+            filesModified: changedFiles,
+          },
+          projectId
+        );
 
         toast.success("AI code generated and compiled!");
       },
@@ -600,8 +642,8 @@ export default function ${capitalizedName || "CustomComponent"}() {
         version: 0,
         items: (state) =>
           Object.entries(state.projects).map(([portfolioId, project]) => ({
-            portfolioId,
             ...project,
+            portfolioId,
           })) as unknown as Record<string, unknown>[],
         prefs: () => ({}),
         merge: (items) => ({

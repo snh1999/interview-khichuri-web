@@ -280,4 +280,21 @@ describe("useCollectOrphanAssets", () => {
 
     await waitFor(async () => expect(await getAssetImage("orphan")).toBeNull());
   });
+
+  it("keeps another account's referenced assets", async () => {
+    setActiveUserId("user-a");
+    await saveAssetImage("a-asset", "data:,a");
+    await putPortfolio(portfolio("p-a", [image("img-a", "idb://a-asset")]));
+
+    setActiveUserId("user-b");
+    await saveAssetImage("b-orphan", "data:,b");
+    await putPortfolio(portfolio("p-b"));
+    renderHook(() => useCollectOrphanAssets(), { wrapper });
+
+    // The user-b orphan proves cleanup ran; user-a's asset must have survived it.
+    await waitFor(async () =>
+      expect(await getAssetImage("b-orphan")).toBeNull()
+    );
+    expect(await getAssetImage("a-asset")).toBe("data:,a");
+  });
 });

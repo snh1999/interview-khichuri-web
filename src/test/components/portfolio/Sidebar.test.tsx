@@ -4,12 +4,9 @@ import type { QueryClient } from "@tanstack/react-query";
 import { screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Sidebar } from "@/components/portfolio/builder/Sidebar";
+import type { BuilderProject } from "@/components/portfolio/builder.types";
 import { useAppStore } from "@/store/appStore";
-import {
-  type BuilderProject,
-  createEmptyProject,
-  useBuilderStore,
-} from "@/store/useBuilderStore";
+import { createEmptyProject, useBuilderStore } from "@/store/useBuilderStore";
 import { render } from "@/test/render";
 
 const seedProject = (overrides: Partial<BuilderProject> = {}) => {

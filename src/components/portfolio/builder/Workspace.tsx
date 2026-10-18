@@ -15,27 +15,63 @@ const SandpackStoreSync: React.FC = () => {
   const { sandpack } = useSandpack();
   const updateFileContent = useBuilderStore((s) => s.updateFileContent);
   const { activeFile, files } = useBuilderProject();
-  const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Latest sandbox content per path, so a file switch or unmount can flush what
+  // the debounce has not written yet. Sandpack content is only pushed into the store here — nothing else does.
+  const pendingRef = React.useRef<Map<string, string>>(new Map());
+  const timersRef = React.useRef<Map<string, ReturnType<typeof setTimeout>>>(
+    new Map()
+  );
+  const sandpackRef = React.useRef(sandpack.files);
+  sandpackRef.current = sandpack.files;
+
+  const flushPath = React.useCallback(
+    (path: string) => {
+      const timer = timersRef.current.get(path);
+      if (timer) {
+        clearTimeout(timer);
+        timersRef.current.delete(path);
+      }
+      const pending = pendingRef.current.get(path);
+      if (pending === undefined) {
+        return;
+      }
+      pendingRef.current.delete(path);
+      // Drop the write if the sandbox no longer holds this content (an external re-sync, e.g. an AI merge, already won) or the store caught up.
+      if (sandpackRef.current[path]?.code !== pending) {
+        return;
+      }
+      updateFileContent(path, pending);
+    },
+    [updateFileContent]
+  );
 
   React.useEffect(() => {
     const currentCode = sandpack.files[activeFile]?.code;
     const currentStoreCode = files[activeFile];
 
     if (currentCode !== undefined && currentCode !== currentStoreCode) {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
+      pendingRef.current.set(activeFile, currentCode);
+      const timer = timersRef.current.get(activeFile);
+      if (timer) {
+        clearTimeout(timer);
       }
-      timerRef.current = setTimeout(() => {
-        updateFileContent(activeFile, currentCode);
-      }, 350);
+      timersRef.current.set(
+        activeFile,
+        setTimeout(() => flushPath(activeFile), 350)
+      );
     }
+    // No cleanup: the per-path timer must survive an active-file switch.
+  }, [sandpack.files, activeFile, files, flushPath]);
 
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
+  // Last chance flush when the workspace goes away (route change, canvas tab).
+  React.useEffect(
+    () => () => {
+      for (const path of [...pendingRef.current.keys()]) {
+        flushPath(path);
       }
-    };
-  }, [sandpack.files, activeFile, files, updateFileContent]);
+    },
+    [flushPath]
+  );
 
   return null;
 };

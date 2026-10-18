@@ -29,6 +29,7 @@ import { ActionButton } from "@/components/ui/button/ActionButton";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
+import { useAppStore } from "@/store/appStore";
 import {
   getActiveProject,
   useBuilderProject,
@@ -171,6 +172,8 @@ export const Sidebar: React.FC = () => {
     instruction?: string
   ) => {
     setInputPrompt("");
+    const projectId = useBuilderStore.getState().activePortfolioId;
+    const { userId } = useAppStore.getState();
     addMessage({ sender: "user", content: promptText });
 
     try {
@@ -188,7 +191,11 @@ export const Sidebar: React.FC = () => {
         model,
         instruction,
       });
-      applyAiResult(result);
+      if (useAppStore.getState().userId !== userId) {
+        toast.info("AI result discarded: the signed-in account changed.");
+        return;
+      }
+      applyAiResult(result, projectId ?? undefined);
     } catch (err: unknown) {
       console.error("[Sidebar] Failed to generate code:", err);
       toast.error(
