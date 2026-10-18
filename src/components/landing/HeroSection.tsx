@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button.tsx";
 
 export const HeroSection = () => (
   <section className="relative overflow-hidden pt-16 pb-20 md:pt-24">
-    <div className="absolute inset-0 bg-grid opacity-[0.03]" />
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--primary)/6%,transparent_60%)]" />
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--primary)/4%,transparent_60%)]"
+    />
 
     <div className="relative mx-auto flex max-w-7xl flex-col items-center px-4 text-center sm:px-6">
       <Badge className="mb-6" variant="outline">
@@ -63,11 +65,7 @@ export const HeroSection = () => (
     </div>
 
     <div className="relative mx-auto mt-16 w-full max-w-6xl px-4 sm:px-6">
-      <ScreenshotFrame
-        className="rounded-2xl shadow-2xl shadow-foreground/5"
-        priority
-        screenshot={HERO.image}
-      />
+      <ScreenshotFrame priority screenshot={HERO.image} />
     </div>
   </section>
 );

@@ -1,3 +1,4 @@
+import { CaretDownIcon } from "@phosphor-icons/react";
 import { DECISIONS } from "@/components/landing/landing.copy.ts";
 
 export const DecisionsSection = () => (
@@ -15,14 +16,21 @@ export const DecisionsSection = () => (
 
       <div className="grid gap-px overflow-hidden rounded-xl bg-foreground/10 ring-1 ring-foreground/10">
         {DECISIONS.items.map((decision) => (
-          <div className="bg-card p-6" key={decision.question}>
-            <h3 className="font-heading font-semibold text-sm">
-              {decision.question}
-            </h3>
-            <p className="mt-2 text-muted-foreground text-xs leading-relaxed">
+          <details className="group bg-card" key={decision.question}>
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-6 transition-colors hover:bg-accent/40 focus-visible:outline-2 focus-visible:outline-ring focus-visible:-outline-offset-2 [&::-webkit-details-marker]:hidden">
+              <h3 className="font-heading font-semibold text-sm">
+                {decision.question}
+              </h3>
+              <CaretDownIcon
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
+                weight="bold"
+              />
+            </summary>
+            <p className="px-6 pb-6 text-muted-foreground text-xs leading-relaxed">
               {decision.answer}
             </p>
-          </div>
+          </details>
         ))}
       </div>
     </div>

@@ -37,7 +37,7 @@ export const RoadmapSection = () => (
                       ? "default"
                       : // biome-ignore lint/style/noNestedTernary: <>
                         item.label === "Alpha"
-                        ? "destructive"
+                        ? "secondary"
                         : "outline"
                   }
                 >

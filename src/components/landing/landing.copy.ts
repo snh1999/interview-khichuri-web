@@ -238,7 +238,7 @@ export const ROADMAP = {
   items: [
     {
       description:
-        "Customize and share your prompts. Get pastable prompt for Gemini, Claude, Kimi, Chatgpt and others without API key.",
+        "Customize and share your prompts. Get a pastable prompt for Gemini, Claude, Kimi, ChatGPT, and others without an API key.",
       icon: ArticleIcon,
       label: "Alpha",
       title: "Prompt Library",
@@ -266,7 +266,7 @@ export const ROADMAP = {
     },
     {
       description:
-        "Given a company and a role, find relaxant information from available sources so your answers are informed.",
+        "Given a company and a role, find relevant information from available sources so your answers are informed.",
       icon: TargetIcon,
       label: "Planned",
       title: "Company research",
@@ -294,17 +294,17 @@ export const DECISIONS = {
   items: [
     {
       answer:
-        "That is meant as the differentiating factor for this project. YouTube is filled with tutorials around this app idea, but all of them use some paid service one way or the other. I just tried to give this app has its own place, by the pitch that user doesn't have to pay anything. and most insurgent of his job is not in the position to pay for an app like this.",
-      question: "Why such free-self contained philosophy?",
+        "That is the differentiating factor for this project. YouTube is full of tutorials around this same idea, but all of them lean on some paid service one way or another. I wanted this app to have its own place with a simple pitch: the user does not have to pay anything. And most people in the middle of a job search are not in a position to pay for an app like this.",
+      question: "Why the free, self-contained philosophy?",
     },
     {
       answer:
-        "the app will not benefit from server-side rendering in any way, But it was tempting invite as I was considering to use Tauri for desktop application. But when I started there was quite a few Next.js vulnerability in the past and Tanstack start did not even reach version 1. With BYOK setup, user is putting some trust in this system- I wanted to avoid any route that may have caused the user to regret that trust. ",
+        "The app does not benefit from server-side rendering in any way, and the stack was tempting while I was considering Tauri for the desktop application. But there had been quite a few Next.js vulnerabilities in the past, and TanStack Start had not even reached version 1. With a BYOK setup the user is putting real trust in this system, so I wanted to avoid any route that might make them regret that trust.",
       question: "Why not use Next.js or any other full-stack framework?",
     },
     {
       answer:
-        " Right now the plan is to give a more limited and lighter Tauri version and a electron version with local AI setup. Honestly, I am not sure about this one. The initial plan was to use tauri for a more performant application with minimal bundle size. But as the planning evolved, Some of the cool features will require browser-use or shipping some sort of browser which works against the decision to use Tauri.",
+        "Right now the plan is a lighter, more limited Tauri version and an Electron version with a local AI setup. Honestly, I am not sure about this one. The initial plan was Tauri, for a more performant app with a minimal bundle size. But as planning evolved, some of the features I want need browser automation or a bundled browser, which works against that choice.",
       question: "What is the plan with Desktop app?",
     },
     {
@@ -354,7 +354,7 @@ export const DECISIONS = {
 export const CTA = {
   heading: "Bring your own key and see how it feels",
   sub: "No card, no shared inference budget, no sales call. Sign up, paste an OpenAI or Google key, and everything above opens against your own account — start wherever the search is stuck.",
-  primary: { href: REGISTER_PAGE, label: "Create an account" },
+  primary: { href: REGISTER_PAGE, label: "Start prepping" },
   secondary: { href: LOGIN_PAGE, label: "I already have one" },
 } as const;
 
