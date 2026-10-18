@@ -1,7 +1,11 @@
 import type React from "react";
 import { Input } from "@/components/ui/input.tsx";
-import { useSketchBuilderStore } from "@/store/sketchBuilderStore";
+import {
+  useCurrentPortfolio,
+  useSketchBuilderStore,
+} from "@/store/sketchBuilderStore";
 import type { CanvasElement, ElementChanges } from "../types";
+import { getElementsWithContainedChildren } from "../utils/containment";
 
 interface GeometryEditorProps {
   activeElement: CanvasElement;
@@ -21,17 +25,35 @@ export const GeometryEditor: React.FC<GeometryEditorProps> = ({
 }) => {
   const recordHistory = useSketchBuilderStore((s) => s.recordHistory);
   const updateElements = useSketchBuilderStore((s) => s.updateElements);
+  const { elements } = useCurrentPortfolio();
+
+  // Translate the given elements (frames bring their contained children) along
+  // one axis, mirroring a canvas drag so the artboard never moves without its
+  // contents. Lines/pens keep their endpoints in step via the store's
+  // `withConsistentGeometry`.
+  const translate = (ids: string[], dx: number, dy: number) => {
+    if (dx === 0 && dy === 0) {
+      return;
+    }
+    recordHistory();
+    updateElements(
+      getElementsWithContainedChildren(elements, ids).map((el) => ({
+        id: el.id,
+        changes: dx === 0 ? { y: el.y + dy } : { x: el.x + dx },
+      }))
+    );
+  };
+
   const handleXChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     if (isMulti) {
-      const deltaX = val - activeElement.x;
-      recordHistory();
-      updateElements(
-        selectedElements.map((el) => ({
-          id: el.id,
-          changes: { x: el.x + deltaX },
-        }))
+      translate(
+        selectedElements.map((el) => el.id),
+        val - activeElement.x,
+        0
       );
+    } else if (activeElement.type === "frame") {
+      translate([activeElement.id], val - activeElement.x, 0);
     } else {
       updateSelected({ x: val });
     }
@@ -39,14 +61,13 @@ export const GeometryEditor: React.FC<GeometryEditorProps> = ({
   const handleYChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     if (isMulti) {
-      const deltaY = val - activeElement.y;
-      recordHistory();
-      updateElements(
-        selectedElements.map((el) => ({
-          id: el.id,
-          changes: { y: el.y + deltaY },
-        }))
+      translate(
+        selectedElements.map((el) => el.id),
+        0,
+        val - activeElement.y
       );
+    } else if (activeElement.type === "frame") {
+      translate([activeElement.id], 0, val - activeElement.y);
     } else {
       updateSelected({ y: val });
     }

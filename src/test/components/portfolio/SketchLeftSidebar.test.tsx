@@ -401,4 +401,20 @@ describe("LibraryTab", () => {
       2
     );
   });
+
+  it("skips hidden or locked frames when choosing where to insert", async () => {
+    seed([
+      frame({ id: "f-hidden", visible: false }),
+      frame({ id: "f-locked", locked: true }),
+      frame({ id: "f-ok", x: 500 }),
+    ]);
+
+    const { user } = render(<LibraryTab />);
+    await user.click(screen.getByRole("button", { name: NAVIGATION_BAR }));
+
+    const inserted = draft()?.elements.find(
+      (el) => el.type === "stamp"
+    ) as StampElement;
+    expect(inserted.frameId).toBe("f-ok");
+  });
 });

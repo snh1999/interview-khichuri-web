@@ -1,8 +1,9 @@
 import type React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useGenerateProject, useGenerateSketch } from "@/api/portfolio";
 import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
+import { getAssetImage } from "@/lib/storage/imageStorageDb";
 import { generateSafeId } from "@/lib/utils";
 import { useAppStore } from "@/store/appStore";
 import {
@@ -25,6 +26,23 @@ interface AiTransformModalProps {
   mode?: "new" | "append";
 }
 
+// Inspiration images live in this browser's IndexedDB (`idb://`); the server
+// cannot read those. Inline the resolved data URLs so generation can actually
+// see the uploaded image.
+const withResolvedInspiration = async (
+  frames: FrameElement[]
+): Promise<FrameElement[]> =>
+  Promise.all(
+    frames.map(async (frame) => {
+      const url = frame.inspirationImageUrl;
+      if (!url?.startsWith("idb://")) {
+        return frame;
+      }
+      const data = await getAssetImage(url.replace("idb://", ""));
+      return { ...frame, inspirationImageUrl: data ?? undefined };
+    })
+  );
+
 export const AiTransformModal: React.FC<AiTransformModalProps> = ({
   isOpen,
   onClose,
@@ -41,9 +59,25 @@ export const AiTransformModal: React.FC<AiTransformModalProps> = ({
   const addElement = useSketchBuilderStore((s) => s.addElement);
   const setViewMode = useSketchBuilderStore((s) => s.setViewMode);
   const seedProjectFiles = useBuilderStore((s) => s.seedProjectFiles);
+  // A generation can outlive the page: capture the portfolio that started the
+  // run so the streamed files land there even if the user opens another one.
+  const targetProjectIdRef = useRef<string | null>(null);
+  // Account that started the run. Account switching swaps the user-scoped
+  // stores, so files streamed/applied after a change must not land under the
+  // incoming user (mirrors the guard in the builder sidebar).
+  const runUserIdRef = useRef<string | null>(null);
+  const streamProjectFiles = useCallback(
+    (files: Record<string, string>) => {
+      if (useAppStore.getState().userId !== runUserIdRef.current) {
+        return;
+      }
+      seedProjectFiles(files, targetProjectIdRef.current ?? undefined);
+    },
+    [seedProjectFiles]
+  );
 
   const generateSketch = useGenerateSketch();
-  const generateProject = useGenerateProject(seedProjectFiles);
+  const generateProject = useGenerateProject(streamProjectFiles);
   const skipAiDialog = useAppStore((state) => state.skipAiDialog);
 
   const currentPortfolio = useCurrentPortfolio();
@@ -158,6 +192,8 @@ export const AiTransformModal: React.FC<AiTransformModalProps> = ({
     instruction?: string
   ) => {
     const portfolioId = currentPortfolio.id;
+    targetProjectIdRef.current = portfolioId;
+    runUserIdRef.current = useAppStore.getState().userId;
     onClose();
     useBuilderStore.getState().setActivePortfolio(portfolioId);
     setViewMode("preview");
@@ -209,6 +245,9 @@ export const AiTransformModal: React.FC<AiTransformModalProps> = ({
       }
 
       setActiveFrameForAi(selectedFrameIds[0] ?? null);
+      const targetId = currentPortfolio.id;
+      const { userId } = useAppStore.getState();
+      runUserIdRef.current = userId;
       onClose();
 
       toast.info(
@@ -219,14 +258,18 @@ export const AiTransformModal: React.FC<AiTransformModalProps> = ({
       const portfolio = useSketchBuilderStore.getState().getCurrentPortfolio();
       const design = await generateSketch.mutateAsync({
         prompt: fullPrompt,
-        frames: activeFrames,
+        frames: await withResolvedInspiration(activeFrames),
         elements: frameElements,
         theme: portfolio.theme,
         provider,
         model,
         instruction,
       });
-      applyGeneratedDesign(design, mode);
+      if (useAppStore.getState().userId !== userId) {
+        toast.info("AI result discarded: the signed-in account changed.");
+        return;
+      }
+      applyGeneratedDesign(design, mode, targetId);
       toast.success("Design generated successfully in Code Builder!");
     } catch (err: unknown) {
       console.error("[AiTransformModal] Failed to generate design:", err);

@@ -44,15 +44,15 @@ export const StampShape: React.FC<StampShapeProps> = ({ el, isSelected }) => {
   const IconComponent = STAMP_ICONS[el.stampType];
 
   return (
-    <g>
+    <g opacity={el.opacity ?? 1}>
       <rect
         fill={el.fillColor || "#ffffff"}
         height={el.height}
-        rx={el.cornerRadius || 12}
+        rx={el.cornerRadius ?? 12}
         stroke={
           isSelected ? "var(--primary)" : el.strokeColor || "var(--border)"
         }
-        strokeWidth={isSelected ? 2 : el.strokeWidth || 1.5}
+        strokeWidth={isSelected ? 2 : (el.strokeWidth ?? 1.5)}
         width={el.width}
         x={el.x}
         y={el.y}

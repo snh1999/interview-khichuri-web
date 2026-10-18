@@ -5,6 +5,8 @@ import { AiTransformModal } from "@/components/portfolio/sketch/AiTransformModal
 import type { Portfolio } from "@/components/portfolio/sketch/types";
 import { DEFAULT_THEMES } from "@/components/portfolio/sketch/utils/defaultPortfolios.ts";
 import { Toaster } from "@/components/ui/sonner.tsx";
+import { saveAssetImage } from "@/lib/storage/imageStorageDb";
+import { useAppStore } from "@/store/appStore.ts";
 import { useSketchBuilderStore } from "@/store/sketchBuilderStore.ts";
 import { useBuilderStore } from "@/store/useBuilderStore.ts";
 import { server } from "@/test/msw/server.ts";
@@ -126,6 +128,7 @@ afterEach(() => {
     draft: null,
     viewMode: "canvas",
   });
+  useAppStore.setState({ userId: null });
 });
 
 describe("AiTransformModal without a sketch", () => {
@@ -192,6 +195,98 @@ describe("AiTransformModal multi-select sketch", () => {
       expect(
         useBuilderStore.getState().projects[PORTFOLIO]?.files["/Home.js"]
       ).toBe("// home")
+    );
+  });
+
+  it("discards the result when the account changes mid-generation", async () => {
+    withProvider();
+    useAppStore.getState().setUserId("u-1");
+    seedPortfolioWithFrames();
+    server.use(
+      http.post(`${API}/portfolio/sketch`, () => {
+        useAppStore.getState().setUserId("u-2");
+        return envelope({
+          id: "design-1",
+          routes: ["/"],
+          createdAt: "2024-01-01",
+          prompt: "",
+          themeUsed: {},
+          wireframeSummary: {
+            elementCount: 0,
+            detectedLayout: "",
+            sections: [],
+          },
+          files: { "/Home.js": "// home" },
+          previewType: "interactive",
+        });
+      })
+    );
+
+    const { user } = render(
+      <>
+        <AiTransformModal isOpen onClose={vi.fn()} />
+        <Toaster />
+      </>
+    );
+    await user.click(await screen.findByRole("button", { name: "Select all" }));
+    await user.click(
+      screen.getByRole("button", { name: "Generate Portfolio" })
+    );
+
+    expect(
+      await screen.findByText(
+        "AI result discarded: the signed-in account changed."
+      )
+    ).toBeInTheDocument();
+    expect(
+      useBuilderStore.getState().projects[PORTFOLIO]?.files["/Home.js"]
+    ).toBeUndefined();
+  });
+
+  it("inlines uploaded inspiration images before sending them", async () => {
+    withProvider();
+    await saveAssetImage("insp-1", "data:image/png;base64,BBBB");
+    seedPortfolioWithFrames();
+    useSketchBuilderStore
+      .getState()
+      .updateElement("f1", { inspirationImageUrl: "idb://insp-1" });
+
+    let sentFrames: { id: string; inspirationImageUrl?: string }[] = [];
+    server.use(
+      http.post(`${API}/portfolio/sketch`, async ({ request }) => {
+        const body = (await request.json()) as {
+          frames: { id: string; inspirationImageUrl?: string }[];
+        };
+        sentFrames = body.frames;
+        return envelope({
+          id: "design-1",
+          routes: ["/"],
+          createdAt: "2024-01-01",
+          prompt: "",
+          themeUsed: {},
+          wireframeSummary: {
+            elementCount: 0,
+            detectedLayout: "",
+            sections: [],
+          },
+          files: {
+            "/App.js": "export default function App() { return null; }",
+          },
+          previewType: "interactive",
+        });
+      })
+    );
+
+    const { user } = render(<AiTransformModal isOpen onClose={vi.fn()} />);
+    await user.click(await screen.findByRole("button", { name: "Select all" }));
+    await user.click(
+      screen.getByRole("button", { name: "Generate Portfolio" })
+    );
+
+    await waitFor(() =>
+      expect(sentFrames.find((f) => f.id === "f1")?.inspirationImageUrl).toBe(
+        "data:image/png;base64,BBBB"
+      )
     );
   });
 });

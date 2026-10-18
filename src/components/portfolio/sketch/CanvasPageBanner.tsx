@@ -23,11 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  deleteAssetImage,
-  getAssetImage,
-  saveAssetImage,
-} from "@/lib/storage/imageStorageDb";
+import { getAssetImage, saveAssetImage } from "@/lib/storage/imageStorageDb";
 import { generateSafeId } from "@/lib/utils";
 import {
   useCurrentPortfolio,
@@ -165,29 +161,22 @@ export const CanvasPageBanner: React.FC<CanvasPageBannerProps> = ({
         return;
       }
 
-      const oldUrl = frame.inspirationImageUrl;
       updateElement(
         frame.id,
         { inspirationImageUrl: `idb://${assetId}` },
         true
       );
 
-      // Clean up previously attached IDB asset only after new one is successfully persisted
-      if (oldUrl?.startsWith("idb://")) {
-        const oldAssetId = oldUrl.replace("idb://", "");
-        await deleteAssetImage(oldAssetId);
-      }
-
+      // A replaced asset is left for the orphan sweep (`cleanupOrphanAssetImages`),
+      // which also counts undo/redo history and duplicated frames still pointing at
+      // it — deleting eagerly here would break those references.
       toast.success("Inspiration image attached to frame");
     };
     reader.readAsDataURL(file);
   };
 
-  const handleRemoveInspiration = async () => {
-    if (frame.inspirationImageUrl?.startsWith("idb://")) {
-      const assetId = frame.inspirationImageUrl.replace("idb://", "");
-      await deleteAssetImage(assetId);
-    }
+  const handleRemoveInspiration = () => {
+    // Leave the asset to the orphan sweep; undo still holds this URL.
     updateElement(frame.id, { inspirationImageUrl: undefined });
   };
 
@@ -237,8 +226,11 @@ export const CanvasPageBanner: React.FC<CanvasPageBannerProps> = ({
   const bannerTop = frame.y - bannerOffset;
 
   return (
+    // biome-ignore lint/a11y/noNoninteractiveElementInteractions: raw pointer surface or wrapper containing nested controls; no semantic HTML equivalent
+    // biome-ignore lint/a11y/noStaticElementInteractions: raw pointer surface or wrapper containing nested controls; no semantic HTML equivalent
     <div
       className="pointer-events-auto absolute z-50 origin-top-left select-none"
+      onMouseDown={handleStopPropagation}
       style={{
         left: `${frame.x}px`,
         top: `${bannerTop}px`,

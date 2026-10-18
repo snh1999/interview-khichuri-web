@@ -387,6 +387,49 @@ describe("sketchBuilderStore element mutations", () => {
     expect(elements()[0].x).toBe(42);
   });
 
+  it("keeps a line's endpoints in step with its start and box", () => {
+    const line = {
+      id: "l1",
+      type: "line",
+      x: 0,
+      y: 0,
+      endX: 100,
+      endY: 100,
+      width: 100,
+      height: 100,
+      zIndex: 1,
+    } as CanvasElement;
+    store().setDraft(draft("a", [line]));
+
+    // Moving the start translates the end.
+    store().updateElement("l1", { x: 10 });
+    expect(elements()[0]).toMatchObject({ x: 10, endX: 110 });
+
+    // Resizing the box scales the end vector, so the drawn line follows.
+    store().updateElement("l1", { width: 300 });
+    expect(elements()[0]).toMatchObject({ width: 300, endX: 310 });
+  });
+
+  it("translates a pen's points when it moves", () => {
+    store().setDraft(
+      draft("a", [
+        pen("p1", [
+          { x: 1, y: 2 },
+          { x: 3, y: 4 },
+        ]),
+      ])
+    );
+
+    store().updateElement("p1", { x: 5, y: 7 });
+
+    expect(elements()[0]).toMatchObject({
+      points: [
+        { x: 6, y: 9 },
+        { x: 8, y: 11 },
+      ],
+    });
+  });
+
   it("blocks edits to elements locked directly or by their frame", () => {
     store().setDraft(
       draft("a", [frame("f1", { locked: true }), rect("c1", { frameId: "f1" })])
@@ -576,6 +619,22 @@ describe("sketchBuilderStore alignment", () => {
     store().alignSelectedElements("left");
     expect(store().draft).toBeNull();
   });
+
+  it("moves a frame's contained children along with the frame", () => {
+    store().setDraft(
+      draft("p", [
+        frame("f1", { x: 0, y: 0, width: 100, height: 100 }),
+        frame("f2", { x: 50, y: 0, width: 100, height: 100 }),
+        rect("c2", { x: 60, y: 10, width: 10, height: 10, frameId: "f2" }),
+      ])
+    );
+    store().selectElements(["f1", "f2"]);
+
+    store().alignSelectedElements("left");
+
+    expect(elements().find((el) => el.id === "f2")?.x).toBe(0);
+    expect(elements().find((el) => el.id === "c2")?.x).toBe(10);
+  });
 });
 
 describe("sketchBuilderStore viewport, moodboard, theme", () => {
@@ -699,6 +758,36 @@ describe("sketchBuilderStore generated designs", () => {
       "/Home.js": "home",
       "/Contact.js": "c",
     });
+  });
+
+  it("seeds the captured portfolio, not the one active on resolve", () => {
+    store().setDraft(draft("p2"));
+    useBuilderStore.setState({ activePortfolioId: "p2" });
+
+    store().applyGeneratedDesign(design(), "new", "p1");
+
+    expect(useBuilderStore.getState().projects.p1?.files["/App.js"]).toBe(
+      "generated"
+    );
+    expect(useBuilderStore.getState().projects.p2).toBeUndefined();
+  });
+
+  it("appends to the captured portfolio, not the one active on resolve", () => {
+    store().setDraft(draft("p2"));
+    useBuilderStore.getState().seedGeneratedFiles("p1", { "/App.js": "old" });
+    useBuilderStore.setState({ activePortfolioId: "p2" });
+
+    store().applyGeneratedDesign(
+      { ...design(), files: { "/About.js": "about" } },
+      "append",
+      "p1"
+    );
+
+    expect(useBuilderStore.getState().projects.p1.files).toEqual({
+      "/App.js": "old",
+      "/About.js": "about",
+    });
+    expect(useBuilderStore.getState().projects.p2).toBeUndefined();
   });
 });
 

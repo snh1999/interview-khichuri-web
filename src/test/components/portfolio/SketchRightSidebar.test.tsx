@@ -213,6 +213,28 @@ describe("useBatchUpdate", () => {
     expect(useSketchBuilderStore.getState().history.past).toHaveLength(0);
     expect(elementById("a")?.x).toBe(5);
   });
+
+  it("starts a fresh entry after an undo inside the debounce window", () => {
+    const a = makeRect({ id: "a" });
+    seed([a]);
+
+    const { result } = renderHook(() => useBatchUpdate([{ id: "a" }]));
+
+    act(() => {
+      result.current({ x: 1 });
+    });
+    expect(useSketchBuilderStore.getState().history.past).toHaveLength(1);
+
+    act(() => {
+      useSketchBuilderStore.getState().undo();
+    });
+    expect(useSketchBuilderStore.getState().history.past).toHaveLength(0);
+
+    act(() => {
+      result.current({ x: 2 });
+    });
+    expect(useSketchBuilderStore.getState().history.past).toHaveLength(1);
+  });
 });
 
 describe("useSelectionState", () => {
@@ -707,6 +729,28 @@ describe("GeometryEditor", () => {
     expect(elementById("a")?.x).toBe(210);
     expect(elementById("b")?.x).toBe(250);
     expect(updateSelected).not.toHaveBeenCalled();
+  });
+
+  it("moves a frame's contained children when its X changes", () => {
+    const frameEl = makeFrame({ id: "f1", x: 100, y: 50 });
+    const child = makeStamp({ id: "s1", x: 140, y: 80, frameId: "f1" });
+    seed([frameEl, child]);
+
+    render(
+      <GeometryEditor
+        activeElement={frameEl}
+        isMulti={false}
+        selectedElements={[frameEl]}
+        updateSelected={vi.fn()}
+      />
+    );
+
+    fireEvent.change(screen.getAllByRole("spinbutton")[0], {
+      target: { value: "160" },
+    });
+
+    expect(elementById("f1")?.x).toBe(160);
+    expect(elementById("s1")?.x).toBe(200);
   });
 });
 

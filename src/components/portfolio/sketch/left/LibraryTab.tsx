@@ -28,6 +28,7 @@ export const LibraryTab: React.FC = () => {
   const selectElements = useSketchBuilderStore((s) => s.selectElements);
   const setViewport = useSketchBuilderStore((s) => s.setViewport);
   const setCurrentTool = useSketchBuilderStore((s) => s.setCurrentTool);
+  const selectedElementIds = useSketchBuilderStore((s) => s.selectedElementIds);
   const currentPortfolio = useCurrentPortfolio();
   const { elements } = currentPortfolio;
 
@@ -38,7 +39,13 @@ export const LibraryTab: React.FC = () => {
 
   const handleAddStampQuick = (stampType: StampType) => {
     const defaults = getStampDefaults(stampType);
-    const [firstFrame] = frameElements;
+    // Prefer a selected editable frame, else the first visible, unlocked one, so
+    // a new component never inherits a hidden/locked frame's state.
+    const isEditable = (f: FrameElement) => f.visible !== false && !f.locked;
+    const targetFrame =
+      frameElements.find(
+        (f) => selectedElementIds.includes(f.id) && isEditable(f)
+      ) ?? frameElements.find(isEditable);
     const offset = (elements.length % 6) * 28;
     const newStamp: StampElement = {
       id: generateSafeId("stamp"),
@@ -47,8 +54,8 @@ export const LibraryTab: React.FC = () => {
       name: defaults.label,
       label: defaults.label,
       sublabel: defaults.sublabel,
-      x: firstFrame ? firstFrame.x + 40 + offset : 100 + offset,
-      y: firstFrame ? firstFrame.y + 100 + offset : 100 + offset,
+      x: targetFrame ? targetFrame.x + 40 + offset : 100 + offset,
+      y: targetFrame ? targetFrame.y + 100 + offset : 100 + offset,
       width: defaults.width,
       height: defaults.height,
       strokeColor: defaults.strokeColor,
@@ -56,7 +63,7 @@ export const LibraryTab: React.FC = () => {
       strokeWidth: 1.5,
       opacity: 1,
       cornerRadius: 12,
-      frameId: firstFrame?.id,
+      frameId: targetFrame?.id,
       zIndex: getNextZIndex(elements),
     };
 

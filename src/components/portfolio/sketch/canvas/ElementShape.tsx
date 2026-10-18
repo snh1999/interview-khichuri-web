@@ -1,4 +1,5 @@
 import type { CanvasElement } from "../types";
+import { ImageShape } from "./ImageShape";
 import { StampShape } from "./StampShape";
 
 interface ElementShapeProps {
@@ -21,11 +22,11 @@ export function ElementShape({ el, isSelected }: ElementShapeProps) {
             className="shadow-xl"
             fill={el.fillColor ?? el.background ?? "#ffffff"}
             height={el.height}
-            rx={el.cornerRadius || 16}
+            rx={el.cornerRadius ?? 16}
             stroke={
               isSelected ? "var(--primary)" : el.strokeColor || "var(--border)"
             }
-            strokeWidth={isSelected ? 2.5 : el.strokeWidth || 1.5}
+            strokeWidth={isSelected ? 2.5 : (el.strokeWidth ?? 1.5)}
             width={el.width}
             x={el.x}
             y={el.y}
@@ -38,9 +39,9 @@ export function ElementShape({ el, isSelected }: ElementShapeProps) {
           fill={el.fillColor || "transparent"}
           height={el.height}
           opacity={el.opacity ?? 1}
-          rx={el.cornerRadius || 8}
+          rx={el.cornerRadius ?? 8}
           stroke={el.strokeColor || "currentColor"}
-          strokeWidth={el.strokeWidth || 2}
+          strokeWidth={el.strokeWidth ?? 2}
           width={el.width}
           x={el.x}
           y={el.y}
@@ -56,7 +57,7 @@ export function ElementShape({ el, isSelected }: ElementShapeProps) {
           rx={el.width / 2}
           ry={el.height / 2}
           stroke={el.strokeColor || "currentColor"}
-          strokeWidth={el.strokeWidth || 2}
+          strokeWidth={el.strokeWidth ?? 2}
         />
       )}
 
@@ -65,7 +66,7 @@ export function ElementShape({ el, isSelected }: ElementShapeProps) {
           opacity={el.opacity ?? 1}
           stroke={el.strokeColor || "currentColor"}
           strokeLinecap="round"
-          strokeWidth={el.strokeWidth || 2}
+          strokeWidth={el.strokeWidth ?? 2}
           x1={el.x}
           x2={el.endX ?? el.x + el.width}
           y1={el.y}
@@ -80,7 +81,7 @@ export function ElementShape({ el, isSelected }: ElementShapeProps) {
           const endX = el.endX ?? el.x + el.width;
           const endY = el.endY ?? el.y + el.height;
           const angle = Math.atan2(endY - startY, endX - startX);
-          const headLength = Math.max(10, (el.strokeWidth || 2) * 3.5);
+          const headLength = Math.max(10, (el.strokeWidth ?? 2) * 3.5);
           const arrowAngle = Math.PI / 7;
           const p1x = endX - headLength * Math.cos(angle - arrowAngle);
           const p1y = endY - headLength * Math.sin(angle - arrowAngle);
@@ -93,7 +94,7 @@ export function ElementShape({ el, isSelected }: ElementShapeProps) {
                 opacity={el.opacity ?? 1}
                 stroke={el.strokeColor || "currentColor"}
                 strokeLinecap="round"
-                strokeWidth={el.strokeWidth || 2}
+                strokeWidth={el.strokeWidth ?? 2}
                 x1={startX}
                 x2={endX}
                 y1={startY}
@@ -118,7 +119,7 @@ export function ElementShape({ el, isSelected }: ElementShapeProps) {
           stroke={el.strokeColor || "currentColor"}
           strokeLinecap="round"
           strokeLinejoin="round"
-          strokeWidth={el.strokeWidth || 2}
+          strokeWidth={el.strokeWidth ?? 2}
         />
       )}
 
@@ -139,6 +140,8 @@ export function ElementShape({ el, isSelected }: ElementShapeProps) {
           {el.text || "Double click to edit text"}
         </text>
       )}
+
+      {el.type === "image" && <ImageShape el={el} />}
 
       {el.type === "stamp" && <StampShape el={el} isSelected={isSelected} />}
     </>

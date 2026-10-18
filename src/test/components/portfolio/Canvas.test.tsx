@@ -254,13 +254,29 @@ describe("Canvas rendering", () => {
     expect(screen.getByText("f")).toBeInTheDocument();
   });
 
-  it("selects an element when it receives focus in select mode", () => {
+  it("selects an element when it is keyboard-activated in select mode", () => {
     seed([rect("r")]);
+    render(<Canvas />);
+
+    fireEvent.keyDown(element("rectangle"), { key: "Enter" });
+
+    expect(store().selectedElementIds).toEqual(["r"]);
+  });
+
+  it("does not replace a multi-selection on mouse focus", () => {
+    seed([
+      rect("r1"),
+      pen("p1", [
+        { x: 0, y: 0 },
+        { x: 5, y: 5 },
+      ]),
+    ]);
+    selectIds(["r1", "p1"]);
     render(<Canvas />);
 
     fireEvent.focus(element("rectangle"));
 
-    expect(store().selectedElementIds).toEqual(["r"]);
+    expect([...store().selectedElementIds].sort()).toEqual(["p1", "r1"]);
   });
 
   it("refuses to select or erase a locked element", () => {
@@ -491,6 +507,18 @@ describe("Canvas keyboard shortcuts", () => {
 
     press("ArrowUp");
     expect(elements()[0].y).toBe(0);
+  });
+
+  it("nudges by 10px when shift is held", () => {
+    seed([rect("r1", { x: 0, y: 0 })]);
+    render(<Canvas />);
+    selectIds(["r1"]);
+
+    press("ArrowRight", "ArrowRight", { shiftKey: true });
+    expect(elements()[0].x).toBe(10);
+
+    press("ArrowDown", "ArrowDown", { shiftKey: true });
+    expect(elements()[0].y).toBe(10);
   });
 
   it("nudges line endpoints and pen points together", () => {

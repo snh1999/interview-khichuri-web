@@ -52,6 +52,7 @@ export const Canvas: React.FC = () => {
   const fontSize = useSketchBuilderStore((s) => s.fontSize);
   const cornerRadius = useSketchBuilderStore((s) => s.cornerRadius);
   const roughness = useSketchBuilderStore((s) => s.roughness);
+  const setCanvasSize = useSketchBuilderStore((s) => s.setCanvasSize);
   const selectedElementIds = useSketchBuilderStore((s) => s.selectedElementIds);
   const selectElements = useSketchBuilderStore((s) => s.selectElements);
   const toggleElementSelection = useSketchBuilderStore(
@@ -133,6 +134,11 @@ export const Canvas: React.FC = () => {
   const [isResizing, setIsResizing] = useState<string | null>(null);
   const [dragStartPoint, setDragStartPoint] = useState<Point>({ x: 0, y: 0 });
   const dragChildrenMapRef = useRef<Map<string, string[]>>(new Map());
+  // Element positions captured at drag start. Computing moves against the live
+  // store is unsafe: updates are RAF-throttled, so between a move and its flush
+  // the store base is stale while the pointer keeps advancing, and deltas would
+  // compound wrongly. A fixed base + fixed origin makes moves absolute.
+  const dragBaseRef = useRef<Map<string, CanvasElement>>(new Map());
   const marqueeInitialSelectionRef = useRef<string[]>([]);
   const [currentDrawingElement, setCurrentDrawingElement] =
     useState<CanvasElement | null>(null);
@@ -321,7 +327,7 @@ export const Canvas: React.FC = () => {
       }
       moveSelectionBy(dx, dy);
     },
-    { enableOnFormTags: false }
+    { enableOnFormTags: false, ignoreModifiers: true }
   );
   useHotkeys(
     "escape",
@@ -584,9 +590,10 @@ export const Canvas: React.FC = () => {
         string,
         { el: CanvasElement; dx: number; dy: number }
       >();
+      const baseElements = dragBaseRef.current;
 
       for (const id of selectedElementIds) {
-        const foundEl = elements.find((element) => element.id === id);
+        const foundEl = baseElements.get(id);
         if (foundEl) {
           elementsToMove.set(id, { el: foundEl, dx, dy });
         }
@@ -596,7 +603,7 @@ export const Canvas: React.FC = () => {
       for (const childIds of dragChildrenMapRef.current.values()) {
         for (const childId of childIds) {
           if (!elementsToMove.has(childId)) {
-            const childEl = elements.find((element) => element.id === childId);
+            const childEl = baseElements.get(childId);
             if (childEl) {
               elementsToMove.set(childId, { el: childEl, dx, dy });
             }
@@ -640,7 +647,6 @@ export const Canvas: React.FC = () => {
         });
       }
 
-      setDragStartPoint(worldPoint);
       return;
     }
 
@@ -898,7 +904,29 @@ export const Canvas: React.FC = () => {
     };
   }, [persistViewport]);
 
+  // Keep the store's canvas size current so centering/focus math uses the real
+  // flex slot (between the sidebars) instead of a hardcoded window offset.
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+    const update = () => {
+      setCanvasSize({
+        width: container.clientWidth,
+        height: container.clientHeight,
+      });
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [setCanvasSize]);
+
   const handleElementDoubleClick = (el: CanvasElement) => {
+    if (getLockedElementIds(elements).has(el.id)) {
+      return;
+    }
     if (el.type === "text") {
       setEditingTextId(el.id);
       setEditTextValue((el as TextElement).text || "");
@@ -1038,8 +1066,13 @@ export const Canvas: React.FC = () => {
                 // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped element
                 onDoubleClick={() => handleElementDoubleClick(el)}
                 // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped element
-                onFocus={() => {
-                  if (currentTool === "select" && !isLocked) {
+                onKeyDown={(e) => {
+                  if (
+                    (e.key === "Enter" || e.key === " ") &&
+                    currentTool === "select" &&
+                    !isLocked
+                  ) {
+                    e.preventDefault();
                     selectElements([el.id]);
                   }
                 }}
@@ -1103,6 +1136,9 @@ export const Canvas: React.FC = () => {
                       childrenMap.set(frame.id, childIds);
                     }
                     dragChildrenMapRef.current = childrenMap;
+                    dragBaseRef.current = new Map(
+                      elements.map((elem) => [elem.id, elem])
+                    );
 
                     setIsDraggingElements(true);
                     setHasMovedDuringDrag(false);
@@ -1140,9 +1176,11 @@ export const Canvas: React.FC = () => {
           transformOrigin: "0 0",
         }}
       >
-        {frameElements.map((frame) => (
-          <CanvasPageBanner frame={frame} key={frame.id} />
-        ))}
+        {frameElements
+          .filter((frame) => elementStateById.get(frame.id)?.visible !== false)
+          .map((frame) => (
+            <CanvasPageBanner frame={frame} key={frame.id} />
+          ))}
       </div>
 
       {elements.length === 0 && (

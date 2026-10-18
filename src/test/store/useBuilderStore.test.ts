@@ -451,6 +451,22 @@ describe("useBuilderStore.applyAiResult", () => {
     expect(project().files["/Local.jsx"]).toBe("edited while the AI ran");
   });
 
+  it("keeps a locally edited file even when the reply also returns it", () => {
+    seedProject({ files: { "/App.js": "sent-baseline" } });
+    // The user keeps typing while the request is in flight.
+    useBuilderStore.getState().updateFileContent("/App.js", "local keystrokes");
+
+    useBuilderStore
+      .getState()
+      .applyAiResult(
+        { files: { "/App.js": "stale-server" }, message: "done", applied: [] },
+        PORTFOLIO,
+        { "/App.js": "sent-baseline" }
+      );
+
+    expect(project().files["/App.js"]).toBe("local keystrokes");
+  });
+
   it("lists each changed file once and excludes deletes", () => {
     seedProject();
 
@@ -602,6 +618,38 @@ describe("useBuilderStore.seedProjectFiles", () => {
     expect(project().files["/Keep.jsx"]).toBe("keep");
     expect(project().activeFile).toBe("/App.js");
   });
+
+  it("seeds the starting project when another is active on resolve", () => {
+    seedProject({ files: { "/App.js": "origin" } });
+    useBuilderStore.setState((state) => ({
+      projects: {
+        ...state.projects,
+        p2: { ...createEmptyProject(), files: { "/App.js": "other" } },
+      },
+      activePortfolioId: "p2",
+    }));
+
+    useBuilderStore
+      .getState()
+      .seedProjectFiles({ "/Hero.jsx": "hero" }, PORTFOLIO);
+
+    expect(project().files["/Hero.jsx"]).toBe("hero");
+    expect(useBuilderStore.getState().projects.p2.files["/Hero.jsx"]).toBe(
+      undefined
+    );
+  });
+
+  it("creates the target project when genesis starts with none", () => {
+    useBuilderStore.setState({ activePortfolioId: null });
+
+    useBuilderStore
+      .getState()
+      .seedProjectFiles({ "/App.js": "app" }, PORTFOLIO);
+
+    expect(
+      useBuilderStore.getState().projects[PORTFOLIO].files["/App.js"]
+    ).toBe("app");
+  });
 });
 
 describe("useBuilderStore.exportProject", () => {
@@ -718,5 +766,29 @@ describe("applyGeneratedDesign link", () => {
       "/Home.js": "home",
       "/Contact.js": "contact",
     });
+  });
+
+  it("appends to the starting project when another is active on resolve", () => {
+    seedProject({ files: { "/App.js": "old" } });
+    useBuilderStore.setState((state) => ({
+      projects: {
+        ...state.projects,
+        p2: { ...createEmptyProject(), files: { "/App.js": "p2" } },
+      },
+      activePortfolioId: "p2",
+    }));
+
+    useBuilderStore
+      .getState()
+      .appendGeneratedFiles(
+        { "/About.js": "about" },
+        "Added /about",
+        PORTFOLIO
+      );
+
+    expect(project().files["/About.js"]).toBe("about");
+    expect(useBuilderStore.getState().projects.p2.files["/About.js"]).toBe(
+      undefined
+    );
   });
 });

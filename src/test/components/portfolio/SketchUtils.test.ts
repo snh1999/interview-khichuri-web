@@ -19,6 +19,7 @@ import {
 } from "@/components/portfolio/sketch/utils/stampConstants";
 import { getCenteredViewport } from "@/components/portfolio/sketch/utils/viewport";
 import { getNextZIndex } from "@/components/portfolio/sketch/utils/zIndex";
+import { useSketchBuilderStore } from "@/store/sketchBuilderStore";
 
 describe("rgbToHex", () => {
   it("formats channels as zero-padded hex", () => {
@@ -369,6 +370,19 @@ describe("getCenteredViewport", () => {
       y: 294,
       zoom: 0.5,
     });
+  });
+
+  it("uses the measured canvas size over the window estimate", () => {
+    useSketchBuilderStore.setState({ canvasSize: { width: 400, height: 600 } });
+    try {
+      expect(getCenteredViewport(element, { x: 0, y: 0, zoom: 1 })).toEqual({
+        x: 0,
+        y: 200,
+        zoom: 1,
+      });
+    } finally {
+      useSketchBuilderStore.setState({ canvasSize: { width: 0, height: 0 } });
+    }
   });
 });
 

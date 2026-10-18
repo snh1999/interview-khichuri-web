@@ -7,6 +7,7 @@ import type {
   Portfolio,
 } from "@/components/portfolio/sketch/types";
 import { DEFAULT_THEMES } from "@/components/portfolio/sketch/utils/defaultPortfolios.ts";
+import { getAssetImage, saveAssetImage } from "@/lib/storage/imageStorageDb";
 import { useSketchBuilderStore } from "@/store/sketchBuilderStore.ts";
 import { render } from "@/test/render.tsx";
 
@@ -262,5 +263,24 @@ describe("CanvasPageBanner", () => {
     await user.click(screen.getByRole("button", { name: "Remove" }));
 
     expect(savedFrame("a")?.inspirationImageUrl).toBeUndefined();
+  });
+
+  it("keeps the removed inspiration asset so undo can still resolve it", async () => {
+    await saveAssetImage("insp-keep", "data:image/png;base64,AAAA");
+    const alpha = frame({
+      id: "a",
+      title: "Alpha",
+      inspirationImageUrl: "idb://insp-keep",
+    });
+    seed([alpha]);
+
+    const { user } = render(<CanvasPageBanner frame={alpha} />);
+    await user.click(screen.getByRole("button", { name: PAGE_SETUP }));
+    await user.click(screen.getByRole("button", { name: "Remove" }));
+
+    expect(savedFrame("a")?.inspirationImageUrl).toBeUndefined();
+    await expect(getAssetImage("insp-keep")).resolves.toBe(
+      "data:image/png;base64,AAAA"
+    );
   });
 });

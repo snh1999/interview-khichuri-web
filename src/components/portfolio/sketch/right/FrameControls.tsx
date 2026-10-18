@@ -13,6 +13,7 @@ export const FrameControls: React.FC<FrameControlsProps> = ({
   activeElement,
 }) => {
   const updateElement = useSketchBuilderStore((s) => s.updateElement);
+  const recordHistory = useSketchBuilderStore((s) => s.recordHistory);
   const setActiveFrameForAi = useSketchBuilderStore(
     (s) => s.setActiveFrameForAi
   );
@@ -36,6 +37,7 @@ export const FrameControls: React.FC<FrameControlsProps> = ({
         <Input
           className="h-7 bg-background font-mono text-xs"
           onChange={handleRouteChange}
+          onFocus={recordHistory}
           type="text"
           value={(activeElement as FrameElement).route || "/"}
         />
