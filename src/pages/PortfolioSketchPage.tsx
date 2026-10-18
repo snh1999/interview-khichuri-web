@@ -1,6 +1,10 @@
 import type React from "react";
 import { lazy, Suspense, useEffect } from "react";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
+import { AiTransformModal } from "@/components/portfolio/sketch/AiTransformModal";
+import { Canvas } from "@/components/portfolio/sketch/Canvas";
+import { LeftSidebar } from "@/components/portfolio/sketch/LeftSidebar";
+import { RightSidebar } from "@/components/portfolio/sketch/RightSidebar";
 import { SketchNavbar } from "@/components/portfolio/sketch/SketchNavbar";
 import { Spinner } from "@/components/ui/spinner";
 import { useSketchBuilderStore } from "@/store/sketchBuilderStore";
@@ -14,6 +18,13 @@ const LazyProjectBuilder = lazy(() =>
 
 export const PortfolioSketchPage: React.FC = () => {
   const viewMode = useSketchBuilderStore((s) => s.viewMode);
+  const isSidebarOpen = useSketchBuilderStore((s) => s.isSidebarOpen);
+  const isAiModalOpen = useSketchBuilderStore((s) => s.isAiModalOpen);
+  const closeAiModal = useSketchBuilderStore((s) => s.closeAiModal);
+  const aiModalTargetFrameId = useSketchBuilderStore(
+    (s) => s.aiModalTargetFrameId
+  );
+  const aiModalMode = useSketchBuilderStore((s) => s.aiModalMode);
 
   // The editor store owns the live canvas draft; the builder store keys its
   // code projects by the same id, so keep them in step here.
@@ -31,7 +42,17 @@ export const PortfolioSketchPage: React.FC = () => {
         <SketchNavbar />
 
         <div className="relative flex flex-1 overflow-hidden">
-          {viewMode === "preview" ? (
+          {viewMode === "canvas" && (
+            <>
+              {isSidebarOpen && <LeftSidebar />}
+              <div className="relative h-full flex-1 overflow-hidden">
+                <Canvas />
+              </div>
+              <RightSidebar />
+            </>
+          )}
+
+          {viewMode === "preview" && (
             <div className="h-full flex-1 overflow-hidden">
               <Suspense
                 fallback={
@@ -43,12 +64,15 @@ export const PortfolioSketchPage: React.FC = () => {
                 <LazyProjectBuilder />
               </Suspense>
             </div>
-          ) : (
-            <div className="flex h-full flex-1 items-center justify-center bg-muted/30 text-muted-foreground">
-              <p className="text-sm">Canvas will be added in the next PR.</p>
-            </div>
           )}
         </div>
+
+        <AiTransformModal
+          isOpen={isAiModalOpen}
+          mode={aiModalMode}
+          onClose={closeAiModal}
+          targetFrameId={aiModalTargetFrameId ?? undefined}
+        />
       </div>
     </AppErrorSuspense>
   );
