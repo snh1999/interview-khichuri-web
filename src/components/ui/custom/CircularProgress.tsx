@@ -61,10 +61,14 @@ const CircularProgress = ({
 
     return (
       <div
+        aria-valuemax={100}
+        aria-valuemin={0}
+        aria-valuenow={currentPercent}
         className={cn(
           "relative flex shrink-0 items-center justify-center",
           className
         )}
+        role="progressbar"
         style={{ width: size, height: size }}
         {...props}
       >
@@ -127,10 +131,14 @@ const CircularProgress = ({
 
   return (
     <div
+      aria-valuemax={100}
+      aria-valuemin={0}
+      aria-valuenow={currentPercent}
       className={cn(
         "relative flex shrink-0 items-center justify-center",
         className
       )}
+      role="progressbar"
       style={{ width: size, height: size }}
       {...props}
     >

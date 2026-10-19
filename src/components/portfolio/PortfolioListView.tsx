@@ -65,13 +65,13 @@ export const PortfolioListView = () => {
       <CardHeader>
         <div className="flex items-start justify-between gap-3">
           <div>
-            <CardTitle>Portfolio (Experiemental)</CardTitle>
+            <CardTitle>Portfolio (Experimental)</CardTitle>
             <CardDescription>
               Wireframes and moodboards for your personal portfolio.
             </CardDescription>
-            <CardDescription className="text-destructive">
-              There may be issues/bugs, Portfolio builder is actively being
-              developed.
+            <CardDescription className="text-amber-700 dark:text-amber-300">
+              The Portfolio builder is experimental and still in development;
+              you may encounter bugs.
             </CardDescription>
           </div>
           <CardAction>

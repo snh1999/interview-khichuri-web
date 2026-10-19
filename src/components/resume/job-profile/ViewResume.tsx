@@ -52,7 +52,7 @@ export const ViewResume = ({ resume, onClose }: Readonly<IProps>) => {
         </div>
 
         <DrawLogFooter className="flex flex-row items-center justify-end gap-2 border-border border-t px-4 py-3">
-          <Button onClick={onClose} variant="destructive">
+          <Button onClick={onClose} variant="outline">
             <XIcon />
             Close
           </Button>
@@ -64,7 +64,7 @@ export const ViewResume = ({ resume, onClose }: Readonly<IProps>) => {
           ) : null}
           {hasPdfFile ? <OpenPDFInNewTab resumeId={resume.id} /> : null}
           <Button onClick={handleReview}>
-            <ListIcon /> View
+            <ListIcon /> Open details
           </Button>
         </DrawLogFooter>
       </DrawLogContent>

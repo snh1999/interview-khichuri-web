@@ -15,7 +15,7 @@ import { render } from "@/test/render.tsx";
 
 const CREATED_AT = "2026-01-01T00:00:00.000Z";
 
-const PICK_PROMPT_PATTERN = /Pick a job and resume/;
+const PICK_PROMPT_PATTERN = /Select a job and a resume/;
 const SAVED_CARD_PATTERN = /Main resume/;
 const FILTERED_EMPTY_PATTERN = /No saved scores for this selection yet/;
 
@@ -121,6 +121,19 @@ describe("ATSReview", () => {
     );
     const view = render(<ATSReview />);
     expect(await view.findAllByText("Main resume")).toHaveLength(5);
+    expect(
+      screen.getByText("Showing 5 of 6 saved reviews.")
+    ).toBeInTheDocument();
+
+    await view.user.click(screen.getByRole("button", { name: "Show all" }));
+
+    expect(await view.findAllByText("Main resume")).toHaveLength(6);
+    expect(
+      screen.getByText("Showing all 6 saved reviews.")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Show recent" })
+    ).toBeInTheDocument();
   });
 
   it("shows the filtered empty state when no owned resume matches", async () => {
@@ -156,7 +169,9 @@ describe("ATSReview", () => {
       await screen.findByRole("option", { name: "Main resume" })
     );
 
-    expect(await view.findByText("Main resume")).toBeInTheDocument();
+    expect(
+      await view.findByRole("button", { name: SAVED_CARD_PATTERN })
+    ).toBeInTheDocument();
   });
 
   it("ignores saved entries whose resume is unknown", async () => {

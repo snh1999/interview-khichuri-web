@@ -41,6 +41,21 @@ Object.defineProperty(Element.prototype, "animate", {
   writable: true,
 });
 
+Object.defineProperty(Element.prototype, "getAnimations", {
+  value: () => [],
+  writable: true,
+});
+
+Object.defineProperty(Element.prototype, "scrollTo", {
+  value: () => undefined,
+  writable: true,
+});
+
+Object.defineProperty(document, "fonts", {
+  value: { ready: Promise.resolve() },
+  writable: true,
+});
+
 vi.stubGlobal(
   "ResizeObserver",
   class {

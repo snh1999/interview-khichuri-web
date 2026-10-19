@@ -15,7 +15,7 @@ import type { IResume } from "@/api/resumes";
 import { PUBLIC_RESUME_PAGE } from "@/app.constants.ts";
 import { AiActionButton } from "@/components/common/ai/AiActionButton.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
-import { ActionButton } from "@/components/ui/button/ActionButton.tsx";
+import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   DropdownMenu,
@@ -63,17 +63,7 @@ export const ResumeListItem = ({
 
   const handleNavigateToEdit = () => navigate(`/resumes/${resume.id}/edit`);
 
-  const handleDelete = async () => {
-    try {
-      await onDelete(resume.id);
-      return { error: false, message: "Resume deleted" };
-    } catch (err) {
-      return {
-        error: true,
-        message: err instanceof Error ? err.message : "Failed to delete resume",
-      };
-    }
-  };
+  const handleDelete = () => onDelete(resume.id);
 
   const handleView = () => onView(resume);
   const handleSetPrimary = () => onSetPrimary(resume.id);
@@ -86,7 +76,7 @@ export const ResumeListItem = ({
   return (
     <div className="flex items-center gap-3 rounded-lg border border-muted-foreground/25 p-3">
       <button
-        className="flex min-w-0 flex-1 items-center gap-3 text-left"
+        className="flex min-w-0 flex-1 items-center gap-3 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         onClick={handleView}
         type="button"
       >
@@ -99,6 +89,12 @@ export const ResumeListItem = ({
           {resume.name}
         </span>
       </button>
+
+      {resume.isPrimary ? (
+        <Badge className="shrink-0" variant="secondary">
+          Primary
+        </Badge>
+      ) : null}
 
       {isGenerated && resume.template ? (
         <Badge className="shrink-0 text-muted-foreground" variant="outline">
@@ -149,14 +145,12 @@ export const ResumeListItem = ({
             />
           )}
 
-          {!resume.isPrimary && (
-            <DropdownMenuItem
-              disabled={isSettingPrimary}
-              onClick={handleSetPrimary}
-            >
-              <StarIcon className="size-4" /> Set as Primary
-            </DropdownMenuItem>
-          )}
+          <DropdownMenuItem
+            disabled={resume.isPrimary || isSettingPrimary}
+            onClick={handleSetPrimary}
+          >
+            <StarIcon className="size-4" /> Set as primary
+          </DropdownMenuItem>
           {isGenerated && (
             <DropdownMenuItem onClick={handleNavigateToEdit}>
               <PenIcon className="size-4" /> Edit
@@ -167,35 +161,24 @@ export const ResumeListItem = ({
               <LinkIcon className="size-4" /> Copy link
             </DropdownMenuItem>
           ) : null}
-          <ActionButton
-            action={handleDelete}
+          <MutationButton
             actionLabel="Delete resume"
             aria-label={`Delete ${resume.name}`}
-            className="w-full justify-start text-destructive"
             dialogDescription="This resume will be permanently deleted."
             dialogTitle="Delete this resume?"
+            errorMessage="Failed to delete resume"
+            mutationFn={handleDelete}
+            renderNode={
+              <DropdownMenuItem closeOnClick={false} variant="destructive">
+                <TrashIcon className="size-4" /> Delete
+              </DropdownMenuItem>
+            }
             requireConfirmation
-            type="button"
-            variant="ghost"
-          >
-            <TrashIcon className="size-4" /> Delete
-          </ActionButton>
+            successMessage="Resume deleted"
+            variant="destructive"
+          />
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <ActionButton
-        action={handleDelete}
-        actionLabel="Delete resume"
-        aria-label={`Delete ${resume.name}`}
-        dialogDescription="This resume will be permanently deleted."
-        dialogTitle="Delete this resume?"
-        requireConfirmation
-        size="icon"
-        type="button"
-        variant="destructive"
-      >
-        <TrashIcon className="size-4" />
-      </ActionButton>
     </div>
   );
 };

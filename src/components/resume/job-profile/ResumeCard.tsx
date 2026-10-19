@@ -38,6 +38,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog.tsx";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
 
 export const ResumeCard = () => {
   const { data: resumes } = useGetResumes();
@@ -83,17 +88,41 @@ export const ResumeCard = () => {
   };
 
   const hasResume = resumes.length > 0;
-  const hasQuota = resumes.length < 5;
+  const hasQuota = resumes.length < MAX_RESUMES;
   const beforeForm = profileData ? profileToFormData(profileData) : undefined;
 
   const openDialog = () => setOpen(true);
   const closeDialog = () => setOpen(false);
+  const quotaTooltip = `You have reached the ${MAX_RESUMES}-resume limit. Delete one to add another.`;
   const closeResumeView = () => setViewingResume(null);
   const closeExtraction = () => setExtraction(null);
   const handleMerge = (merged: TProfileFormData) =>
     applyExtraction(merged, false);
   const handleOverride = (merged: TProfileFormData) =>
     applyExtraction(merged, true);
+
+  const renderAddResume = () => {
+    if (!hasResume) {
+      return null;
+    }
+    const button = (
+      <Button disabled={!hasQuota} onClick={openDialog} variant="outline">
+        <PlusIcon className="size-4" />
+        Add resume
+      </Button>
+    );
+    if (hasQuota) {
+      return button;
+    }
+    return (
+      <Tooltip>
+        <TooltipTrigger
+          render={<span className="inline-flex">{button}</span>}
+        />
+        <TooltipContent>{quotaTooltip}</TooltipContent>
+      </Tooltip>
+    );
+  };
 
   const onFillProfile = async (
     resume: IResume,
@@ -114,28 +143,17 @@ export const ResumeCard = () => {
       <CardHeader>
         <div className="flex items-start justify-between gap-3">
           <div>
-            <CardTitle>Resume</CardTitle>
+            <CardTitle>Your resumes</CardTitle>
 
             <CardDescription>
               {hasResume
                 ? `${resumes.length} of ${MAX_RESUMES} resumes.`
                 : "Upload a PDF or generate a tailored resume from your profile data."}
 
-              {hasQuota ? "" : " To add more you need to delete at least one"}
+              {hasQuota ? "" : " Delete a resume to add another."}
             </CardDescription>
           </div>
-          <CardAction>
-            {hasResume ? (
-              <Button
-                disabled={!hasQuota}
-                onClick={openDialog}
-                variant="outline"
-              >
-                <PlusIcon className="size-4" />
-                Add resume
-              </Button>
-            ) : null}
-          </CardAction>
+          <CardAction>{renderAddResume()}</CardAction>
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
