@@ -6,6 +6,7 @@ import {
   getScoreTone,
   SCORE_TEXT_CLASS,
 } from "@/components/resume/resume.helpers";
+import { Card, CardContent } from "@/components/ui/card.tsx";
 import type {
   IScoreDimension,
   TDeterministicScore,
@@ -15,7 +16,7 @@ import { profileFacts, scoreJob } from "@/lib/deterministic-score.ts";
 const GROUPS: ReadonlyArray<{ title: string; keys: readonly string[] }> = [
   { keys: ["skills"], title: "Skills" },
   { keys: ["seniority"], title: "Seniority" },
-  { keys: ["workType", "location"], title: "Location & work type" },
+  { keys: ["workType", "location"], title: "Work type" },
   { keys: ["role"], title: "Others" },
 ];
 
@@ -58,53 +59,55 @@ const FitScoreCard = ({
     : [];
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border p-4 text-center sm:flex-row">
-      <div className="flex flex-col gap-1 sm:basis-1/3">
-        <span className="flex items-start justify-between">
-          <span className="font-medium text-sm">{title}</span>
-          {score ? <FitCircle score={score.overall} /> : null}
-        </span>
-        {score ? (
-          <span
-            className={cn(
-              "font-semibold text-4xl",
-              SCORE_TEXT_CLASS[getScoreTone(score.overall)]
-            )}
-          >
-            {score.overall}%
+    <Card>
+      <CardContent className="flex flex-col gap-4 text-center sm:flex-row">
+        <div className="flex flex-col gap-1 sm:basis-1/3">
+          <span className="flex items-center justify-center gap-4">
+            <span className="font-medium text-sm">{title}</span>
+            {score ? <FitCircle score={score.overall} /> : null}
           </span>
-        ) : (
-          <span className="text-muted-foreground text-sm">
-            {unavailableMessage}
-          </span>
-        )}
-      </div>
-
-      {score ? (
-        <div className="grid grid-cols-2 gap-2 sm:flex-1 sm:grid-cols-4">
-          {cards.map((card) => (
-            <div
-              className="flex flex-col gap-1 rounded-lg border p-2"
-              key={card.title}
+          {score ? (
+            <span
+              className={cn(
+                "font-semibold text-4xl",
+                SCORE_TEXT_CLASS[getScoreTone(score.overall)]
+              )}
             >
-              <span className="text-muted-foreground text-xs">
-                {card.title}
-              </span>
-              <span className="font-medium text-lg">
-                {card.score === null ? (
-                  <span className="text-muted-foreground">—</span>
-                ) : (
-                  <>
-                    {card.score}{" "}
-                    <span className="text-muted-foreground text-xs">%</span>
-                  </>
-                )}
-              </span>
-            </div>
-          ))}
+              {score.overall}%
+            </span>
+          ) : (
+            <span className="text-muted-foreground text-sm">
+              {unavailableMessage}
+            </span>
+          )}
         </div>
-      ) : null}
-    </div>
+
+        {score ? (
+          <div className="grid grid-cols-2 gap-2 sm:flex-1 sm:grid-cols-4">
+            {cards.map((card) => (
+              <div
+                className="flex flex-col gap-1 rounded-lg border bg-muted/60 p-2"
+                key={card.title}
+              >
+                <span className="text-muted-foreground text-xs">
+                  {card.title}
+                </span>
+                <span className="font-medium text-lg">
+                  {card.score === null ? (
+                    <span className="text-muted-foreground">—</span>
+                  ) : (
+                    <>
+                      {card.score}{" "}
+                      <span className="text-muted-foreground text-xs">%</span>
+                    </>
+                  )}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </CardContent>
+    </Card>
   );
 };
 

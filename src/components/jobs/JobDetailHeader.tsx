@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { type IJobWithTopics, useDeleteJob } from "@/api/jobs";
-import { useProfile } from "@/api/profile/profiles";
+import { useProfileQuery } from "@/api/profile/profiles";
 import { JOBS_PAGE } from "@/app.constants.ts";
 import { JobLetterActions } from "@/components/jobs/JobLetterActions.tsx";
 import { JobPostForm } from "@/components/jobs/JobPostForm.tsx";
@@ -35,8 +35,7 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
   const navigate = useNavigate();
   const rolesMap = useRolesMap();
   const topicsMap = useTopicsMap();
-  // TODO: profile should be optional here - if /profile is down the whole detail page breaks even though we only need it for topic highlighting.
-  const { data: profile } = useProfile();
+  const { data: profile } = useProfileQuery();
   const skillIds = new Set(profileFacts(profile).skillIds);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -63,11 +62,14 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
   const timeline = [
     {
       label: "",
-      value: dateInfo.startsWith("Create") ? null : dateInfo,
+      value:
+        dateInfo.startsWith("Create") || dateInfo.startsWith("Applied")
+          ? null
+          : dateInfo,
       danger: urgent,
     },
-    { label: "Applied", value: fmt(job.appliedAt) },
     { label: "Interview", value: fmt(job.interviewDate) },
+    { label: "Applied", value: fmt(job.appliedAt) },
     { label: "Deadline", value: fmt(job.deadline) },
   ].filter((t) => t.value);
 
@@ -83,8 +85,8 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
       <GutterCard className="py-4" variant={variant}>
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="font-semibold text-foreground text-lg">{job.title}</p>
-            <p className="m mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground text-sm">
+            <p className="font-semibold text-foreground text-xl">{job.title}</p>
+            <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground text-sm">
               <span className="inline-flex items-center gap-1">
                 <BuildingsIcon className="size-3.5" />
                 {job.companyName}
@@ -97,7 +99,7 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
               ) : null}
               {roleName ? (
                 <span className="inline-flex items-center gap-1">
-                  <BriefcaseIcon />
+                  <BriefcaseIcon className="size-3.5" />
                   {roleName}
                 </span>
               ) : null}
@@ -110,6 +112,7 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
               <PencilLineIcon className="size-3" />
               Edit
             </Button>
+            <Separator orientation="vertical" />
             <MutationButton
               actionLabel="Delete job"
               aria-label="Delete job"
@@ -156,7 +159,7 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
             </span>
 
             <span className="flex gap-1">
-              <PencilIcon />
+              <PencilIcon className="size-3.5" />
               Updated {fmt(job.updatedAt)}
             </span>
           </span>

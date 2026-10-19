@@ -48,8 +48,6 @@ export const JOB_STATUS_VARIANT = {
 } as const;
 
 export const getDateInfo = (job: IJob): string => {
-  const days = daysUntil(job.deadline);
-
   if (job.interviewDate) {
     const interviewDays = daysUntil(job.interviewDate);
     return interviewDays !== null && interviewDays >= 0
@@ -59,6 +57,7 @@ export const getDateInfo = (job: IJob): string => {
   if (job.appliedAt) {
     return `Applied ${new Date(job.appliedAt).toLocaleDateString()}`;
   }
+  const days = daysUntil(job.deadline);
   if (days !== null) {
     return days >= 0 ? `${days}d left` : "Deadline passed";
   }

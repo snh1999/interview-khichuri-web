@@ -122,7 +122,7 @@ export const JobLetterActions = ({ job }: Readonly<{ job: IJob }>) => {
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button size="sm" variant="outline">
+            <Button size="sm">
               <SparkleIcon className="size-3" />
               Generate
             </Button>
