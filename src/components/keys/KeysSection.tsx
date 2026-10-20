@@ -55,7 +55,8 @@ const KeysCard = () => {
       <CardHeader>
         <CardTitle>API Keys</CardTitle>
         <CardDescription>
-          Manage your AI provider API keys for question generation.
+          Manage the AI provider API keys used across the app. Keys are
+          encrypted with AES-256 and used only with your selected provider.
         </CardDescription>
         <CardAction>
           <KeysFormDialog getIsActive={getIsActive} />
@@ -70,10 +71,16 @@ const KeysCard = () => {
                   <CardTitle className="flex gap-2 pt-3 text-md">
                     {PROVIDER_LABELS[provider as TApiKeyProvider]}
                     {defaultAiProvider?.provider === provider ? (
-                      <ShieldCheckIcon
-                        className="text-signal-success"
-                        weight="fill"
-                      />
+                      <>
+                        <ShieldCheckIcon
+                          aria-hidden="true"
+                          className="text-signal-success"
+                          weight="fill"
+                        />
+                        <span className="font-normal text-muted-foreground text-xs">
+                          Default on this device
+                        </span>
+                      </>
                     ) : null}
                   </CardTitle>
                 </div>

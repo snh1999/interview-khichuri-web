@@ -51,7 +51,7 @@ export const UpdateProfileForm = ({ user }: Readonly<IProp>) => {
             size="lg"
             type="submit"
           >
-            Update
+            Save changes
           </AsyncButton>
         </CardFooter>
       </form>

@@ -32,7 +32,7 @@ export const AccountCard = (props: Readonly<IProps>) => {
       <Card size="sm">
         <CardContent>
           <p className="text-muted-foreground text-sm">
-            Unknown provider: {provider}
+            {provider} is no longer supported.
           </p>
         </CardContent>
       </Card>

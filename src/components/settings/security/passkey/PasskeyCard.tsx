@@ -9,6 +9,7 @@ import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -58,36 +59,37 @@ export const PasskeyCard = () => {
     <Card>
       <CardHeader>
         <CardTitle>Passkeys</CardTitle>
+        <CardAction>
+          <Dialog onOpenChange={handleDialogOpen} open={isDialogOpen}>
+            <DialogTrigger
+              render={<Button className="mt-4">New Passkey</Button>}
+            />
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Passkey</DialogTitle>
+                <DialogDescription>
+                  Create a new passkey for secure, passwordless authentication.
+                </DialogDescription>
+              </DialogHeader>
+
+              <form className="space-y-4" onSubmit={onSubmit}>
+                <FormInput form={form} label="Name" name="name" />
+                <AsyncButton
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
+                  type="submit"
+                >
+                  Add
+                </AsyncButton>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </CardAction>
       </CardHeader>
       <CardContent>
         <Suspense fallback={<Spinner className="h-15" />}>
           <PasskeyItems />
         </Suspense>
-
-        <Dialog onOpenChange={handleDialogOpen} open={isDialogOpen}>
-          <DialogTrigger
-            render={<Button className="mt-4">New Passkey</Button>}
-          />
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Passkey</DialogTitle>
-              <DialogDescription>
-                Create a new passkey for secure, passwordless authentication.
-              </DialogDescription>
-            </DialogHeader>
-
-            <form className="space-y-4" onSubmit={onSubmit}>
-              <FormInput form={form} label="Name" name="name" />
-              <AsyncButton
-                className="w-full"
-                disabled={form.formState.isSubmitting}
-                type="submit"
-              >
-                Add
-              </AsyncButton>
-            </form>
-          </DialogContent>
-        </Dialog>
       </CardContent>
     </Card>
   );

@@ -36,12 +36,12 @@ export const ProfileSecurity = () => {
   const { cooldown, markSent } = useEmailResendCooldown();
   const [emailSent, setEmailSent] = useState(false);
 
-  if (!session) {
-    return null;
+  if (!(session && accounts)) {
+    return <ProfileSkeletonCard />;
   }
 
   const { email } = session.user;
-  const hasPassword = accounts?.some(
+  const hasPassword = accounts.some(
     (account) => account.providerId === "credential"
   );
 
@@ -74,20 +74,18 @@ export const ProfileSecurity = () => {
             <CardTitle>Set Password</CardTitle>
             <CardDescription className="whitespace-normal">
               {emailSent
-                ? `We sent a password reset link to ${email}. Please check your inbox.`
-                : "We will send you a password reset email to set up a password."}
+                ? `We sent a password setup link to ${email}. Please check your inbox.`
+                : "We'll email you a link to set a password."}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <AuthActionButton
               action={handlePasswordReset}
               disabled={cooldown > 0}
-              successMessage="Password reset email sent"
+              successMessage="Password setup email sent"
               variant="outline"
             >
-              {emailSent
-                ? "Resend Email"
-                : "Send Email with Password Reset Link"}
+              {emailSent ? "Resend Email" : "Send Password Setup Link"}
               {cooldown > 0 ? ` (${cooldown}s)` : ""}
             </AuthActionButton>
           </CardContent>

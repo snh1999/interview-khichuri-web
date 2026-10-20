@@ -166,7 +166,7 @@ export const KeysFormDialog = ({
               placeholder="e.g. gemini-2.0-flash"
             />
 
-            <div className="flex justify-between align-center">
+            <div className="flex items-center justify-between">
               <div className="flex-1">
                 <FormCheckbox
                   form={form}

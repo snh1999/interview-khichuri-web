@@ -9,7 +9,9 @@ import { changePassword } from "@/lib/auth/auth-client.ts";
 
 const updatePasswordSchema = z
   .object({
-    currentPassword: z.string().min(8, "Invalid password"),
+    currentPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters"),
     newPassword: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
     revokeOtherSessions: z.boolean(),
@@ -70,7 +72,7 @@ export const UpdatePasswordForm = () => {
       />
       <PasswordInput
         form={form}
-        label="Re-enter Password"
+        label="Confirm New Password"
         name="confirmPassword"
       />
 

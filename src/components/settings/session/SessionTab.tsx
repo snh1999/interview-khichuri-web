@@ -32,7 +32,7 @@ const SessionManagement = () => {
   const { mutateAsync: revokeOtherSessions } = useRevokeOtherSessions();
 
   if (!(data && sessions)) {
-    return null;
+    return <SessionSkeleton />;
   }
 
   const currentSession = data.session;
@@ -54,6 +54,10 @@ const SessionManagement = () => {
           <CardAction>
             <AuthActionButton
               action={revokeOtherSessions}
+              actionLabel="Revoke other sessions"
+              dialogDescription="Every other device will be signed out and must sign in again."
+              dialogTitle="Revoke all other sessions?"
+              requireConfirmation
               successMessage="Revoked other sessions"
               variant="destructive"
             >
@@ -65,7 +69,7 @@ const SessionManagement = () => {
 
       <CardContent>
         {otherSessions.length === 0 ? (
-          <div className="text-center text-muted-foreground text-xs italic opacity-70">
+          <div className="text-center text-muted-foreground text-sm">
             No other active sessions
           </div>
         ) : (
@@ -99,7 +103,7 @@ const SessionNotFreshFallback = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your Session Has Session Expired</CardTitle>
+        <CardTitle>Your session has expired</CardTitle>
         <CardDescription>Log in again to manage sessions</CardDescription>
       </CardHeader>
       <CardFooter>

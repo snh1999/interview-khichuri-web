@@ -8,6 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import {
@@ -37,13 +43,18 @@ const LinkedAccounts = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Linked Accounts </CardTitle>
+        <CardTitle>Linked Accounts</CardTitle>
       </CardHeader>
       <CardContent>
         {nonCredentialAccounts.length === 0 ? (
-          <div className="py-8 text-center text-muted-foreground">
-            No linked accounts found
-          </div>
+          <Empty>
+            <EmptyHeader>
+              <EmptyTitle>No linked accounts</EmptyTitle>
+              <EmptyDescription>
+                Link an account to sign in without a password.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
           <div className="space-y-3">
             {nonCredentialAccounts.map((account) => (

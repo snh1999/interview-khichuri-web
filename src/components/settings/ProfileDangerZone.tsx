@@ -25,7 +25,7 @@ export const ProfileDangerZone = () => (
         <li>Open the link to confirm deletion.</li>
       </ol>
       <p className="whitespace-normal pt-4 text-destructive">
-        NOTE: Once confirmed, your profile, preferences, and all saved data will
+        Note: Once confirmed, your profile, preferences, and all saved data will
         be erased permanently.
       </p>
     </CardContent>

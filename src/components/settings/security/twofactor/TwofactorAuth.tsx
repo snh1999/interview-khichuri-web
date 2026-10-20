@@ -26,7 +26,12 @@ export const TwoFactorAuth = () => {
     <Card>
       <CardHeader className="flex items-center justify-between gap-2">
         <CardTitle>Two-Factor Authentication</CardTitle>
-        <Badge variant={isEnabled ? "default" : "secondary"}>
+        <Badge
+          className={
+            isEnabled ? "bg-signal-success/10 text-signal-success" : undefined
+          }
+          variant={isEnabled ? "ghost" : "secondary"}
+        >
           {isEnabled ? "Enabled" : "Disabled"}
         </Badge>
       </CardHeader>

@@ -1,11 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  KeyIcon,
-  PencilIcon,
-  ShieldCheckIcon,
-  TrashIcon,
-} from "@phosphor-icons/react";
-import { cn } from "cn";
+import { KeyIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -106,22 +100,22 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
         </CardDescription>
         <CardAction className="flex items-center gap-3 pt-3">
           {isActive ? (
-            <div className={cn("flex items-center gap-1")}>
-              {isPrimary ? (
-                <ShieldCheckIcon
-                  className="size-4 text-signal-success"
-                  weight="fill"
-                />
-              ) : (
+            <div className="flex items-center gap-1">
+              {isPrimary ? null : (
                 <Button
                   onClick={handleSetPrimary}
                   size="xs"
                   variant="secondary"
                 >
-                  Set Primary
+                  Set default
                 </Button>
               )}
-              <Badge>Active</Badge>
+              <Badge
+                className="bg-signal-success/10 text-signal-success"
+                variant="ghost"
+              >
+                Active key
+              </Badge>
             </div>
           ) : (
             <Button
@@ -137,7 +131,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
           <Dialog onOpenChange={setEditOpen} open={editOpen}>
             <DialogTrigger
               render={
-                <Button size="sm" variant="outline">
+                <Button aria-label="Edit key" size="sm" variant="outline">
                   <PencilIcon />
                 </Button>
               }
@@ -167,6 +161,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
 
           <MutationButton
             actionLabel="Delete key"
+            aria-label="Delete key"
             dialogDescription="This will permanently delete this API key."
             dialogTitle="Delete this API key?"
             mutationFn={handleDelete}
