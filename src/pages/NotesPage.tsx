@@ -68,7 +68,7 @@ const NotesContent = () => {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-semibold text-xl">Notes</h1>
         <Button onClick={openCreateDialog} variant="outline">
-          <PlusCircleIcon />
+          <PlusCircleIcon className="size-3" weight="bold" />
           New Note
         </Button>
       </div>
@@ -81,11 +81,11 @@ const NotesContent = () => {
         <TabsList className="*:px-10" variant="line">
           <TabsTrigger value="notes">
             <NotePencilIcon />
-            <span className="max-sm:hidden">My Notes</span>
+            <span>My Notes</span>
           </TabsTrigger>
           <TabsTrigger value="questions">
             <NotebookIcon />
-            <span className="max-sm:hidden">Questions</span>
+            <span>Questions</span>
           </TabsTrigger>
         </TabsList>
 
@@ -126,11 +126,11 @@ const NotesContent = () => {
 
 const NotesPageSkeleton = () => (
   <div className="w-full space-y-4">
-    <div className="mb-6 flex items-center justify-between">
-      <Skeleton className="h-8 w-20" />
-      <Skeleton className="h-10 w-28" />
+    <div className="mb-2 flex items-center justify-between">
+      <Skeleton className="h-7 w-20" />
+      <Skeleton className="h-7 w-24" />
     </div>
-    <Skeleton className="h-10 w-full" />
+    <Skeleton className="h-8 w-full" />
     <div className="space-y-1.5">
       <Skeleton className="h-16 w-full" />
       <Skeleton className="h-16 w-full" />

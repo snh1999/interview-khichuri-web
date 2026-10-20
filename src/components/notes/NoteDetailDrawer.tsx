@@ -1,9 +1,9 @@
 import { PencilIcon, TrashIcon, XIcon } from "@phosphor-icons/react";
+import { format } from "date-fns";
 import type { INote, TNoteLinkKind } from "@/api/notes";
 import { noteLinkKind, useDeleteNote } from "@/api/notes";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { MarkdownContent } from "@/components/common/MarkdownContent.tsx";
-import { formatDate } from "@/components/notes/notes.helpers.ts";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
@@ -65,7 +65,7 @@ const NoteDetailContent = ({
   const handleEdit = () => onEdit(note);
 
   const kind = noteLinkKind(note);
-  const date = formatDate(note.updatedAt);
+  const date = format(note.updatedAt, "dd MMMM, yyyy");
 
   const handleOpenChange = (state: boolean) => onOpenChange(state);
 
@@ -91,8 +91,9 @@ const NoteDetailContent = ({
               render={
                 <Button
                   aria-label="Close note"
-                  className="bg-transparent text-destructive"
+                  className="text-muted-foreground"
                   size="icon"
+                  variant="ghost"
                 >
                   <XIcon />
                 </Button>

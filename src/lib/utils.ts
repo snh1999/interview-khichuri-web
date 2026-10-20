@@ -97,3 +97,21 @@ export const generateSafeId = (prefix = ""): string => {
   }
   return prefix ? `${prefix}-${rand}` : rand;
 };
+
+export function markdownToPlain(md: string): string {
+  return md
+    .replace(/```[\s\S]*?```/g, "") // fenced code blocks
+    .replace(/`([^`]*)`/g, "$1") // inline code
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1") // images
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1") // links
+    .replace(/^#{1,6}\s+/gm, "") // headings
+    .replace(/^>\s?/gm, "") // blockquotes
+    .replace(/^[-*+]\s+/gm, "") // bullets
+    .replace(/^\d+\.\s+/gm, "") // numbered lists
+    .replace(/(\*\*|__)(.*?)\1/g, "$2") // bold
+    .replace(/([*_])(.*?)\1/g, "$2") // italic
+    .replace(/~~(.*?)~~/g, "$1") // strikethrough
+    .replace(/^[-*_]{3,}\s*$/gm, "") // horizontal rules
+    .replace(/\n{3,}/g, "\n\n") // extra blank lines
+    .trim();
+}

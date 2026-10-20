@@ -1,15 +1,19 @@
 import {
   BriefcaseIcon,
-  CalendarCheckIcon,
+  ClockIcon,
   PencilIcon,
+  QuestionIcon,
 } from "@phosphor-icons/react";
+import { format } from "date-fns";
 import type { INote } from "@/api/notes";
 import { noteLinkKind } from "@/api/notes";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
-import { formatDate } from "@/components/notes/notes.helpers.ts";
+import { noteDetailsPlain } from "@/components/notes/notes.helpers.ts";
+import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Empty,
+  EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
@@ -30,9 +34,13 @@ interface IProps {
 }
 
 export const NotesList = ({
+  filtered,
   notes,
+  onClearFilters,
   ...props
-}: Readonly<IProps & { notes: INote[] }>) => {
+}: Readonly<
+  IProps & { notes: INote[]; filtered: boolean; onClearFilters: () => void }
+>) => {
   const [listParent] = useStrictSafeAutoAnimate();
 
   return (
@@ -40,15 +48,26 @@ export const NotesList = ({
       {notes.length === 0 ? (
         <Empty fullHeight>
           <EmptyHeader>
-            <EmptyTitle>No notes found.</EmptyTitle>
+            <EmptyTitle>
+              {filtered ? "No notes match your filters." : "No notes yet."}
+            </EmptyTitle>
             <EmptyDescription>
-              Create a note to keep questions and study material handy.
+              {filtered
+                ? "Try a different search, or turn off the Favorites filter."
+                : "Create a note to keep questions and study material handy."}
             </EmptyDescription>
           </EmptyHeader>
+          {filtered ? (
+            <EmptyContent>
+              <Button onClick={onClearFilters} size="sm" variant="outline">
+                Clear filters
+              </Button>
+            </EmptyContent>
+          ) : null}
         </Empty>
       ) : (
         <ItemGroup
-          className="overflow-hidden rounded-md bg-card"
+          className="gap-0 divide-y divide-border overflow-hidden rounded-md bg-card"
           ref={listParent}
         >
           {notes.map((note) => (
@@ -67,6 +86,7 @@ const NoteListItem = ({
   onEdit,
 }: Readonly<IProps & { note: INote }>) => {
   const kind = noteLinkKind(note);
+  const noteDetails = noteDetailsPlain(note.details);
   const handleSelect = () => setSelectedId(note.id);
   const handleToggleFavorite = () => onFavoriteToggle(note);
   const handleEdit = (e: React.MouseEvent) => {
@@ -85,7 +105,7 @@ const NoteListItem = ({
 
   return (
     <Item
-      className="rounded-sm bg-muted/60"
+      className="rounded-none hover:bg-muted/50"
       onClick={handleSelect}
       onKeyDown={handleKeyDown}
       role="button"
@@ -96,16 +116,28 @@ const NoteListItem = ({
           {note.title}
         </ItemTitle>
 
+        {noteDetails ? (
+          <p className="line-clamp-1 text-muted-foreground text-xs">
+            {noteDetails}
+          </p>
+        ) : null}
+
         <span className="flex min-w-0 flex-wrap items-center gap-2 text-muted-foreground text-xs">
           {kind === "job" ? (
-            <span className="flex min-w-0 flex-row items-center gap-1.5">
-              <BriefcaseIcon className="size-3.5 shrink-0" />
+            <Badge className="max-w-48" variant="outline">
+              <BriefcaseIcon />
               <span className="truncate">{note.jobTitle ?? "Job"}</span>
-            </span>
+            </Badge>
+          ) : null}
+          {kind === "question" ? (
+            <Badge variant="outline">
+              <QuestionIcon />
+              Question
+            </Badge>
           ) : null}
           <span className="flex items-center gap-1.5">
-            <CalendarCheckIcon className="size-3.5 shrink-0" />
-            {formatDate(note.updatedAt)}
+            <ClockIcon className="size-3.5 shrink-0" />
+            Updated {format(note.updatedAt, "dd MMM, yyyy")}
           </span>
         </span>
       </ItemContent>

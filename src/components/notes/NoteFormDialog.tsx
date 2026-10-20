@@ -123,7 +123,7 @@ export const NoteFormDialog = ({
         <DrawLogTrigger
           render={
             <Button variant="outline">
-              <PlusCircleIcon />
+              <PlusCircleIcon className="size-3" weight="bold" />
               New Note
             </Button>
           }
@@ -134,7 +134,7 @@ export const NoteFormDialog = ({
         <DrawLogHeader>
           <DrawLogTitle className="flex items-center gap-2">
             <NotePencilIcon />
-            {note ? "Edit Note" : "Create Note"}
+            {note ? "Edit Note" : "New Note"}
           </DrawLogTitle>
         </DrawLogHeader>
 

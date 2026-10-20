@@ -62,6 +62,7 @@ export const QuestionsTab = ({
               <MagnifyingGlassIcon className="size-4" />
             </InputGroupAddon>
             <InputGroupInput
+              aria-label="Search questions"
               onChange={handleSearchChange}
               placeholder="Search questions..."
               value={search}
@@ -80,6 +81,12 @@ export const QuestionsTab = ({
           />
         </div>
       </div>
+
+      <p aria-live="polite" className="text-muted-foreground text-xs">
+        {items.length === QUESTION_BANK.length
+          ? `${QUESTION_BANK.length} questions`
+          : `${items.length} of ${QUESTION_BANK.length} questions`}
+      </p>
 
       {items.length === 0 ? (
         <Empty fullHeight>

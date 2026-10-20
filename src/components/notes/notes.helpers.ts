@@ -10,6 +10,7 @@ import {
 } from "@/api/notes";
 import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import type { IQuestionBankItem } from "@/lib/questions/question-bank.ts";
+import { markdownToPlain } from "@/lib/utils.ts";
 
 export const NOTE_LINK_TYPES = ["job", "question_bank"] as const;
 export type TNoteLinkType = (typeof NOTE_LINK_TYPES)[number];
@@ -38,7 +39,7 @@ const noteFormSchema = z
       .min(1, "Details are required")
       .max(5000, "Details are too long"),
     noteType: z.enum(["none", ...NOTE_LINK_TYPES]),
-    jobId: z.string().uuid().nullish(),
+    jobId: z.uuid().nullish(),
     questionBankId: z.string().nullish(),
   })
   .refine((data) => data.noteType !== "job" || Boolean(data.jobId), {
@@ -104,10 +105,52 @@ export const useNoteForm = (
   };
 };
 
-export const formatDate = (value: string) =>
-  new Intl.DateTimeFormat(undefined, { dateStyle: "long" }).format(
-    new Date(value)
+export const NOTE_SORT_OPTIONS = [
+  { value: "newest", label: "Newest first" },
+  { value: "oldest", label: "Oldest first" },
+  { value: "title", label: "Title (A-Z)" },
+] as const;
+
+export type TNoteSortKey = (typeof NOTE_SORT_OPTIONS)[number]["value"];
+
+export const filterNotes = (
+  notes: INote[],
+  options: { favoritesOnly: boolean; query: string }
+): INote[] => {
+  const query = options.query.trim().toLowerCase();
+  return notes.filter(
+    (note) =>
+      (!options.favoritesOnly || note.isFavorite) &&
+      (!query ||
+        note.title.toLowerCase().includes(query) ||
+        (note.details ?? "").toLowerCase().includes(query))
   );
+};
+
+export const sortNotes = (notes: INote[], sort: TNoteSortKey): INote[] => {
+  if (sort === "title") {
+    return [...notes].sort((a, b) => a.title.localeCompare(b.title));
+  }
+  const direction = sort === "oldest" ? 1 : -1;
+  return [...notes].sort(
+    (a, b) =>
+      (new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()) *
+      direction
+  );
+};
+
+export const noteDetailsPlain = (
+  details?: string | null,
+  maxLength = 140
+): string => {
+  const text = markdownToPlain(details ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return text.length > maxLength
+    ? `${text.slice(0, maxLength).trimEnd()}…`
+    : text;
+};
 
 export const JOB_TEMPLATE_TEXT = "";
 
