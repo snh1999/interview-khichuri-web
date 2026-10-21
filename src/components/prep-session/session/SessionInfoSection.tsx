@@ -15,6 +15,7 @@ import {
 } from "@/api/sessions";
 import { JOB_DETAIL_PAGE, SESSIONS_PAGE } from "@/app.constants.ts";
 import { PrepSessionForm } from "@/components/prep-session/session/PrepSessionForm.tsx";
+import { getSessionTopicIds } from "@/components/prep-session/session.helpers.ts";
 import { Badge } from "@/components/ui/badge.tsx";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -27,6 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
+import { useTopicsMap } from "@/hooks/useLookupMap";
 
 const DESC_PREVIEW_LENGTH = 220;
 
@@ -36,8 +38,14 @@ interface IProps {
 
 export const SessionInfoSection = ({ session }: IProps) => {
   const { data: questions } = useQuestions(session.id);
+  const topicsMap = useTopicsMap();
   const navigate = useNavigate();
   const [descExpanded, setDescExpanded] = useState(false);
+
+  const topics = getSessionTopicIds(session).flatMap((topicId) => {
+    const topic = topicsMap.get(topicId);
+    return topic ? [topic] : [];
+  });
 
   const descriptionIsClipped =
     (session.description?.length ?? 0) > DESC_PREVIEW_LENGTH;
@@ -61,7 +69,7 @@ export const SessionInfoSection = ({ session }: IProps) => {
     });
 
   return (
-    <Card className="w-full rounded-xs bg-card/80">
+    <Card className="w-full">
       <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
         <div className="min-w-0">
           <CardTitle className="wrap-break-word text-xl">
@@ -91,22 +99,36 @@ export const SessionInfoSection = ({ session }: IProps) => {
         </CardAction>
       </CardHeader>
 
-      <CardContent className="flex flex-wrap gap-1.5">
-        {session.experience ? (
-          <Badge variant="default">{session.experience}</Badge>
+      <CardContent className="space-y-3">
+        {topics.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5">
+            {topics.map((topic) => (
+              <Badge key={topic.id} variant="secondary">
+                {topic.name}
+              </Badge>
+            ))}
+          </div>
         ) : null}
-        <Badge className="gap-1" variant="secondary">
-          <QuestionIcon className="size-3.5" />
-          {questions.length} questions
-        </Badge>
-        <Badge className="gap-1" variant="secondary">
-          <PushPinIcon className="size-3.5" />
-          {pinnedCount} pinned
-        </Badge>
-        <Badge className="gap-1" variant="secondary">
-          <ClockIcon className="size-3.5" />
-          updated {updatedDate}
-        </Badge>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground text-xs">
+          {session.experience ? (
+            <span className="inline-flex items-center gap-1">
+              <BriefcaseIcon className="size-3.5" />
+              {session.experience}
+            </span>
+          ) : null}
+          <span className="inline-flex items-center gap-1">
+            <QuestionIcon className="size-3.5" />
+            {questions.length} questions
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <PushPinIcon className="size-3.5" />
+            {pinnedCount} pinned
+          </span>
+          <span className="ml-auto inline-flex items-center gap-1">
+            <ClockIcon className="size-3.5" />
+            Updated {updatedDate}
+          </span>
+        </div>
       </CardContent>
 
       {session.description ? (
@@ -116,7 +138,7 @@ export const SessionInfoSection = ({ session }: IProps) => {
           </p>
           {descriptionIsClipped ? (
             <Button
-              className="h-auto p-0 text-xs"
+              className="h-auto p-0 text-muted-foreground text-xs hover:text-foreground"
               onClick={toggleExpansion}
               variant="link"
             >
@@ -132,6 +154,10 @@ export const SessionInfoSection = ({ session }: IProps) => {
 const JobDetails = ({ jobId }: { jobId: string }) => {
   const { data: job } = useGetJob(jobId);
   const navigate = useNavigate();
+
+  if (!job) {
+    return null;
+  }
 
   const openJobDetail = () =>
     navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));

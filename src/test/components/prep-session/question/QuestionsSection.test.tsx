@@ -99,7 +99,7 @@ describe("QuestionsSection", () => {
     expect(screen.getByText("What is caching?")).toBeInTheDocument();
 
     await view.user.type(
-      screen.getByPlaceholderText("Search questions..."),
+      screen.getByPlaceholderText("Search question text..."),
       "rate"
     );
     expect(screen.getByText("Design a rate limiter")).toBeInTheDocument();
@@ -128,6 +128,24 @@ describe("QuestionsSection", () => {
     expect(screen.queryByText("Design a rate limiter")).not.toBeInTheDocument();
   });
 
+  it("clears search and filters from the empty state", async () => {
+    const view = await renderSection([makeQuestion()]);
+    await view.findByText("Design a rate limiter");
+
+    await view.user.type(
+      screen.getByPlaceholderText("Search question text..."),
+      "not found"
+    );
+    expect(
+      await view.findByText("No questions match your filters.")
+    ).toBeInTheDocument();
+
+    await view.user.click(
+      screen.getByRole("button", { name: "Clear search and filters" })
+    );
+    expect(await view.findByText("Design a rate limiter")).toBeInTheDocument();
+  });
+
   it("shows the empty state when no questions exist", async () => {
     const view = await renderSection([]);
     expect(await view.findByText("No questions yet")).toBeInTheDocument();
@@ -136,14 +154,10 @@ describe("QuestionsSection", () => {
     ).toBeInTheDocument();
   });
 
-  it("opens the add-question form from the options menu", async () => {
+  it("opens the add-question form from the header", async () => {
     const view = await renderSection([makeQuestion()]);
     await view.findByText("Design a rate limiter");
-    await view.user.click(
-      screen.getByRole("button", { name: "Question options" })
-    );
-    await view.user.keyboard("{ArrowDown}");
-    await view.user.keyboard("{Enter}");
+    await view.user.click(screen.getByRole("button", { name: "Add question" }));
     expect(await view.findByLabelText("Question text")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Add Question" })
@@ -191,10 +205,7 @@ describe("QuestionsSection", () => {
     const view = await renderSection([makeQuestion()]);
     await view.findByText("Design a rate limiter");
 
-    await view.user.click(
-      screen.getByRole("button", { name: "Question options" })
-    );
-    await view.user.click(await screen.findByText("Add Question"));
+    await view.user.click(screen.getByRole("button", { name: "Add question" }));
     expect(await view.findByLabelText("Question text")).toBeInTheDocument();
 
     await view.user.keyboard("{Escape}");

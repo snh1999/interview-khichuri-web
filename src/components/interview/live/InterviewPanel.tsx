@@ -6,6 +6,7 @@ import {
 } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 import { generatePath, Link } from "react-router";
+import { useSessionQuery } from "@/api/sessions/index.ts";
 import { SESSION_DETAIL_PAGE } from "@/app.constants.ts";
 import { CameraPreview } from "@/components/interview/live/CameraPreview.tsx";
 import { QuestionClock } from "@/components/interview/live/QuestionClock.tsx";
@@ -15,6 +16,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { useMediaQuery } from "@/hooks/useMediaQuery.ts";
 import { useInterviewStore } from "@/store/interviewStore";
 import type { IInterviewTimingRefs } from "./QuestionClock";
 
@@ -40,10 +42,15 @@ export const InterviewPanel = ({
   const toggleCamera = useInterviewStore((state) => state.toggleCamera);
   const toggleAvatar = useInterviewStore((state) => state.toggleAvatar);
   const toggleChat = useInterviewStore((state) => state.toggleChat);
+  const isMobile = useMediaQuery("(max-width: 767px)");
+  const { data: session } = useSessionQuery(sessionId);
+
+  const sessionTitle = session?.title?.trim() || "Mock interview";
 
   const backLink = (
     <Link
-      className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
+      aria-label="Back to session"
+      className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
       title="Back to session"
       to={generatePath(SESSION_DETAIL_PAGE, { sessionId })}
     >
@@ -53,9 +60,10 @@ export const InterviewPanel = ({
 
   const cameraToggleButton = (
     <Button
+      aria-label={panes.camera ? "Hide camera" : "Show camera"}
       onClick={toggleCamera}
       size="icon"
-      title={panes.camera ? "Hide camera preview" : "Show camera preview"}
+      title={panes.camera ? "Hide camera" : "Show camera"}
       variant={panes.camera ? "default" : "outline"}
     >
       <VideoCameraIcon className="size-4" />
@@ -64,9 +72,10 @@ export const InterviewPanel = ({
 
   const avatarToggleButton = (
     <Button
+      aria-label={panes.avatar ? "Hide AI avatar" : "Show AI avatar"}
       onClick={toggleAvatar}
       size="icon"
-      title={panes.avatar ? "Hide AI Avatar" : "Show AI Avatar"}
+      title={panes.avatar ? "Hide AI avatar" : "Show AI avatar"}
       variant={panes.avatar ? "default" : "outline"}
     >
       <RobotIcon className="size-4" />
@@ -75,33 +84,39 @@ export const InterviewPanel = ({
 
   const chatToggleButton = (
     <Button
+      aria-label={panes.chat ? "Hide chat" : "Show chat"}
       onClick={toggleChat}
       size="icon"
-      title={panes.chat ? "Hide Chat" : "Show Chat"}
+      title={panes.chat ? "Hide chat" : "Show chat"}
       variant={panes.chat ? "default" : "outline"}
     >
       <ChatCircleDotsIcon className="size-4" />
     </Button>
   );
 
-  const panelContent = (
-    <div className="flex h-full min-h-0 flex-col">
-      <header className="flex items-center justify-between gap-2 border-border border-b px-3 py-2">
-        <div>{backLink}</div>
-        <div className="flex items-center gap-1">
-          <div className="pr-2">
-            <QuestionClock
-              pausedAccumRef={pausedAccumRef}
-              startRef={startRef}
-              totalElapsedRef={totalElapsedRef}
-            />
-          </div>
-          {cameraToggleButton}
-          {avatarToggleButton}
-          {chatToggleButton}
+  const header = (
+    <header className="flex items-center justify-between gap-2 border-border border-b px-3 py-2">
+      <div className="flex min-w-0 items-center gap-2">
+        {backLink}
+        <p className="min-w-0 truncate font-medium text-xs">{sessionTitle}</p>
+      </div>
+      <div className="flex shrink-0 items-center gap-1">
+        <div className="pr-2">
+          <QuestionClock
+            pausedAccumRef={pausedAccumRef}
+            startRef={startRef}
+            totalElapsedRef={totalElapsedRef}
+          />
         </div>
-      </header>
+        {cameraToggleButton}
+        {avatarToggleButton}
+        {chatToggleButton}
+      </div>
+    </header>
+  );
 
+  const stage = (
+    <div className="flex h-full min-h-0 flex-col">
       {panes.camera ? (
         <div className="flex h-[clamp(150px,42%,380px)] min-h-0 shrink-0 flex-col px-3 pb-3">
           <CameraPreview />
@@ -140,6 +155,22 @@ export const InterviewPanel = ({
     );
   }
 
+  if (isMobile) {
+    return (
+      <div className="flex h-full min-h-0 w-full flex-col overflow-hidden">
+        {header}
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          {stage}
+        </div>
+        {panes.chat ? (
+          <div className="flex min-h-0 flex-[1.2] flex-col overflow-hidden border-border border-t">
+            {chatPane}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full min-h-0 w-full overflow-hidden">
       <ResizablePanelGroup orientation="horizontal">
@@ -148,7 +179,10 @@ export const InterviewPanel = ({
           defaultSize={CAMERA_WIDTH_DEFAULT}
           minSize={CAMERA_WIDTH_MIN}
         >
-          {panelContent}
+          <div className="flex h-full min-h-0 flex-col">
+            {header}
+            {stage}
+          </div>
         </ResizablePanel>
         {panes.chat ? (
           <>

@@ -1,7 +1,5 @@
-import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { useEffect } from "react";
 import { useGetJob } from "@/api/jobs";
-import { JOBS_PAGE } from "@/app.constants.ts";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
 import { JobDetailHeader } from "@/components/jobs/JobDetailHeader.tsx";
@@ -9,7 +7,6 @@ import { JobFitScore } from "@/components/jobs/JobFitScore.tsx";
 import { JobInfoSection } from "@/components/jobs/JobInfoSection.tsx";
 import { LinkedSessionsSection } from "@/components/jobs/LinkedSessionsSection.tsx";
 import { ATSReview } from "@/components/resume/ats/ATSReview.tsx";
-import { LinkButton } from "@/components/ui/button/LinkButton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useJobId } from "@/hooks/useId.ts";
@@ -42,46 +39,39 @@ const JobDetailContent = () => {
     handleTabChange(String(value));
 
   return (
-    <div className="w-full">
-      <LinkButton className="mb-2" path={JOBS_PAGE}>
-        <ArrowLeftIcon className="mr-2 size-4" />
-        Jobs
-      </LinkButton>
-      <div className="flex flex-col gap-4">
-        <JobDetailHeader job={job} />
+    <div className="flex w-full flex-col gap-4">
+      <JobDetailHeader job={job} />
 
-        <Tabs onValueChange={handleTabValueChange} value={currentTab}>
-          <TabsList className="*:px-10" variant="line">
-            {JOB_DETAIL_TABS.map((tab) => (
-              <TabsTrigger key={tab.key} value={tab.key}>
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+      <Tabs onValueChange={handleTabValueChange} value={currentTab}>
+        <TabsList className="*:px-10" variant="line">
+          {JOB_DETAIL_TABS.map((tab) => (
+            <TabsTrigger key={tab.key} value={tab.key}>
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-          <TabsContent value="overview">
-            <div className="space-y-4">
-              <JobFitScore job={job} />
-              <JobInfoSection job={job} sectionId="details" />
-            </div>
-          </TabsContent>
+        <TabsContent value="overview">
+          <div className="space-y-4">
+            <JobFitScore job={job} />
+            <JobInfoSection job={job} sectionId="details" />
+          </div>
+        </TabsContent>
 
-          <TabsContent value="ats">
-            <ATSReview job={job} />
-          </TabsContent>
+        <TabsContent value="ats">
+          <ATSReview job={job} />
+        </TabsContent>
 
-          <TabsContent value="sessions">
-            <LinkedSessionsSection job={job} />
-          </TabsContent>
-        </Tabs>
-      </div>
+        <TabsContent value="sessions">
+          <LinkedSessionsSection job={job} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
 
 const JobDetailSkeleton = () => (
   <div className="w-full">
-    <Skeleton className="mb-4 h-6 w-20" />
     <Skeleton className="mb-4 h-28 w-full" />
     <Skeleton className="mb-6 h-10 w-64" />
     <div className="grid gap-4 sm:grid-cols-2">

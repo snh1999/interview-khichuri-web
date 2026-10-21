@@ -122,8 +122,11 @@
   --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
+  --signal-success: oklch(0.75 0.15 162.48);
   --signal-success-foreground: oklch(0.845 0.143 164.978);
+  --signal-warning: oklch(0.82 0.16 70.08);
   --signal-warning-foreground: oklch(0.855 0.17 80);
+  --signal-danger: oklch(0.72 0.22 16.439);
   --signal-danger-foreground: oklch(0.81 0.117 11.638);
   --info: oklch(0.72 0.11 234.09);
   --border: oklch(1 0 0 / 10%);
@@ -195,7 +198,7 @@ select:-webkit-autofill:focus {
 
 /* Thin theme-aware scrollbar that keeps native scrolling behavior. */
 .calendar-scrollbar {
-  scrollbar-color: var(--ring) transparent;
+  scrollbar-color: var(--focus) transparent;
   scrollbar-width: thin;
 }
 
@@ -208,7 +211,7 @@ select:-webkit-autofill:focus {
 }
 
 .calendar-scrollbar::-webkit-scrollbar-thumb {
-  background-color: color-mix(in oklab, var(--ring) 50%, transparent);
+  background-color: color-mix(in oklab, var(--focus) 50%, transparent);
   border-radius: 9999px;
 }
 

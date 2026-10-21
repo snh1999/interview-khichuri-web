@@ -129,14 +129,6 @@ const App = () => {
           <Route element={<JobsPage />} path={JOBS_PAGE} />
           <Route element={<SessionsPage />} path={SESSIONS_PAGE} />
           <Route element={<SessionDetailPage />} path={SESSION_DETAIL_PAGE} />
-          <Route
-            element={
-              <Suspense fallback={<Spinner />}>
-                <InterviewPage />
-              </Suspense>
-            }
-            path={INTERVIEW_PAGE}
-          />
           <Route element={<NotesPage />} path={NOTES_PAGE} />
           <Route
             element={
@@ -164,22 +156,34 @@ const App = () => {
             path={RESUME_DETAIL_PAGE}
           />
         </Route>
-        <Route
-          element={
-            <Suspense fallback={<Spinner />}>
-              <ResumeEditorWithPreviewPage />
-            </Suspense>
-          }
-          path={RESUME_EDITOR_PAGE}
-        />
-        <Route
-          element={
-            <Suspense fallback={<Spinner />}>
-              <PortfolioEditorPage />
-            </Suspense>
-          }
-          path={PORTFOLIO_EDITOR_PAGE}
-        />
+
+        <Route element={<SidebarLayout hideSidebar />}>
+          <Route
+            element={
+              <Suspense fallback={<Spinner />}>
+                <InterviewPage />
+              </Suspense>
+            }
+            path={INTERVIEW_PAGE}
+          />
+
+          <Route
+            element={
+              <Suspense fallback={<Spinner />}>
+                <ResumeEditorWithPreviewPage />
+              </Suspense>
+            }
+            path={RESUME_EDITOR_PAGE}
+          />
+          <Route
+            element={
+              <Suspense fallback={<Spinner />}>
+                <PortfolioEditorPage />
+              </Suspense>
+            }
+            path={PORTFOLIO_EDITOR_PAGE}
+          />
+        </Route>
       </Route>
 
       <Route element={<EmptyPage />} path="/*" />

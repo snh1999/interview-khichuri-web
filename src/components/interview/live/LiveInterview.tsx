@@ -150,9 +150,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
           live = chunk.questions ?? [];
           setLiveFollowUps(live);
         } else if (chunk.type === "error") {
-          toast.error(
-            chunk.message ?? "Could not generate follow-up questions"
-          );
+          toast.error(chunk.message ?? "Couldn't generate follow-up questions");
           break;
         } else {
           streamSucceeded = true;
@@ -163,7 +161,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
       if (err instanceof DOMException && err.name === "AbortError") {
         return;
       }
-      toast.error("Could not generate follow-up questions");
+      toast.error("Couldn't generate follow-up questions");
     } finally {
       try {
         if (!controller.signal.aborted && streamSucceeded) {
@@ -182,7 +180,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
           }
         }
       } catch {
-        toast.error("Could not save follow-up questions");
+        toast.error("Couldn't save follow-up questions");
       } finally {
         setStreamingFollowUps(false);
         setLiveFollowUps([]);
@@ -226,7 +224,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
 
   const handleEvaluate = async (provider: string, model?: string) => {
     if (!storedDraft?.items.some((item) => item.answer.trim().length > 0)) {
-      toast.error("No answers recorded yet");
+      toast.error("Add at least one answer before evaluating.");
       return;
     }
     setIsEvaluating(true);
@@ -246,7 +244,9 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
       toast.success("Interview evaluated");
       setDialogOpen(false);
     } catch {
-      toast.error("Failed to evaluate interview");
+      toast.error(
+        "Couldn't evaluate the interview. Check your AI key and try again."
+      );
     } finally {
       setIsEvaluating(false);
     }
@@ -267,9 +267,9 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
           <EmptyMedia variant="icon">
             <ArrowLeftIcon />
           </EmptyMedia>
-          <EmptyTitle>No questions found</EmptyTitle>
+          <EmptyTitle>No questions in this interview</EmptyTitle>
           <EmptyDescription>
-            Start a new mock interview from the session page to begin.
+            Start a new mock interview from the session page.
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -284,7 +284,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
             size="sm"
           >
             <ArrowLeftIcon className="size-4" />
-            Back to Session
+            Back to session
           </Button>
         </EmptyContent>
       </Empty>
@@ -331,13 +331,13 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
             ? interviewEvaluationCopyPrompt({ transcript: items })
             : undefined
         }
-        description="Choose an AI provider to evaluate your interview."
+        description="Choose an AI provider to evaluate this interview."
         executeLabel="Evaluate"
         isLoading={isEvaluating}
         onExecute={handleEvaluate}
         onOpenChange={setDialogOpen}
         open={dialogOpen}
-        title="Evaluate Interview"
+        title="Evaluate interview"
       />
     </div>
   );

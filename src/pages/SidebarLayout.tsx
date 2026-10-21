@@ -5,7 +5,11 @@ import { Header } from "@/components/layout/header/Header.tsx";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area.tsx";
 import { SidebarProvider } from "@/components/ui/sidebar.tsx";
 
-export const SidebarLayout = () => {
+export const SidebarLayout = ({
+  hideSidebar = false,
+}: {
+  hideSidebar?: boolean;
+}) => {
   return (
     <SidebarProvider>
       <div className="flex h-dvh w-full flex-col overflow-hidden">
@@ -15,7 +19,7 @@ export const SidebarLayout = () => {
         <ScrollArea className="h-full min-h-0 w-full flex-1 rounded-md border">
           {/* min-h-full ensuring footer is at the bottom */}
           <div className="flex min-h-full">
-            <AppSidebar />
+            {hideSidebar ? null : <AppSidebar />}
             <div className="flex min-w-0 flex-1 flex-col">
               <main className="mx-auto flex w-full flex-1 flex-col px-4 py-6 sm:px-6">
                 <Outlet />
