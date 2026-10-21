@@ -238,7 +238,7 @@ export const VoiceSettingsModal = ({
   let testBadge: ReactNode = null;
   if (testResult?.success) {
     testBadge = (
-      <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-2 py-0.5 font-semibold text-[0.65rem] text-emerald-700">
+      <span className="inline-flex items-center gap-1 rounded bg-signal-success/10 px-2 py-0.5 font-semibold text-[0.65rem] text-signal-success-foreground">
         <CheckCircleIcon className="size-3" />
         {formatLatency(testResult.latencyMs)}
       </span>

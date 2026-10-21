@@ -33,14 +33,14 @@ const getEngineDotClass = (engine: TSpeechEnginePref): string => {
     return "bg-primary";
   }
   if (engine === "browser") {
-    return "bg-emerald-500";
+    return "bg-signal-success";
   }
   return "bg-muted-foreground";
 };
 
 const getSpeakTestButtonClass = (engine: TSpeechEnginePref): string => {
   if (engine === "browser") {
-    return "bg-emerald-600 text-white hover:bg-emerald-700";
+    return "bg-signal-success text-signal-success-foreground hover:bg-signal-success/80";
   }
   if (engine === "auto") {
     return "bg-foreground text-background hover:bg-foreground/90";

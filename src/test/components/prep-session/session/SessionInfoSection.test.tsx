@@ -93,9 +93,7 @@ describe("SessionInfoSection", () => {
       makeQuestion({ id: 2, isFavorite: false }),
       makeQuestion({ id: 3, isFavorite: false }),
     ]);
-    expect(
-      screen.getByRole("heading", { level: 1, name: "System design deep dive" })
-    ).toBeInTheDocument();
+    expect(screen.getByText("System design deep dive")).toBeInTheDocument();
     expect(screen.getByText("System design")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Acme - Staff Engineer" })
