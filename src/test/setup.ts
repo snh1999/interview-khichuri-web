@@ -51,6 +51,17 @@ Object.defineProperty(Element.prototype, "scrollTo", {
   writable: true,
 });
 
+// sonner captures the pointer on toast pointerdown (swipe to dismiss)
+Object.defineProperty(Element.prototype, "setPointerCapture", {
+  value: () => undefined,
+  writable: true,
+});
+
+Object.defineProperty(Element.prototype, "releasePointerCapture", {
+  value: () => undefined,
+  writable: true,
+});
+
 Object.defineProperty(document, "fonts", {
   value: { ready: Promise.resolve() },
   writable: true,

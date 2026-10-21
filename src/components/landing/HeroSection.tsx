@@ -7,11 +7,6 @@ import { Button } from "@/components/ui/button.tsx";
 
 export const HeroSection = () => (
   <section className="relative overflow-hidden pt-16 pb-20 md:pt-24">
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--primary)/4%,transparent_60%)]"
-    />
-
     <div className="relative mx-auto flex max-w-7xl flex-col items-center px-4 text-center sm:px-6">
       <Badge className="mb-6" variant="outline">
         {HERO.badge}

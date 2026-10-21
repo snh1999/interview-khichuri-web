@@ -53,7 +53,9 @@ export const QuestionClock = memo(
 
     return (
       <span
+        aria-label="Total elapsed time"
         className="flex items-center gap-1 font-medium text-muted-foreground text-xs tabular-nums"
+        role="timer"
         title="Total elapsed time"
       >
         {hideIcon ? null : <ClockIcon className="size-3.5" />}

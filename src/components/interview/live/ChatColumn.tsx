@@ -27,8 +27,10 @@ export const ChatColumn = ({
   return (
     <div className={cn("flex min-h-0 min-w-0 flex-1 flex-col", className)}>
       <div
-        className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-6"
+        aria-live="polite"
+        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4"
         ref={listParent}
+        role="log"
       >
         <Message align="left">
           <div className="flex items-start gap-3">

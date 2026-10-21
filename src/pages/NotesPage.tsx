@@ -78,7 +78,7 @@ const NotesContent = () => {
         onValueChange={handleTabChange}
         value={currentTab}
       >
-        <TabsList className="*:px-10" variant="line">
+        <TabsList className="w-full bg-card" variant="line">
           <TabsTrigger value="notes">
             <NotePencilIcon />
             <span>My Notes</span>

@@ -79,18 +79,18 @@ const LogConsole = ({ logs, onClear }: Readonly<ILogConsoleProps>) => {
       </CardHeader>
       <CardContent className="flex h-32 flex-col gap-1 overflow-y-auto bg-secondary/30 p-3 font-mono text-xs">
         {logs.length === 0 ? (
-          <span className="text-slate-500 italic">
+          <span className="text-muted-foreground italic">
             No events recorded yet. Click "Speak Audio Test" to inspect.
           </span>
         ) : (
           logs.map((log) => {
-            let colorClass = "text-slate-300";
+            let colorClass = "text-foreground";
             if (log.type === "success") {
-              colorClass = "text-emerald-400";
+              colorClass = "text-signal-success";
             } else if (log.type === "warn") {
-              colorClass = "text-amber-300";
+              colorClass = "text-signal-warning";
             } else if (log.type === "error") {
-              colorClass = "font-bold text-red-400";
+              colorClass = "font-bold text-signal-danger";
             }
             return (
               <span
@@ -100,7 +100,7 @@ const LogConsole = ({ logs, onClear }: Readonly<ILogConsoleProps>) => {
                 )}
                 key={log.id}
               >
-                <span className="shrink-0 select-none text-slate-500">
+                <span className="shrink-0 select-none text-muted-foreground">
                   {log.timestamp}
                 </span>
                 <span>{log.message}</span>

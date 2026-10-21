@@ -1,7 +1,9 @@
 import { screen, waitFor } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
+import { Link, Route, Routes, useLocation } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AiActionButton } from "@/components/common/ai/AiActionButton.tsx";
+import { Toaster } from "@/components/ui/sonner.tsx";
 import { useAppStore } from "@/store/appStore.ts";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
@@ -29,6 +31,11 @@ const withProvider = (provider = "openai") =>
 afterEach(() => {
   useAppStore.setState({ skipAiDialog: false });
 });
+
+const LocationProbe = () => {
+  const location = useLocation();
+  return <span>{location.pathname}</span>;
+};
 
 describe("AiActionButton", () => {
   it("opens the dialog and executes with the selected provider", async () => {
@@ -75,5 +82,53 @@ describe("AiActionButton", () => {
     expect(
       await screen.findByText("No AI providers available.")
     ).toBeInTheDocument();
+  });
+
+  it("brings the user back to the page the AI call was made from", async () => {
+    withProvider();
+    useAppStore.setState({ skipAiDialog: true });
+    let resolveExecute: (() => void) | undefined;
+    const execute = vi.fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveExecute = resolve;
+        })
+    );
+    const { user } = render(
+      <>
+        <Toaster duration={10_000} />
+        <Link to="/jobs/456">Elsewhere</Link>
+        <Routes>
+          <Route
+            element={
+              <AiActionButton
+                execute={execute}
+                executeLabel="Summarize"
+                title="AI"
+              />
+            }
+            path="/jobs/123"
+          />
+          <Route element={<span>elsewhere</span>} path="/jobs/456" />
+        </Routes>
+        <LocationProbe />
+      </>,
+      { route: "/jobs/123" }
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Summarize" }));
+    await user.click(screen.getByRole("link", { name: "Elsewhere" }));
+
+    expect(screen.getByText("/jobs/456")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Summarize" })
+    ).not.toBeInTheDocument();
+
+    if (resolveExecute) {
+      resolveExecute();
+    }
+    await user.click(await screen.findByRole("button", { name: "View" }));
+
+    expect(await screen.findByText("/jobs/123")).toBeInTheDocument();
   });
 });

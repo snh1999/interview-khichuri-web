@@ -102,7 +102,7 @@ describe("SessionInfoSection", () => {
     expect(screen.getByText("1 pinned")).toBeInTheDocument();
     expect(
       screen.getByText(
-        `Updated ${new Date("2026-01-10T00:00:00.000Z").toLocaleDateString()}`
+        `Updated ${new Date("2026-01-10T00:00:00.000Z").toLocaleDateString(undefined, { dateStyle: "medium" })}`
       )
     ).toBeInTheDocument();
     expect(screen.getByText("Senior")).toBeInTheDocument();

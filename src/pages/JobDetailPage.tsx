@@ -43,7 +43,7 @@ const JobDetailContent = () => {
       <JobDetailHeader job={job} />
 
       <Tabs onValueChange={handleTabValueChange} value={currentTab}>
-        <TabsList className="*:px-10" variant="line">
+        <TabsList className="w-full bg-card" variant="line">
           {JOB_DETAIL_TABS.map((tab) => (
             <TabsTrigger key={tab.key} value={tab.key}>
               {tab.label}

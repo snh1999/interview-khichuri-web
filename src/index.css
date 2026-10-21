@@ -253,8 +253,16 @@ select:-webkit-autofill:focus {
   --md-editor-box-shadow-color: var(--destructive);
 }
 
-/* Sandpack custom height overrides so preview is not cropped by code file height */
-.sp-wrapper,
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 .sp-layout {
   display: flex !important;
   flex: 1 1 0% !important;

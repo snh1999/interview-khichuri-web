@@ -102,6 +102,7 @@ export const QuestionCard = ({
       <CardHeader className="flex w-full items-start justify-between gap-3 py-0 text-left">
         <div className="flex gap-2">
           <Button
+            aria-expanded={expanded}
             aria-label={expanded ? "Collapse question" : "Expand question"}
             onClick={handleOpenChange}
             size="icon-sm"

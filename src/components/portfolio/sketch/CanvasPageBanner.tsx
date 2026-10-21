@@ -432,7 +432,9 @@ export const CanvasPageBanner: React.FC<CanvasPageBannerProps> = ({
                 <img
                   alt="Moodboard"
                   className="h-full w-full object-cover"
+                  decoding="async"
                   height={20}
+                  loading="lazy"
                   src={resolvedInspirationSrc}
                   width={20}
                 />

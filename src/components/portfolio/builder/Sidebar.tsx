@@ -81,7 +81,7 @@ const SidebarTabBar: React.FC<ISidebarTabBarProps> = ({
         type="button"
       >
         <FolderIcon
-          className={tab === "files" ? "text-amber-500" : ""}
+          className={tab === "files" ? "text-signal-warning" : ""}
           size={15}
           weight={tab === "files" ? "fill" : "regular"}
         />
@@ -299,7 +299,7 @@ export const Sidebar: React.FC = () => {
     ) {
       return (
         <FileJsIcon
-          className="shrink-0 text-amber-500"
+          className="shrink-0 text-signal-warning"
           size={15}
           weight="fill"
         />
@@ -308,7 +308,7 @@ export const Sidebar: React.FC = () => {
     if (filename.endsWith(".css")) {
       return (
         <FileCssIcon
-          className="shrink-0 text-sky-500"
+          className="shrink-0 text-muted-foreground"
           size={15}
           weight="fill"
         />
@@ -502,7 +502,7 @@ export const Sidebar: React.FC = () => {
                             value={editingFileName}
                           />
                           <Button
-                            className="text-emerald-600 hover:bg-emerald-50"
+                            className="text-signal-success-foreground hover:bg-signal-success/10"
                             // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped file path
                             onClick={() => handleSaveRename(filePath)}
                             size="icon-xs"
@@ -587,7 +587,7 @@ export const Sidebar: React.FC = () => {
                                     deleteFile(filePath);
                                     return Promise.resolve({ error: false });
                                   }}
-                                  className="rounded p-1 text-muted-foreground transition hover:bg-red-100 hover:text-red-600"
+                                  className="rounded p-1 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
                                   dialogDescription={`This will permanently delete "${filePath}". This action cannot be undone.`}
                                   dialogTitle="Delete File"
                                   onClick={handleStopPropagation}
@@ -690,7 +690,7 @@ export const Sidebar: React.FC = () => {
             <div className="space-y-1.5">
               <div className="flex items-center gap-1 px-1 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
                 <LightningIcon
-                  className="text-amber-500"
+                  className="text-signal-warning"
                   size={13}
                   weight="fill"
                 />
@@ -776,12 +776,12 @@ export const Sidebar: React.FC = () => {
 
                   {msg.missingFiles && msg.missingFiles.length > 0 && (
                     <div className="mt-2.5 flex flex-wrap items-center gap-1.5 border-border border-t pt-2">
-                      <span className="font-medium text-amber-600 text-xxs">
+                      <span className="font-medium text-signal-warning-foreground text-xxs">
                         Missing:
                       </span>
                       {msg.missingFiles.map((f) => (
                         <span
-                          className="rounded border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 font-mono text-amber-600 text-xxs"
+                          className="rounded border border-signal-warning/40 bg-signal-warning/10 px-1.5 py-0.5 font-mono text-signal-warning-foreground text-xxs"
                           key={f}
                         >
                           {f}

@@ -73,6 +73,11 @@ export const CameraPreview = memo(
       }
     }, [isOn, stopStream, startStream]);
 
+    const handleRetryCamera = useCallback(() => {
+      // biome-ignore lint/complexity/noVoid: fire-and-forget
+      void startStream();
+    }, [startStream]);
+
     useEffect(() => stopStream, [stopStream]);
 
     return (
@@ -107,15 +112,23 @@ export const CameraPreview = memo(
             )}
           </Button>
           {error.length > 0 && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-muted px-4">
+            <div
+              className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-muted px-4"
+              role="alert"
+            >
               <p className="rounded px-2 py-1 text-center text-destructive text-xs">
                 Camera unavailable. Check your browser's camera permission, then
                 try again.
               </p>
-              <Button onClick={clearError} size="xs" variant="destructive">
-                <XIcon />
-                Dismiss
-              </Button>
+              <div className="flex gap-2">
+                <Button onClick={handleRetryCamera} size="xs">
+                  Retry
+                </Button>
+                <Button onClick={clearError} size="xs" variant="destructive">
+                  <XIcon />
+                  Dismiss
+                </Button>
+              </div>
             </div>
           )}
         </div>

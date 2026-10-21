@@ -1,4 +1,4 @@
-import { ArrowLeftIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, QuestionIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { generatePath, Link } from "react-router";
 import { toast } from "sonner";
@@ -90,9 +90,10 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
   const currentQuestion = questions[currentIndex];
   const isLast = currentIndex === questions.length - 1;
 
-  const answerInput = (floating: boolean) => (
+  const answerInput = (floating: boolean, className?: string) => (
     <AnswerInput
       answer={answer}
+      className={className}
       floating={floating}
       isLast={isLast}
       onAnswerChange={handleAnswerChange}
@@ -239,7 +240,9 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
         })),
         elapsedSeconds: elapsedClock(),
       });
-      await archiveLocalDraft(storedDraft);
+      if (storedDraft) {
+        await archiveLocalDraft(storedDraft);
+      }
       await clearLocalDraft(interview.id);
       toast.success("Interview evaluated");
       setDialogOpen(false);
@@ -265,7 +268,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
       <Empty className="h-full">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <ArrowLeftIcon />
+            <QuestionIcon />
           </EmptyMedia>
           <EmptyTitle>No questions in this interview</EmptyTitle>
           <EmptyDescription>
@@ -309,16 +312,26 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
           startRef={startRef}
           totalElapsedRef={totalElapsedRef}
         >
-          <div className="relative flex h-full min-h-0 flex-col">
+          <div className="flex h-full min-h-0 flex-col">
             {panes.avatar ? (
               <AvatarView
                 nextQuestionText={nextQuestionText}
                 questionText={questionText}
               />
-            ) : null}
+            ) : (
+              <div className="flex min-h-0 flex-1 items-center justify-center text-muted-foreground text-sm">
+                Avatar hidden
+              </div>
+            )}
             {panes.chat ? null : (
-              <div className="absolute inset-x-4 bottom-4 z-20 flex justify-center">
-                <div className="w-full max-w-2xl">{answerInput(true)}</div>
+              <div className="shrink-0 bg-background">
+                <div className="border-border border-t px-4 py-2">
+                  <p className="font-medium text-[10px] text-muted-foreground uppercase tracking-wide">
+                    Question
+                  </p>
+                  <p className="text-sm">{questionText}</p>
+                </div>
+                {answerInput(false, "border-t-0")}
               </div>
             )}
           </div>

@@ -29,7 +29,6 @@ interface ICameraPanelProps extends IInterviewTimingRefs {
   chatSlot?: ReactNode;
   children?: ReactNode;
 }
-
 export const InterviewPanel = ({
   sessionId,
   startRef,
@@ -37,6 +36,7 @@ export const InterviewPanel = ({
   totalElapsedRef,
   chatSlot,
   children,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: legacy panel
 }: Readonly<ICameraPanelProps>) => {
   const panes = useInterviewStore((state) => state.panes);
   const toggleCamera = useInterviewStore((state) => state.toggleCamera);
@@ -118,7 +118,14 @@ export const InterviewPanel = ({
   const stage = (
     <div className="flex h-full min-h-0 flex-col">
       {panes.camera ? (
-        <div className="flex h-[clamp(150px,42%,380px)] min-h-0 shrink-0 flex-col px-3 pb-3">
+        <div
+          className="flex min-h-0 shrink-0 flex-col px-3 pb-3"
+          style={{
+            height: isMobile
+              ? "clamp(120px, 30%, 200px)"
+              : "clamp(150px, 42%, 380px)",
+          }}
+        >
           <CameraPreview />
         </div>
       ) : null}
@@ -140,7 +147,6 @@ export const InterviewPanel = ({
           {backLink}
           <div className="my-1 p-1">
             <QuestionClock
-              hideIcon
               pausedAccumRef={pausedAccumRef}
               startRef={startRef}
               totalElapsedRef={totalElapsedRef}

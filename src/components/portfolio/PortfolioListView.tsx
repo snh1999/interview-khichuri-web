@@ -69,7 +69,7 @@ export const PortfolioListView = () => {
             <CardDescription>
               Wireframes and moodboards for your personal portfolio.
             </CardDescription>
-            <CardDescription className="text-amber-700 dark:text-amber-300">
+            <CardDescription className="text-signal-warning-foreground">
               The Portfolio builder is experimental and still in development;
               you may encounter bugs.
             </CardDescription>

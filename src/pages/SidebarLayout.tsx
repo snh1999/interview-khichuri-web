@@ -13,6 +13,12 @@ export const SidebarLayout = ({
   return (
     <SidebarProvider>
       <div className="flex h-dvh w-full flex-col overflow-hidden">
+        <a
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:ring-2 focus:ring-ring"
+          href="#main-content"
+        >
+          Skip to content
+        </a>
         <Header />
 
         {/* h-full important for right-scrollbar, min-h-0 important for horizontal sidebar*/}
@@ -21,7 +27,10 @@ export const SidebarLayout = ({
           <div className="flex min-h-full">
             {hideSidebar ? null : <AppSidebar />}
             <div className="flex min-w-0 flex-1 flex-col">
-              <main className="mx-auto flex w-full flex-1 flex-col px-4 py-6 sm:px-6">
+              <main
+                className="mx-auto flex w-full flex-1 flex-col px-4 py-6 sm:px-6"
+                id="main-content"
+              >
                 <Outlet />
               </main>
 
