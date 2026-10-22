@@ -274,6 +274,28 @@ const projectKeys = (project: { id?: number; name?: string }): string[] => [
     : []),
 ];
 
+const projectLookupKeys = (
+  project: { id?: number; name?: string },
+  index: number
+): string[] => [
+  ...projectKeys(project),
+  ...(project.id === undefined ? [`index:${index}`] : []),
+];
+
+const lookupProjectSkills = (
+  project: { id?: number; name?: string },
+  index: number,
+  projectSkills: ReadonlyMap<string, string[]>
+): string[] => {
+  for (const key of projectLookupKeys(project, index)) {
+    const skills = projectSkills.get(key);
+    if (skills !== undefined) {
+      return skills;
+    }
+  }
+  return [];
+};
+
 const resolveIds = (
   names: string[],
   idsByName: ReadonlyMap<string, number>
@@ -301,8 +323,8 @@ export const applyExtractedLookupIds = (
   idsByName: ILookupNameIdMaps
 ): TProfileFormData => {
   const projectSkills = new Map<string, string[]>();
-  for (const project of entries.projects) {
-    for (const key of projectKeys(project)) {
+  for (const [index, project] of entries.projects.entries()) {
+    for (const key of projectLookupKeys(project, index)) {
       projectSkills.set(key, [
         ...new Set([...(projectSkills.get(key) ?? []), ...project.skills]),
       ]);
@@ -319,10 +341,8 @@ export const applyExtractedLookupIds = (
       industries: mergeIds(data.professional?.industries, industries),
       skills: mergeIds(data.professional?.skills, skills),
     },
-    projects: (data.projects ?? []).map((project) => {
-      const names = projectKeys(project).flatMap(
-        (key) => projectSkills.get(key) ?? []
-      );
+    projects: (data.projects ?? []).map((project, index) => {
+      const names = lookupProjectSkills(project, index, projectSkills);
       const projectIds = resolveIds(names, idsByName.topics);
       return {
         ...project,

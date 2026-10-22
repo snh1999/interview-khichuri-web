@@ -15,6 +15,14 @@ export const ALL_PROVIDERS = [
 
 export type TApiKeyProvider = (typeof ALL_PROVIDERS)[number];
 
+const BASE_URL_PROVIDERS: ReadonlySet<TApiKeyProvider> = new Set([
+  "cloudflare",
+  "custom",
+]);
+
+export const providerNeedsBaseUrl = (provider: TApiKeyProvider) =>
+  BASE_URL_PROVIDERS.has(provider);
+
 export const PROVIDER_LABELS: Record<TApiKeyProvider, string> = {
   google: "Google",
   openai: "OpenAI",

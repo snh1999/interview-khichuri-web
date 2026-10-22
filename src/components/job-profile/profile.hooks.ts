@@ -95,6 +95,9 @@ export const getUseJobProfileForm = () => {
 
   const onSubmit = form.handleSubmit(async (data: TProfileFormData) => {
     try {
+      const previousDefaults = structuredClone(
+        form.formState.defaultValues
+      ) as TProfileFormData;
       const resolvedSections: Partial<Record<TProfileFormSections, unknown>> =
         {};
       const mutations: {
@@ -203,11 +206,18 @@ export const getUseJobProfileForm = () => {
         );
       }
 
-      form.reset({ ...data, ...resolvedSections } as TProfileFormData);
-      for (const name of failed) {
-        form.setValue(name, data[name as keyof TProfileFormData] as never, {
-          shouldDirty: true,
-        });
+      const nextDefaults = structuredClone(previousDefaults);
+      for (const name of succeeded) {
+        (nextDefaults as Record<string, unknown>)[name] =
+          resolvedSections[name] ?? data[name as keyof TProfileFormData];
+      }
+
+      form.reset(nextDefaults, { keepValues: true });
+      for (const name of succeeded) {
+        const resolved = resolvedSections[name];
+        if (resolved !== undefined) {
+          form.setValue(name, resolved as never, { shouldDirty: true });
+        }
       }
 
       if (failed.length === 0) {

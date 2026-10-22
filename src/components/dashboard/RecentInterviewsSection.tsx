@@ -19,7 +19,7 @@ export const RecentInterviewsSection = () => {
     limit: RECENT_INTERVIEWS_COUNT,
   });
 
-  if (!interviews || interviews.length === 0) {
+  if (!interviews) {
     return null;
   }
 

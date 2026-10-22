@@ -8,18 +8,21 @@ import { z } from "zod";
 import {
   ALL_PROVIDERS,
   PROVIDER_LABELS,
+  providerNeedsBaseUrl,
   type TApiKeyProvider,
   useCreateApiKey,
 } from "@/api/keys";
-import {
-  MAX_NAME_LENGTH,
-  MAX_SHORT_LENGTH,
-  MAX_URL_LENGTH,
-} from "@/app.constants.ts";
+import { MAX_NAME_LENGTH, MAX_SHORT_LENGTH } from "@/app.constants.ts";
 import { FormCheckbox } from "@/components/common/form/FormCheckbox.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
 import { ProviderInfoCard } from "@/components/keys/info/ProviderInfoCard.tsx";
+import {
+  baseUrlSchema,
+  getBaseUrlPlaceholder,
+  MODEL_PLACEHOLDER,
+  requireBaseUrl,
+} from "@/components/keys/key.schemas.ts";
 import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button, type buttonVariants } from "@/components/ui/button.tsx";
@@ -37,15 +40,6 @@ const API_PROVIDERS = Object.entries(PROVIDER_LABELS).map(([value, label]) => ({
   value,
 }));
 
-const baseUrlSchema = z
-  .string()
-  .max(MAX_URL_LENGTH)
-  .optional()
-  .refine(
-    (value) => !value || value.startsWith("https://"),
-    "Base URL must use HTTPS"
-  );
-
 const createKeySchema = z
   .object({
     isActive: z.boolean(),
@@ -56,15 +50,8 @@ const createKeySchema = z
     baseUrl: baseUrlSchema,
   })
   .superRefine((data, context) => {
-    if (
-      (data.provider === "cloudflare" || data.provider === "custom") &&
-      !data.baseUrl?.trim()
-    ) {
-      context.addIssue({
-        code: "custom",
-        message: "Base URL is required for this provider",
-        path: ["baseUrl"],
-      });
+    if (providerNeedsBaseUrl(data.provider)) {
+      requireBaseUrl(data, context);
     }
   });
 
@@ -133,7 +120,7 @@ export const KeysFormDialog = ({
   });
 
   const provider = form.watch("provider");
-  const needsBaseUrl = provider === "custom" || provider === "cloudflare";
+  const needsBaseUrl = providerNeedsBaseUrl(provider);
   const isActiveDefault = getIsActive?.(provider);
   useEffect(() => {
     if (isActiveDefault === undefined) {
@@ -195,11 +182,7 @@ export const KeysFormDialog = ({
                 form={form}
                 label="Base URL"
                 name="baseUrl"
-                placeholder={
-                  provider === "cloudflare"
-                    ? "https://api.cloudflare.com/client/v4/accounts/<account_id>/ai/v1"
-                    : "https://api.example.com/v1"
-                }
+                placeholder={getBaseUrlPlaceholder(provider)}
               />
             ) : null}
 
@@ -215,7 +198,7 @@ export const KeysFormDialog = ({
               form={form}
               label="Model (optional)"
               name="model"
-              placeholder="e.g. gemini-2.0-flash"
+              placeholder={MODEL_PLACEHOLDER}
             />
 
             <div className="flex items-center justify-between">
