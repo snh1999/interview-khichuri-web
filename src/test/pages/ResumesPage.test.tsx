@@ -185,14 +185,10 @@ describe("ResumesPage", () => {
     await user.click(await screen.findByRole("button", { name: ACTIONS_FOR }));
 
     expect(
-      await screen.findByText(
-        "Set another resume as primary before deleting this one."
-      )
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Delete" })).toHaveAttribute(
-      "aria-disabled",
-      "true"
-    );
+      await screen.findByRole("button", {
+        name: "Set another resume as primary to Delete",
+      })
+    ).toHaveAttribute("aria-disabled", "true");
   });
 
   it("opens the public page of a public resume", async () => {

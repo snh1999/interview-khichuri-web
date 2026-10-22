@@ -4,14 +4,21 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import type { IApiKey } from "@/api/keys";
 import {
+  type IApiKey,
+  providerNeedsBaseUrl,
   useActivateApiKey,
   useDeleteApiKey,
   useUpdateApiKey,
 } from "@/api/keys";
-import { MAX_SHORT_LENGTH, MAX_URL_LENGTH } from "@/app.constants.ts";
+import { MAX_SHORT_LENGTH } from "@/app.constants.ts";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
+import {
+  baseUrlSchema,
+  getBaseUrlPlaceholder,
+  MODEL_PLACEHOLDER,
+  requireBaseUrl,
+} from "@/components/keys/key.schemas.ts";
 import { Badge } from "@/components/ui/badge.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
@@ -40,10 +47,12 @@ interface Props {
 }
 
 const editSchema = z.object({
-  baseUrl: z.string().max(MAX_URL_LENGTH).optional(),
+  baseUrl: baseUrlSchema,
   model: z.string().max(MAX_SHORT_LENGTH).nullish(),
   name: z.string().min(1, "Name is required").max(MAX_SHORT_LENGTH),
 });
+
+const customProviderEditSchema = editSchema.superRefine(requireBaseUrl);
 
 type EditFormData = z.infer<typeof editSchema>;
 
@@ -53,6 +62,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
   const { mutateAsync: updateKey } = useUpdateApiKey();
   const [editOpen, setEditOpen] = useState(false);
   const isActive = apiKey.isActive === true;
+  const needsBaseUrl = providerNeedsBaseUrl(apiKey.provider);
 
   const setDefaultAiProvider = useAppStore(
     (state) => state.setDefaultAiProvider
@@ -63,11 +73,11 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
 
   const form = useForm<EditFormData>({
     defaultValues: {
-      baseUrl: apiKey.baseUrl ?? "",
+      baseUrl: needsBaseUrl ? (apiKey.baseUrl ?? "") : "",
       model: apiKey.model ?? "",
       name: apiKey.name,
     },
-    resolver: zodResolver(editSchema),
+    resolver: zodResolver(needsBaseUrl ? customProviderEditSchema : editSchema),
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
@@ -75,9 +85,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
       id: apiKey.id,
       model: data.model || null,
       name: data.name,
-      ...(apiKey.provider === "custom" || apiKey.provider === "cloudflare"
-        ? { baseUrl: data.baseUrl?.trim() || null }
-        : {}),
+      ...(needsBaseUrl ? { baseUrl: data.baseUrl?.trim() || null } : {}),
     });
     toast.success("API key updated");
     setEditOpen(false);
@@ -121,12 +129,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
               </Badge>
             </div>
           ) : (
-            <Button
-              disabled={isActive}
-              onClick={handleActivateClick}
-              size="sm"
-              variant="secondary"
-            >
+            <Button onClick={handleActivateClick} size="sm" variant="secondary">
               Activate
             </Button>
           )}
@@ -149,15 +152,14 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
                   form={form}
                   label="Model (optional)"
                   name="model"
-                  placeholder="e.g. gemini-2.0-flash"
+                  placeholder={MODEL_PLACEHOLDER}
                 />
-                {apiKey.provider === "custom" ||
-                apiKey.provider === "cloudflare" ? (
+                {needsBaseUrl ? (
                   <FormInput
                     form={form}
                     label="Base URL"
                     name="baseUrl"
-                    placeholder="https://api.example.com/v1"
+                    placeholder={getBaseUrlPlaceholder(apiKey.provider)}
                   />
                 ) : null}
                 <div className="flex items-center justify-end gap-2">
