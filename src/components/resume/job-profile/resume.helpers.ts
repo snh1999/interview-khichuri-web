@@ -1,18 +1,24 @@
 import { z } from "zod";
-import { MAX_LARGE_LENGTH, MAX_SHORT_LENGTH } from "@/app.constants.ts";
+import {
+  MAX_LARGE_LENGTH,
+  MAX_SHORT_LENGTH,
+  MAX_TINY_LENGTH,
+} from "@/app.constants.ts";
 import {
   activitySchema,
   educationSchema,
   personalSchema,
+  preferencesSchema,
   professionalSchema,
   profileFormSchema,
   profileLinkSchema,
   projectSchema,
   publicationSchema,
   referenceSchema,
+  type TProfileFormData,
   workExperienceSchema,
 } from "@/components/job-profile/profile.helpers.ts";
-import { stringToDate } from "@/lib/utils.ts";
+import { normalizeLookupName, stringToDate } from "@/lib/utils.ts";
 
 const dateOrNull = z.coerce.date().nullish();
 
@@ -40,9 +46,14 @@ const resumeProjectSchema = projectSchema.omit({ skillNames: true }).extend({
   skills: z.string().trim().max(MAX_LARGE_LENGTH).optional(),
 });
 
+const extractedNameList = z.array(z.string().trim().min(1)).nullish();
+
 export const resumeExtractionSchema = z.object({
   personal: personalSchema.extend({ phone: z.string().nullish() }).partial(),
-  professional: resumeProfessionalSchema.partial(),
+  professional: resumeProfessionalSchema.partial().extend({
+    industries: extractedNameList,
+    skills: extractedNameList,
+  }),
   workExperience: z.array(
     workExperienceSchema
       .extend({ endDate: dateOrNull, startDate: dateOrNull })
@@ -60,7 +71,13 @@ export const resumeExtractionSchema = z.object({
         .partial()
     )
     .optional(),
-  projects: z.array(resumeProjectSchema.partial()).optional(),
+  projects: z
+    .array(
+      resumeProjectSchema.partial().extend({
+        skills: z.union([z.string(), z.array(z.string())]).optional(),
+      })
+    )
+    .optional(),
   publications: z.array(publicationSchema.partial()).optional(),
   references: z.array(referenceSchema.partial()).optional(),
   skillGroups: z.array(skillGroupSchema).max(MAX_SKILL_GROUPS).optional(),
@@ -68,6 +85,37 @@ export const resumeExtractionSchema = z.object({
 });
 
 export type TResumeContent = z.infer<typeof resumeExtractionSchema>;
+
+export const profileApplySchema = z.object({
+  activities: z
+    .array(
+      activitySchema
+        .extend({ endDate: dateOrNull, startDate: dateOrNull })
+        .partial()
+    )
+    .optional(),
+  education: z
+    .array(
+      educationSchema
+        .extend({ endDate: dateOrNull, startDate: dateOrNull })
+        .partial()
+    )
+    .optional(),
+  links: z.array(profileLinkSchema.partial()).optional(),
+  personal: personalSchema.extend({ phone: z.string().nullish() }).partial(),
+  preferences: preferencesSchema.partial().optional(),
+  professional: professionalSchema.partial(),
+  projects: z.array(projectSchema.partial()).optional(),
+  publications: z.array(publicationSchema.partial()).optional(),
+  references: z.array(referenceSchema.partial()).optional(),
+  workExperience: z
+    .array(
+      workExperienceSchema
+        .extend({ endDate: dateOrNull, startDate: dateOrNull })
+        .partial()
+    )
+    .optional(),
+});
 
 export const resumeFormSchema = profileFormSchema
   .omit({
@@ -165,3 +213,121 @@ export const mergeIntoFormData = (
           : base.skillGroups,
       } as TResumeFormData)
     : base;
+
+export interface IExtractedProjectLookup {
+  id?: number;
+  name?: string;
+  skills: string[];
+}
+
+export interface IExtractedLookupEntries {
+  industries: string[];
+  professional: string[];
+  projects: IExtractedProjectLookup[];
+}
+
+export interface ILookupNameIdMaps {
+  industries: ReadonlyMap<string, number>;
+  topics: ReadonlyMap<string, number>;
+}
+
+const splitLookupEntries = (value?: string | string[] | null): string[] => {
+  const entries = Array.isArray(value) ? value : (value ?? "").split(",");
+  return entries
+    .flatMap((entry) => (typeof entry === "string" ? entry.split(",") : []))
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0 && entry.length <= MAX_TINY_LENGTH);
+};
+
+export const collectExtractedLookupNames = (
+  content?: TResumeContent | null
+): IExtractedLookupEntries => {
+  if (!content) {
+    return { industries: [], professional: [], projects: [] };
+  }
+
+  const professional = content.professional ?? {};
+  const groupKeywords = (content.skillGroups ?? []).flatMap((group) =>
+    splitLookupEntries(group.keywords)
+  );
+
+  return {
+    industries: [...new Set(splitLookupEntries(professional.industries))],
+    professional: [
+      ...new Set([
+        ...splitLookupEntries(professional.skills),
+        ...groupKeywords,
+      ]),
+    ],
+    projects: (content.projects ?? []).map((project) => ({
+      id: project.id,
+      name: project.name,
+      skills: splitLookupEntries(project.skills),
+    })),
+  };
+};
+
+const projectKeys = (project: { id?: number; name?: string }): string[] => [
+  ...(project.id === undefined ? [] : [`id:${project.id}`]),
+  ...(project.name?.trim()
+    ? [`name:${normalizeLookupName(project.name)}`]
+    : []),
+];
+
+const resolveIds = (
+  names: string[],
+  idsByName: ReadonlyMap<string, number>
+): number[] => [
+  ...new Set(
+    names
+      .map((name) => idsByName.get(normalizeLookupName(name)))
+      .filter((id): id is number => id !== undefined)
+  ),
+];
+
+const mergeIds = (
+  existing: readonly unknown[] | undefined,
+  added: number[]
+): number[] => [
+  ...new Set([
+    ...(existing ?? []).filter((id): id is number => typeof id === "number"),
+    ...added,
+  ]),
+];
+
+export const applyExtractedLookupIds = (
+  data: TProfileFormData,
+  entries: IExtractedLookupEntries,
+  idsByName: ILookupNameIdMaps
+): TProfileFormData => {
+  const projectSkills = new Map<string, string[]>();
+  for (const project of entries.projects) {
+    for (const key of projectKeys(project)) {
+      projectSkills.set(key, [
+        ...new Set([...(projectSkills.get(key) ?? []), ...project.skills]),
+      ]);
+    }
+  }
+
+  const skills = resolveIds(entries.professional, idsByName.topics);
+  const industries = resolveIds(entries.industries, idsByName.industries);
+
+  return {
+    ...data,
+    professional: {
+      ...data.professional,
+      industries: mergeIds(data.professional?.industries, industries),
+      skills: mergeIds(data.professional?.skills, skills),
+    },
+    projects: (data.projects ?? []).map((project) => {
+      const names = projectKeys(project).flatMap(
+        (key) => projectSkills.get(key) ?? []
+      );
+      const projectIds = resolveIds(names, idsByName.topics);
+      return {
+        ...project,
+        skills: mergeIds(project.skills, projectIds),
+      };
+    }),
+  };
+};

@@ -1,7 +1,8 @@
 import { PlusIcon } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
+import { useIndustries, useTopics } from "@/api/lookups";
 import { useProfile } from "@/api/profile";
 import type { IResume } from "@/api/resumes";
 import {
@@ -17,9 +18,11 @@ import { AddResume } from "@/components/resume/job-profile/AddResume.tsx";
 import { ExtractPreviewDialog } from "@/components/resume/job-profile/preview/ExtractPreviewDialog.tsx";
 import { ResumeListItem } from "@/components/resume/job-profile/ResumeListItem.tsx";
 import {
+  applyExtractedLookupIds,
+  collectExtractedLookupNames,
   EMPTY_FORM,
   mergeIntoFormData,
-  resumeExtractionSchema,
+  profileApplySchema,
   type TResumeContent,
 } from "@/components/resume/job-profile/resume.helpers.ts";
 import { ViewResume } from "@/components/resume/job-profile/ViewResume.tsx";
@@ -43,19 +46,30 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip.tsx";
+import { buildLookupNameMap } from "@/lib/utils.ts";
 
 export const ResumeCard = () => {
   const { data: resumes } = useGetResumes();
   const { data: profileData } = useProfile();
   const { reset } = useFormContext<TProfileFormData>();
+  const topics = useTopics();
+  const industries = useIndustries();
+  const topicIdsByName = useMemo(
+    () => buildLookupNameMap(topics.data),
+    [topics.data]
+  );
+  const industryIdsByName = useMemo(
+    () => buildLookupNameMap(industries.data),
+    [industries.data]
+  );
 
   const [viewingResume, setViewingResume] = useState<IResume | null>(null);
   const [open, setOpen] = useState(false);
   const [extraction, setExtraction] = useState<TResumeContent | null>(null);
   const { mutateAsync: deleteResume } = useDeleteResume();
-  const { mutate: setPrimary, isPending: isSettingPrimary } =
-    useSetPrimaryResume();
+  const { mutateAsync: setPrimary } = useSetPrimaryResume();
   const extractResume = useExtractResume();
+  const extractedLookups = collectExtractedLookupNames(extraction);
 
   const handleExtract = async (
     resume: IResume,
@@ -72,13 +86,18 @@ export const ResumeCard = () => {
 
   const applyExtraction = (merged: TProfileFormData, override: boolean) => {
     try {
-      const parsed = resumeExtractionSchema.parse({ ...EMPTY_FORM, ...merged });
+      const withLookups = applyExtractedLookupIds(merged, extractedLookups, {
+        industries: industryIdsByName,
+        topics: topicIdsByName,
+      });
+      const parsed = profileApplySchema.parse({
+        ...EMPTY_FORM,
+        ...withLookups,
+      });
       reset(parsed as TProfileFormData, { keepDefaultValues: true });
       setExtraction(null);
       toast.success(
-        override
-          ? "Profile replaced — review and save"
-          : "Profile merged — review and save"
+        `Profile ${override ? "replaced" : "merged"} with resume data. Review and save`
       );
     } catch (error) {
       toast.error(
@@ -162,7 +181,6 @@ export const ResumeCard = () => {
             {resumes.map((resume) => (
               <ResumeListItem
                 isExtracting={extractResume.isPending}
-                isSettingPrimary={isSettingPrimary}
                 key={resume.id}
                 onDelete={deleteResume}
                 onFillProfile={onFillProfile}
@@ -184,6 +202,7 @@ export const ResumeCard = () => {
           <ExtractPreviewDialog
             before={beforeForm}
             data={extraction}
+            lookupEntries={extractedLookups}
             onClose={closeExtraction}
             onMerge={handleMerge}
             onOverride={handleOverride}

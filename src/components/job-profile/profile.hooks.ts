@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useIndustries, useTopics } from "@/api/lookups";
 import {
   useProfile,
   useUpdateActivities,
@@ -23,11 +25,27 @@ import {
   profileFormSchema,
   profileToFormData,
 } from "@/components/job-profile/profile.helpers.ts";
-import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
-import { formatSectionLabel } from "@/lib/utils.ts";
+import {
+  buildLookupNameMap,
+  formatSectionLabel,
+  normalizeLookupName,
+} from "@/lib/utils.ts";
 
-const formatSectionNames = (names: string[]) =>
+const formatSectionNames = (names: TProfileFormSections[]) =>
   names.map(formatSectionLabel).join(", ");
+
+const resolveNamedIds = (
+  names: string[] | undefined,
+  ids: number[] | undefined,
+  idsByName: ReadonlyMap<string, number>
+): number[] => [
+  ...new Set([
+    ...(ids ?? []),
+    ...(names ?? [])
+      .map((name) => idsByName.get(normalizeLookupName(name)))
+      .filter((id): id is number => id !== undefined),
+  ]),
+];
 
 export const getUseJobProfileForm = () => {
   const { data: profileData } = useProfile();
@@ -61,14 +79,24 @@ export const getUseJobProfileForm = () => {
     resolver: zodResolver(profileFormSchema),
   });
 
-  const resolveIndustries = useResolveLookupField(form, "industries");
-  const resolveSkills = useResolveLookupField(form, "topics");
+  const topics = useTopics();
+  const industries = useIndustries();
+  const topicIdsByName = useMemo(
+    () => buildLookupNameMap(topics.data),
+    [topics.data]
+  );
+  const industryIdsByName = useMemo(
+    () => buildLookupNameMap(industries.data),
+    [industries.data]
+  );
 
   const { isDirty, dirtyFields } = form.formState;
   const { reset } = form;
 
   const onSubmit = form.handleSubmit(async (data: TProfileFormData) => {
     try {
+      const resolvedSections: Partial<Record<TProfileFormSections, unknown>> =
+        {};
       const mutations: {
         name: TProfileFormSections;
         dirty: unknown;
@@ -82,22 +110,26 @@ export const getUseJobProfileForm = () => {
         {
           name: "professional",
           dirty: dirtyFields.professional,
-          run: async () => {
+          run: () => {
             const { industriesNames, skillNames, ...overviewFields } =
               data.professional;
-            const skills = await resolveSkills(
-              "professional.skills",
-              "professional.skillNames"
-            );
-            const industries = await resolveIndustries(
-              "professional.industries",
-              "professional.industriesNames"
-            );
-            return updateWorkOverview.mutateAsync({
+            const resolved = {
               ...overviewFields,
-              ...(Array.isArray(skills) ? { skills } : {}),
-              ...(Array.isArray(industries) ? { industries } : {}),
-            });
+              industries: resolveNamedIds(
+                industriesNames,
+                data.professional.industries,
+                industryIdsByName
+              ),
+              industriesNames: [],
+              skills: resolveNamedIds(
+                skillNames,
+                data.professional.skills,
+                topicIdsByName
+              ),
+              skillNames: [],
+            };
+            resolvedSections.professional = resolved;
+            return updateWorkOverview.mutateAsync(resolved);
           },
         },
         {
@@ -132,7 +164,19 @@ export const getUseJobProfileForm = () => {
         {
           name: "projects",
           dirty: dirtyFields.projects,
-          run: () => updateProjects.mutateAsync({ projects: data.projects }),
+          run: () => {
+            const projects = (data.projects ?? []).map((project) => ({
+              ...project,
+              skills: resolveNamedIds(
+                project.skillNames,
+                project.skills,
+                topicIdsByName
+              ),
+              skillNames: [],
+            }));
+            resolvedSections.projects = projects;
+            return updateProjects.mutateAsync({ projects });
+          },
         },
         {
           name: "references",
@@ -152,16 +196,17 @@ export const getUseJobProfileForm = () => {
       const results = await Promise.allSettled(toRun.map(({ run }) => run()));
 
       const succeeded: TProfileFormSections[] = [];
-      const failed: string[] = [];
+      const failed: TProfileFormSections[] = [];
       for (const [i, result] of results.entries()) {
         (result.status === "fulfilled" ? succeeded : failed).push(
           toRun[i].name
         );
       }
 
-      for (const name of succeeded) {
-        form.resetField(name, {
-          defaultValue: data[name as keyof TProfileFormData],
+      form.reset({ ...data, ...resolvedSections } as TProfileFormData);
+      for (const name of failed) {
+        form.setValue(name, data[name as keyof TProfileFormData] as never, {
+          shouldDirty: true,
         });
       }
 

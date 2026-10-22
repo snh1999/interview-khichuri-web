@@ -73,6 +73,29 @@ export const stripNulls = (value: unknown): unknown => {
   return value;
 };
 
+const LOOKUP_NAME_SEPARATOR = /[._\-(),]/g;
+const LOOKUP_NAME_WHITESPACE = /\s+/g;
+
+export const normalizeLookupName = (name: string): string =>
+  name
+    .trim()
+    .toLowerCase()
+    .replace(LOOKUP_NAME_SEPARATOR, "")
+    .replace(LOOKUP_NAME_WHITESPACE, " ");
+
+export const buildLookupNameMap = (
+  entries: readonly { id: number; name: string }[]
+): Map<string, number> => {
+  const map = new Map<string, number>();
+  for (const entry of entries) {
+    const key = normalizeLookupName(entry.name);
+    if (key && !map.has(key)) {
+      map.set(key, entry.id);
+    }
+  }
+  return map;
+};
+
 const CAMEL_CASE_SEPARATOR = /([a-z])([A-Z])/g;
 const FIRST_CHAR = /^./;
 

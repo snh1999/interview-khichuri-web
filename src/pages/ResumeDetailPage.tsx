@@ -1,4 +1,5 @@
 import { PenIcon, ReadCvLogoIcon } from "@phosphor-icons/react";
+import { formatDistanceToNow } from "date-fns";
 import { useEffect, useMemo } from "react";
 import { generatePath, useNavigate } from "react-router";
 import {
@@ -41,6 +42,8 @@ export const REVIEW_SECTION_LABEL: Record<TStandaloneCategoryKey, string> = {
   skills: "Skills",
 };
 
+const renderBareScore = (value: number) => value;
+
 export const ResumeDetailPage = () => (
   <AppErrorSuspense errorPage fallback={ResumeDetailSkeleton}>
     <ResumeDetailContent />
@@ -60,7 +63,12 @@ const ResumeDetailContent = () => {
   }, [resume.name, setPageHeader]);
 
   const { data: cachedReviewEntry } = useCachedStandaloneReview(resumeId);
-  const cachedReview = cachedReviewEntry ? { ...cachedReviewEntry } : null;
+  const cachedReview = cachedReviewEntry ?? null;
+  const isStale = Boolean(
+    cachedReview &&
+      resume.updatedAt &&
+      new Date(resume.updatedAt).getTime() > cachedReview.timestamp
+  );
   const reviewMutation = useReviewResumeStandalone();
 
   const copyPrompt = useMemo(
@@ -90,32 +98,38 @@ const ResumeDetailContent = () => {
 
   return (
     <div className="w-full">
-      <div className="mb-4 flex items-center justify-between gap-2">
-        <h1 className="font-semibold text-xl">{resume.name}</h1>
-        <div className="flex items-center gap-2">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <h1 className="min-w-0 truncate font-semibold text-base sm:sr-only">
+          {resume.name}
+        </h1>
+        <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
           {isGenerated ? (
-            <Button onClick={handleEdit} variant="outline">
+            <Button onClick={handleEdit} size="sm" variant="ghost">
               <PenIcon className="size-4" />
               Edit
             </Button>
           ) : null}
           {hasPdfFile ? <OpenPDFInNewTab resumeId={resumeId} /> : null}
-          <Button onClick={handleNavigateBack} variant="outline">
+          <Button onClick={handleNavigateBack} size="sm" variant="ghost">
             <ReadCvLogoIcon className="size-4" />
             All Resumes
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,4fr)_minmax(0,5fr)]">
-        <Card className="px-1 pb-1 lg:order-1">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,4fr)]">
+        <ViewResumeContent resume={resume} />
+
+        <Card className="px-1 pb-1">
           <CardHeader>
             <div className="flex items-center gap-2">
               {cachedReview ? (
                 <CircularProgress
+                  aria-label="AI review score"
                   className={`shrink-0 ${SCORE_TEXT_CLASS[getScoreTone(cachedReview.overall)]}`}
                   progressBgClassName="text-primary/15"
                   progressClassName="text-primary"
+                  renderLabel={renderBareScore}
                   showLabel
                   size={60}
                   strokeWidth={7}
@@ -123,11 +137,19 @@ const ResumeDetailContent = () => {
                 />
               ) : null}
               <div>
-                <CardTitle className="text-sm">AI Review</CardTitle>
+                <CardTitle className="text-base">AI Review</CardTitle>
                 {cachedReview ? (
                   <CardDescription>
-                    Score this resume on — tone, content, structure, and skills.
+                    {`Reviewed ${formatDistanceToNow(
+                      new Date(cachedReview.timestamp),
+                      { addSuffix: true }
+                    )}`}
                   </CardDescription>
+                ) : null}
+                {isStale ? (
+                  <p className="text-signal-warning text-xs">
+                    Resume edited since this review — re-run to refresh.
+                  </p>
                 ) : null}
               </div>
             </div>
@@ -165,10 +187,6 @@ const ResumeDetailContent = () => {
             )}
           </CardContent>
         </Card>
-
-        <div className="lg:order-2">
-          <ViewResumeContent resume={resume} />
-        </div>
       </div>
     </div>
   );
@@ -176,10 +194,17 @@ const ResumeDetailContent = () => {
 
 const ResumeDetailSkeleton = () => (
   <div className="w-full">
-    <Skeleton className="mb-4 h-8 w-64" />
-    <Skeleton className="mb-6 h-5 w-96" />
-    <SkeletonCard>
-      <Skeleton className="h-96 w-full" />
-    </SkeletonCard>
+    <div className="mb-4 flex items-center justify-between gap-2">
+      <Skeleton className="h-6 w-48" />
+      <Skeleton className="h-7 w-64" />
+    </div>
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,4fr)]">
+      <SkeletonCard>
+        <Skeleton className="h-96 w-full" />
+      </SkeletonCard>
+      <SkeletonCard noFooter>
+        <Skeleton className="h-64 w-full" />
+      </SkeletonCard>
+    </div>
   </div>
 );

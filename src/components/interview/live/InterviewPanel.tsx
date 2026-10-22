@@ -36,7 +36,6 @@ export const InterviewPanel = ({
   totalElapsedRef,
   chatSlot,
   children,
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: legacy panel
 }: Readonly<ICameraPanelProps>) => {
   const panes = useInterviewStore((state) => state.panes);
   const toggleCamera = useInterviewStore((state) => state.toggleCamera);

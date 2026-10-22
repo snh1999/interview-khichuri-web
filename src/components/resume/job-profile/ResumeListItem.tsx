@@ -1,5 +1,6 @@
 import {
   ArrowSquareOutIcon,
+  ArticleIcon,
   DotsThreeVerticalIcon,
   FileArrowDownIcon,
   FilePdfIcon,
@@ -26,10 +27,9 @@ import {
 
 interface IProps {
   resume: IResume;
-  isSettingPrimary: boolean;
   isExtracting: boolean;
   onView: (resume: IResume) => void;
-  onSetPrimary: (id: string) => void;
+  onSetPrimary: (id: string) => Promise<unknown>;
   onDelete: (id: string) => Promise<void>;
   onFillProfile: (
     resume: IResume,
@@ -40,7 +40,6 @@ interface IProps {
 
 export const ResumeListItem = ({
   resume,
-  isSettingPrimary,
   isExtracting,
   onView,
   onSetPrimary,
@@ -50,12 +49,20 @@ export const ResumeListItem = ({
   const navigate = useNavigate();
   const isGenerated = Boolean(resume.template);
   const isPdf = Boolean(resume.url);
+  const publicUrl = resume.slug
+    ? `${window.location.origin}${PUBLIC_RESUME_PAGE.replace(":slug", resume.slug)}`
+    : null;
 
   const handleCopyLink = () => {
-    if (resume.slug) {
-      const url = `${window.location.origin}${PUBLIC_RESUME_PAGE.replace(":slug", resume.slug)}`;
-      navigator.clipboard.writeText(url);
+    if (publicUrl) {
+      navigator.clipboard.writeText(publicUrl);
       toast.success("Link copied to clipboard");
+    }
+  };
+
+  const handleOpenPublicPage = () => {
+    if (publicUrl) {
+      window.open(publicUrl, "_blank");
     }
   };
 
@@ -90,11 +97,7 @@ export const ResumeListItem = ({
         </span>
       </button>
 
-      {resume.isPrimary ? (
-        <Badge className="shrink-0" variant="secondary">
-          Primary
-        </Badge>
-      ) : null}
+      {resume.isPrimary ? <Badge className="shrink-0">Primary</Badge> : null}
 
       {isGenerated && resume.template ? (
         <Badge className="shrink-0 text-muted-foreground" variant="outline">
@@ -124,7 +127,7 @@ export const ResumeListItem = ({
         />
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem onClick={handleNavigate}>
-            <ArrowSquareOutIcon className="size-4" /> Visit
+            <ArticleIcon className="size-4" /> Open details
           </DropdownMenuItem>
           {resume.content ? (
             <DropdownMenuItem onClick={handleFillProfile}>
@@ -140,31 +143,42 @@ export const ResumeListItem = ({
               isLoading={isExtracting}
               title="Extract Resume Data"
               toastErrorMessage="Failed to extract resume"
-              toastSuccessMessage="Profile extracted — review and save"
+              toastSuccessMessage="Resume data applied to profile. Review and save"
               variant="ghost"
             />
           )}
 
-          <DropdownMenuItem
-            disabled={resume.isPrimary || isSettingPrimary}
-            onClick={handleSetPrimary}
-          >
-            <StarIcon className="size-4" /> Set as primary
-          </DropdownMenuItem>
+          <MutationButton
+            actionLabel="Set as primary"
+            disabled={resume.isPrimary}
+            errorMessage="Failed to set primary resume"
+            mutationFn={handleSetPrimary}
+            renderNode={
+              <DropdownMenuItem closeOnClick={false}>
+                <StarIcon className="size-4" /> Set as primary
+              </DropdownMenuItem>
+            }
+            successMessage="Primary resume set"
+          />
           {isGenerated && (
             <DropdownMenuItem onClick={handleNavigateToEdit}>
               <PenIcon className="size-4" /> Edit
             </DropdownMenuItem>
           )}
-          {isGenerated && resume.isPublic && resume.slug ? (
+          {isGenerated && resume.isPublic && publicUrl ? (
             <DropdownMenuItem onClick={handleCopyLink}>
               <LinkIcon className="size-4" /> Copy link
+            </DropdownMenuItem>
+          ) : null}
+          {resume.isPublic && publicUrl ? (
+            <DropdownMenuItem onClick={handleOpenPublicPage}>
+              <ArrowSquareOutIcon className="size-4" /> Open public page
             </DropdownMenuItem>
           ) : null}
           <MutationButton
             actionLabel="Delete resume"
             aria-label={`Delete ${resume.name}`}
-            dialogDescription="This resume will be permanently deleted."
+            dialogDescription={`Deleting "${resume.name}" also removes its saved ATS reviews. This cannot be undone.`}
             dialogTitle="Delete this resume?"
             errorMessage="Failed to delete resume"
             mutationFn={handleDelete}

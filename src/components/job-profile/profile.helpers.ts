@@ -114,13 +114,11 @@ export const profileLinkSchema = z.object({
 
 export type TProfileLinkDto = z.infer<typeof profileLinkSchema>;
 
-const optionalUrlSchema = z.union([
-  z.literal(""),
-  z.url().max(MAX_URL_LENGTH),
-  z.undefined(),
-]);
+const optionalUrlSchema = z
+  .union([z.literal(""), z.url().max(MAX_URL_LENGTH)])
+  .optional();
 
-const optionalEmailSchema = z.union([z.literal(""), z.email(), z.undefined()]);
+const optionalEmailSchema = z.union([z.literal(""), z.email()]).optional();
 
 export const publicationSchema = z.object({
   authors: z.array(z.string().trim().min(1).max(MAX_NAME_LENGTH)),

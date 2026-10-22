@@ -147,6 +147,71 @@ describe("JobPostForm", () => {
     });
   });
 
+  it("auto-sets the status to Applied when the applied date is set", async () => {
+    let posted: Record<string, unknown> | null = null;
+    server.use(
+      http.post("*/api/v1/jobs", async ({ request }) => {
+        posted = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(
+          {
+            data: { ...editJob, createdAt: CREATED_AT, updatedAt: CREATED_AT },
+            message: "Created",
+            statusCode: 201,
+          },
+          { status: 201 }
+        );
+      })
+    );
+    const { user } = renderForm();
+
+    await user.type(screen.getByLabelText("Description"), DESCRIPTION);
+    await user.type(screen.getByLabelText("Title"), "Senior Frontend");
+    await pickCompany(user);
+    await user.type(screen.getByLabelText("Applied At"), "15 January 2026");
+    await user.tab();
+    await user.click(screen.getByRole("button", { name: "Create" }));
+
+    expect(await screen.findByText("Job created")).toBeInTheDocument();
+    expect(posted).toMatchObject({
+      status: "applied",
+      appliedAt: expect.any(String),
+    });
+  });
+
+  it("auto-sets the status to Scheduled when the interview date is set", async () => {
+    let posted: Record<string, unknown> | null = null;
+    server.use(
+      http.post("*/api/v1/jobs", async ({ request }) => {
+        posted = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(
+          {
+            data: { ...editJob, createdAt: CREATED_AT, updatedAt: CREATED_AT },
+            message: "Created",
+            statusCode: 201,
+          },
+          { status: 201 }
+        );
+      })
+    );
+    const { user } = renderForm();
+
+    await user.type(screen.getByLabelText("Description"), DESCRIPTION);
+    await user.type(screen.getByLabelText("Title"), "Senior Frontend");
+    await pickCompany(user);
+    await user.type(screen.getByLabelText("Applied At"), "15 January 2026");
+    await user.tab();
+    await user.type(screen.getByLabelText("Interview Date"), "20 January 2026");
+    await user.tab();
+    await user.click(screen.getByRole("button", { name: "Create" }));
+
+    expect(await screen.findByText("Job created")).toBeInTheDocument();
+    expect(posted).toMatchObject({
+      status: "scheduled",
+      appliedAt: expect.any(String),
+      interviewDate: expect.any(String),
+    });
+  });
+
   it("updates an existing job through PATCH", async () => {
     let patched: unknown = null;
     server.use(
