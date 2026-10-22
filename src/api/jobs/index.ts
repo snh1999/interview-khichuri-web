@@ -2,7 +2,16 @@ import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client";
 
-export const JOB_STATUS = ["applied", "saved", "scheduled"] as const;
+export const JOB_STATUS = [
+  "applied",
+  "saved",
+  "scheduled",
+  "interviewed",
+  "offer",
+  "rejected",
+  "not_selected",
+  "withdrawn",
+] as const;
 
 export type TJobStatus = (typeof JOB_STATUS)[number];
 

@@ -26,6 +26,7 @@ import {
 } from "@/components/jobs/filters/jobDatePresets.ts";
 import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
+import { formatDate } from "@/lib/date.ts";
 import { daysUntil, stringToDate } from "@/lib/utils.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
 
@@ -33,6 +34,12 @@ export const STATUS_LABEL: Record<TJobStatus, string> = {
   saved: "Saved",
   applied: "Applied",
   scheduled: "Scheduled",
+  interviewed: "Interviewed",
+  offer: "Offer received",
+  rejected: "Rejected",
+  // biome-ignore lint/style/useNamingConvention: value comes from the API
+  not_selected: "Not selected",
+  withdrawn: "Withdrawn",
 };
 
 export const STATUS_OPTIONS: { value: TJobStatus; label: string }[] =
@@ -45,6 +52,12 @@ export const JOB_STATUS_VARIANT = {
   saved: "default",
   applied: "warning",
   scheduled: "success",
+  interviewed: "default",
+  offer: "success",
+  rejected: "danger",
+  // biome-ignore lint/style/useNamingConvention: value comes from the API
+  not_selected: "danger",
+  withdrawn: "default",
 } as const;
 
 export const getDateInfo = (job: IJob): string => {
@@ -52,17 +65,17 @@ export const getDateInfo = (job: IJob): string => {
     const interviewDays = daysUntil(job.interviewDate);
     return interviewDays !== null && interviewDays >= 0
       ? `${interviewDays} days until interview`
-      : `Interviewed at ${new Date(job.interviewDate).toLocaleDateString()}`;
+      : `Interviewed at ${formatDate(job.interviewDate)}`;
   }
   if (job.appliedAt) {
-    return `Applied ${new Date(job.appliedAt).toLocaleDateString()}`;
+    return `Applied ${formatDate(job.appliedAt)}`;
   }
   const days = daysUntil(job.deadline);
   if (days !== null) {
     return days >= 0 ? `${days}d left` : "Deadline passed";
   }
 
-  return `Created: ${new Date(job.createdAt).toLocaleDateString()}`;
+  return `Created: ${formatDate(job.createdAt)}`;
 };
 
 const jobPostSchema = z
