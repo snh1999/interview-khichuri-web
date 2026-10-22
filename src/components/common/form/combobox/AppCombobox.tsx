@@ -94,6 +94,11 @@ const toComboValue = (
   return value === null ? null : (optionMap.get(value as TValue) ?? null);
 };
 
+const hasSingleValue = (
+  multiple: boolean | undefined,
+  value: TValue | TValue[] | null
+) => multiple !== true && value !== null;
+
 interface IBelowChipsProps {
   values: TValue[];
   extraChips?: string[];
@@ -276,6 +281,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
             id={name}
             onBlur={onBlur}
             placeholder={isCreating ? "Creating..." : placeholder}
+            showClear={hasSingleValue(multiple, value)}
             showTrigger={!isCreating}
           >
             {isCreating ? (

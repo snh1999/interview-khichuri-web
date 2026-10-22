@@ -50,6 +50,22 @@ describe("AppCombobox", () => {
     expect(getAllByDisplayValue("React").length).toBeGreaterThan(0);
   });
 
+  it("clears a selected single value", async () => {
+    const onChange = vi.fn();
+    const { getByRole, user } = render(
+      <AppCombobox
+        data={DATA}
+        onChange={onChange}
+        toOption={toOption}
+        value={1}
+      />
+    );
+
+    await user.click(getByRole("button", { name: "Clear selection" }));
+
+    expect(onChange).toHaveBeenCalledWith(null);
+  });
+
   it("renders inline chips for a multi value", () => {
     const { getByText } = render(
       <AppCombobox

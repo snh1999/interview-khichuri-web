@@ -28,6 +28,7 @@ import {
 interface IProps {
   resume: IResume;
   isExtracting: boolean;
+  deleteDisabled?: boolean;
   onView: (resume: IResume) => void;
   onSetPrimary: (id: string) => Promise<unknown>;
   onDelete: (id: string) => Promise<void>;
@@ -41,6 +42,7 @@ interface IProps {
 export const ResumeListItem = ({
   resume,
   isExtracting,
+  deleteDisabled = false,
   onView,
   onSetPrimary,
   onDelete,
@@ -180,11 +182,17 @@ export const ResumeListItem = ({
             aria-label={`Delete ${resume.name}`}
             dialogDescription={`Deleting "${resume.name}" also removes its saved ATS reviews. This cannot be undone.`}
             dialogTitle="Delete this resume?"
+            disabled={Boolean(deleteDisabled)}
             errorMessage="Failed to delete resume"
             mutationFn={handleDelete}
             renderNode={
-              <DropdownMenuItem closeOnClick={false} variant="destructive">
-                <TrashIcon className="size-4" /> Delete
+              <DropdownMenuItem
+                closeOnClick={false}
+                disabled={deleteDisabled}
+                variant="destructive"
+              >
+                <TrashIcon className="size-4" />{" "}
+                {deleteDisabled ? "Set another resume as primary to Delete": "Delete"}
               </DropdownMenuItem>
             }
             requireConfirmation

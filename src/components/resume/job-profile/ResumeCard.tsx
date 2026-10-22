@@ -180,6 +180,7 @@ export const ResumeCard = () => {
           <div className="flex flex-col gap-2">
             {resumes.map((resume) => (
               <ResumeListItem
+                deleteDisabled={resume.isPrimary && resumes.length > 1}
                 isExtracting={extractResume.isPending}
                 key={resume.id}
                 onDelete={deleteResume}

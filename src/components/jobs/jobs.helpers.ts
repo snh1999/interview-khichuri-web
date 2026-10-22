@@ -161,6 +161,8 @@ export const useJobPostForm = ({
   const resolveTopics = useResolveLookupField(form, "topics");
 
   const watchedStatus = form.watch("status");
+  const watchedAppliedAt = form.watch("appliedAt");
+  const watchedInterviewDate = form.watch("interviewDate");
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: only auto-set appliedAt when status changes to "applied"
   useEffect(() => {
@@ -168,6 +170,23 @@ export const useJobPostForm = ({
       form.setValue("appliedAt", new Date(), { shouldDirty: true });
     }
   }, [watchedStatus]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only auto-set status when appliedAt changes
+  useEffect(() => {
+    if (watchedAppliedAt && form.getValues("status") === "saved") {
+      form.setValue("status", "applied", { shouldDirty: true });
+    }
+  }, [watchedAppliedAt]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only auto-set status when interviewDate changes
+  useEffect(() => {
+    if (
+      watchedInterviewDate &&
+      ["saved", "applied"].includes(form.getValues("status"))
+    ) {
+      form.setValue("status", "scheduled", { shouldDirty: true });
+    }
+  }, [watchedInterviewDate]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: job is excluded so background refetches don't wipe the user's edits
   useEffect(() => {

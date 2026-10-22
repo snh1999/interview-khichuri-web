@@ -108,6 +108,7 @@ export const useNoteForm = (
 export const NOTE_SORT_OPTIONS = [
   { value: "newest", label: "Newest first" },
   { value: "oldest", label: "Oldest first" },
+  { value: "updated", label: "Recently updated" },
   { value: "title", label: "Title (A-Z)" },
 ] as const;
 
@@ -127,16 +128,21 @@ export const filterNotes = (
   );
 };
 
+const timestamp = (value: string) => new Date(value).getTime();
+
 export const sortNotes = (notes: INote[], sort: TNoteSortKey): INote[] => {
-  if (sort === "title") {
-    return [...notes].sort((a, b) => a.title.localeCompare(b.title));
-  }
   const direction = sort === "oldest" ? 1 : -1;
-  return [...notes].sort(
-    (a, b) =>
-      (new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()) *
-      direction
-  );
+  const dateKey = sort === "updated" ? "updatedAt" : "createdAt";
+
+  return [...notes].sort((a, b) => {
+    if (a.isFavorite !== b.isFavorite) {
+      return a.isFavorite ? -1 : 1;
+    }
+    if (sort === "title") {
+      return a.title.localeCompare(b.title);
+    }
+    return (timestamp(a[dateKey]) - timestamp(b[dateKey])) * direction;
+  });
 };
 
 export const noteDetailsPlain = (
