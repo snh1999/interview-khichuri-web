@@ -11,7 +11,7 @@ import {
   takeLatest,
 } from "@/components/dashboard/dashboard.helpers";
 import type { IDashboardStats } from "@/components/dashboard/dashboard.helpers.ts";
-import { RecentNotesSection } from "@/components/dashboard/RecentNotesSection";
+import { RecentInterviewsSection } from "@/components/dashboard/RecentInterviewsSection";
 import { RecentSessionsSection } from "@/components/dashboard/RecentSessionsSection";
 import { SavedJobsSection } from "@/components/dashboard/SavedJobsSection";
 import { ScoreProgress } from "@/components/dashboard/ScoreProgress";
@@ -59,7 +59,7 @@ const DashboardContent = () => {
         </div>
         <div className="space-y-4 lg:col-span-5">
           <SavedJobsSection jobs={jobs} />
-          <RecentNotesSection />
+          <RecentInterviewsSection />
         </div>
       </div>
     </div>

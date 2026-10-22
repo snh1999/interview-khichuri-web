@@ -41,7 +41,7 @@ const SCORE_TIER = (score: number) => {
 
 interface IProps {
   interview: IInterview;
-  onDelete: (interview: IInterview) => Promise<void>;
+  onDelete?: (interview: IInterview) => Promise<void>;
 }
 
 export const InterviewItem = ({ interview, onDelete }: IProps) => {
@@ -54,7 +54,9 @@ export const InterviewItem = ({ interview, onDelete }: IProps) => {
     startedAt,
   } = interview;
   const { data: stored } = useLocalInterviewState(id, !completedAt);
-  const handleDelete = () => onDelete(interview);
+  const handleDelete = async () => {
+    await onDelete?.(interview);
+  };
   const answerCount = stored
     ? stored.items.filter((item) => item.answer.trim().length > 0).length
     : 0;
@@ -106,20 +108,22 @@ export const InterviewItem = ({ interview, onDelete }: IProps) => {
           </p>
         )}
       </Link>
-      <MutationButton
-        actionLabel="Delete"
-        className="ml-4"
-        dialogDescription="This will permanently delete this mock interview and its transcript."
-        dialogTitle="Delete this mock interview?"
-        errorMessage="Failed to delete mock interview"
-        mutationFn={handleDelete}
-        requireConfirmation
-        successMessage="Mock interview deleted"
-        variant="destructive"
-      >
-        <TrashIcon className="size-3.5" />
-        Delete
-      </MutationButton>
+      {onDelete ? (
+        <MutationButton
+          actionLabel="Delete"
+          className="ml-4"
+          dialogDescription="This will permanently delete this mock interview and its transcript."
+          dialogTitle="Delete this mock interview?"
+          errorMessage="Failed to delete mock interview"
+          mutationFn={handleDelete}
+          requireConfirmation
+          successMessage="Mock interview deleted"
+          variant="destructive"
+        >
+          <TrashIcon className="size-3.5" />
+          Delete
+        </MutationButton>
+      ) : null}
     </GutterCard>
   );
 };
