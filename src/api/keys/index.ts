@@ -9,6 +9,8 @@ export const ALL_PROVIDERS = [
   "openrouter",
   "mistral",
   "cerebras",
+  "cloudflare",
+  "custom",
 ] as const;
 
 export type TApiKeyProvider = (typeof ALL_PROVIDERS)[number];
@@ -20,6 +22,8 @@ export const PROVIDER_LABELS: Record<TApiKeyProvider, string> = {
   openrouter: "OpenRouter",
   mistral: "Mistral",
   cerebras: "Cerebras",
+  cloudflare: "Cloudflare AI",
+  custom: "Custom (OpenAI-compatible)",
 } as const;
 
 export interface IApiKey {
@@ -29,6 +33,7 @@ export interface IApiKey {
   provider: TApiKeyProvider;
   isActive: boolean | null;
   model: string | null;
+  baseUrl: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -37,12 +42,14 @@ export interface ICreateApiKeyDto {
   name: string;
   provider: TApiKeyProvider;
   key: string;
+  baseUrl?: string;
   isActive?: boolean;
   model?: string;
 }
 
 export interface IUpdateApiKeyDto {
   name?: string;
+  baseUrl?: string | null;
   model?: string | null;
 }
 

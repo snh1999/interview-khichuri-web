@@ -326,7 +326,7 @@ branch on `{ data, error }`.
 
 | Feature            | Where                                             | Notes                                                              |
 |--------------------|---------------------------------------------------|--------------------------------------------------------------------|
-| BYOK keys          | `src/components/keys/`, `src/api/keys/`           | Six providers: google, openai, groq, openrouter, mistral, cerebras |
+| BYOK keys          | `src/components/keys/`, `src/api/keys/`           | Eight providers: google, openai, groq, openrouter, mistral, cerebras, cloudflare, custom |
 | AI dialog          | `src/components/common/ai/`                       | Shared prompt/confirm flow; skippable per user                     |
 | ATS score          | `src/components/resume/ats/`                      | 4 categories, cached in IndexedDB                                  |
 | Standalone review  | `src/components/resume/ats/`                      | 4 categories, cached in IndexedDB                                  |

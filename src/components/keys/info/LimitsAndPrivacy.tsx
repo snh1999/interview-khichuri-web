@@ -100,18 +100,20 @@ export const LimitsAndPrivacy = ({
           </div>
 
           <div className="flex items-center justify-center gap-2 pt-4">
-            <Badge
-              render={
-                <Link
-                  rel="noreferrer"
-                  target="_blank"
-                  to={info.privacyPolicyUrl}
-                >
-                  Privacy Policy
-                </Link>
-              }
-              variant="secondary"
-            />
+            {info.privacyPolicyUrl ? (
+              <Badge
+                render={
+                  <Link
+                    rel="noreferrer"
+                    target="_blank"
+                    to={info.privacyPolicyUrl}
+                  >
+                    Privacy Policy
+                  </Link>
+                }
+                variant="secondary"
+              />
+            ) : null}
 
             {info.benchmarkUrl ? (
               <Badge

@@ -11,7 +11,11 @@ import {
   type TApiKeyProvider,
   useCreateApiKey,
 } from "@/api/keys";
-import { MAX_NAME_LENGTH, MAX_SHORT_LENGTH } from "@/app.constants.ts";
+import {
+  MAX_NAME_LENGTH,
+  MAX_SHORT_LENGTH,
+  MAX_URL_LENGTH,
+} from "@/app.constants.ts";
 import { FormCheckbox } from "@/components/common/form/FormCheckbox.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
@@ -33,13 +37,36 @@ const API_PROVIDERS = Object.entries(PROVIDER_LABELS).map(([value, label]) => ({
   value,
 }));
 
-const createKeySchema = z.object({
-  isActive: z.boolean(),
-  key: z.string().min(1, "API key is required").max(MAX_NAME_LENGTH),
-  model: z.string().max(MAX_SHORT_LENGTH).optional(),
-  name: z.string().min(1, "Name is required").max(MAX_SHORT_LENGTH),
-  provider: z.enum(ALL_PROVIDERS),
-});
+const baseUrlSchema = z
+  .string()
+  .max(MAX_URL_LENGTH)
+  .optional()
+  .refine(
+    (value) => !value || value.startsWith("https://"),
+    "Base URL must use HTTPS"
+  );
+
+const createKeySchema = z
+  .object({
+    isActive: z.boolean(),
+    key: z.string().min(1, "API key is required").max(MAX_NAME_LENGTH),
+    model: z.string().max(MAX_SHORT_LENGTH).optional(),
+    name: z.string().min(1, "Name is required").max(MAX_SHORT_LENGTH),
+    provider: z.enum(ALL_PROVIDERS),
+    baseUrl: baseUrlSchema,
+  })
+  .superRefine((data, context) => {
+    if (
+      (data.provider === "cloudflare" || data.provider === "custom") &&
+      !data.baseUrl?.trim()
+    ) {
+      context.addIssue({
+        code: "custom",
+        message: "Base URL is required for this provider",
+        path: ["baseUrl"],
+      });
+    }
+  });
 
 type TCreateKeyFormData = z.infer<typeof createKeySchema>;
 
@@ -54,6 +81,7 @@ const useKeysForm = ({
 
   const form = useForm<TCreateKeyFormData>({
     defaultValues: {
+      baseUrl: "",
       isActive,
       key: "",
       model: "",
@@ -65,7 +93,11 @@ const useKeysForm = ({
 
   const onSubmit = form.handleSubmit(async (data) => {
     await createKey(
-      { ...data, model: data.model?.trim() || undefined },
+      {
+        ...data,
+        baseUrl: data.baseUrl?.trim() || undefined,
+        model: data.model?.trim() || undefined,
+      },
       {
         onSuccess: () => {
           toast.success("API key saved");
@@ -101,6 +133,7 @@ export const KeysFormDialog = ({
   });
 
   const provider = form.watch("provider");
+  const needsBaseUrl = provider === "custom" || provider === "cloudflare";
   const isActiveDefault = getIsActive?.(provider);
   useEffect(() => {
     if (isActiveDefault === undefined) {
@@ -108,6 +141,12 @@ export const KeysFormDialog = ({
     }
     form.setValue("isActive", isActiveDefault);
   }, [isActiveDefault, form]);
+
+  useEffect(() => {
+    if (!needsBaseUrl) {
+      form.setValue("baseUrl", "", { shouldDirty: false });
+    }
+  }, [form, needsBaseUrl]);
 
   const resetForm = () => form.reset();
 
@@ -150,6 +189,19 @@ export const KeysFormDialog = ({
               name={"provider"}
               selectData={API_PROVIDERS}
             />
+
+            {needsBaseUrl ? (
+              <FormInput
+                form={form}
+                label="Base URL"
+                name="baseUrl"
+                placeholder={
+                  provider === "cloudflare"
+                    ? "https://api.cloudflare.com/client/v4/accounts/<account_id>/ai/v1"
+                    : "https://api.example.com/v1"
+                }
+              />
+            ) : null}
 
             <FormInput
               form={form}

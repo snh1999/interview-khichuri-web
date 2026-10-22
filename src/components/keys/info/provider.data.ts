@@ -15,7 +15,7 @@ export interface IProviderInfo {
     notes: string;
   };
   privacyNote: string;
-  privacyPolicyUrl: string;
+  privacyPolicyUrl?: string;
   benchmarkUrl?: string;
 }
 
@@ -223,5 +223,65 @@ export const PROVIDER_INFO: Record<TApiKeyProvider, IProviderInfo> = {
       "Cerebras's general privacy policy covers its websites; API/Cloud Services usage terms are governed separately by its customer agreement; check current terms directly, as public detail on data handling for inference specifically is limited.",
     privacyPolicyUrl: "https://www.cerebras.ai/privacy-policy",
     benchmarkUrl: "https://artificialanalysis.ai/providers/cerebras",
+  },
+
+  cloudflare: {
+    name: "Cloudflare Workers AI",
+    getApiKeyUrl: "https://dash.cloudflare.com/profile/api-tokens",
+    getApiKeySteps: [
+      "Sign in to the Cloudflare dashboard",
+      "Create an API token with Workers AI permissions",
+      "Copy your Account ID from the dashboard",
+      "Use https://api.cloudflare.com/client/v4/accounts/<account_id>/ai/v1 as the base URL",
+    ],
+    pros: [
+      "Free daily allocation of 10,000 Neurons with decent privacy policy, no credit card required",
+      "Open-weight models hosted on Cloudflare's edge network",
+      "One key can cover Workers AI, and data stays within the selected jurisdiction",
+    ],
+    cons: [
+      "Uses Neurons as the billing unit, so cost per request is harder to estimate than token pricing",
+      "The base URL includes your Account ID, so each key is tied to one account",
+      "Smaller model selection than dedicated inference providers",
+    ],
+    freeTier:
+      "No card required: 10,000 Neurons per day, reset at 00:00 UTC. Token cost varies by model.",
+    freeTierLimits: {
+      rpm: 0,
+      rpd: 0,
+      contextWindow: 8192,
+      notes:
+        "Daily allowance is measured in Neurons, not requests. Check the live model limits in the Workers AI dashboard.",
+    },
+    privacyNote:
+      "Cloudflare states that it does not use customer data to train models. Workers AI processes requests on Cloudflare's network, subject to the Cloudflare privacy policy.",
+    privacyPolicyUrl: "https://www.cloudflare.com/privacypolicy/",
+    benchmarkUrl: "https://artificialanalysis.ai/",
+  },
+
+  custom: {
+    name: "Custom (OpenAI-compatible)",
+    getApiKeyUrl: "https://ai-sdk.dev/providers/openai-compatible-providers",
+    getApiKeySteps: [
+      "Enter the HTTPS base URL of an OpenAI-compatible endpoint",
+      "Paste the API key issued by that provider",
+      "Optionally set a model name, otherwise the provider's default is used",
+    ],
+    pros: [
+      "Works with any self-hosted or third-party OpenAI-compatible API",
+      "Useful for local gateways, proxies, and regional providers",
+    ],
+    cons: [
+      "You are responsible for the endpoint's availability, data handling, and model compatibility",
+      "Features such as structured output may behave differently between providers",
+    ],
+    freeTier: "Depends entirely on the provider behind the endpoint.",
+    freeTierLimits: {
+      rpm: 0,
+      rpd: 0,
+      notes: "Limits are set by the endpoint you connect to.",
+    },
+    privacyNote:
+      "Your prompts go to the endpoint you configure. Review that provider's privacy policy before sending sensitive data.",
   },
 };

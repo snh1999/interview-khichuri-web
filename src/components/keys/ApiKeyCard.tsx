@@ -10,7 +10,7 @@ import {
   useDeleteApiKey,
   useUpdateApiKey,
 } from "@/api/keys";
-import { MAX_SHORT_LENGTH } from "@/app.constants.ts";
+import { MAX_SHORT_LENGTH, MAX_URL_LENGTH } from "@/app.constants.ts";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
@@ -31,6 +31,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog.tsx";
+import { formatDate } from "@/lib/date";
 import { useAppStore } from "@/store/appStore.ts";
 
 interface Props {
@@ -39,6 +40,7 @@ interface Props {
 }
 
 const editSchema = z.object({
+  baseUrl: z.string().max(MAX_URL_LENGTH).optional(),
   model: z.string().max(MAX_SHORT_LENGTH).nullish(),
   name: z.string().min(1, "Name is required").max(MAX_SHORT_LENGTH),
 });
@@ -61,6 +63,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
 
   const form = useForm<EditFormData>({
     defaultValues: {
+      baseUrl: apiKey.baseUrl ?? "",
       model: apiKey.model ?? "",
       name: apiKey.name,
     },
@@ -72,6 +75,9 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
       id: apiKey.id,
       model: data.model || null,
       name: data.name,
+      ...(apiKey.provider === "custom" || apiKey.provider === "cloudflare"
+        ? { baseUrl: data.baseUrl?.trim() || null }
+        : {}),
     });
     toast.success("API key updated");
     setEditOpen(false);
@@ -93,10 +99,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
           <CardDescription>Model: {apiKey.model}</CardDescription>
         ) : null}
         <CardDescription>
-          Created:{" "}
-          {new Intl.DateTimeFormat(undefined, {
-            dateStyle: "long",
-          }).format(new Date(apiKey.createdAt))}
+          Created: {formatDate(apiKey.createdAt, "PPP")}
         </CardDescription>
         <CardAction className="flex items-center gap-3 pt-3">
           {isActive ? (
@@ -148,6 +151,15 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
                   name="model"
                   placeholder="e.g. gemini-2.0-flash"
                 />
+                {apiKey.provider === "custom" ||
+                apiKey.provider === "cloudflare" ? (
+                  <FormInput
+                    form={form}
+                    label="Base URL"
+                    name="baseUrl"
+                    placeholder="https://api.example.com/v1"
+                  />
+                ) : null}
                 <div className="flex items-center justify-end gap-2">
                   <DialogClose
                     onClick={handleReset}
