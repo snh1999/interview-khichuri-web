@@ -7,6 +7,7 @@ import {
   takeLatest,
   urgencyFor,
 } from "@/components/dashboard/dashboard.helpers.ts";
+import { formatDate } from "@/lib/date.ts";
 
 describe("urgencyFor", () => {
   it("buckets days into urgent, soon and later", () => {
@@ -37,10 +38,7 @@ describe("buildScoreHistory", () => {
       { createdAt: "2024-03-03T00:00:00.000Z", overallScore: 55 },
     ]);
 
-    const expected = new Date("2024-03-03T00:00:00.000Z").toLocaleDateString(
-      undefined,
-      { day: "numeric", month: "short" }
-    );
+    const expected = formatDate("2024-03-03T00:00:00.000Z", "MMM d");
     expect(point?.label).toBe(expected);
   });
 });

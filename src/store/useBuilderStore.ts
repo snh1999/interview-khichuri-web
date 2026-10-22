@@ -9,6 +9,7 @@ import type {
   ProjectFiles,
   ViewMode,
 } from "@/components/portfolio/builder.types";
+import { formatTime } from "@/lib/date";
 import {
   createPortfolioStorage,
   deleteStoredRow,
@@ -70,8 +71,7 @@ const mergeAiFiles = (
   return nextFiles;
 };
 
-const nowTime = (): string =>
-  new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+const nowTime = (): string => formatTime(new Date());
 
 export const createEmptyProject = (): BuilderProject => ({
   viewMode: "preview" as ViewMode,

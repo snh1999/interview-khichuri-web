@@ -28,6 +28,7 @@ import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { useRolesMap, useTopicsMap } from "@/hooks/useLookupMap.ts";
+import { formatDate } from "@/lib/date";
 import { profileFacts } from "@/lib/deterministic-score";
 import { isUrgent } from "@/lib/utils";
 
@@ -51,12 +52,7 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
   const variant = urgent ? "danger" : JOB_STATUS_VARIANT[job.status];
 
   const fmt = (d: string | null | undefined) =>
-    d
-      ? new Date(d).toLocaleDateString(undefined, {
-          month: "short",
-          day: "numeric",
-        })
-      : null;
+    d ? formatDate(d, "MMM d") : null;
 
   const dateInfo = getDateInfo(job);
   const timeline = [

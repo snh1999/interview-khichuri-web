@@ -8,12 +8,7 @@ import {
 import { INTERVIEW_PAGE } from "@/app.constants.ts";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
-
-const formatDate = (value: string) =>
-  new Date(value).toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+import { formatDateTime } from "@/lib/date";
 
 const formatDuration = (seconds: number | null | undefined) => {
   const total = seconds ?? 0;
@@ -69,13 +64,13 @@ export const InterviewItem = ({ interview, onDelete }: IProps) => {
   let subtitle: string | null = null;
 
   if (isCompleted) {
-    title = `Completed · ${formatDate(completedAt)}`;
+    title = `Completed · ${formatDateTime(completedAt)}`;
     subtitle = formatDuration(elapsedSeconds);
   } else if (hasAnswers) {
-    title = `In progress · ${formatDate(startedAt)}`;
+    title = `In progress · ${formatDateTime(startedAt)}`;
     subtitle = `${answerCount} answered`;
   } else {
-    title = `Created · ${formatDate(createdAt)}`;
+    title = `Created · ${formatDateTime(createdAt)}`;
   }
 
   return (

@@ -7,12 +7,13 @@ import {
   resumeToText,
   stripProtocol,
 } from "@/components/resume/utils.ts";
+import { formatDate } from "@/lib/date.ts";
 
 describe("formatToString", () => {
   it("formats dates, booleans and numbers", () => {
     const date = new Date(2024, 0, 15);
 
-    expect(formatToString(date)).toBe(date.toLocaleDateString());
+    expect(formatToString(date)).toBe(formatDate(date));
     expect(formatToString(true)).toBe("Yes");
     expect(formatToString(false)).toBe("No");
     expect(formatToString(3)).toBe("3");

@@ -6,6 +6,7 @@ import {
   STATUS_LABEL,
   STATUS_OPTIONS,
 } from "@/components/jobs/jobs.helpers.ts";
+import { formatDate } from "@/lib/date.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
 
 const makeJob = (overrides: Partial<IJob> = {}): IJob => ({
@@ -48,14 +49,14 @@ describe("getDateInfo", () => {
   it("falls back to a past interview date", () => {
     const past = "2024-01-01T00:00:00.000Z";
     expect(getDateInfo(makeJob({ interviewDate: past }))).toBe(
-      `Interviewed at ${new Date(past).toLocaleDateString()}`
+      `Interviewed at ${formatDate(past)}`
     );
   });
 
   it("reports the applied date", () => {
     const applied = "2024-02-02T00:00:00.000Z";
     expect(getDateInfo(makeJob({ appliedAt: applied }))).toBe(
-      `Applied ${new Date(applied).toLocaleDateString()}`
+      `Applied ${formatDate(applied)}`
     );
   });
 
@@ -69,7 +70,7 @@ describe("getDateInfo", () => {
   it("falls back to the created date", () => {
     const created = "2024-03-03T00:00:00.000Z";
     expect(getDateInfo(makeJob({ createdAt: created }))).toBe(
-      `Created: ${new Date(created).toLocaleDateString()}`
+      `Created: ${formatDate(created)}`
     );
   });
 });

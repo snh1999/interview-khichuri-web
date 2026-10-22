@@ -14,6 +14,7 @@ import {
   oauthProviders,
   type TOauthProviders,
 } from "@/lib/auth/auth.helpers.tsx";
+import { formatDate } from "@/lib/date";
 
 interface IProps {
   provider: TOauthProviders;
@@ -52,7 +53,7 @@ export const AccountCard = (props: Readonly<IProps>) => {
             <CardTitle className="text-xs">{providerDetails.name}</CardTitle>
             <CardDescription>
               {account
-                ? `Linked on ${new Intl.DateTimeFormat(undefined, { dateStyle: "long" }).format(new Date(account.createdAt))}`
+                ? `Linked on ${formatDate(account.createdAt, "PPP")}`
                 : `Connect your ${providerDetails.name} account for easier sign-in`}
             </CardDescription>
           </div>

@@ -29,6 +29,7 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 import { useTopicsMap } from "@/hooks/useLookupMap";
+import { formatDate } from "@/lib/date";
 
 const DESC_PREVIEW_LENGTH = 220;
 
@@ -55,7 +56,7 @@ export const SessionInfoSection = ({ session }: IProps) => {
       : session.description;
 
   const pinnedCount = questions.filter((q) => q.isFavorite).length;
-  const updatedDate = new Date(session.updatedAt).toLocaleDateString();
+  const updatedDate = formatDate(session.updatedAt);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const closeDialog = () => setDialogOpen(false);

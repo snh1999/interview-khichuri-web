@@ -1,13 +1,14 @@
 import { format } from "date-fns";
 import type { TResumeContent } from "@/components/resume/job-profile/resume.helpers.ts";
 import { objectToString } from "@/lib/ai/objectToString.ts";
+import { formatDate } from "@/lib/date.ts";
 
 export const formatToString = (
   value: unknown,
   numberSuffix = ""
 ): string | null => {
   if (value instanceof Date) {
-    return value.toLocaleDateString();
+    return formatDate(value);
   }
   if (value === undefined || value === null || value === "") {
     return null;

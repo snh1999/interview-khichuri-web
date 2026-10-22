@@ -39,6 +39,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { formatTime } from "@/lib/date";
 import {
   useCurrentPortfolio,
   useSketchBuilderStore,
@@ -295,10 +296,7 @@ export const SketchNavbar: React.FC = () => {
         {!isPreviewTab && currentPortfolio.updatedAt ? (
           <span className="ml-1 hidden items-center gap-1 text-muted-foreground text-xs xl:flex">
             <CheckIcon className="text-emerald-500" size={12} /> Saved{" "}
-            {new Date(currentPortfolio.updatedAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {formatTime(currentPortfolio.updatedAt)}
           </span>
         ) : null}
       </div>

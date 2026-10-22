@@ -13,6 +13,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty.tsx";
+import { formatDate } from "@/lib/date";
 
 export const PasskeyItems = () => {
   const { data: passkeys } = useListPasskey();
@@ -37,7 +38,7 @@ export const PasskeyItems = () => {
                 <div className="space-y-1">
                   <CardTitle>{passkey.name}</CardTitle>
                   <CardDescription>
-                    Created {new Date(passkey.createdAt).toLocaleDateString()}
+                    Created {formatDate(passkey.createdAt)}
                   </CardDescription>
                 </div>
                 <AuthActionButton

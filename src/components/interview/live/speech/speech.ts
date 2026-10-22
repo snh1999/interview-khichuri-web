@@ -1,4 +1,5 @@
 import { api } from "@/lib/api-client.ts";
+import { formatTime } from "@/lib/date";
 
 export const VISEMES = ["rest", "aa", "ee", "oh", "mbp", "th", "fv"] as const;
 
@@ -946,7 +947,7 @@ class SpeechService {
   private log(type: TDiagnosticLogType, message: string): void {
     this.logs.push({
       id: `${Date.now()}-${this.logs.length}`,
-      timestamp: new Date().toLocaleTimeString(),
+      timestamp: formatTime(new Date(), "HH:mm:ss"),
       type,
       message,
     });

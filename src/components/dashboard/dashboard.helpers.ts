@@ -1,4 +1,5 @@
 import { URGENT_DAYS_THRESHOLD } from "@/app.constants";
+import { formatDate } from "@/lib/date";
 
 export type UpcomingUrgency = "urgent" | "soon" | "later";
 
@@ -35,10 +36,7 @@ export const buildScoreHistory = (
     ) {
       const date = new Date(interview.completedAt ?? interview.createdAt);
       points.push({
-        label: date.toLocaleDateString(undefined, {
-          month: "short",
-          day: "numeric",
-        }),
+        label: formatDate(date, "MMM d"),
         date: date.getTime(),
         score: interview.overallScore,
       });

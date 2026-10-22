@@ -192,7 +192,9 @@ export const ResumeListItem = ({
                 variant="destructive"
               >
                 <TrashIcon className="size-4" />{" "}
-                {deleteDisabled ? "Set another resume as primary to Delete": "Delete"}
+                {deleteDisabled
+                  ? "Set another resume as primary to Delete"
+                  : "Delete"}
               </DropdownMenuItem>
             }
             requireConfirmation

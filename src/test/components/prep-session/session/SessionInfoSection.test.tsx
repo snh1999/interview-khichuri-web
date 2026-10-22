@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import type { IJobWithTopics } from "@/api/jobs";
 import type { IPrepSession, IQuestion } from "@/api/sessions";
 import { SessionInfoSection } from "@/components/prep-session/session/SessionInfoSection.tsx";
+import { formatDate } from "@/lib/date.ts";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
@@ -101,9 +102,7 @@ describe("SessionInfoSection", () => {
     expect(screen.getByText("3 questions")).toBeInTheDocument();
     expect(screen.getByText("1 pinned")).toBeInTheDocument();
     expect(
-      screen.getByText(
-        `Updated ${new Date("2026-01-10T00:00:00.000Z").toLocaleDateString(undefined, { dateStyle: "medium" })}`
-      )
+      screen.getByText(`Updated ${formatDate("2026-01-10T00:00:00.000Z")}`)
     ).toBeInTheDocument();
     expect(screen.getByText("Senior")).toBeInTheDocument();
     await view.user.click(
