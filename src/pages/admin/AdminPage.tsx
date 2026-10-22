@@ -10,11 +10,11 @@ import { Button } from "@/components/ui/button.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 const AdminPage = () => {
-  const { data: hasAccess, isPending } = useGetPermission({
+  const { data: permission, isPending } = useGetPermission({
     permissions: { user: ["list"] },
   });
 
-  if (!(hasAccess || isPending)) {
+  if (!isPending && permission?.success !== true) {
     return <Navigate replace to={HOMEPAGE} />;
   }
 

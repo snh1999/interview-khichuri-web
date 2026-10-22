@@ -27,10 +27,10 @@ import {
   SESSIONS_PAGE,
   SETTINGS_PAGE,
 } from "@/app.constants.ts";
+import { AdminGuard } from "@/components/admin/AdminGuard.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLocalDataOnLogin } from "@/hooks/useLocalDataOnLogin.ts";
 import { useSession } from "@/lib/auth/auth-client.ts";
-import AdminPage from "@/pages/admin/AdminPage.tsx";
 import ConfirmLoginPage from "@/pages/auth/ConfirmLogin.tsx";
 import EmailRedirectPage from "@/pages/auth/EmailRedirectPage.tsx";
 import ForgotPasswordPage from "@/pages/auth/FogotPasswordPage.tsx";
@@ -83,6 +83,24 @@ const ResumesPage = lazy(() =>
 
 const JobProfilePage = lazy(() => import("@/pages/JobProfilePage.tsx"));
 
+const AdminLayout = lazy(() =>
+  import("@/pages/admin/AdminLayout.tsx").then((m) => ({
+    default: m.AdminLayout,
+  }))
+);
+
+const AdminOverviewPage = lazy(() =>
+  import("@/pages/admin/AdminOverviewPage.tsx").then((m) => ({
+    default: m.AdminOverviewPage,
+  }))
+);
+
+const AdminPlaceholderPage = lazy(
+  () => import("@/pages/admin/AdminPlaceholderPage.tsx")
+);
+
+const LookupsPage = lazy(() => import("@/pages/admin/LookupsPage.tsx"));
+
 const PortfolioEditorPage = lazy(() =>
   import("@/pages/PortfolioEditorPage.tsx").then((m) => ({
     default: m.PortfolioEditorPage,
@@ -125,7 +143,24 @@ const App = () => {
       <Route
         element={session ? <Outlet /> : <Navigate replace to={LOGIN_PAGE} />}
       >
-        <Route element={<AdminPage />} path={ADMIN_PAGE} />
+        <Route element={<AdminGuard />} path={ADMIN_PAGE}>
+          <Route element={<AdminLayout />}>
+            <Route element={<AdminOverviewPage />} index />
+            <Route
+              element={<AdminPlaceholderPage title="Users" />}
+              path="users"
+            />
+            <Route
+              element={<AdminPlaceholderPage title="Prompts" />}
+              path="prompts"
+            />
+            <Route
+              element={<AdminPlaceholderPage title="Companies" />}
+              path="companies"
+            />
+            <Route element={<LookupsPage />} path="lookups" />
+          </Route>
+        </Route>
 
         <Route element={<SidebarLayout />}>
           <Route element={<DashboardPage />} path={HOMEPAGE} />

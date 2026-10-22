@@ -106,6 +106,8 @@ export const queryKeys = {
     },
     sessions: (options?: Record<string, unknown>) =>
       [...queryKeys.admin.all, "sessions", options] as const,
+    stats: ["admin", "stats"] as const,
+    health: ["admin", "health"] as const,
     users: (options?: Record<string, unknown>) =>
       [...queryKeys.admin.all, "users", options] as const,
   },

@@ -1,0 +1,44 @@
+import { Suspense } from "react";
+import { Outlet } from "react-router";
+import { AdminSidebar } from "@/components/admin/AdminSidebar.tsx";
+import { Footer } from "@/components/layout/Footer.tsx";
+import { Header } from "@/components/layout/header/Header.tsx";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area.tsx";
+import { SidebarProvider } from "@/components/ui/sidebar.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
+
+export const AdminLayout = () => (
+  <SidebarProvider>
+    <div className="flex h-dvh w-full flex-col overflow-hidden">
+      <a
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:ring-2 focus:ring-ring"
+        href="#admin-main-content"
+      >
+        Skip to content
+      </a>
+      <Header />
+
+      {/* h-full important for right-scrollbar, min-h-0 important for horizontal sidebar*/}
+      <ScrollArea className="h-full min-h-0 w-full flex-1 rounded-md border">
+        {/* min-h-full ensuring footer is at the bottom */}
+        <div className="flex min-h-full">
+          <AdminSidebar />
+          <div className="flex min-w-0 flex-1 flex-col">
+            <main
+              className="mx-auto flex w-full flex-1 flex-col px-4 py-6 sm:px-6"
+              id="admin-main-content"
+            >
+              <Suspense fallback={<Spinner />}>
+                <Outlet />
+              </Suspense>
+            </main>
+
+            <Footer />
+          </div>
+        </div>
+
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    </div>
+  </SidebarProvider>
+);
