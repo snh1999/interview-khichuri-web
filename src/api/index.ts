@@ -110,6 +110,12 @@ export const queryKeys = {
     health: ["admin", "health"] as const,
     users: (options?: Record<string, unknown>) =>
       [...queryKeys.admin.all, "users", options] as const,
+    user: (id: string) =>
+      [...queryKeys.admin.all, "users", "detail", id] as const,
+    prompts: (options?: Record<string, unknown>) =>
+      [...queryKeys.admin.all, "prompts", options] as const,
+    companies: (options?: Record<string, unknown>) =>
+      [...queryKeys.admin.all, "companies", options] as const,
   },
   auth: {
     accounts: ["account"] as const,

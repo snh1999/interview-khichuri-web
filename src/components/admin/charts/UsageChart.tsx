@@ -32,21 +32,32 @@ export const UsageChart = ({ usage }: { usage: IAdminStats["usage"] }) => {
     value,
   }));
 
+  const summary = data.length
+    ? `Usage records: ${data.map(({ name, value }) => `${name} ${value}`).join(", ")}.`
+    : "No usage data available.";
+
   return (
-    <ChartContainer className="h-72 w-full" config={chartConfig}>
-      <BarChart data={data}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          axisLine={false}
-          dataKey="name"
-          height={70}
-          interval={0}
-          textAnchor="end"
-          tickLine={false}
-        />
-        <ChartTooltip content={<ChartTooltipContent />} />
-        <Bar dataKey="value" fill="var(--color-value)" radius={4} />
-      </BarChart>
-    </ChartContainer>
+    <figure className="min-w-0">
+      <ChartContainer
+        aria-hidden="true"
+        className="h-72 w-full min-w-0"
+        config={chartConfig}
+      >
+        <BarChart data={data}>
+          <CartesianGrid vertical={false} />
+          <XAxis
+            axisLine={false}
+            dataKey="name"
+            height={70}
+            interval={0}
+            textAnchor="end"
+            tickLine={false}
+          />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <Bar dataKey="value" fill="var(--color-value)" radius={4} />
+        </BarChart>
+      </ChartContainer>
+      <figcaption className="sr-only">{summary}</figcaption>
+    </figure>
   );
 };

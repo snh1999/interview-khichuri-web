@@ -1,30 +1,22 @@
-import { ArrowLeftIcon } from "@phosphor-icons/react";
 import { useIndustries, useRoles, useTopics } from "@/api/lookups";
-import { ADMIN_PAGE } from "@/app.constants";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
 import { LookupManager } from "@/components/lookups/LookupManager";
-import { LinkButton } from "@/components/ui/button/LinkButton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTabs } from "@/hooks/useTabs";
 
 const LookupsPage = () => {
-  // const { data: hasAccess, isPending } = useGetPermission({
-  //   permissions: { user: ["list"] },
-  // });
   const { currentTab, handleTabChange } = useTabs("roles");
 
-  // if (!hasAccess && !isPending) {
-  //   return <Navigate to={HOMEPAGE} replace />;
-  // }
-
   return (
-    <div className="container mx-auto my-6 px-4">
-      <LinkButton className="mb-4" path={ADMIN_PAGE}>
-        <ArrowLeftIcon className="mr-2 size-4" />
-        Back to Admin
-      </LinkButton>
+    <div>
+      <div className="mb-6">
+        <h1 className="font-heading font-semibold text-xl">Lookups</h1>
+        <p className="text-muted-foreground text-sm">
+          Manage roles, topics, and industries.
+        </p>
+      </div>
 
       <AppErrorSuspense fallback={LookupsPageSkeleton}>
         <Tabs onValueChange={handleTabChange} value={currentTab}>

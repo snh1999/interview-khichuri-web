@@ -10,6 +10,8 @@ import { ADMIN_USERS_PAGE } from "@/app.constants.ts";
 import { SignupsChart } from "@/components/admin/charts/SignupsChart.tsx";
 import { StatCard } from "@/components/admin/charts/StatCard.tsx";
 import { UsageChart } from "@/components/admin/charts/UsageChart.tsx";
+import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
+import { SkeletonCard } from "@/components/common/boundary/SkeletonCard.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import {
   Card,
@@ -18,8 +20,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
 
-export const AdminOverviewPage = () => {
+export const AdminOverviewPage = () => (
+  <AppErrorSuspense fallback={AdminOverviewSkeleton}>
+    <AdminOverviewContent />
+  </AppErrorSuspense>
+);
+
+const AdminOverviewContent = () => {
   const { data: stats } = useAdminStats();
   const { data: recent } = useAdminUsers({ limit: 5, sort: "createdAt:desc" });
 
@@ -109,6 +118,23 @@ export const AdminOverviewPage = () => {
     </div>
   );
 };
+
+const AdminOverviewSkeleton = () => (
+  <div aria-busy="true" className="flex flex-col gap-6">
+    <Skeleton className="h-7 w-40" />
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {[0, 1, 2, 3].map((card) => (
+        <SkeletonCard compact key={card} noFooter>
+          <Skeleton className="h-8 w-20" />
+        </SkeletonCard>
+      ))}
+    </div>
+    <SkeletonCard noFooter>
+      <Skeleton className="h-64 w-full" />
+    </SkeletonCard>
+    <span className="sr-only">Loading admin overview…</span>
+  </div>
+);
 
 const HealthBadge = () => {
   const { data, isPending, isError } = useAdminHealth();

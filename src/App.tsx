@@ -95,8 +95,22 @@ const AdminOverviewPage = lazy(() =>
   }))
 );
 
-const AdminPlaceholderPage = lazy(
-  () => import("@/pages/admin/AdminPlaceholderPage.tsx")
+const AdminPromptsPage = lazy(() =>
+  import("@/pages/admin/PromptsPage.tsx").then((m) => ({
+    default: m.PromptsPage,
+  }))
+);
+
+const AdminCompaniesPage = lazy(() =>
+  import("@/pages/admin/CompaniesPage.tsx").then((m) => ({
+    default: m.CompaniesPage,
+  }))
+);
+
+const UsersPage = lazy(() =>
+  import("@/pages/admin/UsersPage.tsx").then((m) => ({
+    default: m.UsersPage,
+  }))
 );
 
 const LookupsPage = lazy(() => import("@/pages/admin/LookupsPage.tsx"));
@@ -146,18 +160,9 @@ const App = () => {
         <Route element={<AdminGuard />} path={ADMIN_PAGE}>
           <Route element={<AdminLayout />}>
             <Route element={<AdminOverviewPage />} index />
-            <Route
-              element={<AdminPlaceholderPage title="Users" />}
-              path="users"
-            />
-            <Route
-              element={<AdminPlaceholderPage title="Prompts" />}
-              path="prompts"
-            />
-            <Route
-              element={<AdminPlaceholderPage title="Companies" />}
-              path="companies"
-            />
+            <Route element={<UsersPage />} path="users" />
+            <Route element={<AdminPromptsPage />} path="prompts" />
+            <Route element={<AdminCompaniesPage />} path="companies" />
             <Route element={<LookupsPage />} path="lookups" />
           </Route>
         </Route>

@@ -33,6 +33,9 @@ const ADMIN_MENU = [
   { name: "Companies", icon: BuildingsIcon, url: ADMIN_COMPANIES_PAGE },
 ] as const;
 
+const isActivePath = (pathname: string, url: string) =>
+  url === ADMIN_PAGE ? pathname === url : pathname.startsWith(url);
+
 export const AdminSidebar = () => {
   const { pathname } = useLocation();
 
@@ -46,8 +49,9 @@ export const AdminSidebar = () => {
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton
                     className="py-5 text-md"
-                    isActive={pathname === item.url}
+                    isActive={isActivePath(pathname, item.url)}
                     render={<Link to={item.url} />}
+                    tooltip={item.name}
                   >
                     <item.icon />
                     <span>{item.name}</span>
@@ -65,6 +69,7 @@ export const AdminSidebar = () => {
                 <SidebarMenuButton
                   className="py-5 text-md"
                   render={<Link to={HOMEPAGE} />}
+                  tooltip="Back to app"
                 >
                   <ArrowLeftIcon />
                   <span>Back to app</span>

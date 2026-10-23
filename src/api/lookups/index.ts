@@ -62,6 +62,7 @@ export const useUpdateLookup = (schema: TLookupSchema) =>
 
 export const useDeleteLookup = (schema: TLookupSchema) =>
   useMutation({
+    meta: { invalidates: queryKeys.lookups[schema] },
     mutationFn: async (id: number) =>
       await api.delete(`/lookups/${schema}/${id}`),
   });

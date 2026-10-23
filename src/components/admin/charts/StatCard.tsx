@@ -24,7 +24,9 @@ export const StatCard = ({
       <CardTitle className="font-normal text-muted-foreground text-sm">
         {title}
       </CardTitle>
-      {StatIcon ? <StatIcon className="size-4 text-muted-foreground" /> : null}
+      {StatIcon ? (
+        <StatIcon aria-hidden className="size-4 text-muted-foreground" />
+      ) : null}
     </CardHeader>
     <CardContent>
       <p className="font-heading font-semibold text-2xl tabular-nums">
