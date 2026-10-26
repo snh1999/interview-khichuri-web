@@ -4,7 +4,6 @@ import { HttpResponse, http } from "msw";
 import { type ReactNode, Suspense, useMemo } from "react";
 import { describe, expect, it } from "vitest";
 import {
-  noteLinkKind,
   useCreateNote,
   useDeleteNote,
   useGetNote,
@@ -36,18 +35,6 @@ const wrapper = ({ children }: { children: ReactNode }) => {
     </QueryClientProvider>
   );
 };
-
-describe("noteLinkKind", () => {
-  it("prefers a job link, then a question, else none", () => {
-    expect(noteLinkKind({ id: "n", jobId: "j", title: "" } as never)).toBe(
-      "job"
-    );
-    expect(noteLinkKind({ id: "n", questionId: 2, title: "" } as never)).toBe(
-      "question"
-    );
-    expect(noteLinkKind({ id: "n", title: "" } as never)).toBe("none");
-  });
-});
 
 describe("note queries", () => {
   it("serialises filters into the query string", async () => {
