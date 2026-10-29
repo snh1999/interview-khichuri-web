@@ -1,33 +1,13 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { type DefaultValues, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
 import type { TJobStatus } from "@/api/jobs";
-import {
-  type ICreateJobDto,
-  type IJob,
-  JOB_STATUS,
-  useCreateJob,
-  useUpdateJob,
-} from "@/api/jobs";
-import {
-  DEFAULT_MAX_STRING_LENGTH,
-  MAX_SHORT_LENGTH,
-  MAX_TINY_LENGTH,
-  MAX_URL_LENGTH,
-} from "@/app.constants.ts";
-import { workTypeSchema } from "@/components/job-profile/profile.helpers.ts";
+import { type IJob, JOB_STATUS } from "@/api/jobs";
 import {
   DATE_TYPE_SELECTIONS,
   getDatePreset,
   type TJobDatePresetKey,
   type TJobDateTypeSelection,
 } from "@/components/jobs/filters/jobDatePresets.ts";
-import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
-import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
 import { formatDate } from "@/lib/date.ts";
-import { daysUntil, stringToDate } from "@/lib/utils.ts";
+import { daysUntil, isHttpUrl } from "@/lib/utils.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
 
 export const STATUS_LABEL: Record<TJobStatus, string> = {
@@ -60,15 +40,51 @@ export const JOB_STATUS_VARIANT = {
   withdrawn: "default",
 } as const;
 
+export interface IJobLink {
+  url: string;
+  label: string | null;
+}
+
+/** `links` is stored as stringified `[{url, label}]`. */
+export const parseJobLinks = (links?: string | null): IJobLink[] => {
+  if (!links) {
+    return [];
+  }
+  try {
+    const parsed: unknown = JSON.parse(links);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    return parsed.flatMap((item: unknown) => {
+      if (
+        typeof item !== "object" ||
+        item === null ||
+        typeof (item as { url?: unknown }).url !== "string"
+      ) {
+        return [];
+      }
+      const { url, label } = item as { url: string; label?: unknown };
+      return isHttpUrl(url)
+        ? [{ url, label: typeof label === "string" ? label : null }]
+        : [];
+    });
+  } catch {
+    // unparsable text column: treat as no links instead of crashing the page
+    return [];
+  }
+};
+
 export const getDateInfo = (job: IJob): string => {
-  if (job.interviewDate) {
-    const interviewDays = daysUntil(job.interviewDate);
+  const interviewDate = job.track?.interviewDate;
+  const appliedAt = job.track?.appliedAt;
+  if (interviewDate) {
+    const interviewDays = daysUntil(interviewDate);
     return interviewDays !== null && interviewDays >= 0
       ? `${interviewDays} days until interview`
-      : `Interviewed at ${formatDate(job.interviewDate)}`;
+      : `Interviewed at ${formatDate(interviewDate)}`;
   }
-  if (job.appliedAt) {
-    return `Applied ${formatDate(job.appliedAt)}`;
+  if (appliedAt) {
+    return `Applied ${formatDate(appliedAt)}`;
   }
   const days = daysUntil(job.deadline);
   if (days !== null) {
@@ -76,172 +92,6 @@ export const getDateInfo = (job: IJob): string => {
   }
 
   return `Created: ${formatDate(job.createdAt)}`;
-};
-
-const jobPostSchema = z
-  .object({
-    appliedAt: z.date().nullish(),
-    companyId: z.number().int().positive().nullish(),
-    companyName: z
-      .string()
-      .trim()
-      .min(1, "Company name is required")
-      .max(MAX_SHORT_LENGTH),
-    currency: z.string().length(3).nullish(),
-    deadline: z.date().nullish(),
-    description: z
-      .string()
-      .trim()
-      .min(10, "Description too short")
-      .max(DEFAULT_MAX_STRING_LENGTH),
-    experienceRequired: z.number().int().nonnegative().nullish(),
-    interviewDate: z.date().nullish(),
-    links: z.array(z.object({ value: z.url().max(MAX_URL_LENGTH) })).nullish(),
-    location: z.string().max(MAX_SHORT_LENGTH).nullish(),
-    notes: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
-    roleId: z.number().int().positive().nullish(),
-    salaryLower: z.number().int().positive().nullish(),
-    salaryUpper: z.number().int().positive().nullish(),
-    source: z.string().max(DEFAULT_MAX_STRING_LENGTH).nullish(),
-    status: z.enum(JOB_STATUS),
-    title: z
-      .string()
-      .trim()
-      .min(2, "Title too short")
-      .max(50, "Keep the title less than 50 characters"),
-    topicIds: z.array(z.number().int().positive()),
-    topicNames: z
-      .array(z.string().trim().min(1).max(MAX_TINY_LENGTH))
-      .optional(),
-    workType: workTypeSchema.nullish(),
-  })
-  .superRefine((data, ctx) => {
-    if (
-      data.deadline &&
-      data.interviewDate &&
-      data.deadline >= data.interviewDate
-    ) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Deadline must be before the interview date",
-        path: ["deadline"],
-      });
-    }
-  });
-export type TJobFormData = z.infer<typeof jobPostSchema>;
-
-interface IProps {
-  job?: IJob;
-  open: boolean;
-  initialDescription?: string;
-  onSuccess?: () => void;
-}
-
-const buildDefaultValues = (
-  job?: IJob,
-  initialDescription?: string
-): DefaultValues<TJobFormData> => ({
-  ...job,
-  appliedAt: stringToDate(job?.appliedAt),
-  deadline: stringToDate(job?.deadline),
-  description: initialDescription ?? job?.description,
-  interviewDate: stringToDate(job?.interviewDate),
-  links: job?.links
-    ? job.links
-        .split("\n")
-        .filter(Boolean)
-        .map((v) => ({ value: v }))
-    : [],
-  status: job?.status ?? "saved",
-  title: job?.title ?? "",
-  topicIds: job?.topicIds ?? [],
-});
-
-export const useJobPostForm = ({
-  job,
-  open,
-  initialDescription,
-  onSuccess,
-}: IProps): TFormHook<TJobFormData> => {
-  const createJob = useCreateJob();
-  const updateJob = useUpdateJob();
-
-  const form = useForm<TJobFormData>({
-    defaultValues: buildDefaultValues(job, initialDescription),
-    resolver: zodResolver(jobPostSchema),
-  });
-
-  const resolveTopics = useResolveLookupField(form, "topics");
-
-  const watchedStatus = form.watch("status");
-  const watchedAppliedAt = form.watch("appliedAt");
-  const watchedInterviewDate = form.watch("interviewDate");
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only auto-set appliedAt when status changes to "applied"
-  useEffect(() => {
-    if (watchedStatus === "applied" && !form.getValues("appliedAt")) {
-      form.setValue("appliedAt", new Date(), { shouldDirty: true });
-    }
-  }, [watchedStatus]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only auto-set status when appliedAt changes
-  useEffect(() => {
-    if (watchedAppliedAt && form.getValues("status") === "saved") {
-      form.setValue("status", "applied", { shouldDirty: true });
-    }
-  }, [watchedAppliedAt]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only auto-set status when interviewDate changes
-  useEffect(() => {
-    if (
-      watchedInterviewDate &&
-      ["saved", "applied"].includes(form.getValues("status"))
-    ) {
-      form.setValue("status", "scheduled", { shouldDirty: true });
-    }
-  }, [watchedInterviewDate]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: job is excluded so background refetches don't wipe the user's edits
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    form.reset(buildDefaultValues(job, initialDescription));
-  }, [open, initialDescription, form, job?.id]);
-
-  const onSubmit = form.handleSubmit(async (rawData: TJobFormData) => {
-    const { links, topicNames, ...data } = rawData;
-    const topicIds = await resolveTopics("topicIds", "topicNames");
-    const payload = {
-      ...data,
-      ...(topicIds ? { topicIds } : {}),
-      links: links
-        ? links
-            .map((l) => l.value)
-            .filter(Boolean)
-            .join("\n")
-        : "",
-    } as ICreateJobDto;
-
-    try {
-      if (job) {
-        await updateJob.mutateAsync({ id: job.id, ...payload });
-        toast.success("Job updated");
-      } else {
-        await createJob.mutateAsync(payload);
-        toast.success("Job created");
-      }
-      onSuccess?.();
-    } catch {
-      toast.error(`Failed to ${job ? "update" : "create"} job`);
-    }
-  });
-
-  return {
-    form,
-    onSubmit,
-    isLoading: createJob.isPending || updateJob.isPending,
-  };
 };
 
 const isJobStatus = (value: string | null): value is TJobStatus =>

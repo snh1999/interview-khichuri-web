@@ -1,5 +1,5 @@
 import type { FieldValues } from "react-hook-form";
-import { type IJob, useGetJobs } from "@/api/jobs";
+import { type IJobWithTrack, useGetJobs } from "@/api/jobs";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import {
   FormCombobox,
@@ -26,7 +26,7 @@ const JobsComboboxContent = <T extends FieldValues>({
   description,
 }: Readonly<TComboboxProps<T>>) => {
   const { data: jobs } = useGetJobs();
-  const toOption = (item: IJob) => ({
+  const toOption = (item: IJobWithTrack) => ({
     value: item.id,
     label: `${item.title} @ ${item.companyName}`,
   });

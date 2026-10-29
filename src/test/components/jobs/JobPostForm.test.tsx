@@ -288,7 +288,7 @@ describe("JobPostForm", () => {
     );
     await user.click(screen.getByRole("button", { name: "Create" }));
 
-    expect(await screen.findByText("Enter an http(s) URL")).toBeInTheDocument();
+    expect(await screen.findByText("Enter a valid URL")).toBeInTheDocument();
   });
 
   it("submits number fields as numbers", async () => {
@@ -312,7 +312,7 @@ describe("JobPostForm", () => {
     await user.type(screen.getByLabelText("Title"), "Senior Frontend");
     await pickCompany(user);
     await user.type(screen.getByLabelText("Minimum Salary"), "120000");
-    await user.type(screen.getByLabelText("Experience Required (years)"), "5");
+    await user.type(screen.getByLabelText("Experience Requirement"), "5");
     await user.click(screen.getByRole("button", { name: "Create" }));
 
     expect(await screen.findByText("Job created")).toBeInTheDocument();

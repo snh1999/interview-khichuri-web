@@ -16,6 +16,31 @@ export const isHttpUrl = (value: string): boolean => {
   }
 };
 
+const HTTP_REGEX = /^[a-z][a-z0-9+.-]*:\/\//i;
+export const normalizeHttpUrl = (value: string): string | null => {
+  const input = value.trim();
+  if (!input) {
+    return null;
+  }
+
+  const hasScheme = HTTP_REGEX.test(input);
+  try {
+    const url = new URL(hasScheme ? input : `https://${input}`);
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      return null;
+    }
+    if (url.username || url.password) {
+      return null;
+    }
+    if (!url.hostname.includes(".")) {
+      return null;
+    }
+    return url.toString();
+  } catch {
+    return null;
+  }
+};
+
 export const daysUntil = (date?: string | null): number | null => {
   if (!date) {
     return null;

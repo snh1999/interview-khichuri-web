@@ -16,9 +16,10 @@ import {
   CURRENCIES,
   REMOTE_PREFERENCES,
 } from "@/components/job-profile/profile.data.ts";
+import { useJobPostForm } from "@/components/jobs/JobPostForm.helpers.ts";
 import {
+  parseJobLinks,
   STATUS_OPTIONS,
-  useJobPostForm,
 } from "@/components/jobs/jobs.helpers.ts";
 import { Button } from "@/components/ui/button";
 import { AsyncButton } from "@/components/ui/button/AsyncButton";
@@ -67,6 +68,7 @@ export const JobPostForm = ({
   const handleCompanyChange = (id: number | null, name: string) => {
     form.setValue("companyId", id, { shouldDirty: true });
     form.setValue("companyName", name, { shouldDirty: true });
+    form.clearErrors("companyName");
   };
 
   const handleExtract = async (provider: string, model?: string) => {
@@ -83,14 +85,24 @@ export const JobPostForm = ({
       })
     ) as IJobExtractionResult;
 
+    const { links: extractedLinks, ...extracted } = result;
+    const parsedLinks = parseJobLinks(extractedLinks);
+
     form.setValues(
       {
-        ...result,
+        ...extracted,
+        ...(parsedLinks.length > 0
+          ? {
+              links: parsedLinks.map(({ url, label }) => ({
+                value: url,
+                label,
+              })),
+            }
+          : {}),
         companyName: result.companyName ?? "",
         roleId: result.roleId ?? null,
         topicNames: result.topicNames ?? [],
         deadline: stringToDate(result.deadline),
-        interviewDate: stringToDate(result.interviewDate),
       },
       { shouldDirty: true }
     );
@@ -107,7 +119,7 @@ export const JobPostForm = ({
         open={open}
         type="job"
       >
-        <DrawLogContent>
+        <DrawLogContent className="sm:max-w-2xl">
           <DrawLogHeader>
             <DrawLogTitle>{job ? "Edit Job" : "Add Job"}</DrawLogTitle>
           </DrawLogHeader>
@@ -123,11 +135,11 @@ export const JobPostForm = ({
                 textArea
               />
 
-              <FormArrayInput
+              <FormInput
                 form={form}
-                label="Links"
-                name="links"
-                placeholder="https://example.com/job"
+                label="Source URL"
+                name="url"
+                placeholder="e.g. https://company.com/careers/job-123"
               />
 
               <FormInput
@@ -140,6 +152,7 @@ export const JobPostForm = ({
               <CompaniesCombobox
                 companyId={form.watch("companyId") ?? null}
                 companyName={form.watch("companyName") ?? ""}
+                error={form.formState.errors.companyName?.message}
                 onChange={handleCompanyChange}
                 placeholder="e.g. Acme Corp"
               />
@@ -156,86 +169,86 @@ export const JobPostForm = ({
                 idsName="topicIds"
                 names="topicNames"
               />
+              <div className="flex items-center gap-2">
+                <FormInput
+                  form={form}
+                  label="Location"
+                  name="location"
+                  placeholder="e.g. Remote, New York, NY"
+                />
 
-              <FormInput
-                form={form}
-                label="Location"
-                name="location"
-                placeholder="e.g. Remote, New York, NY"
-              />
+                <FormSelect
+                  form={form}
+                  label="Work Type"
+                  name="workType"
+                  placeholder="Select work type"
+                  selectData={REMOTE_PREFERENCES}
+                />
 
-              <FormInput
-                form={form}
-                label="Source"
-                name="source"
-                placeholder="e.g. LinkedIn, Company website or link"
-              />
+                <FormInput
+                  form={form}
+                  label="Experience Requirement"
+                  name="experienceRequired"
+                  placeholder="Years of experience"
+                  type="number"
+                />
+              </div>
 
-              <FormSelect
-                form={form}
-                label="Work Type"
-                name="workType"
-                selectData={REMOTE_PREFERENCES}
-              />
+              <div className="flex gap-2">
+                <FormInput
+                  form={form}
+                  label="Minimum Salary"
+                  name="salaryLower"
+                  placeholder="e.g. 120000"
+                  type="number"
+                />
 
-              <FormInput
-                form={form}
-                label="Minimum Salary"
-                name="salaryLower"
-                placeholder="e.g. 120000"
-                type="number"
-              />
+                <FormInput
+                  form={form}
+                  label="Maximum Salary"
+                  name="salaryUpper"
+                  placeholder="e.g. 150000"
+                  type="number"
+                />
 
-              <FormInput
-                form={form}
-                label="Maximum Salary"
-                name="salaryUpper"
-                placeholder="e.g. 150000"
-                type="number"
-              />
+                <FormSelect
+                  form={form}
+                  label="Salary Currency"
+                  name="currency"
+                  placeholder={"Currency unit of the salary range"}
+                  selectData={CURRENCIES}
+                />
+              </div>
 
-              <FormInput
-                form={form}
-                label="Experience Required (years)"
-                name="experienceRequired"
-                placeholder="e.g. 5"
-                type="number"
-              />
+              <div className="flex gap-2">
+                <FormDatePicker
+                  form={form}
+                  label="Deadline"
+                  name="deadline"
+                  placeholder="Pick a deadline date..."
+                />
+                <FormSelect
+                  form={form}
+                  label="Status"
+                  name="status"
+                  selectData={STATUS_OPTIONS}
+                />
+              </div>
+              <div className="flex gap-2">
+                <FormDatePicker
+                  form={form}
+                  label="Applied At"
+                  name="appliedAt"
+                  placeholder="Pick application date..."
+                />
 
-              <FormSelect
-                form={form}
-                label="Salary Currency"
-                name="currency"
-                selectData={CURRENCIES}
-              />
-
-              <FormSelect
-                form={form}
-                label="Status"
-                name="status"
-                selectData={STATUS_OPTIONS}
-              />
-
-              <FormDatePicker
-                form={form}
-                label="Deadline"
-                name="deadline"
-                placeholder="Pick a deadline date..."
-              />
-
-              <FormDatePicker
-                form={form}
-                label="Interview Date"
-                name="interviewDate"
-                placeholder="Pick an interview date..."
-              />
-
-              <FormDatePicker
-                form={form}
-                label="Applied At"
-                name="appliedAt"
-                placeholder="Pick application date..."
-              />
+                <FormDatePicker
+                  form={form}
+                  label="Interview Date"
+                  name="interviewDate"
+                  placeholder="Pick an interview date..."
+                />
+              </div>
 
               <FormInput
                 form={form}
@@ -243,6 +256,13 @@ export const JobPostForm = ({
                 name="notes"
                 placeholder="Additional notes..."
                 textArea
+              />
+
+              <FormArrayInput
+                form={form}
+                label="Links"
+                name="links"
+                placeholder="https://example.com/job"
               />
             </DrawLogBody>
 

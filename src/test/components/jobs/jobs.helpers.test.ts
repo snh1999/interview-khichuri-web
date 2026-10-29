@@ -1,13 +1,15 @@
 import { afterEach, describe, expect, it } from "vitest";
 import type { IJob, ITrackedJob } from "@/api/jobs";
 import {
-  getDateInfo,
   jobPostSchema,
+  serializeJobLinks,
+} from "@/components/jobs/JobPostForm.helpers.ts";
+import {
+  getDateInfo,
   parseJobLinks,
   readFiltersFromParams,
   STATUS_LABEL,
   STATUS_OPTIONS,
-  serializeJobLinks,
 } from "@/components/jobs/jobs.helpers.ts";
 import { formatDate } from "@/lib/date.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
@@ -144,13 +146,9 @@ describe("parseJobLinks", () => {
     ]);
   });
 
-  it("falls back to trimmed newline-separated links", () => {
-    expect(
-      parseJobLinks(" https://acme.com/a \n\nhttps://acme.com/b ")
-    ).toEqual([
-      { url: "https://acme.com/a", label: null },
-      { url: "https://acme.com/b", label: null },
-    ]);
+  it("returns an empty list for non-array or malformed JSON", () => {
+    expect(parseJobLinks("https://acme.com/a\nhttps://acme.com/b")).toEqual([]);
+    expect(parseJobLinks("{not json")).toEqual([]);
   });
 
   it("drops unsafe and malformed entries", () => {

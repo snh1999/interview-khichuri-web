@@ -9,7 +9,12 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "@/components/ui/combobox.tsx";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field.tsx";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ICompanyOption {
@@ -25,6 +30,7 @@ interface ICompaniesComboboxProps {
   placeholder?: string;
   description?: string;
   disabled?: boolean;
+  error?: string;
 }
 
 const comboboxFallback = () => <Skeleton className="h-7 w-full rounded-md" />;
@@ -43,6 +49,7 @@ const CompaniesComboboxInner = ({
   placeholder = "Type or select a company...",
   description,
   disabled = false,
+  error,
 }: Readonly<ICompaniesComboboxProps>) => {
   const { data: companies } = useCompanies();
   const options = useMemo<ICompanyOption[]>(
@@ -115,6 +122,9 @@ const CompaniesComboboxInner = ({
         </ComboboxContent>
       </Combobox>
       {description ? <FieldDescription>{description}</FieldDescription> : null}
+      {error ? (
+        <FieldError className="text-sm" errors={[{ message: error }]} />
+      ) : null}
     </Field>
   );
 };
