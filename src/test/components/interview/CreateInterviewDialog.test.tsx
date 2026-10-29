@@ -33,10 +33,17 @@ const makeJob = () => ({
   createdAt: CREATED_AT,
   description: "Senior role",
   id: "job-1",
-  status: "saved",
   title: "Staff Engineer",
   topicIds: [],
   updatedAt: CREATED_AT,
+  track: {
+    id: "track-1",
+    jobId: "job-1",
+    status: "saved",
+    isFavorite: false,
+    createdAt: CREATED_AT,
+    updatedAt: CREATED_AT,
+  },
 });
 
 describe("CreateInterviewDialog", () => {

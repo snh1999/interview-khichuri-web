@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import type { TEventSource } from "@/api/calendar";
-import { type IJob, useGetJobs } from "@/api/jobs";
+import { type IJobWithTrack, useGetJobs } from "@/api/jobs";
 import type { TEventVisibility, TJobEvent } from "./calendar.types.ts";
 
 const jobToCalendarEvent = (
-  job: IJob,
+  job: IJobWithTrack,
   date: string,
   source: TEventSource
 ): TJobEvent => ({
@@ -28,11 +28,13 @@ export const useGetJobEvents = (visibleTypes: TEventVisibility) => {
       if (visibleTypes.deadline && job.deadline) {
         result.push(jobToCalendarEvent(job, job.deadline, "deadline"));
       }
-      if (visibleTypes.interview && job.interviewDate) {
-        result.push(jobToCalendarEvent(job, job.interviewDate, "interview"));
+      if (visibleTypes.interview && job.track.interviewDate) {
+        result.push(
+          jobToCalendarEvent(job, job.track.interviewDate, "interview")
+        );
       }
-      if (visibleTypes.applied && job.appliedAt) {
-        result.push(jobToCalendarEvent(job, job.appliedAt, "applied"));
+      if (visibleTypes.applied && job.track.appliedAt) {
+        result.push(jobToCalendarEvent(job, job.track.appliedAt, "applied"));
       }
     }
 

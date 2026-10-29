@@ -7,13 +7,11 @@ import {
   MapPinIcon,
   PencilIcon,
   PencilLineIcon,
-  TrashIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
-import { type IJobWithTopics, useDeleteJob } from "@/api/jobs";
+import type { IJobWithTopics } from "@/api/jobs";
 import { useProfileQuery } from "@/api/profile/profiles";
-import { JOBS_PAGE } from "@/app.constants.ts";
+import { JobDeleteButton } from "@/components/jobs/JobDeleteButton.tsx";
 import { JobLetterActions } from "@/components/jobs/JobLetterActions.tsx";
 import { JobPostForm } from "@/components/jobs/JobPostForm.tsx";
 import {
@@ -22,7 +20,6 @@ import {
   STATUS_LABEL,
 } from "@/components/jobs/jobs.helpers";
 import { Badge } from "@/components/ui/badge.tsx";
-import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
@@ -30,26 +27,20 @@ import { Separator } from "@/components/ui/separator.tsx";
 import { useRolesMap, useTopicsMap } from "@/hooks/useLookupMap.ts";
 import { formatDate } from "@/lib/date";
 import { profileFacts } from "@/lib/deterministic-score";
-import { isUrgent } from "@/lib/utils";
+import { isHttpUrl, isUrgent } from "@/lib/utils";
 
 export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
-  const navigate = useNavigate();
   const rolesMap = useRolesMap();
   const topicsMap = useTopicsMap();
   const { data: profile } = useProfileQuery();
   const skillIds = new Set(profileFacts(profile).skillIds);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const deleteJob = useDeleteJob();
-
-  const handleDelete = async () =>
-    deleteJob.mutateAsync(job.id, {
-      onSuccess: () => navigate(JOBS_PAGE),
-    });
-
   const roleName = rolesMap.get(job.roleId ?? 0)?.name;
   const urgent = isUrgent(job.deadline ?? null);
-  const variant = urgent ? "danger" : JOB_STATUS_VARIANT[job.status];
+  const { track } = job;
+  const statusVariant = track ? JOB_STATUS_VARIANT[track.status] : "default";
+  const variant = urgent ? "danger" : statusVariant;
 
   const fmt = (d: string | null | undefined) =>
     d ? formatDate(d, "MMM d") : null;
@@ -64,8 +55,8 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
           : dateInfo,
       danger: urgent,
     },
-    { label: "Interview", value: fmt(job.interviewDate) },
-    { label: "Applied", value: fmt(job.appliedAt) },
+    { label: "Interview", value: fmt(track?.interviewDate) },
+    { label: "Applied", value: fmt(track?.appliedAt) },
     { label: "Deadline", value: fmt(job.deadline) },
   ].filter((t) => t.value);
 
@@ -102,23 +93,19 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <StatusBadge label={STATUS_LABEL[job.status]} status={job.status} />
+            {track ? (
+              <StatusBadge
+                label={STATUS_LABEL[track.status]}
+                status={track.status}
+              />
+            ) : null}
             <JobLetterActions job={job} />
             <Button onClick={openDialog} size="sm" variant="outline">
               <PencilLineIcon className="size-3" />
               Edit
             </Button>
             <Separator orientation="vertical" />
-            <MutationButton
-              actionLabel="Delete job"
-              aria-label="Delete job"
-              dialogTitle="Delete this job?"
-              mutationFn={handleDelete}
-              requireConfirmation
-              variant="destructive"
-            >
-              <TrashIcon />
-            </MutationButton>
+            <JobDeleteButton jobId={job.id} />
           </div>
         </div>
 
@@ -140,10 +127,21 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
         )}
 
         <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-muted-foreground text-xs">
-          {job.source ? (
+          {job.url ? (
             <span className="inline-flex items-center gap-1.5">
               <LinkSimpleIcon className="size-3.5" />
-              {job.source}
+              {isHttpUrl(job.url) ? (
+                <a
+                  className="break-all hover:underline"
+                  href={job.url}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {job.url}
+                </a>
+              ) : (
+                job.url
+              )}
             </span>
           ) : (
             <div />

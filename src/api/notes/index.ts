@@ -2,23 +2,9 @@ import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client";
 
-export type TNoteLinkKind = "job" | "question" | "none";
-
-export const noteLinkKind = (note: INote): TNoteLinkKind => {
-  if (note.jobId) {
-    return "job";
-  }
-  if (note.questionId) {
-    return "question";
-  }
-  return "none";
-};
-
 export interface ICreateNoteDto {
   title: string;
   details?: string | null;
-  questionId?: number | null;
-  jobId?: string | null;
   isFavorite?: boolean;
 }
 
@@ -34,7 +20,6 @@ export interface INote extends ICreateNoteDto {
   isFavorite: boolean;
   createdAt: string;
   updatedAt: string;
-  jobTitle?: string;
 }
 
 export interface ILearnMoreResult {

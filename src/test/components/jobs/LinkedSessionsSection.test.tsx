@@ -7,7 +7,17 @@ import { LinkedSessionsSection } from "@/components/jobs/LinkedSessionsSection.t
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
-const JOB_ONE_ID: IJob = { id: "job-1" } as IJob;
+const JOB_ONE: IJob = {
+  id: "job-1",
+  track: {
+    id: "track-1",
+    jobId: "job-1",
+    status: "saved",
+    isFavorite: false,
+    createdAt: "2026-01-05T00:00:00.000Z",
+    updatedAt: "2026-01-05T00:00:00.000Z",
+  },
+} as IJob;
 
 const makeSession = (id: string, jobId: string | null): IPrepSession => ({
   id,
@@ -38,7 +48,7 @@ describe("LinkedSessionsSection", () => {
       makeSession("linked-2", "job-1"),
       makeSession("other", "job-2"),
     ]);
-    const view = render(<LinkedSessionsSection job={JOB_ONE_ID} />);
+    const view = render(<LinkedSessionsSection job={JOB_ONE} />);
     expect(await view.findByText("Session linked-1")).toBeInTheDocument();
     expect(screen.getByText("Session linked-2")).toBeInTheDocument();
     expect(screen.queryByText("Session other")).not.toBeInTheDocument();
@@ -46,7 +56,7 @@ describe("LinkedSessionsSection", () => {
 
   it("shows the empty state when no session matches", async () => {
     useLinkedSessionsResponse([makeSession("other", "job-2")]);
-    const view = render(<LinkedSessionsSection job={JOB_ONE_ID} />);
+    const view = render(<LinkedSessionsSection job={JOB_ONE} />);
     expect(
       await view.findByText("No sessions linked yet.")
     ).toBeInTheDocument();

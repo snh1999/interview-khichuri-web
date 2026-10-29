@@ -2,14 +2,10 @@ import { NotePencilIcon, PlusCircleIcon } from "@phosphor-icons/react";
 import { useEffect, useRef } from "react";
 import type { INote } from "@/api/notes";
 import { FormCombobox } from "@/components/common/form/combobox/FormCombobox.tsx";
-import { JobsCombobox } from "@/components/common/form/combobox/JobsCombobox.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import { FormMarkdownInput } from "@/components/common/form/FormMarkdownInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
-import {
-  buildQuestionBankTemplate,
-  JOB_TEMPLATE_TEXT,
-} from "@/components/notes/notes.helpers";
+import { buildQuestionBankTemplate } from "@/components/notes/notes.helpers";
 import {
   type INotePreset,
   NOTE_LINK_TYPE_OPTIONS,
@@ -72,13 +68,6 @@ export const NoteFormDialog = ({
 
   useEffect(() => {
     if (!open || note) {
-      return;
-    }
-    if (noteType === "job") {
-      form.setValue("details", JOB_TEMPLATE_TEXT, {
-        shouldDirty: false,
-        shouldValidate: false,
-      });
       return;
     }
     if (noteType === "question_bank") {
@@ -156,15 +145,6 @@ export const NoteFormDialog = ({
                   placeholder="Select a type"
                   selectData={NOTE_LINK_TYPE_OPTIONS}
                 />
-
-                {noteType === "job" ? (
-                  <JobsCombobox
-                    form={form}
-                    label="Linked Job"
-                    name="jobId"
-                    placeholder="Select a job"
-                  />
-                ) : null}
 
                 {noteType === "question_bank" ? (
                   <FormCombobox

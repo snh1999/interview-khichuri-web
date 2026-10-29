@@ -40,7 +40,7 @@ const DashboardContent = () => {
   const stats: IDashboardStats = {
     activeJobs: jobs.length,
     interviewsThisWeek: jobs.filter((job) => {
-      const days = daysUntil(job.interviewDate);
+      const days = daysUntil(job.track.interviewDate);
       return days !== null && days >= 0 && days <= INTERVIEWS_WEEK_DAYS;
     }).length,
     avgMockScore,

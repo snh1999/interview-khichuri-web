@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { Route, Routes } from "react-router";
 import { describe, expect, it } from "vitest";
-import type { IJobWithTopics } from "@/api/jobs";
+import type { IJob } from "@/api/jobs";
 import type { IPrepSession, IQuestion } from "@/api/sessions";
 import { QuestionsSection } from "@/components/prep-session/question/QuestionsSection.tsx";
 import { server } from "@/test/msw/server.ts";
@@ -47,12 +47,18 @@ const useQuestionsResponse = (questions: IQuestion[]) =>
           title: "Staff Engineer",
           companyName: "Acme",
           description: "Senior-level role",
-          status: "applied",
-          isFavorite: false,
           createdAt: "2026-01-01T00:00:00.000Z",
           updatedAt: "2026-01-01T00:00:00.000Z",
+          track: {
+            id: "track-1",
+            jobId: "job-1",
+            status: "applied",
+            isFavorite: false,
+            createdAt: "2026-01-01T00:00:00.000Z",
+            updatedAt: "2026-01-01T00:00:00.000Z",
+          },
           topicIds: [] as number[],
-        } satisfies IJobWithTopics,
+        } satisfies IJob,
       })
     ),
     http.get("*/api/v1/lookups/topics", () =>
