@@ -53,7 +53,7 @@ export const serializeJobLinks = (
   return items.length > 0 ? JSON.stringify(items) : null;
 };
 
-const jobPostSchema = z
+export const jobPostSchema = z
   .object({
     appliedAt: z.date().nullish(),
     companyId: z.number().int().positive().nullish(),
@@ -84,7 +84,7 @@ const jobPostSchema = z
     roleId: z.number().int().positive().nullish(),
     salaryLower: z.number().int().positive().nullish(),
     salaryUpper: z.number().int().positive().nullish(),
-    status: z.enum(JOB_STATUS),
+    status: z.enum(JOB_STATUS, "Status is required"),
     title: z
       .string()
       .trim()

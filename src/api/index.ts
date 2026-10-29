@@ -1,5 +1,3 @@
-import type { TPermissionOptions } from "@/api/auth/admin.ts";
-import type { IAtsScoreFilter } from "@/lib/storage/indexdb.ts";
 import {
   MutationCache,
   QueryCache,
@@ -7,6 +5,8 @@ import {
   type QueryKey,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { TPermissionOptions } from "@/api/auth/admin.ts";
+import type { IAtsScoreFilter } from "@/lib/storage/indexdb.ts";
 
 type TQueryFn =
   | QueryKey

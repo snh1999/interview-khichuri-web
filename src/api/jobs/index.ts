@@ -154,7 +154,7 @@ export const useUpdateJob = () =>
       await api.patch<IJobWithTopics>(`/jobs/${id}`, dto),
     meta: {
       invalidates: ({ id }: { id: string }) =>
-        queryKeys.sessions.detailsAndList(id),
+        queryKeys.jobs.detailsAndList(id),
     },
   });
 
@@ -164,7 +164,7 @@ export const useUpdateTrackedJob = () =>
       await api.patch<IJob>(`/jobs/${id}/track`, dto),
     meta: {
       invalidates: ({ id }: { id: string }) =>
-        queryKeys.sessions.detailsAndList(id),
+        queryKeys.jobs.detailsAndList(id),
     },
   });
 
@@ -180,7 +180,7 @@ export const useTrackJob = () =>
     mutationFn: async (id: string) => await api.post<IJob>(`/jobs/${id}/track`),
     meta: {
       invalidates: ({ id }: { id: string }) =>
-        queryKeys.sessions.detailsAndList(id),
+        queryKeys.jobs.detailsAndList(id),
     },
   });
 

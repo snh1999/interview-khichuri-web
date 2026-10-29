@@ -64,9 +64,7 @@ export const JobCardGrid = ({ job, fit }: Readonly<IProps>) => {
         >
           {getDateInfo(job)}
         </p>
-        <div className="hidden">
-          {fit ? <FitCircle score={fit} /> : null}
-        </div>
+        <div className="hidden">{fit ? <FitCircle score={fit} /> : null}</div>
       </div>
     </GutterCard>
   );

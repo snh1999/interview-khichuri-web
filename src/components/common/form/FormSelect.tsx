@@ -36,13 +36,15 @@ const FormSelect = <T extends FieldValues>({
     control: form.control,
     name,
   });
-  const clearValue = () => field.onChange("");
+  const clearValue = () => field.onChange(null);
 
   return (
     <Field data-invalid={fieldState.invalid}>
       {label ? <FieldLabel htmlFor={field.name}>{label}</FieldLabel> : null}
 
-      <ButtonGroup className="w-full">
+      <ButtonGroup
+        className={`w-full ${fieldState.invalid ? "*:border-destructive" : ""}`}
+      >
         <Select
           aria-invalid={fieldState.invalid}
           items={selectData}
@@ -78,7 +80,10 @@ const FormSelect = <T extends FieldValues>({
       {description ? <FieldDescription>{description}</FieldDescription> : null}
 
       {fieldState.invalid ? (
-        <FieldError className="text-sm" errors={[fieldState.error]} />
+        <FieldError
+          className="line-clamp-1 text-sm"
+          errors={[fieldState.error]}
+        />
       ) : null}
     </Field>
   );

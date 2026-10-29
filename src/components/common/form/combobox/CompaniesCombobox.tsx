@@ -97,7 +97,7 @@ const CompaniesComboboxInner = ({
   };
 
   return (
-    <Field>
+    <Field data-invalid={Boolean(error)}>
       {label ? <FieldLabel>{label}</FieldLabel> : null}
       <Combobox
         autoHighlight
@@ -109,7 +109,11 @@ const CompaniesComboboxInner = ({
         onValueChange={handleValueChange}
         value={currentValue}
       >
-        <ComboboxInput onBlur={handleBlur} placeholder={placeholder} />
+        <ComboboxInput
+          className={error && "border-destructive"}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+        />
         <ComboboxContent>
           <ComboboxEmpty>No companies found.</ComboboxEmpty>
           <ComboboxList>
