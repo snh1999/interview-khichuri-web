@@ -44,7 +44,7 @@ export interface ISessionWithQuestions extends IPrepSession {
 
 export const useSessions = () =>
   useSuspenseQuery({
-    queryKey: queryKeys.sessions.list(),
+    queryKey: queryKeys.sessions.list,
     queryFn: async () => await api.get<IPrepSession[]>("/prep-session"),
   });
 
@@ -67,7 +67,7 @@ export const useCreateSession = () =>
   useMutation({
     mutationFn: async (dto: ICreateSessionDto) =>
       await api.post<IPrepSession>("/prep-session", dto),
-    meta: { invalidates: queryKeys.sessions.list() },
+    meta: { invalidates: queryKeys.sessions.list },
   });
 
 export const useUpdateSession = () =>
@@ -86,7 +86,7 @@ export const useDeleteSession = () =>
       await api.delete(`/prep-session/${id}`);
     },
     meta: {
-      invalidates: queryKeys.sessions.list(),
+      invalidates: queryKeys.sessions.list,
       removes: (id: string) => [
         queryKeys.sessions.detail(id),
         queryKeys.sessions.questions(id),

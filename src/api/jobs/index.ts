@@ -136,7 +136,7 @@ export const useGetJobs = (sort: TJobSortKey = "default") =>
         sortQuery ? `/jobs?sort=${sortQuery}` : "/jobs"
       );
     },
-    queryKey: queryKeys.jobs.list({ sort }),
+    queryKey: queryKeys.jobs.listWithFilter({ sort }),
     staleTime: Number.POSITIVE_INFINITY,
     gcTime: Number.POSITIVE_INFINITY,
   });
@@ -145,21 +145,27 @@ export const useCreateJob = () =>
   useMutation({
     mutationFn: async (dto: ICreateJobDto) =>
       await api.post<IJob>("/jobs", dto),
-    meta: { invalidates: queryKeys.jobs.all },
+    meta: { invalidates: queryKeys.jobs.list },
   });
 
 export const useUpdateJob = () =>
   useMutation({
     mutationFn: async ({ id, ...dto }: IUpdateJobDto & { id: string }) =>
       await api.patch<IJobWithTopics>(`/jobs/${id}`, dto),
-    meta: { invalidates: queryKeys.jobs.all },
+    meta: {
+      invalidates: ({ id }: { id: string }) =>
+        queryKeys.sessions.detailsAndList(id),
+    },
   });
 
 export const useUpdateTrackedJob = () =>
   useMutation({
     mutationFn: async ({ id, ...dto }: IUpdateTrackedJobDto & { id: string }) =>
       await api.patch<IJob>(`/jobs/${id}/track`, dto),
-    meta: { invalidates: queryKeys.jobs.all },
+    meta: {
+      invalidates: ({ id }: { id: string }) =>
+        queryKeys.sessions.detailsAndList(id),
+    },
   });
 
 export const useFavoriteToggle = (id: string, isFavorite: boolean) => {
@@ -172,7 +178,10 @@ export const useFavoriteToggle = (id: string, isFavorite: boolean) => {
 export const useTrackJob = () =>
   useMutation({
     mutationFn: async (id: string) => await api.post<IJob>(`/jobs/${id}/track`),
-    meta: { invalidates: queryKeys.jobs.all },
+    meta: {
+      invalidates: ({ id }: { id: string }) =>
+        queryKeys.sessions.detailsAndList(id),
+    },
   });
 
 export const useDeleteJob = () =>
@@ -180,7 +189,10 @@ export const useDeleteJob = () =>
     mutationFn: async ({ id, force }: { id: string; force?: boolean }) => {
       await api.delete(`/jobs/${id}${force ? "?force=1" : ""}`);
     },
-    meta: { invalidates: queryKeys.jobs.all },
+    meta: {
+      invalidates: queryKeys.jobs.list,
+      removes: ({ id }: { id: string }) => [queryKeys.jobs.detail(id)],
+    },
   });
 
 interface IExtractJobDto {

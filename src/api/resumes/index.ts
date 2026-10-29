@@ -39,7 +39,7 @@ export interface IResume {
 export const useGetResumes = () =>
   useSuspenseQuery({
     queryFn: async () => await api.get<IResume[]>("/resume"),
-    queryKey: queryKeys.resumes.list(),
+    queryKey: queryKeys.resumes.list,
   });
 
 export const useGetResumeById = (id: string) =>
@@ -61,7 +61,7 @@ export const useCreateResume = () =>
       content: TResumeFormData;
       template?: string;
     }) => await api.post<IResume>("/resume/create", dto),
-    meta: { invalidates: queryKeys.resumes.list() },
+    meta: { invalidates: queryKeys.resumes.list },
   });
 
 // Purge the resume's cached scores before invalidating them: the global
@@ -75,9 +75,12 @@ const purgeResumeLocalScores = async (resumeId: string): Promise<void> => {
   } catch {
     // IndexedDB unavailable — cached scores for this resume stay
   }
-  await apiClient.invalidateQueries({
-    queryKey: queryKeys.resumes.ats.all,
-  });
+  await Promise.all([
+    apiClient.invalidateQueries({ queryKey: queryKeys.resumes.ats.all }),
+    apiClient.invalidateQueries({
+      queryKey: queryKeys.resumes.reviewById(resumeId),
+    }),
+  ]);
 };
 
 export const useUpdateResume = () =>
@@ -92,15 +95,10 @@ export const useUpdateResume = () =>
       const { id, ...data } = dto;
       return await api.patch<IResume>(`/resume/${id}`, data);
     },
-    onSuccess: async (_data, dto) => {
-      await purgeResumeLocalScores(dto.id);
-      await apiClient.invalidateQueries({
-        queryKey: queryKeys.resumes.reviewById(dto.id),
-      });
-    },
+    onSuccess: async (_data, dto) => purgeResumeLocalScores(dto.id),
     meta: {
       invalidates: ({ id }: { id: string }) => [
-        queryKeys.resumes.list(),
+        queryKeys.resumes.list,
         queryKeys.resumes.resumeById(id),
       ],
     },
@@ -134,7 +132,7 @@ export const useUploadResume = () =>
       }
       return await api.upload<IUploadResponse>("/resume", formData);
     },
-    meta: { invalidates: queryKeys.resumes.list() },
+    meta: { invalidates: queryKeys.resumes.list },
   });
 
 export const useDeleteResume = () =>
@@ -144,7 +142,7 @@ export const useDeleteResume = () =>
       await purgeResumeLocalScores(id);
     },
     meta: {
-      invalidates: queryKeys.resumes.list(),
+      invalidates: queryKeys.resumes.list,
       removes: (id: string) => [
         queryKeys.resumes.resumeById(id),
         queryKeys.resumes.reviewById(id),
@@ -157,7 +155,7 @@ export const useSetPrimaryResume = () =>
   useMutation({
     mutationFn: async (id: string) =>
       await api.patch<void>(`/resume/${id}/primary`),
-    meta: { invalidates: queryKeys.resumes.list() },
+    meta: { invalidates: queryKeys.resumes.list },
   });
 
 // embed causes whole page reload with suspense query
