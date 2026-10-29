@@ -22,9 +22,16 @@ export const toDate = (value: TDateInput): Date | undefined => {
   return isValid(date) ? date : undefined;
 };
 
-export const formatDate = (value: TDateInput, pattern = "PP"): string => {
+export const formatDate = (value: TDateInput, pattern?: string): string => {
   const date = toDate(value);
-  return date ? format(date, pattern) : "";
+
+  if (!date) {
+    return "";
+  }
+
+  return pattern
+    ? format(date, pattern)
+    : new Intl.DateTimeFormat().format(date);
 };
 
 export const formatDateTime = (value: TDateInput, pattern = "PPp"): string =>

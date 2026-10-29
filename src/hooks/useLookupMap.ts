@@ -5,6 +5,7 @@ import {
   useRoles,
   useTopics,
 } from "@/api/lookups";
+import { capitalizeFirst } from "@/lib/utils.ts";
 
 const lookupCache = new WeakMap<ILookupEntry[], Map<number, ILookupEntry>>();
 
@@ -12,7 +13,15 @@ const useLookupMap = (data: ILookupEntry[]) =>
   useMemo(() => {
     let map = lookupCache.get(data);
     if (!map) {
-      map = new Map(data.map((e) => [e.id, e]));
+      map = new Map(
+        data.map((e) => [
+          e.id,
+          {
+            ...e,
+            name: capitalizeFirst(e.name),
+          },
+        ])
+      );
       lookupCache.set(data, map);
     }
     return map;
