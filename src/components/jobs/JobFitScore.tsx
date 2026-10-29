@@ -44,12 +44,12 @@ const groupScore = (
 
 const FitScoreCard = ({
   score,
-  title,
-  unavailableMessage,
+  title = "Profile fit",
+  unavailableMessage = "Not enough profile/job data to score.",
 }: Readonly<{
   score: TDeterministicScore | null;
-  title: string;
-  unavailableMessage: string;
+  title?: string;
+  unavailableMessage?: string;
 }>) => {
   const cards = score
     ? GROUPS.map((group) => ({
@@ -61,9 +61,14 @@ const FitScoreCard = ({
   return (
     <Card>
       <CardContent className="flex flex-col gap-4 text-center sm:flex-row">
-        <div className="flex flex-col gap-1 sm:basis-1/3">
+        <div
+          className={cn(
+            "flex flex-col gap-1",
+            score ? "sm:basis-1/3" : "sm:basis-full"
+          )}
+        >
           <span className="flex items-center justify-center gap-4">
-            <span className="font-medium text-sm">{title}</span>
+            <span className="font-medium text-base">{title}</span>
             {score ? <FitCircle score={score.overall} /> : null}
           </span>
           {score ? (
@@ -118,11 +123,7 @@ export const JobFitScore = ({ job }: Readonly<{ job: IJob }>) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <FitScoreCard
-        score={profileScore.hasSignal ? profileScore : null}
-        title="Profile fit"
-        unavailableMessage="Not enough profile/job data to score."
-      />
+      <FitScoreCard score={profileScore.hasSignal ? profileScore : null} />
       <p className="text-muted-foreground text-xs">
         Heuristic estimate from the job title, skills and your profile. Not an
         AI review.
