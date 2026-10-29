@@ -17,6 +17,7 @@ export const JOB_SORT_OPTIONS: { value: TJobSortKey; label: string }[] = [
   { value: "oldest", label: "Oldest" },
   { value: "deadline", label: "Deadline" },
   { value: "interview", label: "Interview" },
+  { value: "applied", label: "Applied" },
 ] as const;
 
 export const useJobSort = (): {

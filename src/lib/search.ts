@@ -108,8 +108,8 @@ export const createQuestionBankSearch = () =>
     preset: "content",
   });
 
-export const createJobSearch = (jobs: readonly IJob[]) =>
-  createSearch<IJob, "title" | "companyName">(jobs, ["title", "companyName"], {
+export const createJobSearch = <T extends IJob>(jobs: readonly T[]) =>
+  createSearch<T, "title" | "companyName">(jobs, ["title", "companyName"], {
     limit: jobs.length,
     preset: "content",
   });

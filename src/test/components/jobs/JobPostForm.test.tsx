@@ -17,12 +17,22 @@ const editJob: IJob = {
   createdAt: CREATED_AT,
   description: DESCRIPTION,
   id: "job-1",
-  status: "saved",
   title: "Senior Frontend",
   updatedAt: CREATED_AT,
+  track: {
+    id: "track-1",
+    jobId: "job-1",
+    status: "saved",
+    isFavorite: false,
+    createdAt: CREATED_AT,
+    updatedAt: CREATED_AT,
+  },
 };
 
 const baseHandlers = () => [
+  http.patch("*/api/v1/jobs/:id/track", () =>
+    HttpResponse.json({ data: editJob, message: "OK", statusCode: 200 })
+  ),
   http.get("*/api/v1/company", () =>
     HttpResponse.json({
       data: [{ id: 11, name: "Acme Corp" }],
@@ -213,7 +223,8 @@ describe("JobPostForm", () => {
   });
 
   it("updates an existing job through PATCH", async () => {
-    let patched: unknown = null;
+    let patched: Record<string, unknown> | null = null;
+    let tracked: Record<string, unknown> | null = null;
     server.use(
       http.patch("*/api/v1/jobs/:id", async ({ request, params }) => {
         const body = (await request.json()) as Record<string, unknown>;
@@ -225,6 +236,15 @@ describe("JobPostForm", () => {
             updatedAt: CREATED_AT,
             userId: "user-1",
           },
+          message: "OK",
+          statusCode: 200,
+        });
+      }),
+      http.patch("*/api/v1/jobs/:id/track", async ({ request, params }) => {
+        const body = (await request.json()) as Record<string, unknown>;
+        tracked = { ...body, id: params.id };
+        return HttpResponse.json({
+          data: editJob,
           message: "OK",
           statusCode: 200,
         });
@@ -241,6 +261,34 @@ describe("JobPostForm", () => {
       id: "job-1",
       title: "Staff Frontend",
     });
+    expect(patched).not.toHaveProperty("status");
+    expect(patched).not.toHaveProperty("notes");
+    expect(tracked).toMatchObject({
+      id: "job-1",
+      status: "saved",
+    });
+  });
+
+  it("shows a placeholder for work type", () => {
+    renderForm();
+
+    expect(screen.getByText("Select work type")).toBeInTheDocument();
+  });
+
+  it("rejects unsafe link URLs", async () => {
+    const { user } = renderForm();
+
+    await user.type(screen.getByLabelText("Description"), DESCRIPTION);
+    await user.type(screen.getByLabelText("Title"), "Senior Frontend");
+    await pickCompany(user);
+    await user.click(screen.getByRole("button", { name: "Add link" }));
+    await user.type(
+      screen.getByPlaceholderText("https://example.com/job"),
+      "javascript:alert(1)"
+    );
+    await user.click(screen.getByRole("button", { name: "Create" }));
+
+    expect(await screen.findByText("Enter an http(s) URL")).toBeInTheDocument();
   });
 
   it("submits number fields as numbers", async () => {

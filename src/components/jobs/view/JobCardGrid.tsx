@@ -1,7 +1,6 @@
 import { cn } from "cn";
 import { generatePath, useNavigate } from "react-router";
-import type { IJob } from "@/api/jobs";
-import { useUpdateJob } from "@/api/jobs";
+import { type IJobWithTrack, useFavoriteToggle } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { FitCircle } from "@/components/jobs/FitCircle.tsx";
@@ -14,23 +13,23 @@ import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import { isUrgent } from "@/lib/utils";
 
-export const JobCardGrid = ({ job, fit }: { job: IJob; fit?: number }) => {
+interface IProps {
+  job: IJobWithTrack;
+  fit?: number;
+}
+export const JobCardGrid = ({ job, fit }: Readonly<IProps>) => {
   const navigate = useNavigate();
-  const updateJob = useUpdateJob();
-  const urgent = job.interviewDate
-    ? isUrgent(job.interviewDate)
-    : !job.appliedAt && isUrgent(job.deadline);
+  const { track } = job;
+  const urgent = track.interviewDate
+    ? isUrgent(track.interviewDate)
+    : !track.appliedAt && isUrgent(job.deadline);
 
-  const variant = urgent ? "danger" : JOB_STATUS_VARIANT[job.status];
+  const variant = urgent ? "danger" : JOB_STATUS_VARIANT[track.status];
 
   const handleClick = () =>
     navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
 
-  const handleToggleFavorite = () =>
-    updateJob.mutateAsync({
-      id: job.id,
-      isFavorite: !job.isFavorite,
-    });
+  const handleToggleFavorite = useFavoriteToggle(job.id, !track.isFavorite);
 
   return (
     <GutterCard className="pt-3" onClick={handleClick} variant={variant}>
@@ -45,9 +44,12 @@ export const JobCardGrid = ({ job, fit }: { job: IJob; fit?: number }) => {
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <StatusBadge label={STATUS_LABEL[job.status]} status={job.status} />
+          <StatusBadge
+            label={STATUS_LABEL[track.status]}
+            status={track.status}
+          />
           <FavoriteButton
-            isFavorite={job.isFavorite}
+            isFavorite={track.isFavorite}
             onToggle={handleToggleFavorite}
           />
         </div>
@@ -62,7 +64,9 @@ export const JobCardGrid = ({ job, fit }: { job: IJob; fit?: number }) => {
         >
           {getDateInfo(job)}
         </p>
-        {fit ? <FitCircle score={fit} /> : null}
+        <div className="hidden">
+          {fit ? <FitCircle score={fit} /> : null}
+        </div>
       </div>
     </GutterCard>
   );

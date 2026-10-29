@@ -17,7 +17,6 @@ export interface IUpdateSessionDto extends Partial<ICreateSessionDto> {}
 export interface IPrepSession extends ICreateSessionDto {
   id: string;
   userId?: string | null;
-  jobId?: string | null;
   createdAt: string;
   updatedAt: string;
   sessionTopics?: Array<{ topicId: number }>;

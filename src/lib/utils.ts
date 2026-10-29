@@ -7,6 +7,15 @@ export const isUrgent = (date?: string | null): boolean => {
   return days !== null && days <= URGENT_DAYS_THRESHOLD;
 };
 
+export const isHttpUrl = (value: string): boolean => {
+  try {
+    const { protocol } = new URL(value);
+    return protocol === "http:" || protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
 export const daysUntil = (date?: string | null): number | null => {
   if (!date) {
     return null;
@@ -103,6 +112,9 @@ export const formatSectionLabel = (key: string): string =>
   key
     .replace(CAMEL_CASE_SEPARATOR, "$1 $2")
     .replace(FIRST_CHAR, (char) => char.toUpperCase());
+
+export const capitalizeFirst = (value: string): string =>
+  value.replace(FIRST_CHAR, (char) => char.toUpperCase());
 
 export const generateSafeId = (prefix = ""): string => {
   let rand = "";

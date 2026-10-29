@@ -2,7 +2,7 @@ import { PlusCircleIcon } from "@phosphor-icons/react";
 import { useDeferredValue, useMemo } from "react";
 import {
   type IDateFilter,
-  type IJob,
+  type IJobWithTrack,
   type TJobSortKey,
   type TJobStatus,
   useGetJobs,
@@ -30,11 +30,11 @@ import { createJobSearch } from "@/lib/search.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
 
 export const filterJobs = (
-  jobs: IJob[],
+  jobs: IJobWithTrack[],
   params: { status?: TJobStatus; dateFilter?: IDateFilter[] }
-): IJob[] =>
+): IJobWithTrack[] =>
   jobs.filter((job) => {
-    if (params.status && job.status !== params.status) {
+    if (params.status && job.track.status !== params.status) {
       return false;
     }
     return !(
@@ -60,7 +60,7 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
   // TODO: profile should be optional here - if /profile is down the whole job list breaks even though we only need it for fit scores.
   const { data: profile } = useProfile();
   const profileFactSet = useMemo(() => profileFacts(profile), [profile]);
-  const scoreFor = (job: IJob) => {
+  const scoreFor = (job: IJobWithTrack) => {
     const score = scoreJob(profileFactSet, job);
     return score.hasSignal ? score.overall : undefined;
   };
@@ -115,7 +115,7 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
 
       {currentView === "grid" ? (
         <div className="grid gap-2.5 sm:grid-cols-2" ref={gridParent}>
-          {jobs.map((job: IJob) => (
+          {jobs.map((job) => (
             <JobCardGrid fit={scoreFor(job)} job={job} key={job.id} />
           ))}
         </div>
@@ -124,7 +124,7 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
           className="overflow-hidden rounded-md bg-card"
           ref={listParent}
         >
-          {jobs.map((job: IJob) => (
+          {jobs.map((job) => (
             <JobListRow fit={scoreFor(job)} job={job} key={job.id} />
           ))}
         </ItemGroup>

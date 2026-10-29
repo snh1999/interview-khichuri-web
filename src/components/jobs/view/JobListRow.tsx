@@ -1,8 +1,7 @@
 import { BriefcaseIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { cn } from "cn";
 import { generatePath, useNavigate } from "react-router";
-import type { IJob } from "@/api/jobs";
-import { useUpdateJob } from "@/api/jobs";
+import { type IJobWithTrack, useFavoriteToggle } from "@/api/jobs";
 import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { FitCircle } from "@/components/jobs/FitCircle.tsx";
@@ -22,26 +21,22 @@ export const JobListRow = ({
   hideFavorite = false,
   fit,
 }: {
-  job: IJob;
+  job: IJobWithTrack;
   hideFavorite?: boolean;
   fit?: number;
 }) => {
   const navigate = useNavigate();
-  const updateJob = useUpdateJob();
 
-  const urgent = job.interviewDate
-    ? isUrgent(job.interviewDate)
-    : !job.appliedAt && isUrgent(job.deadline);
+  const { track } = job;
+  const urgent = track.interviewDate
+    ? isUrgent(track.interviewDate)
+    : !track.appliedAt && isUrgent(job.deadline);
   const dateInfo = getDateInfo(job);
 
   const handleClick = () =>
     navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
 
-  const handleToggleFavorite = () =>
-    updateJob.mutateAsync({
-      id: job.id,
-      isFavorite: !job.isFavorite,
-    });
+  const handleToggleFavorite = useFavoriteToggle(job.id, !track.isFavorite);
 
   return (
     <Item
@@ -71,15 +66,15 @@ export const JobListRow = ({
         </span>
       </ItemContent>
       <ItemActions>
-        {fit ? <FitCircle score={fit} /> : null}
+        <span className="hidden">{fit ? <FitCircle score={fit} /> : null}</span>
         {hideFavorite ? null : (
           <FavoriteButton
             icon="pin"
-            isFavorite={job.isFavorite}
+            isFavorite={track.isFavorite}
             onToggle={handleToggleFavorite}
           />
         )}
-        <StatusBadge label={STATUS_LABEL[job.status]} status={job.status} />
+        <StatusBadge label={STATUS_LABEL[track.status]} status={track.status} />
 
         <CaretRightIcon className="size-4 shrink-0 text-muted-foreground" />
       </ItemActions>

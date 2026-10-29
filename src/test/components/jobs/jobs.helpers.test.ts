@@ -1,20 +1,32 @@
 import { afterEach, describe, expect, it } from "vitest";
-import type { IJob } from "@/api/jobs";
+import type { IJob, ITrackedJob } from "@/api/jobs";
 import {
   getDateInfo,
+  jobPostSchema,
+  parseJobLinks,
   readFiltersFromParams,
   STATUS_LABEL,
   STATUS_OPTIONS,
+  serializeJobLinks,
 } from "@/components/jobs/jobs.helpers.ts";
 import { formatDate } from "@/lib/date.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
+
+const makeTrack = (overrides: Partial<ITrackedJob> = {}): ITrackedJob => ({
+  id: "track-1",
+  jobId: "job-1",
+  status: "saved",
+  isFavorite: false,
+  createdAt: "2024-01-01T00:00:00.000Z",
+  updatedAt: "2024-01-01T00:00:00.000Z",
+  ...overrides,
+});
 
 const makeJob = (overrides: Partial<IJob> = {}): IJob => ({
   companyName: "Acme",
   createdAt: "2024-01-01T00:00:00.000Z",
   description: "",
   id: "job-1",
-  status: "saved",
   title: "Frontend Engineer",
   updatedAt: "2024-01-01T00:00:00.000Z",
   ...overrides,
@@ -41,23 +53,25 @@ describe("status options", () => {
 
 describe("getDateInfo", () => {
   it("prefers a future interview date", () => {
-    expect(getDateInfo(makeJob({ interviewDate: daysFromNow(5) }))).toBe(
-      "5 days until interview"
-    );
+    expect(
+      getDateInfo(
+        makeJob({ track: makeTrack({ interviewDate: daysFromNow(5) }) })
+      )
+    ).toBe("5 days until interview");
   });
 
   it("falls back to a past interview date", () => {
     const past = "2024-01-01T00:00:00.000Z";
-    expect(getDateInfo(makeJob({ interviewDate: past }))).toBe(
-      `Interviewed at ${formatDate(past)}`
-    );
+    expect(
+      getDateInfo(makeJob({ track: makeTrack({ interviewDate: past }) }))
+    ).toBe(`Interviewed at ${formatDate(past)}`);
   });
 
   it("reports the applied date", () => {
     const applied = "2024-02-02T00:00:00.000Z";
-    expect(getDateInfo(makeJob({ appliedAt: applied }))).toBe(
-      `Applied ${formatDate(applied)}`
-    );
+    expect(
+      getDateInfo(makeJob({ track: makeTrack({ appliedAt: applied }) }))
+    ).toBe(`Applied ${formatDate(applied)}`);
   });
 
   it("reports deadline days left and passed deadlines", () => {
@@ -72,6 +86,102 @@ describe("getDateInfo", () => {
     expect(getDateInfo(makeJob({ createdAt: created }))).toBe(
       `Created: ${formatDate(created)}`
     );
+  });
+});
+
+describe("jobPostSchema URLs", () => {
+  const base = {
+    companyName: "Acme",
+    description: "A sufficiently long job description.",
+    status: "saved" as const,
+    title: "Frontend",
+    topicIds: [],
+  };
+
+  it("accepts http(s) links and URL", () => {
+    expect(
+      jobPostSchema.safeParse({
+        ...base,
+        url: "https://acme.com/jobs/1",
+        links: [{ value: "https://acme.com/jobs/1", label: "Posting" }],
+      }).success
+    ).toBe(true);
+  });
+
+  it("rejects unsafe or malformed URLs", () => {
+    for (const url of [
+      "javascript:alert(1)",
+      "data:text/html,hi",
+      "not a url",
+    ]) {
+      expect(jobPostSchema.safeParse({ ...base, url }).success).toBe(false);
+      expect(
+        jobPostSchema.safeParse({ ...base, links: [{ value: url }] }).success
+      ).toBe(false);
+    }
+  });
+
+  it("allows an empty URL and empty link rows", () => {
+    expect(jobPostSchema.safeParse({ ...base, url: "" }).success).toBe(true);
+    expect(
+      jobPostSchema.safeParse({ ...base, links: [{ value: "" }] }).success
+    ).toBe(true);
+  });
+});
+
+describe("parseJobLinks", () => {
+  it("parses stored JSON links with labels", () => {
+    expect(
+      parseJobLinks(
+        JSON.stringify([
+          { url: "https://acme.com/a", label: "A" },
+          { url: "https://acme.com/b" },
+        ])
+      )
+    ).toEqual([
+      { url: "https://acme.com/a", label: "A" },
+      { url: "https://acme.com/b", label: null },
+    ]);
+  });
+
+  it("falls back to trimmed newline-separated links", () => {
+    expect(
+      parseJobLinks(" https://acme.com/a \n\nhttps://acme.com/b ")
+    ).toEqual([
+      { url: "https://acme.com/a", label: null },
+      { url: "https://acme.com/b", label: null },
+    ]);
+  });
+
+  it("drops unsafe and malformed entries", () => {
+    expect(
+      parseJobLinks(
+        JSON.stringify([
+          { url: "javascript:alert(1)" },
+          { url: 42 },
+          { url: "https://acme.com/ok" },
+        ])
+      )
+    ).toEqual([{ url: "https://acme.com/ok", label: null }]);
+  });
+
+  it("returns an empty list for empty input", () => {
+    expect(parseJobLinks(null)).toEqual([]);
+    expect(parseJobLinks("")).toEqual([]);
+  });
+});
+
+describe("serializeJobLinks", () => {
+  it("trims URLs and labels before storing", () => {
+    expect(
+      serializeJobLinks([{ value: " https://acme.com/a ", label: " A " }])
+    ).toBe(JSON.stringify([{ url: "https://acme.com/a", label: "A" }]));
+  });
+
+  it("drops blank and unsafe entries, returning null when empty", () => {
+    expect(serializeJobLinks([{ value: "   " }])).toBeNull();
+    expect(serializeJobLinks([{ value: "javascript:alert(1)" }])).toBeNull();
+    expect(serializeJobLinks(null)).toBeNull();
   });
 });
 
