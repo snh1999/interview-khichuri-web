@@ -307,9 +307,12 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
           </ComboboxInput>
         )}
         <ComboboxContent anchor={multiple ? anchor : undefined}>
-          {<ComboboxEmpty>
-            {emptyText ?? (showCreate ? inputValue.trim() : "No items found.")}
-          </ComboboxEmpty>}
+          {
+            <ComboboxEmpty>
+              {emptyText ??
+                (showCreate ? inputValue.trim() : "No items found.")}
+            </ComboboxEmpty>
+          }
           <ComboboxList>
             {(opt: IComboboxOption) =>
               opt.isNew ? (
