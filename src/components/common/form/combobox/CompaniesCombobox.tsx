@@ -1,26 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { type KeyboardEvent, useEffect, useMemo, useRef } from "react";
 import { useCompanies } from "@/api/lookups";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/components/ui/combobox.tsx";
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-} from "@/components/ui/field.tsx";
+  AppCombobox,
+  type IComboboxOption,
+} from "@/components/common/form/combobox/AppCombobox.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
-
-interface ICompanyOption {
-  value: number;
-  label: string;
-}
 
 interface ICompaniesComboboxProps {
   companyId: number | null;
@@ -34,6 +19,8 @@ interface ICompaniesComboboxProps {
 }
 
 const comboboxFallback = () => <Skeleton className="h-7 w-full rounded-md" />;
+
+const identityOption = (option: IComboboxOption) => option;
 
 export const CompaniesCombobox = (props: Readonly<ICompaniesComboboxProps>) => (
   <AppErrorSuspense fallback={comboboxFallback}>
@@ -52,7 +39,13 @@ const CompaniesComboboxInner = ({
   error,
 }: Readonly<ICompaniesComboboxProps>) => {
   const { data: companies } = useCompanies();
-  const options = useMemo<ICompanyOption[]>(
+  const typedRef = useRef(companyName);
+
+  useEffect(() => {
+    typedRef.current = companyName;
+  }, [companyName]);
+
+  const realOptions = useMemo<IComboboxOption[]>(
     () =>
       companies.map((company) => ({
         value: company.id,
@@ -60,75 +53,60 @@ const CompaniesComboboxInner = ({
       })),
     [companies]
   );
-  const optionMap = useMemo(
-    () => new Map(options.map((o) => [o.value, o])),
-    [options]
-  );
 
-  const [inputValue, setInputValue] = useState<string>(companyName);
-
-  useEffect(() => {
-    const selected = companyId === null ? undefined : optionMap.get(companyId);
-    setInputValue(selected?.label ?? companyName ?? "");
-  }, [companyId, companyName, optionMap]);
-
-  const currentValue =
-    companyId === null ? null : (optionMap.get(companyId) ?? null);
-  const itemToStringValue = (opt: ICompanyOption) => opt.label;
-
-  const handleValueChange = (
-    next: ICompanyOption | ICompanyOption[] | null
-  ): void => {
-    const option = Array.isArray(next) ? (next[0] ?? null) : next;
-    if (option) {
-      onChange(option.value, option.label);
-    } else {
-      onChange(null, inputValue.trim() || "");
+  const options = useMemo(() => {
+    const typed = companyName.trim();
+    if (companyId !== null || !typed) {
+      return realOptions;
     }
+    return [...realOptions, { label: typed, value: typed }];
+  }, [realOptions, companyId, companyName]);
+
+  const handleChange = (next: string | number | null) => {
+    if (typeof next === "number") {
+      const company = realOptions.find((option) => option.value === next);
+      onChange(next, company?.label ?? "");
+      return;
+    }
+    onChange(null, next ?? "");
   };
 
-  const handleBlur = (): void => {
-    const typed = inputValue.trim();
-    const matched = typed
-      ? options.find((o) => o.label.toLowerCase() === typed.toLowerCase())
-      : undefined;
+  const handleInputValueChange = (next: string) => {
+    typedRef.current = next;
+  };
 
-    onChange(matched ? matched.value : null, matched ? matched.label : typed);
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") {
+      return;
+    }
+    const typed = typedRef.current.trim();
+    if (!typed) {
+      return;
+    }
+    const matches = realOptions.some((option) =>
+      option.label.toLowerCase().includes(typed.toLowerCase())
+    );
+    if (matches) {
+      return;
+    }
+    event.preventDefault();
+    onChange(null, typed);
   };
 
   return (
-    <Field data-invalid={Boolean(error)}>
-      {label ? <FieldLabel>{label}</FieldLabel> : null}
-      <Combobox
-        autoHighlight
-        disabled={disabled}
-        inputValue={inputValue}
-        items={options}
-        itemToStringValue={itemToStringValue}
-        onInputValueChange={setInputValue}
-        onValueChange={handleValueChange}
-        value={currentValue}
-      >
-        <ComboboxInput
-          className={error && "border-destructive"}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-        />
-        <ComboboxContent>
-          <ComboboxEmpty>No companies found.</ComboboxEmpty>
-          <ComboboxList>
-            {(opt: ICompanyOption) => (
-              <ComboboxItem key={opt.value} value={opt}>
-                {opt.label}
-              </ComboboxItem>
-            )}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-      {description ? <FieldDescription>{description}</FieldDescription> : null}
-      {error ? (
-        <FieldError className="text-sm" errors={[{ message: error }]} />
-      ) : null}
-    </Field>
+    <AppCombobox
+      data={options}
+      description={description}
+      disabled={disabled}
+      error={error}
+      label={label}
+      emptyText="Enter to select company"
+      onChange={handleChange}
+      onInputValueChange={handleInputValueChange}
+      onKeyDown={handleKeyDown}
+      placeholder={placeholder}
+      toOption={identityOption}
+      value={companyId ?? (companyName.trim() || null)}
+    />
   );
 };
