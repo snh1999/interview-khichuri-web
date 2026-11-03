@@ -71,15 +71,14 @@ export const ProfessionalInformation = memo(
                 form={form}
                 idsName="professional.skills"
                 label="Skills"
-                names="professional.skillNames"
+                placeholder="Search skills"
               />
 
               <LookupCombobox
                 form={form}
                 idsName="professional.industries"
                 label="Industries"
-                names="professional.industriesNames"
-                placeholder="Search or type to add industries"
+                placeholder="Search industries and pick"
                 schema="industries"
               />
             </div>

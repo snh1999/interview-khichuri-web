@@ -95,7 +95,7 @@ describe("getUseJobProfileForm", () => {
     expect(calls).toEqual(["personal", "workExperience", "personal"]);
   });
 
-  it("resolves known lookup names and drops unknown ones", async () => {
+  it("resolves known lookup names and skips unknown ones", async () => {
     let overviewBody: unknown = null;
     server.use(
       http.get(`${API}/lookups/topics`, () =>

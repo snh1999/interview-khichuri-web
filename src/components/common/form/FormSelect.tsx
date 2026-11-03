@@ -22,6 +22,7 @@ import {
 
 type Props<T extends FieldValues> = TBasicFormInputProps<T> & {
   selectData: readonly { value: string; label: string }[];
+  clearable?: boolean;
 };
 
 const FormSelect = <T extends FieldValues>({
@@ -31,6 +32,7 @@ const FormSelect = <T extends FieldValues>({
   label,
   placeholder,
   description,
+  clearable = true,
 }: Readonly<Props<T>>) => {
   const { field, fieldState } = useController({
     control: form.control,
@@ -65,7 +67,7 @@ const FormSelect = <T extends FieldValues>({
             </SelectGroup>
           </SelectContent>
         </Select>
-        {field.value ? (
+        {field.value && clearable ? (
           <Button
             aria-label="Clear selection"
             onClick={clearValue}

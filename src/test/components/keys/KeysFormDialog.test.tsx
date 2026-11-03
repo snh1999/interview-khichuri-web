@@ -6,6 +6,16 @@ import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
 describe("KeysFormDialog", () => {
+  it("does not allow clearing the required provider", async () => {
+    const { user } = render(<KeysFormDialog />);
+
+    await user.click(screen.getByRole("button", { name: "Add" }));
+
+    expect(
+      screen.queryByRole("button", { name: "Clear selection" })
+    ).not.toBeInTheDocument();
+  });
+
   it("shows validation errors when submitted empty", async () => {
     const { user } = render(<KeysFormDialog />);
 

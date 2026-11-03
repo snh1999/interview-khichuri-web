@@ -18,10 +18,13 @@ import {
 } from "@/components/ui/card.tsx";
 
 interface IProps {
-  provider: TApiKeyProvider;
+  provider: TApiKeyProvider | null;
 }
 
 export const ProviderInfoCard = ({ provider }: IProps) => {
+  if (!provider) {
+    return null;
+  }
   const info = PROVIDER_INFO[provider];
   return (
     <Card>

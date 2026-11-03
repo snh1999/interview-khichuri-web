@@ -229,7 +229,7 @@ export const profileToFormData = (
       id: project.id,
       link: project.link ?? undefined,
       name: project.name,
-      skillNames: (project.skills ?? []).map((skill) => skill.topic.name),
+      skillNames: [],
       skills: (project.skills ?? []).map((skill) => skill.topicId),
       type: project.type ?? "project",
     })),

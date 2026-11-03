@@ -24,9 +24,9 @@ export const PasskeyItems = () => {
       {passkeys.length === 0 ? (
         <Empty>
           <EmptyHeader>
-            <EmptyTitle>No linked accounts</EmptyTitle>
+            <EmptyTitle>No passkeys yet</EmptyTitle>
             <EmptyDescription>
-              Link an account to sign in without a password.
+              Choose New Passkey to sign in without a password.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>

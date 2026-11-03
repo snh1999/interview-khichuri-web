@@ -171,6 +171,7 @@ export const KeysFormDialog = ({
             />
 
             <FormSelect
+              clearable={false}
               form={form}
               label={"Provider"}
               name={"provider"}
