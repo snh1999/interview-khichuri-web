@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { IJob } from "@/api/jobs";
@@ -10,6 +10,9 @@ import { render } from "@/test/render.tsx";
 const CREATED_AT = "2026-01-01T00:00:00.000Z";
 
 const DESCRIPTION = "Senior frontend engineer at a fintech scaleup.";
+
+const DUPLICATE_BANNER = /already exists in Discover/i;
+const DUPLICATE_JOB_TEXT = /Duplicate Role at Globex/;
 
 const editJob: IJob = {
   companyId: 11,
@@ -28,6 +31,23 @@ const editJob: IJob = {
     updatedAt: CREATED_AT,
   },
 };
+
+const duplicateJob: IJob = {
+  ...editJob,
+  companyName: "Globex",
+  id: "job-duplicate",
+  title: "Duplicate Role",
+};
+
+const matchJobHandler = (onRequest?: (url: string) => void) =>
+  http.get("*/api/v1/jobs/from-url", ({ request }) => {
+    onRequest?.(new URL(request.url).searchParams.get("url") ?? "");
+    return HttpResponse.json({
+      data: [duplicateJob],
+      message: "OK",
+      statusCode: 200,
+    });
+  });
 
 const baseHandlers = () => [
   http.patch("*/api/v1/jobs/:id/track", () =>
@@ -51,7 +71,7 @@ const baseHandlers = () => [
 const pickCompany = async (user: ReturnType<typeof render>["user"]) => {
   const input = screen.getByPlaceholderText("e.g. Acme Corp");
   await user.type(input, "Acme Corp");
-  await user.tab();
+  await user.keyboard("{Enter}");
 };
 
 describe("JobPostForm", () => {
@@ -122,6 +142,46 @@ describe("JobPostForm", () => {
       companyName: "Acme Corp",
       description: DESCRIPTION,
       status: "saved",
+      title: "Senior Frontend",
+    });
+  });
+
+  it("creates a job with a new company name confirmed by Enter", async () => {
+    let posted: Record<string, unknown> | null = null;
+    server.use(
+      http.post("*/api/v1/jobs", async ({ request }) => {
+        const body = (await request.json()) as Record<string, unknown>;
+        posted = body;
+        return HttpResponse.json(
+          {
+            data: {
+              ...(editJob as object),
+              ...body,
+              createdAt: CREATED_AT,
+              updatedAt: CREATED_AT,
+            },
+            message: "Created",
+            statusCode: 201,
+          },
+          { status: 201 }
+        );
+      })
+    );
+    const { user } = renderForm();
+
+    await user.type(screen.getByLabelText("Description"), DESCRIPTION);
+    await user.type(screen.getByLabelText("Title"), "Senior Frontend");
+    await user.type(screen.getByPlaceholderText("e.g. Acme Corp"), "Globex");
+    await user.keyboard("{Enter}");
+    await user.click(screen.getByRole("button", { name: "Create" }));
+
+    expect(await screen.findByText("Job created")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Company name is required")
+    ).not.toBeInTheDocument();
+    expect(posted).toMatchObject({
+      companyName: "Globex",
+      description: DESCRIPTION,
       title: "Senior Frontend",
     });
   });
@@ -250,7 +310,7 @@ describe("JobPostForm", () => {
         });
       })
     );
-    const { user } = renderForm(editJob);
+    const { user } = renderForm({ ...editJob, userId: "user-1" });
 
     await user.clear(screen.getByLabelText("Title"));
     await user.type(screen.getByLabelText("Title"), "Staff Frontend");
@@ -339,12 +399,102 @@ describe("JobPostForm", () => {
         });
       })
     );
-    const { user } = renderForm({ ...editJob, salaryLower: 90_000 });
+    const { user } = renderForm({
+      ...editJob,
+      salaryLower: 90_000,
+      userId: "user-1",
+    });
 
     await user.clear(screen.getByLabelText("Minimum Salary"));
     await user.click(screen.getByRole("button", { name: "Update" }));
 
     expect(await screen.findByText("Job updated")).toBeInTheDocument();
     expect(patched).toMatchObject({ salaryLower: null });
+  });
+
+  it("looks up the source URL once after typing settles", async () => {
+    const requested: string[] = [];
+    server.use(matchJobHandler((url) => requested.push(url)));
+    const { user } = renderForm();
+
+    await user.type(
+      screen.getByLabelText("Source URL"),
+      "https://example.com/jobs/1"
+    );
+
+    expect(
+      await screen.findByText(DUPLICATE_BANNER, {}, { timeout: 3000 })
+    ).toBeInTheDocument();
+    expect(screen.getByText(DUPLICATE_JOB_TEXT)).toBeInTheDocument();
+    expect(requested).toEqual(["https://example.com/jobs/1"]);
+  }, 10_000);
+
+  it("hides the duplicate banner when the source URL is cleared", async () => {
+    server.use(matchJobHandler());
+    const { user } = renderForm();
+
+    const urlInput = screen.getByLabelText("Source URL");
+    await user.type(urlInput, "https://example.com/jobs/1");
+    await screen.findByText(DUPLICATE_BANNER, {}, { timeout: 3000 });
+
+    await user.clear(urlInput);
+
+    await waitFor(
+      () => expect(screen.queryByText(DUPLICATE_BANNER)).toBeNull(),
+      { timeout: 3000 }
+    );
+  }, 10_000);
+
+  it("normalizes a scheme-less URL before matching", async () => {
+    const requested: string[] = [];
+    server.use(matchJobHandler((url) => requested.push(url)));
+    const { user } = renderForm();
+
+    await user.type(screen.getByLabelText("Source URL"), "example.com/jobs/1");
+
+    await screen.findByText(DUPLICATE_BANNER, {}, { timeout: 3000 });
+    expect(requested).toEqual(["https://example.com/jobs/1"]);
+  }, 10_000);
+
+  it("rejects a minimum salary above the maximum", async () => {
+    const { user } = renderForm();
+
+    await user.type(screen.getByLabelText("Description"), DESCRIPTION);
+    await user.type(screen.getByLabelText("Title"), "Senior Frontend");
+    await pickCompany(user);
+    await user.type(screen.getByLabelText("Minimum Salary"), "150000");
+    await user.type(screen.getByLabelText("Maximum Salary"), "120000");
+    await user.click(screen.getByRole("button", { name: "Create" }));
+
+    expect(
+      await screen.findByText("Minimum salary can't exceed maximum salary")
+    ).toBeInTheDocument();
+  });
+
+  it("allows a minimum salary equal to the maximum", async () => {
+    let posted: Record<string, unknown> | null = null;
+    server.use(
+      http.post("*/api/v1/jobs", async ({ request }) => {
+        posted = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(
+          { data: editJob, message: "Created", statusCode: 201 },
+          { status: 201 }
+        );
+      })
+    );
+    const { user } = renderForm();
+
+    await user.type(screen.getByLabelText("Description"), DESCRIPTION);
+    await user.type(screen.getByLabelText("Title"), "Senior Frontend");
+    await pickCompany(user);
+    await user.type(screen.getByLabelText("Minimum Salary"), "120000");
+    await user.type(screen.getByLabelText("Maximum Salary"), "120000");
+    await user.click(screen.getByRole("button", { name: "Create" }));
+
+    expect(await screen.findByText("Job created")).toBeInTheDocument();
+    expect(posted).toMatchObject({
+      salaryLower: 120_000,
+      salaryUpper: 120_000,
+    });
   });
 });

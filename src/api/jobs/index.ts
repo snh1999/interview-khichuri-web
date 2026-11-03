@@ -19,6 +19,10 @@ export const JOB_WORK_TYPES = ["remote", "hybrid", "onsite"] as const;
 
 export type TJobWorkType = (typeof JOB_WORK_TYPES)[number];
 
+export const JOB_STATES = ["none", "ok", "failed"] as const;
+
+export type TJobState = (typeof JOB_STATES)[number];
+
 export type TJobSortKey =
   | "default"
   | "newest"
@@ -96,6 +100,8 @@ export interface IJob extends Omit<ICommonFields, "description" | "deadline"> {
   userId?: string | null;
   description: string | null;
   deadline?: string | null;
+  state?: TJobState | null;
+  closedAt?: string | null;
   createdAt: string;
   updatedAt: string;
   track?: ITrackedJob | null;
@@ -179,11 +185,19 @@ export const useTrackJob = () =>
   useMutation({
     mutationFn: async (id: string) => await api.post<IJob>(`/jobs/${id}/track`),
     meta: {
-      invalidates: ({ id }: { id: string }) =>
-        queryKeys.jobs.detailsAndList(id),
+      invalidates: (id: string) => queryKeys.jobs.detailsAndList(id),
     },
   });
 
+export const useMatchJobByUrl = () =>
+  useMutation({
+    mutationFn: async (url: string) =>
+      await api.get<IJob[]>(`/jobs/from-url?url=${encodeURIComponent(url)}`),
+  });
+
+// TODO: force-deleting a job unlinks its prep sessions, but only job queries
+// are invalidated here, so session list/detail caches can keep a stale jobId.
+// Invalidate queryKeys.sessions.all if we decide to fix this.
 export const useDeleteJob = () =>
   useMutation({
     mutationFn: async ({ id, force }: { id: string; force?: boolean }) => {

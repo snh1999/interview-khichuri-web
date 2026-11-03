@@ -1,11 +1,13 @@
 import { BriefcaseIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { cn } from "cn";
-import { generatePath, useNavigate } from "react-router";
 import { type IJobWithTrack, useFavoriteToggle } from "@/api/jobs";
-import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { FitCircle } from "@/components/jobs/FitCircle.tsx";
-import { getDateInfo, STATUS_LABEL } from "@/components/jobs/jobs.helpers";
+import {
+  getDateInfo,
+  STATUS_LABEL,
+  useNavigateToJob,
+} from "@/components/jobs/jobs.helpers";
 import { Button } from "@/components/ui/button.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import {
@@ -25,16 +27,13 @@ export const JobListRow = ({
   hideFavorite?: boolean;
   fit?: number;
 }) => {
-  const navigate = useNavigate();
-
   const { track } = job;
   const urgent = track.interviewDate
     ? isUrgent(track.interviewDate)
     : !track.appliedAt && isUrgent(job.deadline);
   const dateInfo = getDateInfo(job);
 
-  const handleClick = () =>
-    navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
+  const handleClick = useNavigateToJob(job.id);
 
   const handleToggleFavorite = useFavoriteToggle(job.id, !track.isFavorite);
 

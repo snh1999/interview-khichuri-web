@@ -119,6 +119,10 @@ const FitScoreCard = ({
 export const JobFitScore = ({ job }: Readonly<{ job: IJob }>) => {
   const { data: profile } = useProfile();
 
+  if (!job.description?.trim()) {
+    return null;
+  }
+
   const profileScore = scoreJob(profileFacts(profile), job);
 
   return (

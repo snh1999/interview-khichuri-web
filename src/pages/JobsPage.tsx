@@ -12,7 +12,7 @@ import {
   JobsSortMenu,
   useJobSort,
 } from "@/components/jobs/filters/JobsSortMenu.tsx";
-import { JobsStatusPills } from "@/components/jobs/filters/JobsStatusPills.tsx";
+import { JobsStatusSelect } from "@/components/jobs/filters/JobsStatusSelect.tsx";
 import { resolveDateFilters } from "@/components/jobs/filters/jobDatePresets";
 import { JobPostForm } from "@/components/jobs/JobPostForm";
 import { readFiltersFromParams } from "@/components/jobs/jobs.helpers.ts";
@@ -113,7 +113,7 @@ const JobsContent = () => {
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <JobsSearchInput />
-        <JobsStatusPills />
+        <JobsStatusSelect />
       </div>
 
       <Suspense fallback={<JobsListSkeleton />}>

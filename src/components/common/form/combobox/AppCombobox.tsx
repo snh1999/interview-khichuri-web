@@ -149,6 +149,7 @@ const BelowChips = ({
   );
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single/multiple and create flows share one combobox, splitting would duplicate state wiring
 export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
   const {
     data,

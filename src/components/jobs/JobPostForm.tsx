@@ -5,10 +5,10 @@ import {
   useExtractJob,
 } from "@/api/jobs";
 import { AiActionButton } from "@/components/common/ai/AiActionButton";
-import { CompaniesCombobox } from "@/components/common/form/combobox/CompaniesCombobox.tsx";
-import { RolesCombobox } from "@/components/common/form/combobox/RolesCombobox.tsx";
-import { TopicsCombobox } from "@/components/common/form/combobox/TopicsCombobox.tsx";
-import { FormArrayInput } from "@/components/common/form/FormArrayInput.tsx";
+import { CompaniesCombobox } from "@/components/common/form/combobox/CompaniesCombobox";
+import { RolesCombobox } from "@/components/common/form/combobox/RolesCombobox";
+import { TopicsCombobox } from "@/components/common/form/combobox/TopicsCombobox";
+import { FormArrayInput } from "@/components/common/form/FormArrayInput";
 import { FormDatePicker } from "@/components/common/form/FormDatePicker";
 import { FormInput } from "@/components/common/form/FormInput";
 import FormSelect from "@/components/common/form/FormSelect";
@@ -16,10 +16,11 @@ import {
   CURRENCIES,
   REMOTE_PREFERENCES,
 } from "@/components/job-profile/profile.data.ts";
-import { useJobPostForm } from "@/components/jobs/JobPostForm.helpers.ts";
+import { useJobPostForm } from "@/components/jobs/JobPostForm.helpers";
 import {
   parseJobLinks,
   STATUS_OPTIONS,
+  useNavigateToJob,
 } from "@/components/jobs/jobs.helpers.ts";
 import { Button } from "@/components/ui/button";
 import { AsyncButton } from "@/components/ui/button/AsyncButton";
@@ -41,23 +42,29 @@ interface IProps {
   onSuccess: () => void;
   showTrigger?: boolean;
   initialDescription?: string;
+  initialUrl?: string;
 }
 
+// TODO: expand duplicate detection beyond exact URL matches (title/company/location).
 export const JobPostForm = ({
   job,
   onSuccess,
   initialDescription,
+  initialUrl,
   onOpenChange,
   open,
 }: IProps) => {
   const extractJob = useExtractJob();
 
-  const { form, isLoading, onSubmit } = useJobPostForm({
-    job,
-    open,
-    initialDescription,
-    onSuccess,
-  });
+  const { form, isLoading, onSubmit, matchedJob, isSystemJob } = useJobPostForm(
+    {
+      job,
+      open,
+      initialDescription,
+      initialUrl,
+      onSuccess,
+    }
+  );
 
   const description = form.watch("description");
   const links = form.watch("links");
@@ -70,6 +77,8 @@ export const JobPostForm = ({
     form.setValue("companyName", name, { shouldDirty: true });
     form.clearErrors("companyName");
   };
+
+  const handleVisitJob = useNavigateToJob(matchedJob?.id ?? "");
 
   const handleExtract = async (provider: string, model?: string) => {
     const joinedLinks = links
@@ -100,6 +109,7 @@ export const JobPostForm = ({
             }
           : {}),
         companyName: result.companyName ?? "",
+        companyId: null,
         roleId: result.roleId ?? null,
         topicNames: result.topicNames ?? [],
         deadline: stringToDate(result.deadline),
@@ -124,103 +134,121 @@ export const JobPostForm = ({
 
         <form onSubmit={onSubmit}>
           <DrawLogBody>
-            <FormInput
-              form={form}
-              label="Description"
-              name="description"
-              placeholder="Paste the job description here..."
-              rows={8}
-              textArea
-            />
+            {matchedJob ? (
+              <div className="flex flex-col gap-2 rounded-md border bg-muted/40 p-3 text-sm">
+                <p>
+                  This job already exists in Discover:{" "}
+                  <span className="font-medium">
+                    {matchedJob.title} at {matchedJob.companyName}{" "}
+                  </span>
+                  <Button onClick={handleVisitJob} size="sm" type="button">
+                    Check existing job
+                  </Button>
+                </p>
+              </div>
+            ) : null}
 
-            <FormInput
-              form={form}
-              label="Source URL"
-              name="url"
-              placeholder="e.g. https://company.com/careers/job-123"
-            />
+            {isSystemJob ? null : (
+              <>
+                <FormInput
+                  form={form}
+                  label="Description"
+                  name="description"
+                  placeholder="Paste the job description here..."
+                  rows={8}
+                  textArea
+                />
+                <FormInput
+                  form={form}
+                  label="Source URL"
+                  name="url"
+                  placeholder="e.g. https://company.com/careers/job-123"
+                />
+                <FormInput
+                  form={form}
+                  label="Title"
+                  name="title"
+                  placeholder="e.g. Senior Frontend Engineer"
+                />
+                <CompaniesCombobox
+                  companyId={form.watch("companyId") ?? null}
+                  companyName={form.watch("companyName") ?? ""}
+                  error={form.formState.errors.companyName?.message}
+                  onChange={handleCompanyChange}
+                  placeholder="e.g. Acme Corp"
+                />
+                <RolesCombobox
+                  disabled={Boolean(job)}
+                  form={form}
+                  label="Role"
+                  name="roleId"
+                />
+                <TopicsCombobox
+                  form={form}
+                  idsName="topicIds"
+                  names="topicNames"
+                />
+                <div className="flex items-center gap-2">
+                  <FormInput
+                    form={form}
+                    label="Location"
+                    name="location"
+                    placeholder="e.g. Remote, New York, NY"
+                  />
 
-            <FormInput
-              form={form}
-              label="Title"
-              name="title"
-              placeholder="e.g. Senior Frontend Engineer"
-            />
+                  <FormSelect
+                    form={form}
+                    label="Work Type"
+                    name="workType"
+                    placeholder="Select work type"
+                    selectData={REMOTE_PREFERENCES}
+                  />
 
-            <CompaniesCombobox
-              companyId={form.watch("companyId") ?? null}
-              companyName={form.watch("companyName") ?? ""}
-              error={form.formState.errors.companyName?.message}
-              onChange={handleCompanyChange}
-              placeholder="e.g. Acme Corp"
-            />
+                  <FormInput
+                    form={form}
+                    label="Experience Requirement"
+                    name="experienceRequired"
+                    placeholder="Years of experience"
+                    type="number"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <FormInput
+                    form={form}
+                    label="Minimum Salary"
+                    name="salaryLower"
+                    placeholder="e.g. 120000"
+                    type="number"
+                  />
 
-            <RolesCombobox
-              disabled={Boolean(job)}
-              form={form}
-              label="Role"
-              name="roleId"
-            />
+                  <FormInput
+                    form={form}
+                    label="Maximum Salary"
+                    name="salaryUpper"
+                    placeholder="e.g. 150000"
+                    type="number"
+                  />
 
-            <TopicsCombobox form={form} idsName="topicIds" names="topicNames" />
-            <div className="flex items-center gap-2">
-              <FormInput
-                form={form}
-                label="Location"
-                name="location"
-                placeholder="e.g. Remote, New York, NY"
-              />
-
-              <FormSelect
-                form={form}
-                label="Work Type"
-                name="workType"
-                placeholder="Select work type"
-                selectData={REMOTE_PREFERENCES}
-              />
-
-              <FormInput
-                form={form}
-                label="Experience Requirement"
-                name="experienceRequired"
-                placeholder="Years of experience"
-                type="number"
-              />
-            </div>
+                  <FormSelect
+                    form={form}
+                    label="Salary Currency"
+                    name="currency"
+                    placeholder={"Currency unit of the salary range"}
+                    selectData={CURRENCIES}
+                  />
+                </div>
+              </>
+            )}
 
             <div className="flex gap-2">
-              <FormInput
-                form={form}
-                label="Minimum Salary"
-                name="salaryLower"
-                placeholder="e.g. 120000"
-                type="number"
-              />
-
-              <FormInput
-                form={form}
-                label="Maximum Salary"
-                name="salaryUpper"
-                placeholder="e.g. 150000"
-                type="number"
-              />
-
-              <FormSelect
-                form={form}
-                label="Salary Currency"
-                name="currency"
-                placeholder={"Currency unit of the salary range"}
-                selectData={CURRENCIES}
-              />
-            </div>
-
-            <div className="flex gap-2">
-              <FormDatePicker
-                form={form}
-                label="Deadline"
-                name="deadline"
-                placeholder="Pick a deadline date..."
-              />
+              {isSystemJob ? null : (
+                <FormDatePicker
+                  form={form}
+                  label="Deadline"
+                  name="deadline"
+                  placeholder="Pick a deadline date..."
+                />
+              )}
               <FormSelect
                 form={form}
                 label="Status"
@@ -229,6 +257,7 @@ export const JobPostForm = ({
                 selectData={STATUS_OPTIONS}
               />
             </div>
+
             <div className="flex gap-2">
               <FormDatePicker
                 form={form}
@@ -253,28 +282,32 @@ export const JobPostForm = ({
               textArea
             />
 
-            <FormArrayInput
-              form={form}
-              label="Links"
-              name="links"
-              placeholder="https://example.com/job"
-            />
+            {isSystemJob ? null : (
+              <FormArrayInput
+                form={form}
+                label="Links"
+                name="links"
+                placeholder="https://example.com/job"
+              />
+            )}
           </DrawLogBody>
 
           <DrawLogFooter className="justify-between!">
-            <AiActionButton
-              description="Choose an AI provider to extract job details from the description and links."
-              disabled={!hasExtractContent}
-              execute={handleExtract}
-              executeLabel="AI Extract"
-              hideTarget
-              icon={<SparkleIcon className="size-4" />}
-              isLoading={extractJob.isPending}
-              title="Extract Job Details"
-              toastErrorMessage="Failed to extract job details"
-              toastSuccessMessage="Job details extracted"
-              variant="outline"
-            />
+            {isSystemJob ? null : (
+              <AiActionButton
+                description="Choose an AI provider to extract job details from the description and links."
+                disabled={!hasExtractContent}
+                execute={handleExtract}
+                executeLabel="AI Extract"
+                hideTarget
+                icon={<SparkleIcon className="size-4" />}
+                isLoading={extractJob.isPending}
+                title="Extract Job Details"
+                toastErrorMessage="Failed to extract job details"
+                toastSuccessMessage="Job details extracted"
+                variant="outline"
+              />
+            )}
 
             <div className="flex items-center gap-2">
               <DrawLogClose
@@ -282,7 +315,7 @@ export const JobPostForm = ({
               />
               <AsyncButton
                 disabled={!form.formState.isDirty}
-                isLoading={isLoading}
+                isLoading={isLoading || extractJob.isPending}
                 type="submit"
               >
                 {job ? "Update" : "Create"}

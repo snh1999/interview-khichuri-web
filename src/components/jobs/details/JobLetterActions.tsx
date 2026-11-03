@@ -2,7 +2,6 @@ import {
   EnvelopeSimpleIcon,
   FileTextIcon,
   LinkedinLogoIcon,
-  SparkleIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import {
@@ -22,7 +21,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
-import { Separator } from "../ui/separator";
+import { Separator } from "@/components/ui/separator.tsx";
 
 interface IAiDraft {
   description: string;
@@ -122,8 +121,7 @@ export const JobLetterActions = ({ job }: Readonly<{ job: IJob }>) => {
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button size="sm">
-              <SparkleIcon className="size-3" />
+            <Button size="sm" variant="secondary">
               Generate
             </Button>
           }

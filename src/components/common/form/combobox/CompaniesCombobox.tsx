@@ -75,6 +75,18 @@ const CompaniesComboboxInner = ({
     typedRef.current = next;
   };
 
+  const handleBlur = () => {
+    const typed = typedRef.current.trim();
+    const matched = realOptions.find(
+      (option) => option.label.toLowerCase() === typed.toLowerCase()
+    );
+    if (matched) {
+      onChange(Number(matched.value), matched.label);
+      return;
+    }
+    onChange(null, typed);
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key !== "Enter") {
       return;
@@ -101,6 +113,7 @@ const CompaniesComboboxInner = ({
       emptyText="Enter to select company"
       error={error}
       label={label}
+      onBlur={handleBlur}
       onChange={handleChange}
       onInputValueChange={handleInputValueChange}
       onKeyDown={handleKeyDown}

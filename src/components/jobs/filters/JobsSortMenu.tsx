@@ -11,7 +11,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useJobsStore } from "@/store/useJobsStore";
 
-export const JOB_SORT_OPTIONS: { value: TJobSortKey; label: string }[] = [
+interface IJobSortOption {
+  value: TJobSortKey;
+  label: string;
+}
+
+export const JOB_SORT_OPTIONS: readonly IJobSortOption[] = [
   { value: "default", label: "Default" },
   { value: "newest", label: "Newest" },
   { value: "oldest", label: "Oldest" },
@@ -19,6 +24,14 @@ export const JOB_SORT_OPTIONS: { value: TJobSortKey; label: string }[] = [
   { value: "interview", label: "Interview" },
   { value: "applied", label: "Applied" },
 ] as const;
+
+export const DISCOVER_SORT_OPTIONS: readonly IJobSortOption[] =
+  JOB_SORT_OPTIONS.filter(
+    (option) => option.value !== "interview" && option.value !== "applied"
+  );
+
+export const isDiscoverSort = (sort: TJobSortKey) =>
+  DISCOVER_SORT_OPTIONS.some((option) => option.value === sort);
 
 export const useJobSort = (): {
   currentSort: TJobSortKey;
@@ -30,11 +43,12 @@ export const useJobSort = (): {
   return { currentSort, handleSortChange };
 };
 
-export const JobsSortMenu = () => {
+export const JobsSortMenu = ({
+  options = JOB_SORT_OPTIONS,
+}: Readonly<{ options?: readonly IJobSortOption[] }>) => {
   const { currentSort, handleSortChange } = useJobSort();
   const label =
-    JOB_SORT_OPTIONS.find((option) => option.value === currentSort)?.label ??
-    "Sort";
+    options.find((option) => option.value === currentSort)?.label ?? "Sort";
 
   return (
     <DropdownMenu>
@@ -52,7 +66,7 @@ export const JobsSortMenu = () => {
           value={currentSort}
         >
           <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-          {JOB_SORT_OPTIONS.map((option) => (
+          {options.map((option) => (
             <DropdownMenuRadioItem key={option.value} value={option.value}>
               {option.label}
             </DropdownMenuRadioItem>

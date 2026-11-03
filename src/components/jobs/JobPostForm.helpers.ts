@@ -1,14 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { type DefaultValues, useForm } from "react-hook-form";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  type DefaultValues,
+  type FieldErrors,
+  type Resolver,
+  useForm,
+} from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import type { $RefinementCtx } from "zod/v4/core";
 import {
-  type ICreateJobDto,
   type IJob,
   JOB_STATUS,
   useCreateJob,
+  useMatchJobByUrl,
   useUpdateJob,
   useUpdateTrackedJob,
 } from "@/api/jobs";
@@ -21,6 +26,7 @@ import {
 import { workTypeSchema } from "@/components/job-profile/profile.helpers.ts";
 import { parseJobLinks } from "@/components/jobs/jobs.helpers.ts";
 import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue.ts";
 import { useResolveLookupField } from "@/hooks/useResolveLookupField.ts";
 import { isHttpUrl, normalizeHttpUrl, stringToDate } from "@/lib/utils.ts";
 
@@ -117,6 +123,15 @@ export const jobPostSchema = z
         path: ["deadline"],
       });
     }
+
+    const { salaryLower, salaryUpper } = data;
+    if (salaryLower && salaryUpper && salaryLower > salaryUpper) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Minimum salary can't exceed maximum salary",
+        path: ["salaryLower"],
+      });
+    }
   });
 export type TJobFormData = z.infer<typeof jobPostSchema>;
 
@@ -124,12 +139,14 @@ interface IProps {
   job?: IJob;
   open: boolean;
   initialDescription?: string;
+  initialUrl?: string;
   onSuccess?: () => void;
 }
 
 const buildDefaultValues = (
   job?: IJob,
-  initialDescription?: string
+  initialDescription?: string,
+  initialUrl?: string
 ): DefaultValues<TJobFormData> => ({
   appliedAt: stringToDate(job?.track?.appliedAt),
   companyId: job?.companyId ?? null,
@@ -151,82 +168,159 @@ const buildDefaultValues = (
   status: job?.track?.status ?? "saved",
   title: job?.title ?? "",
   topicIds: job?.topicIds ?? [],
-  url: job?.url ?? null,
+  url: initialUrl ?? job?.url ?? null,
   workType: job?.workType ?? null,
 });
+
+const useMatchJob = ({ open }: { open: boolean }) => {
+  const matchJob = useMatchJobByUrl();
+  const [matchedJob, setMatchedJob] = useState<IJob | null>(null);
+  const latestUrlRef = useRef<string | null>(null);
+
+  const clearMatch = useCallback(() => {
+    latestUrlRef.current = null;
+    setMatchedJob(null);
+  }, []);
+
+  const checkUrl = useCallback(
+    async (url: string) => {
+      latestUrlRef.current = url;
+      try {
+        const matches = await matchJob.mutateAsync(url);
+        if (latestUrlRef.current === url) {
+          setMatchedJob(matches[0] ?? null);
+        }
+      } catch {
+        if (latestUrlRef.current === url) {
+          setMatchedJob(null);
+        }
+      }
+    },
+    [matchJob.mutateAsync]
+  );
+
+  useEffect(() => {
+    if (!open) {
+      clearMatch();
+    }
+  }, [open, clearMatch]);
+
+  return {
+    matchedJob,
+    checkUrl,
+    clearMatch,
+  };
+};
+
+const TRACK_FIELDS = ["status", "notes", "appliedAt", "interviewDate"];
 
 export const useJobPostForm = ({
   job,
   open,
   initialDescription,
+  initialUrl,
   onSuccess,
-}: IProps): TFormHook<TJobFormData> => {
+}: IProps): TFormHook<TJobFormData> & {
+  matchedJob: IJob | null;
+  isSystemJob: boolean;
+} => {
   const createJob = useCreateJob();
   const updateJob = useUpdateJob();
   const updateTrack = useUpdateTrackedJob();
+  const { matchedJob, checkUrl, clearMatch } = useMatchJob({ open });
+
+  const baseResolver = zodResolver(jobPostSchema) as Resolver<TJobFormData>;
+  const isSystemJob = Boolean(job && !job.userId);
 
   const form = useForm<TJobFormData>({
-    defaultValues: buildDefaultValues(job, initialDescription),
-    resolver: zodResolver(jobPostSchema),
+    defaultValues: buildDefaultValues(job, initialDescription, initialUrl),
+    resolver: async (values, context, options) => {
+      const result = await baseResolver(values, context, options);
+      if (!isSystemJob || Object.keys(result.errors).length === 0) {
+        return result;
+      }
+      const errors = Object.fromEntries(
+        Object.entries(result.errors).filter(([key]) =>
+          TRACK_FIELDS.includes(key)
+        )
+      ) as FieldErrors<TJobFormData>;
+      return Object.keys(errors).length > 0
+        ? { values: {}, errors }
+        : { values, errors: {} };
+    },
   });
 
   const resolveTopics = useResolveLookupField(form, "topics");
 
-  const watchedStatus = form.watch("status");
-  const watchedAppliedAt = form.watch("appliedAt");
-  const watchedInterviewDate = form.watch("interviewDate");
+  const watchedUrl = form.watch("url");
+  const debouncedUrl = useDebouncedValue(watchedUrl ?? "", 1000);
+  const settledUrl =
+    (watchedUrl ?? "") === debouncedUrl ? normalizeHttpUrl(debouncedUrl) : "";
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only auto-set appliedAt when status changes to "applied"
   useEffect(() => {
-    if (watchedStatus === "applied" && !form.getValues("appliedAt")) {
-      form.setValue("appliedAt", new Date(), { shouldDirty: true });
-    }
-  }, [watchedStatus]);
+    const { unsubscribe } = form.watch((values, { name, type }) => {
+      if (type !== "change") {
+        return; // ignore reset()/setValue()/setValues()
+      }
+      const { status, appliedAt, interviewDate } = values;
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only auto-set status when appliedAt changes
-  useEffect(() => {
-    if (watchedAppliedAt && form.getValues("status") === "saved") {
-      form.setValue("status", "applied", { shouldDirty: true });
-    }
-  }, [watchedAppliedAt]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only auto-set status when interviewDate changes
-  useEffect(() => {
-    if (
-      watchedInterviewDate &&
-      ["saved", "applied"].includes(form.getValues("status"))
-    ) {
-      form.setValue("status", "scheduled", { shouldDirty: true });
-    }
-  }, [watchedInterviewDate]);
+      if (name === "status" && status === "applied" && !appliedAt) {
+        form.setValue("appliedAt", new Date(), { shouldDirty: true });
+      }
+      if (name === "appliedAt" && appliedAt && status === "saved") {
+        form.setValue("status", "applied", { shouldDirty: true });
+      }
+      if (
+        name === "interviewDate" &&
+        interviewDate &&
+        (status === "saved" || status === "applied")
+      ) {
+        form.setValue("status", "scheduled", { shouldDirty: true });
+      }
+    });
+    return unsubscribe;
+  }, [form]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: job is excluded so background refetches don't wipe the user's edits
   useEffect(() => {
     if (!open) {
       return;
     }
-    form.reset(buildDefaultValues(job, initialDescription));
-  }, [open, initialDescription, form, job?.id]);
+    form.reset(buildDefaultValues(job, initialDescription, initialUrl));
+  }, [open, initialDescription, initialUrl, form, job?.id]);
 
+  useEffect(() => {
+    if (open && !job?.id && settledUrl) {
+      checkUrl(settledUrl);
+    } else {
+      clearMatch();
+    }
+  }, [open, settledUrl, checkUrl, clearMatch, job?.id]);
+
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <>
   const onSubmit = form.handleSubmit(async (rawData: TJobFormData) => {
     const { links, topicNames, ...data } = rawData;
     const { status, notes, appliedAt, interviewDate, ...canonical } = data;
-    const topicIds = await resolveTopics("topicIds", "topicNames");
+    const topicIds = isSystemJob
+      ? undefined
+      : await resolveTopics("topicIds", "topicNames");
     const payload = {
       ...canonical,
       url: canonical.url || null,
       ...(topicIds ? { topicIds } : {}),
       links: serializeJobLinks(links),
-    } as ICreateJobDto;
+    };
 
     const track = { status, notes, appliedAt, interviewDate };
 
     if (job) {
-      try {
-        await updateJob.mutateAsync({ id: job.id, ...payload });
-      } catch {
-        toast.error("Failed to update job");
-        return;
+      if (job.userId) {
+        try {
+          await updateJob.mutateAsync({ id: job.id, ...payload });
+        } catch {
+          toast.error("Failed to update job");
+          return;
+        }
       }
       try {
         await updateTrack.mutateAsync({ id: job.id, ...track });
@@ -251,6 +345,8 @@ export const useJobPostForm = ({
   return {
     form,
     onSubmit,
+    matchedJob,
+    isSystemJob,
     isLoading:
       createJob.isPending || updateJob.isPending || updateTrack.isPending,
   };

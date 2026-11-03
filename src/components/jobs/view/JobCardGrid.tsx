@@ -1,13 +1,12 @@
 import { cn } from "cn";
-import { generatePath, useNavigate } from "react-router";
 import { type IJobWithTrack, useFavoriteToggle } from "@/api/jobs";
-import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { FitCircle } from "@/components/jobs/FitCircle.tsx";
 import {
   getDateInfo,
   JOB_STATUS_VARIANT,
   STATUS_LABEL,
+  useNavigateToJob,
 } from "@/components/jobs/jobs.helpers";
 import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
@@ -18,7 +17,6 @@ interface IProps {
   fit?: number;
 }
 export const JobCardGrid = ({ job, fit }: Readonly<IProps>) => {
-  const navigate = useNavigate();
   const { track } = job;
   const urgent = track.interviewDate
     ? isUrgent(track.interviewDate)
@@ -26,9 +24,7 @@ export const JobCardGrid = ({ job, fit }: Readonly<IProps>) => {
 
   const variant = urgent ? "danger" : JOB_STATUS_VARIANT[track.status];
 
-  const handleClick = () =>
-    navigate(generatePath(JOB_DETAIL_PAGE, { jobId: job.id }));
-
+  const handleClick = useNavigateToJob(job.id);
   const handleToggleFavorite = useFavoriteToggle(job.id, !track.isFavorite);
 
   return (

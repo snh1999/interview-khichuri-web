@@ -1,5 +1,7 @@
+import { generatePath, useNavigate } from "react-router";
 import type { TJobStatus } from "@/api/jobs";
 import { type IJob, JOB_STATUS } from "@/api/jobs";
+import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import {
   DATE_TYPE_SELECTIONS,
   getDatePreset,
@@ -44,6 +46,11 @@ export interface IJobLink {
   url: string;
   label: string | null;
 }
+
+export const useNavigateToJob = (jobId: string) => {
+  const navigate = useNavigate();
+  return () => navigate(generatePath(JOB_DETAIL_PAGE, { jobId }));
+};
 
 /** `links` is stored as stringified `[{url, label}]`. */
 export const parseJobLinks = (links?: string | null): IJobLink[] => {
@@ -106,12 +113,25 @@ const isDateTypeSelection = (
 const isPresetKey = (value: string | null): value is TJobDatePresetKey =>
   getDatePreset(value) !== undefined;
 
+export const parseCompanyIdParam = (value: string | null) => {
+  if (value === null) {
+    return null;
+  }
+  const companyId = Number(value);
+  return Number.isInteger(companyId) && companyId > 0 ? companyId : null;
+};
+
 export const readFiltersFromParams = (params: URLSearchParams) => {
-  const { setStatus, setDateChange } = useJobsStore.getState();
+  const { setCompanyId, setStatus, setDateChange } = useJobsStore.getState();
 
   const statusParam = params.get("status");
   if (isJobStatus(statusParam)) {
     setStatus(statusParam);
+  }
+
+  const companyId = parseCompanyIdParam(params.get("companyId"));
+  if (companyId !== null) {
+    setCompanyId(companyId);
   }
 
   const presetParam = params.get("datePreset");
