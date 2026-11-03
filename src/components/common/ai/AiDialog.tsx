@@ -213,9 +213,10 @@ const AiDialogContent = ({
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label>Model Name</Label>
+                    <Label htmlFor="ai-model-name">Model Name</Label>
                     <Input
                       disabled={isLoading}
+                      id="ai-model-name"
                       onChange={handleModelChange}
                       placeholder="Name of specific model (optional)"
                       value={model}
@@ -226,9 +227,12 @@ const AiDialogContent = ({
 
               {showInstruction ? (
                 <div className="space-y-2">
-                  <Label>Additional instructions (optional)</Label>
+                  <Label htmlFor="ai-instructions">
+                    Additional instructions (optional)
+                  </Label>
                   <Textarea
                     disabled={isLoading}
+                    id="ai-instructions"
                     maxLength={MAX_INSTRUCTION_LENGTH}
                     onChange={handleInstructionChange}
                     placeholder="Your priorities or additional instructions for the app"

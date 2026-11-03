@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
+import { FieldLabel } from "@/components/ui/field.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import {
@@ -161,7 +162,7 @@ export const AddResume = ({ count, onSuccess }: Readonly<IProps>) => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Template</Label>
+                  <FieldLabel>Template</FieldLabel>
                   <TemplatePicker
                     disabled={isCreating}
                     onChange={setTemplateId}

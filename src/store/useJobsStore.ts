@@ -17,9 +17,11 @@ interface IJobDateFields {
 interface IJobFiltersState extends IJobDateFields {
   search: string;
   status: TJobStatus | undefined;
+  companyId: number | null;
   sort: TJobSortKey;
   setSearch: (search: string) => void;
   setStatus: (status: TJobStatus | undefined) => void;
+  setCompanyId: (companyId: number | null) => void;
   setSort: (sort: TJobSortKey) => void;
   setDateChange: (change: TDateFilterChange | undefined) => void;
   resetAll: () => void;
@@ -37,12 +39,15 @@ export const useJobsStore = create<IJobFiltersState>()(
     (set) => ({
       search: "",
       status: undefined,
+      companyId: null,
       sort: "default",
       ...DATE_FIELDS_DEFAULT,
 
       setSearch: (search) => set({ search }),
 
       setStatus: (status) => set({ status }),
+
+      setCompanyId: (companyId) => set({ companyId }),
 
       setSort: (sort) => set({ sort }),
 
