@@ -1,7 +1,7 @@
 import { PencilIcon, TrashIcon, XIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
-import type { INote, TNoteLinkKind } from "@/api/notes";
-import { noteLinkKind, useDeleteNote } from "@/api/notes";
+import type { INote } from "@/api/notes";
+import { useDeleteNote } from "@/api/notes";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { MarkdownContent } from "@/components/common/MarkdownContent.tsx";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
@@ -24,20 +24,6 @@ interface IProps {
   onEdit: (note: INote) => void;
   onFavoriteToggle: (note: INote) => Promise<unknown>;
 }
-
-const noteMeta = (
-  kind: TNoteLinkKind,
-  date: string,
-  linkLabel?: string
-): string => {
-  if (kind === "job") {
-    return linkLabel ? `${linkLabel} · ${date}` : `Job · ${date}`;
-  }
-  if (kind === "question") {
-    return `Question · ${date}`;
-  }
-  return date;
-};
 
 export const NoteDetailDrawer = ({ note, ...props }: Readonly<IProps>) => {
   if (!note) {
@@ -64,7 +50,6 @@ const NoteDetailContent = ({
   };
   const handleEdit = () => onEdit(note);
 
-  const kind = noteLinkKind(note);
   const date = format(note.updatedAt, "dd MMMM, yyyy");
 
   const handleOpenChange = (state: boolean) => onOpenChange(state);
@@ -75,9 +60,7 @@ const NoteDetailContent = ({
         <DrawerHeader className="flex flex-row items-start justify-between gap-3 text-left!">
           <div className="min-w-0">
             <DrawerTitle className="text-base">{note.title}</DrawerTitle>
-            <DrawerDescription>
-              {noteMeta(kind, date, note.jobTitle)}
-            </DrawerDescription>
+            <DrawerDescription>{date}</DrawerDescription>
           </div>
           <div className="flex items-center gap-1">
             <FavoriteButton

@@ -53,6 +53,16 @@ export const spansMultipleDays = (event: TJobEvent | TCustomEvent): boolean =>
   "startDate" in event &&
   !isSameDay(event.startDate, getEffectiveEndDate(event));
 
+export const isDeadlineVisible = (
+  deadline: string | null | undefined,
+  now: Date = new Date()
+): deadline is string => {
+  if (!deadline) {
+    return false;
+  }
+  return new Date(deadline) >= startOfMonth(now);
+};
+
 const isLastMinuteOfDay = (date: Date): boolean =>
   date.getHours() === 23 && date.getMinutes() >= 59;
 

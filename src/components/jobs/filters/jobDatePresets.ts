@@ -7,7 +7,7 @@ import {
   startOfYear,
   subMonths,
 } from "date-fns";
-import type { IDateFilter, IJob } from "@/api/jobs";
+import type { IDateFilter, IJobWithTrack } from "@/api/jobs";
 
 export type TJobDateType = IDateFilter["type"];
 
@@ -116,13 +116,17 @@ export const getDatePreset = (
   key: string | null | undefined
 ): IJobDatePreset | undefined => JOB_DATE_PRESETS.find((p) => p.key === key);
 
-export const DATE_FIELD_BY_TYPE: Record<
-  IDateFilter["type"],
-  "deadline" | "interviewDate" | "appliedAt"
-> = {
-  deadline: "deadline",
-  interview: "interviewDate",
-  applied: "appliedAt",
+const jobDateValue = (
+  job: IJobWithTrack,
+  type: IDateFilter["type"]
+): string | null | undefined => {
+  if (type === "deadline") {
+    return job.deadline;
+  }
+  if (type === "interview") {
+    return job.track.interviewDate;
+  }
+  return job.track.appliedAt;
 };
 
 const inDateRange = (value: string, filter: IDateFilter): boolean => {
@@ -130,19 +134,16 @@ const inDateRange = (value: string, filter: IDateFilter): boolean => {
   if (filter.from && time < new Date(filter.from).getTime()) {
     return false;
   }
-  if (filter.to && time > new Date(filter.to).getTime()) {
-    return false;
-  }
-  return true;
+  return !(filter.to && time > new Date(filter.to).getTime());
 };
 
 export const matchesJobDateFilters = (
-  job: IJob,
+  job: IJobWithTrack,
   filters: IDateFilter[]
 ): boolean =>
   filters.length === 0 ||
   filters.some((filter) => {
-    const value = job[DATE_FIELD_BY_TYPE[filter.type]];
+    const value = jobDateValue(job, filter.type);
     return typeof value === "string" ? inDateRange(value, filter) : false;
   });
 

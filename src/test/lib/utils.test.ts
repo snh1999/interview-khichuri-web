@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
   buildLookupNameMap,
+  capitalizeFirst,
   daysUntil,
   formatSectionLabel,
   getErrorMessage,
   getSystemTheme,
+  isHttpUrl,
   isUrgent,
   normalizeLookupName,
   stringToDate,
@@ -80,6 +82,24 @@ describe("formatSectionLabel", () => {
     expect(formatSectionLabel("summary")).toBe("Summary");
     expect(formatSectionLabel("a")).toBe("A");
     expect(formatSectionLabel("")).toBe("");
+  });
+});
+
+describe("capitalizeFirst", () => {
+  it("only changes the first character", () => {
+    expect(capitalizeFirst("frontend developer")).toBe("Frontend developer");
+    expect(capitalizeFirst("Already")).toBe("Already");
+    expect(capitalizeFirst("")).toBe("");
+  });
+});
+
+describe("isHttpUrl", () => {
+  it("accepts only http and https URLs", () => {
+    expect(isHttpUrl("https://example.com/job")).toBe(true);
+    expect(isHttpUrl("http://example.com")).toBe(true);
+    expect(isHttpUrl("javascript:alert(1)")).toBe(false);
+    expect(isHttpUrl("data:text/html,hi")).toBe(false);
+    expect(isHttpUrl("not a url")).toBe(false);
   });
 });
 

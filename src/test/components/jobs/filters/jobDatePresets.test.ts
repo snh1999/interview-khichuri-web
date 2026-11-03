@@ -1,6 +1,6 @@
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { describe, expect, it } from "vitest";
-import type { IJob } from "@/api/jobs";
+import type { IJobWithTrack } from "@/api/jobs";
 import {
   buildDateFiltersForType,
   DATE_TYPE_SELECTIONS,
@@ -10,14 +10,21 @@ import {
   resolveDateFilters,
 } from "@/components/jobs/filters/jobDatePresets.ts";
 
-const makeJob = (overrides: Partial<IJob> = {}): IJob => ({
+const makeJob = (overrides: Partial<IJobWithTrack> = {}): IJobWithTrack => ({
   companyName: "Acme",
   createdAt: "2024-01-01T00:00:00.000Z",
   description: "",
   id: "job-1",
-  status: "saved",
   title: "Frontend Engineer",
   updatedAt: "2024-01-01T00:00:00.000Z",
+  track: {
+    id: "track-1",
+    jobId: "job-1",
+    status: "saved",
+    isFavorite: false,
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
   ...overrides,
 });
 
@@ -77,7 +84,17 @@ describe("matchesJobDateFilters", () => {
   });
 
   it("checks the field for each filter type", () => {
-    const job = makeJob({ appliedAt: "2024-06-15T00:00:00.000Z" });
+    const job = makeJob({
+      track: {
+        id: "track-1",
+        jobId: "job-1",
+        status: "saved",
+        isFavorite: false,
+        appliedAt: "2024-06-15T00:00:00.000Z",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        updatedAt: "2024-01-01T00:00:00.000Z",
+      },
+    });
 
     expect(
       matchesJobDateFilters(job, [

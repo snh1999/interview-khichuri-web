@@ -263,6 +263,7 @@ select:-webkit-autofill:focus {
     scroll-behavior: auto !important;
   }
 }
+
 .sp-layout {
   display: flex !important;
   flex: 1 1 0% !important;

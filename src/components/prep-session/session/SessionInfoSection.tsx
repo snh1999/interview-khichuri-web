@@ -7,7 +7,7 @@ import {
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { generatePath, useNavigate } from "react-router";
-import { useGetJob } from "@/api/jobs";
+import { useJobQuery } from "@/api/jobs";
 import {
   type IPrepSession,
   useDeleteSession,
@@ -153,7 +153,7 @@ export const SessionInfoSection = ({ session }: IProps) => {
 };
 
 const JobDetails = ({ jobId }: { jobId: string }) => {
-  const { data: job } = useGetJob(jobId);
+  const { data: job } = useJobQuery(jobId);
   const navigate = useNavigate();
 
   if (!job) {

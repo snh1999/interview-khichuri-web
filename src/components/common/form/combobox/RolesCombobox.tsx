@@ -6,6 +6,7 @@ import {
   type TComboboxProps,
 } from "@/components/common/form/combobox/FormCombobox.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
+import { capitalizeFirst } from "@/lib/utils";
 
 const comboboxFallback = () => <Skeleton className="h-7 w-full rounded-md" />;
 
@@ -33,7 +34,7 @@ const RolesComboboxContent = <T extends FieldValues>({
   };
 
   const optionMapping = (item: ILookupEntry) => ({
-    label: item.name,
+    label: capitalizeFirst(item.name),
     value: item.id,
   });
 

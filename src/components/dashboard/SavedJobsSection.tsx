@@ -1,7 +1,7 @@
 import { ArrowSquareOutIcon, PlusCircleIcon } from "@phosphor-icons/react";
 import { useCallback, useState } from "react";
 import { Link } from "react-router";
-import type { IJob } from "@/api/jobs";
+import type { IJobWithTrack } from "@/api/jobs";
 import { JOBS_PAGE } from "@/app.constants";
 import { RECENT_ITEMS_COUNT } from "@/components/dashboard/dashboard.helpers";
 import { JobPostForm } from "@/components/jobs/JobPostForm";
@@ -15,7 +15,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export const SavedJobsSection = ({ jobs }: Readonly<{ jobs: IJob[] }>) => {
+export const SavedJobsSection = ({
+  jobs,
+}: Readonly<{ jobs: IJobWithTrack[] }>) => {
   const [open, setOpen] = useState(false);
 
   const openDialog = useCallback(() => setOpen(true), []);

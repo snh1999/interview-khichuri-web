@@ -1,15 +1,8 @@
-import {
-  BriefcaseIcon,
-  ClockIcon,
-  PencilIcon,
-  QuestionIcon,
-} from "@phosphor-icons/react";
+import { ClockIcon, PencilIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import type { INote } from "@/api/notes";
-import { noteLinkKind } from "@/api/notes";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { noteDetailsPlain } from "@/components/notes/notes.helpers.ts";
-import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Empty,
@@ -85,7 +78,6 @@ const NoteListItem = ({
   onFavoriteToggle,
   onEdit,
 }: Readonly<IProps & { note: INote }>) => {
-  const kind = noteLinkKind(note);
   const noteDetails = noteDetailsPlain(note.details);
   const handleSelect = () => setSelectedId(note.id);
   const handleToggleFavorite = () => onFavoriteToggle(note);
@@ -123,18 +115,6 @@ const NoteListItem = ({
         ) : null}
 
         <span className="flex min-w-0 flex-wrap items-center gap-2 text-muted-foreground text-xs">
-          {kind === "job" ? (
-            <Badge className="max-w-48" variant="outline">
-              <BriefcaseIcon />
-              <span className="truncate">{note.jobTitle ?? "Job"}</span>
-            </Badge>
-          ) : null}
-          {kind === "question" ? (
-            <Badge variant="outline">
-              <QuestionIcon />
-              Question
-            </Badge>
-          ) : null}
           <span className="flex items-center gap-1.5">
             <ClockIcon className="size-3.5 shrink-0" />
             Updated {format(note.updatedAt, "dd MMM, yyyy")}

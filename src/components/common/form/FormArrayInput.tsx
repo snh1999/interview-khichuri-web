@@ -29,9 +29,16 @@ export const FormArrayInput = <T extends FieldValues>({
     name,
   });
 
-  const arrayError = form.formState.errors[name] as unknown as
-    | { message?: string }
-    | undefined;
+  const rawError = form.formState.errors[name] as unknown;
+  const arrayError = Array.isArray(rawError)
+    ? rawError
+        .map(
+          (entry) =>
+            (entry as { value?: { message?: string } } | undefined)?.value
+              ?.message
+        )
+        .find(Boolean)
+    : (rawError as { message?: string } | undefined)?.message;
 
   const addNew = () => append({ value: "" } as FieldArray<T, ArrayPath<T>>);
 
@@ -71,7 +78,7 @@ export const FormArrayInput = <T extends FieldValues>({
           </Button>
         </div>
       </div>
-      {arrayError ? <FieldError errors={[arrayError]} /> : null}
+      {arrayError ? <FieldError errors={[{ message: arrayError }]} /> : null}
     </Field>
   );
 };

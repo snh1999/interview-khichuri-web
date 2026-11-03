@@ -23,7 +23,11 @@ describe("queryKeys", () => {
 
   it("builds job, key and lookup keys", () => {
     expect(queryKeys.jobs.detail("j-1")).toEqual(["jobs", "detail", "j-1"]);
-    expect(queryKeys.jobs.list({ a: 1 })).toEqual(["jobs", "list", { a: 1 }]);
+    expect(queryKeys.jobs.listWithFilter({ a: 1 })).toEqual([
+      "jobs",
+      "list",
+      { a: 1 },
+    ]);
     expect(queryKeys.keys.list()).toEqual(["keys", "list", undefined]);
     expect(queryKeys.lookups.topics).toEqual(["lookups", "topics"]);
   });
@@ -42,11 +46,18 @@ describe("queryKeys", () => {
   });
 
   it("builds resume keys including the ats getter", () => {
-    expect(queryKeys.resumes.ats.all).toEqual(["reviews", "ats"]);
-    expect(queryKeys.resumes.ats.filter()).toEqual(["reviews", "ats", {}]);
-    expect(queryKeys.resumes.reviewById("r-1")).toEqual([
-      ...queryKeys.resumes.resumeById("r-1"),
+    expect(queryKeys.resumes.ats.all).toEqual(["resumes", "reviews", "ats"]);
+    expect(queryKeys.resumes.ats.filter()).toEqual([
+      "resumes",
       "reviews",
+      "ats",
+      {},
+    ]);
+    expect(queryKeys.resumes.reviewById("r-1")).toEqual([
+      "resumes",
+      "reviews",
+      "detail",
+      "r-1",
     ]);
   });
 
@@ -79,7 +90,9 @@ describe("apiClient mutation cache", () => {
 
   it("invalidates nested key arrays and removes queries", async () => {
     const invalidate = vi.spyOn(apiClient, "invalidateQueries");
-    const remove = vi.spyOn(apiClient, "removeQueries");
+    apiClient.setQueryData(["c"], 1);
+    apiClient.setQueryData(["d"], 1);
+    const remove = vi.spyOn(apiClient.getQueryCache(), "remove");
     await apiClient
       .getMutationCache()
       .config.onSuccess?.(undefined, undefined, undefined, {

@@ -54,11 +54,17 @@ const useDetailResponse = (
           id: "job-1",
           title: "Staff Engineer",
           companyName: "Acme",
-          status: "applied",
-          isFavorite: false,
+          description: "A role.",
           createdAt: "2026-01-01T00:00:00.000Z",
           updatedAt: "2026-01-01T00:00:00.000Z",
-          topicIds: [],
+          track: {
+            id: "track-1",
+            jobId: "job-1",
+            status: "applied",
+            isFavorite: false,
+            createdAt: "2026-01-01T00:00:00.000Z",
+            updatedAt: "2026-01-01T00:00:00.000Z",
+          },
           ...jobOverride,
         },
       })
@@ -97,7 +103,7 @@ describe("SessionInfoSection", () => {
     expect(screen.getByText("System design deep dive")).toBeInTheDocument();
     expect(screen.getByText("System design")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Acme - Staff Engineer" })
+      await view.findByRole("button", { name: "Acme - Staff Engineer" })
     ).toBeInTheDocument();
     expect(screen.getByText("3 questions")).toBeInTheDocument();
     expect(screen.getByText("1 pinned")).toBeInTheDocument();

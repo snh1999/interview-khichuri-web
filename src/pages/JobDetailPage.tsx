@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { useGetJob } from "@/api/jobs";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
-import { JobDetailHeader } from "@/components/jobs/JobDetailHeader.tsx";
-import { JobFitScore } from "@/components/jobs/JobFitScore.tsx";
-import { JobInfoSection } from "@/components/jobs/JobInfoSection.tsx";
+import { JobDetailHeader } from "@/components/jobs/details/JobDetailHeader.tsx";
+import { JobFitScore } from "@/components/jobs/details/JobFitScore.tsx";
+import { JobInfoSection } from "@/components/jobs/details/JobInfoSection.tsx";
 import { LinkedSessionsSection } from "@/components/jobs/LinkedSessionsSection.tsx";
 import { ATSReview } from "@/components/resume/ats/ATSReview.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,13 +38,20 @@ const JobDetailContent = () => {
   const handleTabValueChange = (value: string | null) =>
     handleTabChange(String(value));
 
+  const tabs = job.track
+    ? JOB_DETAIL_TABS
+    : JOB_DETAIL_TABS.filter((tab) => tab.key !== "sessions");
+  const activeTab = tabs.some((tab) => tab.key === currentTab)
+    ? currentTab
+    : "overview";
+
   return (
     <div className="flex w-full flex-col gap-4">
       <JobDetailHeader job={job} />
 
-      <Tabs onValueChange={handleTabValueChange} value={currentTab}>
+      <Tabs onValueChange={handleTabValueChange} value={activeTab}>
         <TabsList className="w-full bg-card" variant="line">
-          {JOB_DETAIL_TABS.map((tab) => (
+          {tabs.map((tab) => (
             <TabsTrigger key={tab.key} value={tab.key}>
               {tab.label}
             </TabsTrigger>
@@ -62,9 +69,11 @@ const JobDetailContent = () => {
           <ATSReview job={job} />
         </TabsContent>
 
-        <TabsContent value="sessions">
-          <LinkedSessionsSection job={job} />
-        </TabsContent>
+        {job.track ? (
+          <TabsContent value="sessions">
+            <LinkedSessionsSection job={job} />
+          </TabsContent>
+        ) : null}
       </Tabs>
     </div>
   );

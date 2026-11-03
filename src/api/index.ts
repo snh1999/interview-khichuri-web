@@ -22,6 +22,26 @@ declare module "@tanstack/react-query" {
   }
 }
 
+const removeWhenUnobserved = (queryKey: QueryKey) => {
+  const cache = apiClient.getQueryCache();
+  for (const query of cache.findAll({ queryKey })) {
+    if (query.getObserversCount() === 0) {
+      cache.remove(query);
+      continue;
+    }
+    const unsubscribe = cache.subscribe((event) => {
+      if (
+        event.type === "observerRemoved" &&
+        event.query === query &&
+        query.getObserversCount() === 0
+      ) {
+        cache.remove(query);
+        unsubscribe();
+      }
+    });
+  }
+};
+
 export const apiClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
@@ -48,12 +68,11 @@ export const apiClient = new QueryClient({
 
       const removeKeys = resolve(mutation.meta?.removes);
       if (Array.isArray(removeKeys) && removeKeys.length > 0) {
-        if (Array.isArray(removeKeys[0])) {
-          for (const key of removeKeys) {
-            apiClient.removeQueries({ queryKey: key as never });
-          }
-        } else {
-          apiClient.removeQueries({ queryKey: removeKeys as never });
+        const keyList = Array.isArray(removeKeys[0])
+          ? removeKeys
+          : [removeKeys];
+        for (const key of keyList) {
+          removeWhenUnobserved(key as QueryKey);
         }
       }
     },
@@ -101,9 +120,14 @@ export const queryKeys = {
   },
   jobs: {
     all: ["jobs"] as const,
+    get list() {
+      return [...queryKeys.jobs.all, "list"] as const;
+    },
+    listWithFilter: (filters?: Record<string, unknown>) =>
+      [...queryKeys.jobs.list, filters] as const,
     detail: (id: string) => [...queryKeys.jobs.all, "detail", id] as const,
-    list: (filters?: Record<string, unknown>) =>
-      [...queryKeys.jobs.all, "list", filters] as const,
+    detailsAndList: (id: string) =>
+      [queryKeys.jobs.list, queryKeys.jobs.detail(id)] as const,
   },
   keys: {
     all: ["keys"] as const,
@@ -147,15 +171,18 @@ export const queryKeys = {
   },
   resumes: {
     all: ["resumes"] as const,
-    list: () => [...queryKeys.resumes.all, "list"] as const,
-    review: ["reviews"] as const,
+    get review() {
+      return [...queryKeys.resumes.all, "reviews"] as const;
+    },
+    get list() {
+      return [...queryKeys.resumes.all, "list"] as const;
+    },
     resumeById: (id: string) =>
       [...queryKeys.resumes.all, "detail", id] as const,
     resumeBySlug: (slug: string) =>
       [...queryKeys.resumes.all, "public", slug] as const,
     // using different key to stop user from refetching
-    resumeView: (id: string) =>
-      [...queryKeys.resumes.all, "resumeView", id] as const,
+    resumeView: (id: string) => [...queryKeys.resumes.all, "view", id] as const,
     ats: {
       get all() {
         return [...queryKeys.resumes.review, "ats"] as const;
@@ -164,10 +191,7 @@ export const queryKeys = {
         [...queryKeys.resumes.ats.all, filter ?? {}] as const,
     },
     reviewById: (resumeId: string) =>
-      [
-        ...queryKeys.resumes.resumeById(resumeId),
-        ...queryKeys.resumes.review,
-      ] as const,
+      [...queryKeys.resumes.review, "detail", resumeId] as const,
   },
   prompts: {
     all: ["prompts"] as const,
@@ -182,11 +206,14 @@ export const queryKeys = {
   },
   sessions: {
     all: ["sessions"] as const,
-    list: (filters?: Record<string, unknown>) =>
-      [...queryKeys.sessions.all, "list", filters] as const,
+    get list() {
+      return [...queryKeys.sessions.all, "list"] as const;
+    },
+    listWithFilter: (filters?: Record<string, unknown>) =>
+      [...queryKeys.sessions.list, filters] as const,
     detail: (id: string) => [...queryKeys.sessions.all, "detail", id] as const,
     detailsAndList: (id: string) =>
-      [queryKeys.sessions.list(), queryKeys.sessions.detail(id)] as const,
+      [queryKeys.sessions.list, queryKeys.sessions.detail(id)] as const,
     questions: (sessionId: string) =>
       [...queryKeys.sessions.all, "questions", sessionId] as const,
   },

@@ -12,7 +12,7 @@ import type { TFormHook } from "@/components/prep-session/session/session.helper
 import type { IQuestionBankItem } from "@/lib/questions/question-bank.ts";
 import { markdownToPlain } from "@/lib/utils.ts";
 
-export const NOTE_LINK_TYPES = ["job", "question_bank"] as const;
+export const NOTE_LINK_TYPES = ["question_bank"] as const;
 export type TNoteLinkType = (typeof NOTE_LINK_TYPES)[number];
 export type TNoteFormType = TNoteLinkType | "none";
 
@@ -21,7 +21,6 @@ export const NOTE_LINK_TYPE_OPTIONS: {
   label: string;
 }[] = [
   { value: "none", label: "None" },
-  { value: "job", label: "Job" },
   { value: "question_bank", label: "Question Bank" },
 ];
 
@@ -30,22 +29,16 @@ export interface INotePreset {
   questionBankId?: string;
 }
 
-const noteFormSchema = z
-  .object({
-    title: z.string().trim().min(1, "Title is required").max(127),
-    details: z
-      .string()
-      .trim()
-      .min(1, "Details are required")
-      .max(5000, "Details are too long"),
-    noteType: z.enum(["none", ...NOTE_LINK_TYPES]),
-    jobId: z.uuid().nullish(),
-    questionBankId: z.string().nullish(),
-  })
-  .refine((data) => data.noteType !== "job" || Boolean(data.jobId), {
-    message: "Please select a job",
-    path: ["jobId"],
-  });
+const noteFormSchema = z.object({
+  title: z.string().trim().min(1, "Title is required").max(127),
+  details: z
+    .string()
+    .trim()
+    .min(1, "Details are required")
+    .max(5000, "Details are too long"),
+  noteType: z.enum(["none", ...NOTE_LINK_TYPES]),
+  questionBankId: z.string().nullish(),
+});
 
 export type TNoteFormData = z.infer<typeof noteFormSchema>;
 
@@ -56,15 +49,12 @@ export const noteFormDefaults = (
   title: initialValues?.title ?? "",
   details: initialValues?.details ?? "",
   noteType: initialValues ? "none" : (preset?.noteType ?? "none"),
-  jobId: initialValues?.jobId ?? null,
   questionBankId: initialValues ? null : (preset?.questionBankId ?? null),
 });
 
 const toCreatePayload = (data: TNoteFormData): ICreateNoteDto => ({
   title: data.title,
   details: data.details,
-  questionId: null,
-  jobId: data.noteType === "job" ? data.jobId : null,
 });
 
 export const useNoteForm = (
@@ -157,8 +147,6 @@ export const noteDetailsPlain = (
     ? `${text.slice(0, maxLength).trimEnd()}…`
     : text;
 };
-
-export const JOB_TEMPLATE_TEXT = "";
 
 export const buildQuestionContextTemplate = (
   questionText: string,

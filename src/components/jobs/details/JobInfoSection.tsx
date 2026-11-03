@@ -1,5 +1,6 @@
 import type { IJobWithTopics } from "@/api/jobs";
 import { MarkdownContent } from "@/components/common/MarkdownContent.tsx";
+import { parseJobLinks } from "@/components/jobs/jobs.helpers.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
@@ -14,7 +15,8 @@ interface IProps {
 }
 
 export const JobInfoSection = ({ sectionId, job }: IProps) => {
-  const formattedLinks = job.links ? job.links.split("\n").filter(Boolean) : [];
+  const links = parseJobLinks(job.links);
+  const notes = job.track?.notes;
 
   return (
     <div className="space-y-4" id={sectionId}>
@@ -23,39 +25,43 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
           <CardTitle>Description</CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
-          <MarkdownContent content={job.description} />
+          <MarkdownContent content={job.description ?? ""} />
         </CardContent>
       </Card>
 
-      {job.notes ? (
+      {notes ? (
         <Card className="px-1">
           <CardHeader className="border-b">
             <CardTitle>Notes</CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
             <p className="wrap-break-word whitespace-pre-wrap text-sm">
-              {job.notes}
+              {notes}
             </p>
           </CardContent>
         </Card>
       ) : null}
 
-      {formattedLinks.length > 0 ? (
+      {links.length > 0 ? (
         <Card className="px-1">
           <CardHeader className="border-b">
             <CardTitle>Links</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-1 pt-4">
-            {formattedLinks.map((link) => (
+            {links.map((link) => (
               <Button
                 className="justify-start! h-auto break-all py-0 text-sm"
-                key={link}
+                key={`${link.url}-${link.label ?? ""}`}
                 render={
-                  <a href={link} rel="noopener noreferrer" target="_blank" />
+                  <a
+                    href={link.url}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  />
                 }
                 variant="link"
               >
-                {link}
+                {link.label || link.url}
               </Button>
             ))}
           </CardContent>

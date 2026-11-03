@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
-import { describe, expect, it, vi } from "vitest";
-import type { IJob } from "@/api/jobs";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import type { IJobWithTrack, ITrackedJob, TJobStatus } from "@/api/jobs";
 import {
   filterJobs,
   JobPageContent,
@@ -12,18 +12,30 @@ import { render } from "@/test/render.tsx";
 
 const FIT_CIRCLE = /profile fit [a-f]\+?/i;
 
-const makeJob = (overrides: Partial<IJob> = {}): IJob => ({
+const makeTrack = (status: TJobStatus = "saved"): ITrackedJob => ({
+  id: "track-1",
+  jobId: "job-1",
+  status,
+  isFavorite: false,
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+});
+
+const makeJob = (overrides: Partial<IJobWithTrack> = {}): IJobWithTrack => ({
   id: "job-1",
   title: "Staff Engineer",
   companyName: "Acme",
   description: "A senior role.",
-  status: "applied",
+  track: makeTrack(),
   links: null,
-  isFavorite: false,
   createdAt: "2026-01-01T00:00:00.000Z",
   updatedAt: "2026-01-01T00:00:00.000Z",
   topicIds: [],
   ...overrides,
+});
+
+afterEach(() => {
+  useJobsStore.setState({ status: undefined });
 });
 
 const emptyProfile = {
@@ -32,7 +44,10 @@ const emptyProfile = {
   workOverviews: [],
 };
 
-const useJobsResponse = (jobs: IJob[], profile: unknown = emptyProfile) =>
+const useJobsResponse = (
+  jobs: IJobWithTrack[],
+  profile: unknown = emptyProfile
+) =>
   server.use(
     http.get("*/api/v1/jobs", () =>
       HttpResponse.json({ statusCode: 200, message: "OK", data: jobs })
@@ -44,8 +59,8 @@ const useJobsResponse = (jobs: IJob[], profile: unknown = emptyProfile) =>
 
 const renderList = (onCreate = vi.fn()) => {
   useJobsResponse([
-    makeJob({ id: "j1", title: "Alpha", status: "applied" }),
-    makeJob({ id: "j2", title: "Beta", status: "saved" }),
+    makeJob({ id: "j1", title: "Alpha", track: makeTrack("applied") }),
+    makeJob({ id: "j2", title: "Beta", track: makeTrack("saved") }),
   ]);
   const view = render(
     <JobPageContent currentSort="default" onCreate={onCreate} />
@@ -54,9 +69,9 @@ const renderList = (onCreate = vi.fn()) => {
 };
 
 describe("filterJobs", () => {
-  const jobs: IJob[] = [
-    makeJob({ id: "a", status: "applied" }),
-    makeJob({ id: "b", status: "saved" }),
+  const jobs: IJobWithTrack[] = [
+    makeJob({ id: "a", track: makeTrack("applied") }),
+    makeJob({ id: "b", track: makeTrack("saved") }),
   ];
 
   it("filters by status", () => {

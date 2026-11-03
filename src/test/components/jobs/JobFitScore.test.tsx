@@ -1,8 +1,8 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import type { IJob } from "@/api/jobs";
-import { JobFitScore } from "@/components/jobs/JobFitScore.tsx";
+import { JobFitScore } from "@/components/jobs/details/JobFitScore.tsx";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
@@ -55,6 +55,18 @@ describe("JobFitScore", () => {
     // skills 100 + seniority 100, salary bonus forfeited -> 95
     expect(screen.getByText("95%")).toBeInTheDocument();
     expect(screen.queryByText(NO_PROFILE_DATA)).not.toBeInTheDocument();
+  });
+
+  it("hides the fit score when the job has no description", async () => {
+    server.use(...handlers(profile));
+    const { container } = render(
+      <JobFitScore job={{ ...job, description: null }} />
+    );
+
+    await waitFor(() => {
+      expect(container).toBeEmptyDOMElement();
+    });
+    expect(screen.queryByText("Profile fit")).toBeNull();
   });
 
   it("shows a message when there is no profile data", async () => {
