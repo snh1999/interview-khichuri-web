@@ -4,6 +4,7 @@ import { Link, Route, Routes, useLocation } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AiActionButton } from "@/components/common/ai/AiActionButton.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
+import { ApiError } from "@/lib/api-client.ts";
 import { useAppStore } from "@/store/appStore.ts";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
@@ -82,6 +83,74 @@ describe("AiActionButton", () => {
     expect(
       await screen.findByText("No AI providers available.")
     ).toBeInTheDocument();
+  });
+
+  it("shows an actionable API error message", async () => {
+    withProvider();
+    useAppStore.setState({ skipAiDialog: true });
+    const message =
+      "The AI response for job extraction was cut off at the output limit.";
+    const { user } = render(
+      <>
+        <Toaster duration={10_000} />
+        <AiActionButton
+          execute={vi.fn().mockRejectedValue(new ApiError(400, message))}
+          executeLabel="Summarize"
+          title="AI"
+        />
+      </>
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Summarize" }));
+
+    expect(await screen.findByText(message)).toBeInTheDocument();
+  });
+
+  it("uses the fallback message for transport errors", async () => {
+    withProvider();
+    useAppStore.setState({ skipAiDialog: true });
+    const { user } = render(
+      <>
+        <Toaster duration={10_000} />
+        <AiActionButton
+          execute={vi.fn().mockRejectedValue(new TypeError("Failed to fetch"))}
+          executeLabel="Summarize"
+          title="AI"
+          toastErrorMessage="Could not reach the server. Please try again."
+        />
+      </>
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Summarize" }));
+
+    expect(
+      await screen.findByText("Could not reach the server. Please try again.")
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Failed to fetch")).not.toBeInTheDocument();
+  });
+
+  it("hides internal server errors behind the generic message", async () => {
+    withProvider();
+    useAppStore.setState({ skipAiDialog: true });
+    const { user } = render(
+      <>
+        <Toaster duration={10_000} />
+        <AiActionButton
+          execute={vi
+            .fn()
+            .mockRejectedValue(new ApiError(500, "Internal server error"))}
+          executeLabel="Summarize"
+          title="AI"
+        />
+      </>
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Summarize" }));
+
+    expect(
+      await screen.findByText("Something went wrong. Please try again.")
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Internal server error")).not.toBeInTheDocument();
   });
 
   it("brings the user back to the page the AI call was made from", async () => {
