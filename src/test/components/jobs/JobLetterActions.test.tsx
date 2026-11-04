@@ -2,7 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { afterEach, describe, expect, it } from "vitest";
 import type { IJob } from "@/api/jobs";
-import { JobLetterActions } from "@/components/jobs/JobLetterActions.tsx";
+import { JobLetterActions } from "@/components/jobs/details/JobLetterActions.tsx";
 import { useAppStore } from "@/store/appStore.ts";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";

@@ -207,7 +207,12 @@ export const ScoreCard = ({
                 <span className="flex w-full items-center gap-3">
                   <span className="font-medium text-sm">{section.title}</span>
                   {resolvedBadge ? (
-                    <Badge variant="secondary">{resolvedBadge}</Badge>
+                    <Badge variant="secondary">
+                      {resolvedBadge}
+                      {section.badge === undefined ? (
+                        <span className="sr-only"> tips</span>
+                      ) : null}
+                    </Badge>
                   ) : null}
                 </span>
               </AccordionTrigger>
@@ -243,6 +248,7 @@ export const ScoreCard = ({
               ) : null}
             </div>
             <CircularProgress
+              aria-label="Overall score"
               className="shrink-0 text-primary"
               progressBgClassName="text-primary/15"
               progressClassName="text-primary"

@@ -1,4 +1,4 @@
-import { ArrowLeftIcon } from "@phosphor-icons/react";
+import { ArrowLeftIcon, QuestionIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { generatePath, Link } from "react-router";
 import { toast } from "sonner";
@@ -90,9 +90,10 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
   const currentQuestion = questions[currentIndex];
   const isLast = currentIndex === questions.length - 1;
 
-  const answerInput = (floating: boolean) => (
+  const answerInput = (floating: boolean, className?: string) => (
     <AnswerInput
       answer={answer}
+      className={className}
       floating={floating}
       isLast={isLast}
       onAnswerChange={handleAnswerChange}
@@ -150,9 +151,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
           live = chunk.questions ?? [];
           setLiveFollowUps(live);
         } else if (chunk.type === "error") {
-          toast.error(
-            chunk.message ?? "Could not generate follow-up questions"
-          );
+          toast.error(chunk.message ?? "Couldn't generate follow-up questions");
           break;
         } else {
           streamSucceeded = true;
@@ -163,7 +162,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
       if (err instanceof DOMException && err.name === "AbortError") {
         return;
       }
-      toast.error("Could not generate follow-up questions");
+      toast.error("Couldn't generate follow-up questions");
     } finally {
       try {
         if (!controller.signal.aborted && streamSucceeded) {
@@ -182,7 +181,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
           }
         }
       } catch {
-        toast.error("Could not save follow-up questions");
+        toast.error("Couldn't save follow-up questions");
       } finally {
         setStreamingFollowUps(false);
         setLiveFollowUps([]);
@@ -226,7 +225,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
 
   const handleEvaluate = async (provider: string, model?: string) => {
     if (!storedDraft?.items.some((item) => item.answer.trim().length > 0)) {
-      toast.error("No answers recorded yet");
+      toast.error("Add at least one answer before evaluating.");
       return;
     }
     setIsEvaluating(true);
@@ -241,12 +240,16 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
         })),
         elapsedSeconds: elapsedClock(),
       });
-      await archiveLocalDraft(storedDraft);
+      if (storedDraft) {
+        await archiveLocalDraft(storedDraft);
+      }
       await clearLocalDraft(interview.id);
       toast.success("Interview evaluated");
       setDialogOpen(false);
     } catch {
-      toast.error("Failed to evaluate interview");
+      toast.error(
+        "Couldn't evaluate the interview. Check your AI key and try again."
+      );
     } finally {
       setIsEvaluating(false);
     }
@@ -265,11 +268,11 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
       <Empty className="h-full">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <ArrowLeftIcon />
+            <QuestionIcon />
           </EmptyMedia>
-          <EmptyTitle>No questions found</EmptyTitle>
+          <EmptyTitle>No questions in this interview</EmptyTitle>
           <EmptyDescription>
-            Start a new mock interview from the session page to begin.
+            Start a new mock interview from the session page.
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -284,7 +287,7 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
             size="sm"
           >
             <ArrowLeftIcon className="size-4" />
-            Back to Session
+            Back to session
           </Button>
         </EmptyContent>
       </Empty>
@@ -309,16 +312,26 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
           startRef={startRef}
           totalElapsedRef={totalElapsedRef}
         >
-          <div className="relative flex h-full min-h-0 flex-col">
+          <div className="flex h-full min-h-0 flex-col">
             {panes.avatar ? (
               <AvatarView
                 nextQuestionText={nextQuestionText}
                 questionText={questionText}
               />
-            ) : null}
+            ) : (
+              <div className="flex min-h-0 flex-1 items-center justify-center text-muted-foreground text-sm">
+                Avatar hidden
+              </div>
+            )}
             {panes.chat ? null : (
-              <div className="absolute inset-x-4 bottom-4 z-20 flex justify-center">
-                <div className="w-full max-w-2xl">{answerInput(true)}</div>
+              <div className="shrink-0 bg-background">
+                <div className="border-border border-t px-4 py-2">
+                  <p className="font-medium text-[10px] text-muted-foreground uppercase tracking-wide">
+                    Question
+                  </p>
+                  <p className="text-sm">{questionText}</p>
+                </div>
+                {answerInput(false, "border-t-0")}
               </div>
             )}
           </div>
@@ -331,13 +344,13 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
             ? interviewEvaluationCopyPrompt({ transcript: items })
             : undefined
         }
-        description="Choose an AI provider to evaluate your interview."
+        description="Choose an AI provider to evaluate this interview."
         executeLabel="Evaluate"
         isLoading={isEvaluating}
         onExecute={handleEvaluate}
         onOpenChange={setDialogOpen}
         open={dialogOpen}
-        title="Evaluate Interview"
+        title="Evaluate interview"
       />
     </div>
   );

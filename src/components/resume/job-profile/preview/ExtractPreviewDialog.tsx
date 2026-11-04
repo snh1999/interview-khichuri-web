@@ -9,7 +9,10 @@ import {
 import { useMemo, useState } from "react";
 import type { TProfileFormData } from "@/components/job-profile/profile.helpers.ts";
 import { Section } from "@/components/resume/job-profile/preview/Section.tsx";
-import type { TResumeContent } from "@/components/resume/job-profile/resume.helpers.ts";
+import type {
+  IExtractedLookupEntries,
+  TResumeContent,
+} from "@/components/resume/job-profile/resume.helpers.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {
   DrawLog,
@@ -33,6 +36,7 @@ import {
 interface IProps {
   before?: TProfileFormData;
   data: TResumeContent;
+  lookupEntries: IExtractedLookupEntries;
   onClose: () => void;
   onMerge: (data: TProfileFormData) => void;
   onOverride: (data: TProfileFormData) => void;
@@ -46,6 +50,7 @@ type TMode = "merge" | "override";
 export const ExtractPreviewDialog = ({
   before,
   data,
+  lookupEntries,
   onClose,
   onMerge,
   onOverride,
@@ -54,6 +59,12 @@ export const ExtractPreviewDialog = ({
   const rows = useMemo(() => flattenRowGroups(groups), [groups]);
   const initialData = useMemo(() => defaultSelections(rows), [rows]);
 
+  const { professional, industries, projects } = lookupEntries;
+  const hasLookupEntries =
+    professional.length > 0 ||
+    industries.length > 0 ||
+    projects.some((project) => project.skills.length > 0);
+
   const [selections, setSelections] = useState<Record<string, TPick>>(() =>
     defaultSelections(rows)
   );
@@ -61,6 +72,7 @@ export const ExtractPreviewDialog = ({
   const [mode, setMode] = useState<TMode>("merge");
 
   const hasDecisions =
+    hasLookupEntries ||
     Object.keys(edits).length > 0 ||
     mode === "override" ||
     Object.keys(selections).some((key) => selections[key] !== initialData[key]);
@@ -141,6 +153,7 @@ export const ExtractPreviewDialog = ({
               title="Professional Information"
               {...shared}
             />
+            {hasLookupEntries ? <SkillAdditions names={lookupEntries} /> : null}
             {groups.workExperienceRows.length > 0 ? (
               <Section
                 emptyHint="No work experience on either side"
@@ -217,6 +230,33 @@ export const ExtractPreviewDialog = ({
         </DrawLogFooter>
       </DrawLogContent>
     </DrawLog>
+  );
+};
+
+const SkillAdditions = ({ names }: { names: IExtractedLookupEntries }) => {
+  const groups = [
+    { label: "Skills", values: names.professional },
+    { label: "Industries", values: names.industries },
+    {
+      label: "Project skills",
+      values: [...new Set(names.projects.flatMap((project) => project.skills))],
+    },
+  ].filter((group) => group.values.length > 0);
+
+  return (
+    <div className="space-y-1 py-2">
+      <h2 className="font-bold text-sm">Skills (added on apply)</h2>
+      <div className="space-y-1 overflow-hidden rounded-md border bg-muted/50 px-3 py-2 text-xs">
+        {groups.map((group) => (
+          <p key={group.label}>
+            <span className="font-medium text-muted-foreground">
+              {group.label}:
+            </span>{" "}
+            {group.values.join(", ")}
+          </p>
+        ))}
+      </div>
+    </div>
   );
 };
 

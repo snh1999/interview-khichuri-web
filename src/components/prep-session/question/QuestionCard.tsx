@@ -101,7 +101,13 @@ export const QuestionCard = ({
 
       <CardHeader className="flex w-full items-start justify-between gap-3 py-0 text-left">
         <div className="flex gap-2">
-          <Button onClick={handleOpenChange} size="icon-sm" variant="ghost">
+          <Button
+            aria-expanded={expanded}
+            aria-label={expanded ? "Collapse question" : "Expand question"}
+            onClick={handleOpenChange}
+            size="icon-sm"
+            variant="ghost"
+          >
             {expanded ? <CaretDownIcon /> : <CaretRightIcon />}
           </Button>
 
@@ -126,6 +132,7 @@ export const QuestionCard = ({
           />
 
           <Button
+            aria-label="Edit question"
             onClick={viewUpdateForm}
             size="icon-sm"
             type="button"
@@ -135,6 +142,7 @@ export const QuestionCard = ({
           </Button>
 
           <MutationButton
+            aria-label="Delete question"
             dialogDescription="This operation will delete the question."
             errorMessage="Failed to delete question"
             mutationFn={handleDeleteQuestion}
@@ -149,7 +157,7 @@ export const QuestionCard = ({
       </CardHeader>
 
       {openAnswer && question.answer ? (
-        <CardContent className="bg-primary/10 pt-2">
+        <CardContent className="bg-muted/40 pt-2">
           <MarkdownContent content={question.answer} />
         </CardContent>
       ) : null}

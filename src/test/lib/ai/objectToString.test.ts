@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { objectToString } from "@/lib/ai/objectToString.ts";
 
 const ISO = "2026-01-15T12:00:00.000Z";
-const formatted = new Date(ISO).toLocaleDateString();
+const formatted = new Date(ISO).toISOString();
 
 describe("objectToString", () => {
   it("turns camelCase keys into labels and formats scalars", () => {

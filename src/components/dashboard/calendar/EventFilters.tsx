@@ -13,7 +13,7 @@ import {
 import type { TEventVisibility } from "./calendar.types.ts";
 import { EVENT_COLORS, EVENT_LABELS } from "./calendar.types.ts";
 
-const SOURCES: TEventSource[] = ["deadline", "interview", "applied", "custom"];
+const SOURCES: TEventSource[] = ["deadline", "interview", "custom"];
 
 interface Props {
   visibility: TEventVisibility;

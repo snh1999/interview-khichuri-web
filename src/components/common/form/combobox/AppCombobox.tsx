@@ -1,5 +1,5 @@
 import { PlusIcon, SpinnerGapIcon } from "@phosphor-icons/react";
-import { useEffect, useMemo, useState } from "react";
+import { type KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { Chip } from "@/components/ui/Chip.tsx";
 import {
   Combobox,
@@ -40,6 +40,9 @@ interface IBaseProps {
   error?: string;
   name?: string;
   onBlur?: () => void;
+  onInputValueChange?: (value: string) => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
+  emptyText?: string;
 }
 
 interface ISingleProps<D> extends IBaseProps {
@@ -63,6 +66,9 @@ interface IMultiProps<D> extends IBaseProps {
 
 export type TAppComboboxProps<D> = ISingleProps<D> | IMultiProps<D>;
 
+const errorBorder = (error?: string) =>
+  error ? "border-destructive" : undefined;
+
 const toDisplayText = (
   value: TValue | null,
   optionMap: ReadonlyMap<TValue, IComboboxOption>
@@ -71,11 +77,13 @@ const toDisplayText = (
 const shouldShowCreate = (
   isCreating: boolean,
   creatable: boolean,
+  onCreateItem: IBaseProps["onCreateItem"],
   inputValue: string,
   options: IComboboxOption[]
 ) =>
   !isCreating &&
   creatable &&
+  Boolean(onCreateItem) &&
   inputValue.trim().length > 0 &&
   !options.some(
     (o) => o.label.toLowerCase() === inputValue.trim().toLowerCase()
@@ -93,6 +101,11 @@ const toComboValue = (
   }
   return value === null ? null : (optionMap.get(value as TValue) ?? null);
 };
+
+const hasSingleValue = (
+  multiple: boolean | undefined,
+  value: TValue | TValue[] | null
+) => multiple !== true && value !== null;
 
 interface IBelowChipsProps {
   values: TValue[];
@@ -136,6 +149,7 @@ const BelowChips = ({
   );
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: single/multiple and create flows share one combobox, splitting would duplicate state wiring
 export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
   const {
     data,
@@ -151,6 +165,9 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
     error,
     name,
     onBlur,
+    onInputValueChange,
+    onKeyDown,
+    emptyText,
     value,
     onChange,
   } = props;
@@ -184,6 +201,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
   const showCreate = shouldShowCreate(
     isCreating,
     creatable ?? false,
+    onCreateItem,
     inputValue,
     options
   );
@@ -201,9 +219,6 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
     setIsCreating(true);
     try {
       await onCreateItem?.(itemLabel);
-      setInputValue("");
-    } catch {
-      setInputValue(itemLabel);
     } finally {
       setIsCreating(false);
     }
@@ -235,6 +250,11 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
     }
   };
 
+  const handleInputValueChange = (next: string) => {
+    setInputValue(next);
+    onInputValueChange?.(next);
+  };
+
   const itemToStringValue = (opt: IComboboxOption) => opt.label;
 
   return (
@@ -248,7 +268,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
         itemToStringValue={itemToStringValue}
         multiple={multiple}
         name={name}
-        onInputValueChange={setInputValue}
+        onInputValueChange={handleInputValueChange}
         onValueChange={handleValueChange}
         value={comboValue}
       >
@@ -264,6 +284,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
                   ))}
                   <ComboboxChipsInput
                     onBlur={onBlur}
+                    onKeyDown={onKeyDown}
                     placeholder={placeholder}
                   />
                 </>
@@ -272,10 +293,13 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
           </ComboboxChips>
         ) : (
           <ComboboxInput
+            className={errorBorder(error)}
             disabled={isCreating || disabled}
             id={name}
             onBlur={onBlur}
+            onKeyDown={onKeyDown}
             placeholder={isCreating ? "Creating..." : placeholder}
+            showClear={hasSingleValue(multiple, value)}
             showTrigger={!isCreating}
           >
             {isCreating ? (
@@ -284,9 +308,12 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
           </ComboboxInput>
         )}
         <ComboboxContent anchor={multiple ? anchor : undefined}>
-          <ComboboxEmpty>
-            {showCreate ? inputValue.trim() : "No items found."}
-          </ComboboxEmpty>
+          {
+            <ComboboxEmpty>
+              {emptyText ??
+                (showCreate ? inputValue.trim() : "No items found.")}
+            </ComboboxEmpty>
+          }
           <ComboboxList>
             {(opt: IComboboxOption) =>
               opt.isNew ? (

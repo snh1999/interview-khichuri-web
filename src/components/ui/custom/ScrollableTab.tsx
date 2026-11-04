@@ -205,12 +205,16 @@ export const ScrollableTabs = <T extends string>({
         <CaretLeftIcon />
       </Button>
       <nav
+        aria-label="Tabs"
         ref={navRef}
+        role="tablist"
         className="no-scrollbar relative flex min-w-0 flex-1 overflow-x-auto"
       >
         {tabs.map((tab) => (
           <button
+            aria-selected={currentTab === tab.key}
             key={tab.key}
+            role="tab"
             type="button"
             data-tab={tab.key}
             onClick={() => handleClick(tab.key)}

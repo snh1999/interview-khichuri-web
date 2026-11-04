@@ -31,8 +31,8 @@ export const ChangedRow = ({ row, pick, edited, onSelect, onEdit }: IProps) => {
 
   return (
     <div
-      className={`border-b border-l-2 px-3 py-2 last:border-0 ${isModified ? "border-l-amber-500" : ""} 
-      ${accepted ? "border-l-emerald-500" : "border-l-transparent"}`}
+      className={`border-b border-l-2 px-3 py-2 last:border-0 ${isModified ? "border-l-signal-warning" : ""} 
+      ${accepted ? "border-l-signal-success" : "border-l-transparent"}`}
     >
       <div className="mb-1 flex items-center justify-between gap-2">
         <span className="text-muted-foreground">{row.label}</span>

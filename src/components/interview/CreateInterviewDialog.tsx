@@ -12,7 +12,6 @@ import { TopicsAppCombobox } from "@/components/common/form/combobox/TopicsAppCo
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import { CheckboxGroup, CheckboxGroupItem } from "@/components/ui/checkbox.tsx";
 import { Field, FieldLabel } from "@/components/ui/field.tsx";
-import { Label } from "@/components/ui/label.tsx";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx";
 import { generateQuestionsCopyPrompt } from "@/lib/ai/prompts.ts";
 import { useCreateInterviewForm } from "./interview.helpers.ts";
@@ -93,7 +92,7 @@ export const CreateInterviewDialog = ({
     >
       <div className="space-y-6">
         <div className="space-y-2 pt-2">
-          <Label>Flow</Label>
+          <FieldLabel>Flow</FieldLabel>
           <ToggleGroup
             className="grid w-full grid-cols-2"
             onValueChange={handleModeChange}

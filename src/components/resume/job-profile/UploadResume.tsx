@@ -146,9 +146,10 @@ export const UploadResume = ({
           </CardHeader>
           <CardContent className="flex flex-col items-end space-y-4 pt-3">
             <div className="w-full space-y-3">
-              <Label>File name (optional)</Label>
+              <Label htmlFor="resume-file-name">File name (optional)</Label>
               <Input
                 disabled={isUploading}
+                id="resume-file-name"
                 onChange={handleFileRename}
                 placeholder="Renamed file"
                 value={name}

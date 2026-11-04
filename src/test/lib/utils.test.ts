@@ -1,10 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildLookupNameMap,
+  capitalizeFirst,
   daysUntil,
   formatSectionLabel,
   getErrorMessage,
   getSystemTheme,
+  isHttpUrl,
   isUrgent,
+  normalizeLookupName,
   stringToDate,
   stripNulls,
 } from "@/lib/utils.ts";
@@ -78,5 +82,43 @@ describe("formatSectionLabel", () => {
     expect(formatSectionLabel("summary")).toBe("Summary");
     expect(formatSectionLabel("a")).toBe("A");
     expect(formatSectionLabel("")).toBe("");
+  });
+});
+
+describe("capitalizeFirst", () => {
+  it("only changes the first character", () => {
+    expect(capitalizeFirst("frontend developer")).toBe("Frontend developer");
+    expect(capitalizeFirst("Already")).toBe("Already");
+    expect(capitalizeFirst("")).toBe("");
+  });
+});
+
+describe("isHttpUrl", () => {
+  it("accepts only http and https URLs", () => {
+    expect(isHttpUrl("https://example.com/job")).toBe(true);
+    expect(isHttpUrl("http://example.com")).toBe(true);
+    expect(isHttpUrl("javascript:alert(1)")).toBe(false);
+    expect(isHttpUrl("data:text/html,hi")).toBe(false);
+    expect(isHttpUrl("not a url")).toBe(false);
+  });
+});
+
+describe("lookup names", () => {
+  it("normalizes names the same way the API does", () => {
+    expect(normalizeLookupName("  Node.js  ")).toBe("nodejs");
+    expect(normalizeLookupName("C++")).toBe("c++");
+    expect(normalizeLookupName("React (Native)")).toBe("react native");
+  });
+
+  it("builds a normalized name to id map", () => {
+    const map = buildLookupNameMap([
+      { id: 1, name: "React.js" },
+      { id: 2, name: "Node" },
+      { id: 3, name: "reactjs" },
+    ]);
+
+    expect(map.get("reactjs")).toBe(1);
+    expect(map.get("node")).toBe(2);
+    expect(map.size).toBe(2);
   });
 });

@@ -8,12 +8,7 @@ import {
 import { INTERVIEW_PAGE } from "@/app.constants.ts";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
 import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
-
-const formatDate = (value: string) =>
-  new Date(value).toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+import { formatDateTime } from "@/lib/date";
 
 const formatDuration = (seconds: number | null | undefined) => {
   const total = seconds ?? 0;
@@ -41,7 +36,7 @@ const SCORE_TIER = (score: number) => {
 
 interface IProps {
   interview: IInterview;
-  onDelete: (interview: IInterview) => Promise<void>;
+  onDelete?: (interview: IInterview) => Promise<void>;
 }
 
 export const InterviewItem = ({ interview, onDelete }: IProps) => {
@@ -54,7 +49,9 @@ export const InterviewItem = ({ interview, onDelete }: IProps) => {
     startedAt,
   } = interview;
   const { data: stored } = useLocalInterviewState(id, !completedAt);
-  const handleDelete = () => onDelete(interview);
+  const handleDelete = async () => {
+    await onDelete?.(interview);
+  };
   const answerCount = stored
     ? stored.items.filter((item) => item.answer.trim().length > 0).length
     : 0;
@@ -67,13 +64,13 @@ export const InterviewItem = ({ interview, onDelete }: IProps) => {
   let subtitle: string | null = null;
 
   if (isCompleted) {
-    title = `Completed · ${formatDate(completedAt)}`;
+    title = `Completed · ${formatDateTime(completedAt)}`;
     subtitle = formatDuration(elapsedSeconds);
   } else if (hasAnswers) {
-    title = `In progress · ${formatDate(startedAt)}`;
+    title = `In progress · ${formatDateTime(startedAt)}`;
     subtitle = `${answerCount} answered`;
   } else {
-    title = `Created · ${formatDate(createdAt)}`;
+    title = `Created · ${formatDateTime(createdAt)}`;
   }
 
   return (
@@ -106,20 +103,22 @@ export const InterviewItem = ({ interview, onDelete }: IProps) => {
           </p>
         )}
       </Link>
-      <MutationButton
-        actionLabel="Delete"
-        className="ml-4"
-        dialogDescription="This will permanently delete this mock interview and its transcript."
-        dialogTitle="Delete this mock interview?"
-        errorMessage="Failed to delete mock interview"
-        mutationFn={handleDelete}
-        requireConfirmation
-        successMessage="Mock interview deleted"
-        variant="destructive"
-      >
-        <TrashIcon className="size-3.5" />
-        Delete
-      </MutationButton>
+      {onDelete ? (
+        <MutationButton
+          actionLabel="Delete"
+          className="ml-4"
+          dialogDescription="This will permanently delete this mock interview and its transcript."
+          dialogTitle="Delete this mock interview?"
+          errorMessage="Failed to delete mock interview"
+          mutationFn={handleDelete}
+          requireConfirmation
+          successMessage="Mock interview deleted"
+          variant="destructive"
+        >
+          <TrashIcon className="size-3.5" />
+          Delete
+        </MutationButton>
+      ) : null}
     </GutterCard>
   );
 };

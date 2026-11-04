@@ -1,23 +1,24 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  KeyIcon,
-  PencilIcon,
-  ShieldCheckIcon,
-  TrashIcon,
-} from "@phosphor-icons/react";
-import { cn } from "cn";
+import { KeyIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import type { IApiKey } from "@/api/keys";
 import {
+  type IApiKey,
+  providerNeedsBaseUrl,
   useActivateApiKey,
   useDeleteApiKey,
   useUpdateApiKey,
 } from "@/api/keys";
 import { MAX_SHORT_LENGTH } from "@/app.constants.ts";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
+import {
+  baseUrlSchema,
+  getBaseUrlPlaceholder,
+  MODEL_PLACEHOLDER,
+  requireBaseUrl,
+} from "@/components/keys/key.schemas.ts";
 import { Badge } from "@/components/ui/badge.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { MutationButton } from "@/components/ui/button/MutationButton.tsx";
@@ -37,6 +38,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog.tsx";
+import { formatDate } from "@/lib/date";
 import { useAppStore } from "@/store/appStore.ts";
 
 interface Props {
@@ -45,9 +47,12 @@ interface Props {
 }
 
 const editSchema = z.object({
+  baseUrl: baseUrlSchema,
   model: z.string().max(MAX_SHORT_LENGTH).nullish(),
   name: z.string().min(1, "Name is required").max(MAX_SHORT_LENGTH),
 });
+
+const customProviderEditSchema = editSchema.superRefine(requireBaseUrl);
 
 type EditFormData = z.infer<typeof editSchema>;
 
@@ -57,6 +62,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
   const { mutateAsync: updateKey } = useUpdateApiKey();
   const [editOpen, setEditOpen] = useState(false);
   const isActive = apiKey.isActive === true;
+  const needsBaseUrl = providerNeedsBaseUrl(apiKey.provider);
 
   const setDefaultAiProvider = useAppStore(
     (state) => state.setDefaultAiProvider
@@ -67,10 +73,11 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
 
   const form = useForm<EditFormData>({
     defaultValues: {
+      baseUrl: needsBaseUrl ? (apiKey.baseUrl ?? "") : "",
       model: apiKey.model ?? "",
       name: apiKey.name,
     },
-    resolver: zodResolver(editSchema),
+    resolver: zodResolver(needsBaseUrl ? customProviderEditSchema : editSchema),
   });
 
   const onSubmit = form.handleSubmit(async (data) => {
@@ -78,6 +85,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
       id: apiKey.id,
       model: data.model || null,
       name: data.name,
+      ...(needsBaseUrl ? { baseUrl: data.baseUrl?.trim() || null } : {}),
     });
     toast.success("API key updated");
     setEditOpen(false);
@@ -99,37 +107,29 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
           <CardDescription>Model: {apiKey.model}</CardDescription>
         ) : null}
         <CardDescription>
-          Created:{" "}
-          {new Intl.DateTimeFormat(undefined, {
-            dateStyle: "long",
-          }).format(new Date(apiKey.createdAt))}
+          Created: {formatDate(apiKey.createdAt, "PPP")}
         </CardDescription>
         <CardAction className="flex items-center gap-3 pt-3">
           {isActive ? (
-            <div className={cn("flex items-center gap-1")}>
-              {isPrimary ? (
-                <ShieldCheckIcon
-                  className="size-4 text-signal-success"
-                  weight="fill"
-                />
-              ) : (
+            <div className="flex items-center gap-1">
+              {isPrimary ? null : (
                 <Button
                   onClick={handleSetPrimary}
                   size="xs"
                   variant="secondary"
                 >
-                  Set Primary
+                  Set default
                 </Button>
               )}
-              <Badge>Active</Badge>
+              <Badge
+                className="bg-signal-success/10 text-signal-success"
+                variant="ghost"
+              >
+                Active key
+              </Badge>
             </div>
           ) : (
-            <Button
-              disabled={isActive}
-              onClick={handleActivateClick}
-              size="sm"
-              variant="secondary"
-            >
+            <Button onClick={handleActivateClick} size="sm" variant="secondary">
               Activate
             </Button>
           )}
@@ -137,7 +137,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
           <Dialog onOpenChange={setEditOpen} open={editOpen}>
             <DialogTrigger
               render={
-                <Button size="sm" variant="outline">
+                <Button aria-label="Edit key" size="sm" variant="outline">
                   <PencilIcon />
                 </Button>
               }
@@ -152,8 +152,16 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
                   form={form}
                   label="Model (optional)"
                   name="model"
-                  placeholder="e.g. gemini-2.0-flash"
+                  placeholder={MODEL_PLACEHOLDER}
                 />
+                {needsBaseUrl ? (
+                  <FormInput
+                    form={form}
+                    label="Base URL"
+                    name="baseUrl"
+                    placeholder={getBaseUrlPlaceholder(apiKey.provider)}
+                  />
+                ) : null}
                 <div className="flex items-center justify-end gap-2">
                   <DialogClose
                     onClick={handleReset}
@@ -167,6 +175,7 @@ export const ApiKeyCard = ({ apiKey, isPrimary }: Readonly<Props>) => {
 
           <MutationButton
             actionLabel="Delete key"
+            aria-label="Delete key"
             dialogDescription="This will permanently delete this API key."
             dialogTitle="Delete this API key?"
             mutationFn={handleDelete}

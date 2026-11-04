@@ -79,35 +79,8 @@ describe("NoteFormDialog", () => {
       expect(posted[0]).toMatchObject({
         title: "Design deep dive",
         details: expect.stringContaining("## Other ways"),
-        jobId: null,
-        questionId: null,
       });
     });
     expect(await screen.findByText("Note created")).toBeInTheDocument();
-  });
-
-  it("requires a linked job when the note type is job", async () => {
-    server.use(
-      http.get("*/api/v1/jobs", () =>
-        HttpResponse.json({ data: [], message: "OK", statusCode: 200 })
-      )
-    );
-    const { user } = render(
-      <NoteFormDialog onOpenChange={onOpenChange} open />
-    );
-    await user.type(screen.getByLabelText("Title"), "Interview follow-up");
-    await user.type(
-      screen.getByLabelText("Details (Markdown)"),
-      "Talked through the take-home."
-    );
-
-    await selectType(user, "Job");
-    await user.type(
-      screen.getByLabelText("Details (Markdown)"),
-      "Talked through the take-home."
-    );
-    await user.click(screen.getByRole("button", { name: "Create" }));
-
-    expect(await screen.findByText("Please select a job")).toBeInTheDocument();
   });
 });

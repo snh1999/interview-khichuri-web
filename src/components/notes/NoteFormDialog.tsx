@@ -2,14 +2,10 @@ import { NotePencilIcon, PlusCircleIcon } from "@phosphor-icons/react";
 import { useEffect, useRef } from "react";
 import type { INote } from "@/api/notes";
 import { FormCombobox } from "@/components/common/form/combobox/FormCombobox.tsx";
-import { JobsCombobox } from "@/components/common/form/combobox/JobsCombobox.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import { FormMarkdownInput } from "@/components/common/form/FormMarkdownInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
-import {
-  buildQuestionBankTemplate,
-  JOB_TEMPLATE_TEXT,
-} from "@/components/notes/notes.helpers";
+import { buildQuestionBankTemplate } from "@/components/notes/notes.helpers";
 import {
   type INotePreset,
   NOTE_LINK_TYPE_OPTIONS,
@@ -74,13 +70,6 @@ export const NoteFormDialog = ({
     if (!open || note) {
       return;
     }
-    if (noteType === "job") {
-      form.setValue("details", JOB_TEMPLATE_TEXT, {
-        shouldDirty: false,
-        shouldValidate: false,
-      });
-      return;
-    }
     if (noteType === "question_bank") {
       const item = getQuestionBankItem(questionBankId) ?? QUESTION_BANK[0];
       if (!item) {
@@ -123,7 +112,7 @@ export const NoteFormDialog = ({
         <DrawLogTrigger
           render={
             <Button variant="outline">
-              <PlusCircleIcon />
+              <PlusCircleIcon className="size-3" weight="bold" />
               New Note
             </Button>
           }
@@ -134,7 +123,7 @@ export const NoteFormDialog = ({
         <DrawLogHeader>
           <DrawLogTitle className="flex items-center gap-2">
             <NotePencilIcon />
-            {note ? "Edit Note" : "Create Note"}
+            {note ? "Edit Note" : "New Note"}
           </DrawLogTitle>
         </DrawLogHeader>
 
@@ -156,15 +145,6 @@ export const NoteFormDialog = ({
                   placeholder="Select a type"
                   selectData={NOTE_LINK_TYPE_OPTIONS}
                 />
-
-                {noteType === "job" ? (
-                  <JobsCombobox
-                    form={form}
-                    label="Linked Job"
-                    name="jobId"
-                    placeholder="Select a job"
-                  />
-                ) : null}
 
                 {noteType === "question_bank" ? (
                   <FormCombobox

@@ -1,5 +1,6 @@
 import { screen } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
+import { useCallback, useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { CompaniesCombobox } from "@/components/common/form/combobox/CompaniesCombobox.tsx";
 import { server } from "@/test/msw/server.ts";
@@ -17,13 +18,38 @@ const useCompaniesResponse = () =>
     )
   );
 
+interface IHarnessProps {
+  onChange: (companyId: number | null, companyName: string) => void;
+}
+
+const Harness = ({ onChange }: Readonly<IHarnessProps>) => {
+  const [company, setCompany] = useState<{
+    companyId: number | null;
+    companyName: string;
+  }>({ companyId: null, companyName: "" });
+
+  const handleChange = useCallback(
+    (companyId: number | null, companyName: string) => {
+      setCompany({ companyId, companyName });
+      onChange(companyId, companyName);
+    },
+    [onChange]
+  );
+
+  return (
+    <CompaniesCombobox
+      companyId={company.companyId}
+      companyName={company.companyName}
+      onChange={handleChange}
+    />
+  );
+};
+
 describe("CompaniesCombobox", () => {
   it("selects a company from the list", async () => {
     useCompaniesResponse();
     const onChange = vi.fn();
-    const view = render(
-      <CompaniesCombobox companyId={null} companyName="" onChange={onChange} />
-    );
+    const view = render(<Harness onChange={onChange} />);
 
     await view.user.click(await screen.findByRole("combobox"));
     await view.user.click(await screen.findByRole("option", { name: "Acme" }));
@@ -31,28 +57,30 @@ describe("CompaniesCombobox", () => {
     expect(onChange).toHaveBeenCalledWith(1, "Acme");
   });
 
-  it("commits typed text on blur, matching a company or keeping free text", async () => {
+  it("sets a new company name through the caller", async () => {
     useCompaniesResponse();
     const onChange = vi.fn();
-    const view = render(
-      <CompaniesCombobox companyId={null} companyName="" onChange={onChange} />
-    );
+    const view = render(<Harness onChange={onChange} />);
     const input = await screen.findByRole("combobox");
 
-    await view.user.click(input);
-    await screen.findByRole("option", { name: "Acme" });
-    await view.user.keyboard("{Escape}");
+    await view.user.type(input, "Unknown Co");
+    await view.user.keyboard("{Enter}");
 
-    await view.user.clear(input);
-    await view.user.type(input, "Globex");
-    await view.user.tab();
-    expect(onChange).toHaveBeenCalledWith(2, "Globex");
+    expect(onChange).toHaveBeenLastCalledWith(null, "Unknown Co");
+    expect(input).toHaveValue("Unknown Co");
+  });
 
-    onChange.mockClear();
-    await view.user.clear(input);
+  it("commits a typed company name on blur", async () => {
+    useCompaniesResponse();
+    const onChange = vi.fn();
+    const view = render(<Harness onChange={onChange} />);
+    const input = await screen.findByRole("combobox");
+
     await view.user.type(input, "Unknown Co");
     await view.user.tab();
-    expect(onChange).toHaveBeenCalledWith(null, "Unknown Co");
+
+    expect(onChange).toHaveBeenLastCalledWith(null, "Unknown Co");
+    expect(input).toHaveValue("Unknown Co");
   });
 
   it("renders a description, omits the label and tolerates unknown ids", async () => {

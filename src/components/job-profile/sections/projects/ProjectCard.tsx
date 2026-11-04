@@ -72,8 +72,7 @@ export const ProjectCard = ({
               form={form}
               idsName={`projects.${index}.skills`}
               label="Skills"
-              names={`projects.${index}.skillNames`}
-              placeholder="Add skills"
+              placeholder="Search skills"
             />
           )}
         </div>

@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import type { IJobWithTopics } from "@/api/jobs";
 import type { IPrepSession, IQuestion } from "@/api/sessions";
 import { SessionInfoSection } from "@/components/prep-session/session/SessionInfoSection.tsx";
+import { formatDate } from "@/lib/date.ts";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
@@ -53,13 +54,26 @@ const useDetailResponse = (
           id: "job-1",
           title: "Staff Engineer",
           companyName: "Acme",
-          status: "applied",
-          isFavorite: false,
+          description: "A role.",
           createdAt: "2026-01-01T00:00:00.000Z",
           updatedAt: "2026-01-01T00:00:00.000Z",
-          topicIds: [],
+          track: {
+            id: "track-1",
+            jobId: "job-1",
+            status: "applied",
+            isFavorite: false,
+            createdAt: "2026-01-01T00:00:00.000Z",
+            updatedAt: "2026-01-01T00:00:00.000Z",
+          },
           ...jobOverride,
         },
+      })
+    ),
+    http.get("*/api/v1/lookups/topics", () =>
+      HttpResponse.json({
+        statusCode: 200,
+        message: "OK",
+        data: [{ id: 7, name: "System design", isApproved: true }],
       })
     )
   );
@@ -80,21 +94,21 @@ const renderSection = async (
 };
 
 describe("SessionInfoSection", () => {
-  it("renders title, linked job, and question/pin badges", async () => {
-    const view = await renderSection(makeSession(), [
+  it("renders title, topic badges, linked job, and question/pin badges", async () => {
+    const view = await renderSection(makeSession({ topicIds: [7] }), [
       makeQuestion(),
       makeQuestion({ id: 2, isFavorite: false }),
       makeQuestion({ id: 3, isFavorite: false }),
     ]);
+    expect(screen.getByText("System design deep dive")).toBeInTheDocument();
+    expect(screen.getByText("System design")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Acme - Staff Engineer" })
+      await view.findByRole("button", { name: "Acme - Staff Engineer" })
     ).toBeInTheDocument();
     expect(screen.getByText("3 questions")).toBeInTheDocument();
     expect(screen.getByText("1 pinned")).toBeInTheDocument();
     expect(
-      screen.getByText(
-        `updated ${new Date("2026-01-10T00:00:00.000Z").toLocaleDateString()}`
-      )
+      screen.getByText(`Updated ${formatDate("2026-01-10T00:00:00.000Z")}`)
     ).toBeInTheDocument();
     expect(screen.getByText("Senior")).toBeInTheDocument();
     await view.user.click(

@@ -15,6 +15,7 @@ import {
   getWeekDays,
   HOUR_HEIGHT_PX,
   isAllDayEvent,
+  isDeadlineVisible,
   isMidnight,
   SNAP_MINUTES,
   spansMultipleDays,
@@ -295,5 +296,29 @@ describe("yToTime / timeToY", () => {
     const day = new Date(2024, 0, 1, 2);
     expect(timeToY(day)).toBe(2 * HOUR_HEIGHT_PX);
     expect(timeToY(addHours(startOfDay(day), 1))).toBe(HOUR_HEIGHT_PX);
+  });
+});
+
+describe("isDeadlineVisible", () => {
+  const now = new Date(2024, 4, 15);
+
+  it("keeps deadlines from the current month onward, including today", () => {
+    expect(isDeadlineVisible(new Date(2024, 4, 1).toISOString(), now)).toBe(
+      true
+    );
+    expect(isDeadlineVisible(new Date(2024, 4, 15).toISOString(), now)).toBe(
+      true
+    );
+    expect(isDeadlineVisible(new Date(2024, 5, 1).toISOString(), now)).toBe(
+      true
+    );
+  });
+
+  it("drops deadlines from earlier months and empty values", () => {
+    expect(isDeadlineVisible(new Date(2024, 3, 30).toISOString(), now)).toBe(
+      false
+    );
+    expect(isDeadlineVisible(null, now)).toBe(false);
+    expect(isDeadlineVisible(undefined, now)).toBe(false);
   });
 });

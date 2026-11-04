@@ -2,7 +2,16 @@ import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client";
 
-export const JOB_STATUS = ["applied", "saved", "scheduled"] as const;
+export const JOB_STATUS = [
+  "applied",
+  "saved",
+  "scheduled",
+  "interviewed",
+  "offer",
+  "rejected",
+  "not_selected",
+  "withdrawn",
+] as const;
 
 export type TJobStatus = (typeof JOB_STATUS)[number];
 
@@ -10,12 +19,17 @@ export const JOB_WORK_TYPES = ["remote", "hybrid", "onsite"] as const;
 
 export type TJobWorkType = (typeof JOB_WORK_TYPES)[number];
 
+export const JOB_STATES = ["none", "ok", "failed"] as const;
+
+export type TJobState = (typeof JOB_STATES)[number];
+
 export type TJobSortKey =
   | "default"
   | "newest"
   | "oldest"
   | "deadline"
-  | "interview";
+  | "interview"
+  | "applied";
 
 const JOB_SORT_QUERY: Record<TJobSortKey, string | undefined> = {
   default: undefined,
@@ -23,15 +37,20 @@ const JOB_SORT_QUERY: Record<TJobSortKey, string | undefined> = {
   oldest: "createdAt:asc",
   deadline: "deadline:asc",
   interview: "interviewDate:asc",
+  applied: "appliedAt:desc",
 };
 
 interface ICommonFields {
   title: string;
+  companyName: string;
+  companyId?: number | null;
+  description: string;
   roleId?: number | null;
   topicIds?: number[];
-  notes?: string | null;
+  links?: string | null;
+  deadline?: Date | null;
   location?: string | null;
-  source?: string | null;
+  url?: string | null;
   workType?: TJobWorkType | null;
   salaryLower?: number | null;
   salaryUpper?: number | null;
@@ -39,40 +58,57 @@ interface ICommonFields {
   experienceRequired?: number | null;
 }
 
-export interface IJobExtractionResult extends Omit<ICommonFields, "title"> {
+export interface IJobExtractionResult
+  extends Partial<
+    Omit<ICommonFields, "title" | "description" | "companyName" | "deadline">
+  > {
   title?: string;
   companyName?: string | null;
   topicNames?: string[];
   deadline: string | null;
-  interviewDate: string | null;
-  status: TJobStatus;
 }
 
-export interface ICreateJobDto extends ICommonFields {
-  companyId?: number | null;
-  companyName: string;
-  description: string;
-  status: TJobStatus;
-  links?: string | null;
-  isFavorite?: boolean;
-  deadline?: Date | null;
-  interviewDate?: Date | null;
-  appliedAt?: Date | null;
-}
-
-export interface IUpdateJobDto extends Partial<ICreateJobDto> {}
-
-export interface IJob
-  extends Omit<ICreateJobDto, "deadline" | "interviewDate" | "appliedAt"> {
+export interface ITrackedJob {
   id: string;
+  jobId: string;
   userId?: string | null;
-  companyId?: number | null;
-  deadline?: string | null;
-  interviewDate?: string | null;
+  status: TJobStatus;
+  isFavorite: boolean;
+  notes?: string | null;
   appliedAt?: string | null;
+  interviewDate?: string | null;
   createdAt: string;
   updatedAt: string;
-  topicIds?: number[];
+}
+
+export interface IUpdateTrackedJobDto {
+  status?: TJobStatus;
+  isFavorite?: boolean;
+  notes?: string | null;
+  appliedAt?: Date | null;
+  interviewDate?: Date | null;
+}
+
+export interface ICreateJobDto extends ICommonFields, IUpdateTrackedJobDto {
+  status: TJobStatus;
+}
+
+export interface IUpdateJobDto extends Partial<ICommonFields> {}
+
+export interface IJob extends Omit<ICommonFields, "description" | "deadline"> {
+  id: string;
+  userId?: string | null;
+  description: string | null;
+  deadline?: string | null;
+  state?: TJobState | null;
+  closedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  track?: ITrackedJob | null;
+}
+
+export interface IJobWithTrack extends IJob {
+  track: ITrackedJob;
 }
 
 export interface IJobWithTopics extends IJob {
@@ -102,11 +138,11 @@ export const useGetJobs = (sort: TJobSortKey = "default") =>
   useSuspenseQuery({
     queryFn: async () => {
       const sortQuery = JOB_SORT_QUERY[sort];
-      return await api.get<IJob[]>(
+      return await api.get<IJobWithTrack[]>(
         sortQuery ? `/jobs?sort=${sortQuery}` : "/jobs"
       );
     },
-    queryKey: queryKeys.jobs.list({ sort }),
+    queryKey: queryKeys.jobs.listWithFilter({ sort }),
     staleTime: Number.POSITIVE_INFINITY,
     gcTime: Number.POSITIVE_INFINITY,
   });
@@ -115,22 +151,62 @@ export const useCreateJob = () =>
   useMutation({
     mutationFn: async (dto: ICreateJobDto) =>
       await api.post<IJob>("/jobs", dto),
-    meta: { invalidates: queryKeys.jobs.all },
+    meta: { invalidates: queryKeys.jobs.list },
   });
 
 export const useUpdateJob = () =>
   useMutation({
     mutationFn: async ({ id, ...dto }: IUpdateJobDto & { id: string }) =>
       await api.patch<IJobWithTopics>(`/jobs/${id}`, dto),
-    meta: { invalidates: queryKeys.jobs.all },
+    meta: {
+      invalidates: ({ id }: { id: string }) =>
+        queryKeys.jobs.detailsAndList(id),
+    },
   });
 
+export const useUpdateTrackedJob = () =>
+  useMutation({
+    mutationFn: async ({ id, ...dto }: IUpdateTrackedJobDto & { id: string }) =>
+      await api.patch<IJob>(`/jobs/${id}/track`, dto),
+    meta: {
+      invalidates: ({ id }: { id: string }) =>
+        queryKeys.jobs.detailsAndList(id),
+    },
+  });
+
+export const useFavoriteToggle = (id: string, isFavorite: boolean) => {
+  const updateTrackedJob = useUpdateTrackedJob();
+  return async () => {
+    await updateTrackedJob.mutateAsync({ id, isFavorite });
+  };
+};
+
+export const useTrackJob = () =>
+  useMutation({
+    mutationFn: async (id: string) => await api.post<IJob>(`/jobs/${id}/track`),
+    meta: {
+      invalidates: (id: string) => queryKeys.jobs.detailsAndList(id),
+    },
+  });
+
+export const useMatchJobByUrl = () =>
+  useMutation({
+    mutationFn: async (url: string) =>
+      await api.get<IJob[]>(`/jobs/from-url?url=${encodeURIComponent(url)}`),
+  });
+
+// TODO: force-deleting a job unlinks its prep sessions, but only job queries
+// are invalidated here, so session list/detail caches can keep a stale jobId.
+// Invalidate queryKeys.sessions.all if we decide to fix this.
 export const useDeleteJob = () =>
   useMutation({
-    mutationFn: async (id: string) => {
-      await api.delete(`/jobs/${id}`);
+    mutationFn: async ({ id, force }: { id: string; force?: boolean }) => {
+      await api.delete(`/jobs/${id}${force ? "?force=1" : ""}`);
     },
-    meta: { invalidates: queryKeys.jobs.all },
+    meta: {
+      invalidates: queryKeys.jobs.list,
+      removes: ({ id }: { id: string }) => [queryKeys.jobs.detail(id)],
+    },
   });
 
 interface IExtractJobDto {

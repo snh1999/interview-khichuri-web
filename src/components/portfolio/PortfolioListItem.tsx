@@ -33,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import { Label } from "@/components/ui/label";
+import { formatDate } from "@/lib/date";
 import type { Portfolio } from "../portfolio/sketch/types";
 
 interface IProps {
@@ -92,12 +93,7 @@ export const PortfolioListItem = ({ portfolio }: Readonly<IProps>) => {
             {portfolio.title}
           </span>
           <span className="truncate text-muted-foreground text-xs">
-            Edited{" "}
-            {new Date(portfolio.updatedAt).toLocaleDateString(undefined, {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
+            Edited {formatDate(portfolio.updatedAt, "MMM d, yyyy")}
           </span>
         </span>
       </button>

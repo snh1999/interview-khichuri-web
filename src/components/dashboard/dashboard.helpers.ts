@@ -1,4 +1,5 @@
 import { URGENT_DAYS_THRESHOLD } from "@/app.constants";
+import { formatDate } from "@/lib/date";
 
 export type UpcomingUrgency = "urgent" | "soon" | "later";
 
@@ -14,6 +15,7 @@ export const urgencyFor = (days: number): UpcomingUrgency => {
 
 export const RECENT_ITEMS_COUNT = 4;
 export const RECENT_NOTES_COUNT = 5;
+export const RECENT_INTERVIEWS_COUNT = 5;
 export const NOTES_FETCH_LIMIT = 10;
 export const UPCOMING_SOON_DAYS = 7;
 export const UPCOMING_MAX_ITEMS = 5;
@@ -34,10 +36,7 @@ export const buildScoreHistory = (
     ) {
       const date = new Date(interview.completedAt ?? interview.createdAt);
       points.push({
-        label: date.toLocaleDateString(undefined, {
-          month: "short",
-          day: "numeric",
-        }),
+        label: formatDate(date, "MMM d"),
         date: date.getTime(),
         score: interview.overallScore,
       });

@@ -10,8 +10,9 @@ import {
 } from "@/api/notes";
 import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import type { IQuestionBankItem } from "@/lib/questions/question-bank.ts";
+import { markdownToPlain } from "@/lib/utils.ts";
 
-export const NOTE_LINK_TYPES = ["job", "question_bank"] as const;
+export const NOTE_LINK_TYPES = ["question_bank"] as const;
 export type TNoteLinkType = (typeof NOTE_LINK_TYPES)[number];
 export type TNoteFormType = TNoteLinkType | "none";
 
@@ -20,7 +21,6 @@ export const NOTE_LINK_TYPE_OPTIONS: {
   label: string;
 }[] = [
   { value: "none", label: "None" },
-  { value: "job", label: "Job" },
   { value: "question_bank", label: "Question Bank" },
 ];
 
@@ -29,22 +29,16 @@ export interface INotePreset {
   questionBankId?: string;
 }
 
-const noteFormSchema = z
-  .object({
-    title: z.string().trim().min(1, "Title is required").max(127),
-    details: z
-      .string()
-      .trim()
-      .min(1, "Details are required")
-      .max(5000, "Details are too long"),
-    noteType: z.enum(["none", ...NOTE_LINK_TYPES]),
-    jobId: z.string().uuid().nullish(),
-    questionBankId: z.string().nullish(),
-  })
-  .refine((data) => data.noteType !== "job" || Boolean(data.jobId), {
-    message: "Please select a job",
-    path: ["jobId"],
-  });
+const noteFormSchema = z.object({
+  title: z.string().trim().min(1, "Title is required").max(127),
+  details: z
+    .string()
+    .trim()
+    .min(1, "Details are required")
+    .max(5000, "Details are too long"),
+  noteType: z.enum(["none", ...NOTE_LINK_TYPES]),
+  questionBankId: z.string().nullish(),
+});
 
 export type TNoteFormData = z.infer<typeof noteFormSchema>;
 
@@ -55,15 +49,12 @@ export const noteFormDefaults = (
   title: initialValues?.title ?? "",
   details: initialValues?.details ?? "",
   noteType: initialValues ? "none" : (preset?.noteType ?? "none"),
-  jobId: initialValues?.jobId ?? null,
   questionBankId: initialValues ? null : (preset?.questionBankId ?? null),
 });
 
 const toCreatePayload = (data: TNoteFormData): ICreateNoteDto => ({
   title: data.title,
   details: data.details,
-  questionId: null,
-  jobId: data.noteType === "job" ? data.jobId : null,
 });
 
 export const useNoteForm = (
@@ -104,12 +95,58 @@ export const useNoteForm = (
   };
 };
 
-export const formatDate = (value: string) =>
-  new Intl.DateTimeFormat(undefined, { dateStyle: "long" }).format(
-    new Date(value)
-  );
+export const NOTE_SORT_OPTIONS = [
+  { value: "newest", label: "Newest first" },
+  { value: "oldest", label: "Oldest first" },
+  { value: "updated", label: "Recently updated" },
+  { value: "title", label: "Title (A-Z)" },
+] as const;
 
-export const JOB_TEMPLATE_TEXT = "";
+export type TNoteSortKey = (typeof NOTE_SORT_OPTIONS)[number]["value"];
+
+export const filterNotes = (
+  notes: INote[],
+  options: { favoritesOnly: boolean; query: string }
+): INote[] => {
+  const query = options.query.trim().toLowerCase();
+  return notes.filter(
+    (note) =>
+      (!options.favoritesOnly || note.isFavorite) &&
+      (!query ||
+        note.title.toLowerCase().includes(query) ||
+        (note.details ?? "").toLowerCase().includes(query))
+  );
+};
+
+const timestamp = (value: string) => new Date(value).getTime();
+
+export const sortNotes = (notes: INote[], sort: TNoteSortKey): INote[] => {
+  const direction = sort === "oldest" ? 1 : -1;
+  const dateKey = sort === "updated" ? "updatedAt" : "createdAt";
+
+  return [...notes].sort((a, b) => {
+    if (a.isFavorite !== b.isFavorite) {
+      return a.isFavorite ? -1 : 1;
+    }
+    if (sort === "title") {
+      return a.title.localeCompare(b.title);
+    }
+    return (timestamp(a[dateKey]) - timestamp(b[dateKey])) * direction;
+  });
+};
+
+export const noteDetailsPlain = (
+  details?: string | null,
+  maxLength = 140
+): string => {
+  const text = markdownToPlain(details ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return text.length > maxLength
+    ? `${text.slice(0, maxLength).trimEnd()}…`
+    : text;
+};
 
 export const buildQuestionContextTemplate = (
   questionText: string,

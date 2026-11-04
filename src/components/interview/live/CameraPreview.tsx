@@ -73,6 +73,11 @@ export const CameraPreview = memo(
       }
     }, [isOn, stopStream, startStream]);
 
+    const handleRetryCamera = useCallback(() => {
+      // biome-ignore lint/complexity/noVoid: fire-and-forget
+      void startStream();
+    }, [startStream]);
+
     useEffect(() => stopStream, [stopStream]);
 
     return (
@@ -88,11 +93,12 @@ export const CameraPreview = memo(
             ref={videoRef}
           />
           {!isOn && <UserIcon className="h-8 w-8 text-neutral-600" />}
-          <span className="absolute bottom-2 left-0 rounded bg-black/40 px-1.5 py-0.5 text-neutral-300 text-xs">
+          <span className="absolute bottom-2 left-2 rounded bg-black/40 px-1.5 py-0.5 text-neutral-300 text-xs">
             You
           </span>
           <Button
-            className="absolute right-0 bottom-2 rounded-full"
+            aria-label={isOn ? "Turn camera off" : "Turn camera on"}
+            className="absolute right-2 bottom-2 rounded-full"
             disabled={isLoading}
             onClick={toggleCamera}
             size="icon"
@@ -106,14 +112,23 @@ export const CameraPreview = memo(
             )}
           </Button>
           {error.length > 0 && (
-            <div className="absolute inset-0 flex items-center justify-center bg-muted px-2">
+            <div
+              className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-muted px-4"
+              role="alert"
+            >
               <p className="rounded px-2 py-1 text-center text-destructive text-xs">
-                {error}
+                Camera unavailable. Check your browser's camera permission, then
+                try again.
               </p>
-              <Button onClick={clearError} size="xs" variant="destructive">
-                <XIcon />
-                Clear
-              </Button>
+              <div className="flex gap-2">
+                <Button onClick={handleRetryCamera} size="xs">
+                  Retry
+                </Button>
+                <Button onClick={clearError} size="xs" variant="destructive">
+                  <XIcon />
+                  Dismiss
+                </Button>
+              </div>
             </div>
           )}
         </div>

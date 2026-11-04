@@ -29,12 +29,12 @@ describe("UpdateProfileForm", () => {
   it("keeps the buttons disabled until the form is dirty", async () => {
     const { user: actor } = render(<UpdateProfileForm user={user} />);
 
-    expect(screen.getByRole("button", { name: "Update" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Reset" })).toBeDisabled();
 
     await actor.type(screen.getByLabelText("Name"), "x");
 
-    expect(screen.getByRole("button", { name: "Update" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Reset" })).toBeEnabled();
   });
 
@@ -61,7 +61,7 @@ describe("UpdateProfileForm", () => {
     );
     await actor.clear(screen.getByLabelText("Name"));
     await actor.type(screen.getByLabelText("Name"), "Janet Doe");
-    await actor.click(screen.getByRole("button", { name: "Update" }));
+    await actor.click(screen.getByRole("button", { name: "Save changes" }));
 
     expect(updateUser).toHaveBeenCalledWith(
       { name: "Janet Doe" },
@@ -82,7 +82,7 @@ describe("UpdateProfileForm", () => {
     );
     await actor.clear(screen.getByLabelText("Email"));
     await actor.type(screen.getByLabelText("Email"), "new@example.com");
-    await actor.click(screen.getByRole("button", { name: "Update" }));
+    await actor.click(screen.getByRole("button", { name: "Save changes" }));
 
     expect(changeEmail).toHaveBeenCalledWith(
       { newEmail: "new@example.com" },

@@ -48,6 +48,7 @@ const PdfResumeContent = ({ resume }: Readonly<{ resume: IResume }>) => {
     <embed
       className="aspect-[1/1.414] w-full rounded border"
       src={data.url}
+      title="Resume PDF preview"
       type="application/pdf"
     />
   );

@@ -67,6 +67,11 @@ export const SessionCard = ({
           ) : (
             <AuthActionButton
               action={handleRevokeSession}
+              actionLabel="Revoke session"
+              aria-label="Revoke session"
+              dialogDescription="That device will be signed out and must sign in again."
+              dialogTitle="Revoke this session?"
+              requireConfirmation
               successMessage="Session revoked"
               variant="destructive"
             >

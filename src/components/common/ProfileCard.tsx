@@ -61,9 +61,11 @@ export const ProfileCard = ({
           {user.email}
         </span>
       </div>
-      {!isCompact && (
+      {!isCompact && user.role !== "user" && (
         <div data-slot="card-action">
-          <Badge variant="secondary">{user.role}</Badge>
+          <Badge className="capitalize" variant="secondary">
+            {user.role}
+          </Badge>
         </div>
       )}
     </>

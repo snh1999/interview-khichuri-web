@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { authAdmin, useSession } from "@/lib/auth/auth-client.ts";
+import { formatDate } from "@/lib/date";
 
 interface IProps {
   user: UserWithRole;
@@ -94,7 +95,7 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
           )}
         </div>
       </TableCell>
-      <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+      <TableCell>{formatDate(user.createdAt)}</TableCell>
       <TableCell>
         {isSelf ? (
           <Badge>You</Badge>

@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { Route, Routes } from "react-router";
 import { describe, expect, it } from "vitest";
-import type { IJobWithTopics } from "@/api/jobs";
+import type { IJob } from "@/api/jobs";
 import type { IPrepSession, IQuestion } from "@/api/sessions";
 import { QuestionsSection } from "@/components/prep-session/question/QuestionsSection.tsx";
 import { server } from "@/test/msw/server.ts";
@@ -47,12 +47,18 @@ const useQuestionsResponse = (questions: IQuestion[]) =>
           title: "Staff Engineer",
           companyName: "Acme",
           description: "Senior-level role",
-          status: "applied",
-          isFavorite: false,
           createdAt: "2026-01-01T00:00:00.000Z",
           updatedAt: "2026-01-01T00:00:00.000Z",
+          track: {
+            id: "track-1",
+            jobId: "job-1",
+            status: "applied",
+            isFavorite: false,
+            createdAt: "2026-01-01T00:00:00.000Z",
+            updatedAt: "2026-01-01T00:00:00.000Z",
+          },
           topicIds: [] as number[],
-        } satisfies IJobWithTopics,
+        } satisfies IJob,
       })
     ),
     http.get("*/api/v1/lookups/topics", () =>
@@ -99,7 +105,7 @@ describe("QuestionsSection", () => {
     expect(screen.getByText("What is caching?")).toBeInTheDocument();
 
     await view.user.type(
-      screen.getByPlaceholderText("Search questions..."),
+      screen.getByPlaceholderText("Search question text..."),
       "rate"
     );
     expect(screen.getByText("Design a rate limiter")).toBeInTheDocument();
@@ -128,6 +134,24 @@ describe("QuestionsSection", () => {
     expect(screen.queryByText("Design a rate limiter")).not.toBeInTheDocument();
   });
 
+  it("clears search and filters from the empty state", async () => {
+    const view = await renderSection([makeQuestion()]);
+    await view.findByText("Design a rate limiter");
+
+    await view.user.type(
+      screen.getByPlaceholderText("Search question text..."),
+      "not found"
+    );
+    expect(
+      await view.findByText("No questions match your filters.")
+    ).toBeInTheDocument();
+
+    await view.user.click(
+      screen.getByRole("button", { name: "Clear search and filters" })
+    );
+    expect(await view.findByText("Design a rate limiter")).toBeInTheDocument();
+  });
+
   it("shows the empty state when no questions exist", async () => {
     const view = await renderSection([]);
     expect(await view.findByText("No questions yet")).toBeInTheDocument();
@@ -136,14 +160,10 @@ describe("QuestionsSection", () => {
     ).toBeInTheDocument();
   });
 
-  it("opens the add-question form from the options menu", async () => {
+  it("opens the add-question form from the header", async () => {
     const view = await renderSection([makeQuestion()]);
     await view.findByText("Design a rate limiter");
-    await view.user.click(
-      screen.getByRole("button", { name: "Question options" })
-    );
-    await view.user.keyboard("{ArrowDown}");
-    await view.user.keyboard("{Enter}");
+    await view.user.click(screen.getByRole("button", { name: "Add question" }));
     expect(await view.findByLabelText("Question text")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Add Question" })
@@ -191,10 +211,7 @@ describe("QuestionsSection", () => {
     const view = await renderSection([makeQuestion()]);
     await view.findByText("Design a rate limiter");
 
-    await view.user.click(
-      screen.getByRole("button", { name: "Question options" })
-    );
-    await view.user.click(await screen.findByText("Add Question"));
+    await view.user.click(screen.getByRole("button", { name: "Add question" }));
     expect(await view.findByLabelText("Question text")).toBeInTheDocument();
 
     await view.user.keyboard("{Escape}");

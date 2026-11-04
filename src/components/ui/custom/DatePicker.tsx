@@ -19,35 +19,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import type { ICommonInputValues } from "@/components/common/form/form.types.ts";
+import { formatDate, type TDateInput, toDate } from "@/lib/date";
 
-function formatDate(date?: Date | string) {
-  if (!date) {
-    return "";
-  }
-  const d = typeof date === "string" ? new Date(date) : date;
-  return d.toLocaleDateString("en-US", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
-}
+const formatDisplayDate = (date?: TDateInput) =>
+  formatDate(date, "MMMM dd, yyyy");
 
-function isValidDate(date?: Date) {
-  return date && !Number.isNaN(date.getTime());
-}
-
-const toDate = (val: unknown): Date | undefined => {
-  if (val instanceof Date) {
-    return val;
-  }
-  if (typeof val === "string") {
-    return new Date(val);
-  }
-};
-
-interface IProps extends ICommonInputValues{
+interface IProps extends ICommonInputValues {
   invalid?: boolean;
-  value?: unknown;
+  value?: TDateInput;
   name?: string;
   onBlur?: () => void;
   onChange: (value?: Date | null) => void;
@@ -65,7 +44,9 @@ export const DatePicker = ({
 }: Readonly<IProps>) => {
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState<Date | undefined>(toDate(value));
-  const [inputValue, setInputValue] = useState(formatDate(toDate(value)));
+  const [inputValue, setInputValue] = useState(
+    formatDisplayDate(toDate(value))
+  );
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
@@ -74,13 +55,13 @@ export const DatePicker = ({
     }
     const date = toDate(value);
     setMonth(date);
-    setInputValue(formatDate(date));
+    setInputValue(formatDisplayDate(date));
   }, [isFocused, value]);
 
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const parsed = new Date(e.target.value);
+    const parsed = toDate(e.target.value);
     setInputValue(e.target.value);
-    if (isValidDate(parsed)) {
+    if (parsed) {
       onChange(parsed);
       setMonth(parsed);
     }
@@ -104,7 +85,7 @@ export const DatePicker = ({
 
   const onDateSelect = (date?: Date) => {
     onChange(date);
-    setInputValue(formatDate(date));
+    setInputValue(formatDisplayDate(date));
     setOpen(false);
   };
 

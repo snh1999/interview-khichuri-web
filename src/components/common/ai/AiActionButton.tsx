@@ -146,7 +146,7 @@ const AiActionButtonContent = ({
             icon: skipAiDialog ? null : <CheckIcon />,
           },
           {
-            label: "Continue with default",
+            label: children ? "Open with defaults" : "Continue with default",
             onClick: runDefault,
             disabled: isLoading || disabled || !canRunDefault,
             className: skipAiDialog ? "bg-muted border" : "",

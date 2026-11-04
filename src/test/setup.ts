@@ -41,6 +41,32 @@ Object.defineProperty(Element.prototype, "animate", {
   writable: true,
 });
 
+Object.defineProperty(Element.prototype, "getAnimations", {
+  value: () => [],
+  writable: true,
+});
+
+Object.defineProperty(Element.prototype, "scrollTo", {
+  value: () => undefined,
+  writable: true,
+});
+
+// sonner captures the pointer on toast pointerdown (swipe to dismiss)
+Object.defineProperty(Element.prototype, "setPointerCapture", {
+  value: () => undefined,
+  writable: true,
+});
+
+Object.defineProperty(Element.prototype, "releasePointerCapture", {
+  value: () => undefined,
+  writable: true,
+});
+
+Object.defineProperty(document, "fonts", {
+  value: { ready: Promise.resolve() },
+  writable: true,
+});
+
 vi.stubGlobal(
   "ResizeObserver",
   class {

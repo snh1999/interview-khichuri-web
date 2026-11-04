@@ -6,6 +6,7 @@ import {
 } from "@react-pdf/renderer";
 import type { ReactNode } from "react";
 import type { IInterview } from "@/api/sessions/interviews.ts";
+import { formatDate } from "@/lib/date";
 import type { ILocalInterviewState } from "@/lib/storage/interviewStorage.ts";
 
 export const SECTION_OPTIONS = [
@@ -254,9 +255,7 @@ export const ReportPdfTemplate = ({
       </PdfText>
       <PdfText style={{ color: "#666666", marginBottom: 12 }}>
         Duration: {formatDuration(interview.elapsedSeconds)} ·{" "}
-        {new Date(
-          interview.completedAt ?? interview.startedAt
-        ).toLocaleDateString()}
+        {formatDate(interview.completedAt ?? interview.startedAt)}
       </PdfText>
 
       <PdfView

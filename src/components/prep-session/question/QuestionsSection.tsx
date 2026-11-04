@@ -32,7 +32,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import {
@@ -152,11 +151,19 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) =>
     setSearch(e.target.value);
 
+  const clearFilters = () => {
+    setSearch("");
+    setFilter("all");
+  };
+
   const handleCountChange = (e: ChangeEvent<HTMLInputElement>) =>
     setCount(Number(e.target.value));
 
-  const handleFilterChange = (value: string[]) =>
-    setFilter(value[0] as QuestionFilter);
+  const handleFilterChange = (value: string[]) => {
+    if (value[0]) {
+      setFilter(value[0] as QuestionFilter);
+    }
+  };
 
   const dialogAdditionalFields = (
     <>
@@ -171,6 +178,11 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
           type="number"
           value={count}
         />
+        {count < 1 || count > 50 || Number.isNaN(count) ? (
+          <p className="text-destructive text-xs">
+            Enter a number between 1 and 50.
+          </p>
+        ) : null}
       </div>
 
       <div className="flex items-center gap-2">
@@ -234,6 +246,10 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
         <CardHeader>
           <CardTitle>Questions</CardTitle>
           <CardAction className="flex gap-1">
+            <Button onClick={viewAddForm} variant="outline">
+              <PlusIcon className="size-4" weight="bold" />
+              Add question
+            </Button>
             <AiActionButton {...dialogProps}>
               {dialogAdditionalFields}
             </AiActionButton>
@@ -250,14 +266,6 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
                 <DotsThreeVerticalIcon className="size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem
-                  className="whitespace-nowrap"
-                  onClick={viewAddForm}
-                >
-                  <PlusIcon className="size-3" weight="bold" />
-                  Add Question
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem closeOnClick={false} onClick={toggleNoteView}>
                   {showNotes ? (
                     <EyeSlashIcon className="size-3" />
@@ -295,11 +303,11 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
               <Input
                 className="min-w-35 flex-1 text-md"
                 onChange={handleSearchChange}
-                placeholder="Search questions..."
+                placeholder="Search question text..."
                 value={search}
               />
               <ToggleGroup
-                className="*:rounded-full"
+                className="*:rounded-full *:aria-pressed:border-primary *:aria-pressed:bg-primary! *:aria-pressed:text-primary-foreground"
                 onValueChange={handleFilterChange}
                 value={[filter]}
                 variant="outline"
@@ -322,16 +330,28 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
                 <EmptyDescription>
                   {questions.length === 0
                     ? "Generate questions with AI or add one manually."
-                    : "Adjust the filter or add a new question."}
+                    : "Adjust your search or filters to see more."}
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
-                <AiActionButton
-                  {...dialogProps}
-                  executeLabel="Generate Questions"
-                >
-                  {dialogAdditionalFields}
-                </AiActionButton>
+                {questions.length === 0 ? (
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    <AiActionButton
+                      {...dialogProps}
+                      executeLabel="Generate Questions"
+                    >
+                      {dialogAdditionalFields}
+                    </AiActionButton>
+                    <Button onClick={viewAddForm} variant="outline">
+                      <PlusIcon className="size-4" weight="bold" />
+                      Add question manually
+                    </Button>
+                  </div>
+                ) : (
+                  <Button onClick={clearFilters} variant="outline">
+                    Clear search and filters
+                  </Button>
+                )}
               </EmptyContent>
             </Empty>
           ) : (

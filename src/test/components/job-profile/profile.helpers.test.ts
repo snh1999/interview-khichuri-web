@@ -153,7 +153,7 @@ describe("profileToFormData", () => {
     });
     expect(data.projects[0]).toMatchObject({
       name: "Portfolio",
-      skillNames: ["React"],
+      skillNames: [],
       skills: [3],
       type: "research",
     });

@@ -8,6 +8,7 @@ import { z } from "zod";
 import {
   ALL_PROVIDERS,
   PROVIDER_LABELS,
+  providerNeedsBaseUrl,
   type TApiKeyProvider,
   useCreateApiKey,
 } from "@/api/keys";
@@ -16,6 +17,12 @@ import { FormCheckbox } from "@/components/common/form/FormCheckbox.tsx";
 import { FormInput } from "@/components/common/form/FormInput.tsx";
 import FormSelect from "@/components/common/form/FormSelect.tsx";
 import { ProviderInfoCard } from "@/components/keys/info/ProviderInfoCard.tsx";
+import {
+  baseUrlSchema,
+  getBaseUrlPlaceholder,
+  MODEL_PLACEHOLDER,
+  requireBaseUrl,
+} from "@/components/keys/key.schemas.ts";
 import type { TFormHook } from "@/components/prep-session/session/session.helpers.ts";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button, type buttonVariants } from "@/components/ui/button.tsx";
@@ -33,13 +40,20 @@ const API_PROVIDERS = Object.entries(PROVIDER_LABELS).map(([value, label]) => ({
   value,
 }));
 
-const createKeySchema = z.object({
-  isActive: z.boolean(),
-  key: z.string().min(1, "API key is required").max(MAX_NAME_LENGTH),
-  model: z.string().max(MAX_SHORT_LENGTH).optional(),
-  name: z.string().min(1, "Name is required").max(MAX_SHORT_LENGTH),
-  provider: z.enum(ALL_PROVIDERS),
-});
+const createKeySchema = z
+  .object({
+    isActive: z.boolean(),
+    key: z.string().min(1, "API key is required").max(MAX_NAME_LENGTH),
+    model: z.string().max(MAX_SHORT_LENGTH).optional(),
+    name: z.string().min(1, "Name is required").max(MAX_SHORT_LENGTH),
+    provider: z.enum(ALL_PROVIDERS),
+    baseUrl: baseUrlSchema,
+  })
+  .superRefine((data, context) => {
+    if (providerNeedsBaseUrl(data.provider)) {
+      requireBaseUrl(data, context);
+    }
+  });
 
 type TCreateKeyFormData = z.infer<typeof createKeySchema>;
 
@@ -54,6 +68,7 @@ const useKeysForm = ({
 
   const form = useForm<TCreateKeyFormData>({
     defaultValues: {
+      baseUrl: "",
       isActive,
       key: "",
       model: "",
@@ -65,7 +80,11 @@ const useKeysForm = ({
 
   const onSubmit = form.handleSubmit(async (data) => {
     await createKey(
-      { ...data, model: data.model?.trim() || undefined },
+      {
+        ...data,
+        baseUrl: data.baseUrl?.trim() || undefined,
+        model: data.model?.trim() || undefined,
+      },
       {
         onSuccess: () => {
           toast.success("API key saved");
@@ -101,6 +120,7 @@ export const KeysFormDialog = ({
   });
 
   const provider = form.watch("provider");
+  const needsBaseUrl = providerNeedsBaseUrl(provider);
   const isActiveDefault = getIsActive?.(provider);
   useEffect(() => {
     if (isActiveDefault === undefined) {
@@ -108,6 +128,12 @@ export const KeysFormDialog = ({
     }
     form.setValue("isActive", isActiveDefault);
   }, [isActiveDefault, form]);
+
+  useEffect(() => {
+    if (!needsBaseUrl) {
+      form.setValue("baseUrl", "", { shouldDirty: false });
+    }
+  }, [form, needsBaseUrl]);
 
   const resetForm = () => form.reset();
 
@@ -145,11 +171,21 @@ export const KeysFormDialog = ({
             />
 
             <FormSelect
+              clearable={false}
               form={form}
               label={"Provider"}
               name={"provider"}
               selectData={API_PROVIDERS}
             />
+
+            {needsBaseUrl ? (
+              <FormInput
+                form={form}
+                label="Base URL"
+                name="baseUrl"
+                placeholder={getBaseUrlPlaceholder(provider)}
+              />
+            ) : null}
 
             <FormInput
               form={form}
@@ -163,10 +199,10 @@ export const KeysFormDialog = ({
               form={form}
               label="Model (optional)"
               name="model"
-              placeholder="e.g. gemini-2.0-flash"
+              placeholder={MODEL_PLACEHOLDER}
             />
 
-            <div className="flex justify-between align-center">
+            <div className="flex items-center justify-between">
               <div className="flex-1">
                 <FormCheckbox
                   form={form}

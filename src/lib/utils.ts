@@ -7,6 +7,40 @@ export const isUrgent = (date?: string | null): boolean => {
   return days !== null && days <= URGENT_DAYS_THRESHOLD;
 };
 
+export const isHttpUrl = (value: string): boolean => {
+  try {
+    const { protocol } = new URL(value);
+    return protocol === "http:" || protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
+const HTTP_REGEX = /^[a-z][a-z0-9+.-]*:\/\//i;
+export const normalizeHttpUrl = (value: string): string | null => {
+  const input = value.trim();
+  if (!input) {
+    return null;
+  }
+
+  const hasScheme = HTTP_REGEX.test(input);
+  try {
+    const url = new URL(hasScheme ? input : `https://${input}`);
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      return null;
+    }
+    if (url.username || url.password) {
+      return null;
+    }
+    if (!url.hostname.includes(".")) {
+      return null;
+    }
+    return url.toString();
+  } catch {
+    return null;
+  }
+};
+
 export const daysUntil = (date?: string | null): number | null => {
   if (!date) {
     return null;
@@ -73,6 +107,29 @@ export const stripNulls = (value: unknown): unknown => {
   return value;
 };
 
+const LOOKUP_NAME_SEPARATOR = /[._\-(),]/g;
+const LOOKUP_NAME_WHITESPACE = /\s+/g;
+
+export const normalizeLookupName = (name: string): string =>
+  name
+    .trim()
+    .toLowerCase()
+    .replace(LOOKUP_NAME_SEPARATOR, "")
+    .replace(LOOKUP_NAME_WHITESPACE, " ");
+
+export const buildLookupNameMap = (
+  entries: readonly { id: number; name: string }[]
+): Map<string, number> => {
+  const map = new Map<string, number>();
+  for (const entry of entries) {
+    const key = normalizeLookupName(entry.name);
+    if (key && !map.has(key)) {
+      map.set(key, entry.id);
+    }
+  }
+  return map;
+};
+
 const CAMEL_CASE_SEPARATOR = /([a-z])([A-Z])/g;
 const FIRST_CHAR = /^./;
 
@@ -80,6 +137,9 @@ export const formatSectionLabel = (key: string): string =>
   key
     .replace(CAMEL_CASE_SEPARATOR, "$1 $2")
     .replace(FIRST_CHAR, (char) => char.toUpperCase());
+
+export const capitalizeFirst = (value: string): string =>
+  value.replace(FIRST_CHAR, (char) => char.toUpperCase());
 
 export const generateSafeId = (prefix = ""): string => {
   let rand = "";
@@ -97,3 +157,21 @@ export const generateSafeId = (prefix = ""): string => {
   }
   return prefix ? `${prefix}-${rand}` : rand;
 };
+
+export function markdownToPlain(md: string): string {
+  return md
+    .replace(/```[\s\S]*?```/g, "") // fenced code blocks
+    .replace(/`([^`]*)`/g, "$1") // inline code
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1") // images
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1") // links
+    .replace(/^#{1,6}\s+/gm, "") // headings
+    .replace(/^>\s?/gm, "") // blockquotes
+    .replace(/^[-*+]\s+/gm, "") // bullets
+    .replace(/^\d+\.\s+/gm, "") // numbered lists
+    .replace(/(\*\*|__)(.*?)\1/g, "$2") // bold
+    .replace(/([*_])(.*?)\1/g, "$2") // italic
+    .replace(/~~(.*?)~~/g, "$1") // strikethrough
+    .replace(/^[-*_]{3,}\s*$/gm, "") // horizontal rules
+    .replace(/\n{3,}/g, "\n\n") // extra blank lines
+    .trim();
+}

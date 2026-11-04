@@ -49,17 +49,29 @@ export const AnswerInput = ({
           id="interview-answer"
           onChange={onAnswerChange}
           onKeyDown={handleKeyDown}
-          placeholder="Type your answer here..."
+          placeholder="Type or dictate your answer…"
           rows={floating ? 2 : 5}
           value={answer}
         />
         <div className="flex shrink-0 flex-col items-end gap-1">
           {isLast ? (
-            <Button disabled={!answer.trim()} onClick={onFinish} size="icon">
+            <Button
+              aria-label="Finish interview"
+              disabled={!answer.trim()}
+              onClick={onFinish}
+              size="icon"
+              title="Finish interview (Ctrl/Cmd+Enter)"
+            >
               <ChecksIcon className="size-4" />
             </Button>
           ) : (
-            <Button disabled={!answer.trim()} onClick={onNext} size="icon">
+            <Button
+              aria-label="Send answer"
+              disabled={!answer.trim()}
+              onClick={onNext}
+              size="icon"
+              title="Send answer (Ctrl/Cmd+Enter)"
+            >
               <PaperPlaneRightIcon className="size-4" />
             </Button>
           )}

@@ -27,8 +27,10 @@ export const ChatColumn = ({
   return (
     <div className={cn("flex min-h-0 min-w-0 flex-1 flex-col", className)}>
       <div
-        className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-6"
+        aria-live="polite"
+        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4"
         ref={listParent}
+        role="log"
       >
         <Message align="left">
           <div className="flex items-start gap-3">
@@ -36,7 +38,9 @@ export const ChatColumn = ({
               <RobotIcon className="size-4 text-primary" />
             </div>
             <div className="flex flex-col gap-2">
-              <Bubble variant="assistant">{question?.questionText}</Bubble>
+              <Bubble className="text-md" variant="assistant">
+                {question?.questionText}
+              </Bubble>
               {question?.notes ? (
                 <p className="pl-2 text-muted-foreground text-xs italic">
                   Hint: {question.notes}
@@ -54,7 +58,7 @@ export const ChatColumn = ({
               </div>
               <div className="flex flex-col gap-2">
                 {liveFollowUps.length === 0 ? (
-                  <Bubble variant="assistant">
+                  <Bubble className="text-md" variant="assistant">
                     <span className="flex items-center gap-2 text-muted-foreground">
                       <Spinner />
                       Preparing follow-ups…
@@ -62,7 +66,11 @@ export const ChatColumn = ({
                   </Bubble>
                 ) : (
                   liveFollowUps.map((followUp, index) => (
-                    <Bubble key={index.toString()} variant="assistant">
+                    <Bubble
+                      className="text-md"
+                      key={index.toString()}
+                      variant="assistant"
+                    >
                       {followUp.questionText}
                       {streamingFollowUps &&
                       index === liveFollowUps.length - 1 ? (

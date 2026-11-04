@@ -39,7 +39,9 @@ describe("FormDatePicker", () => {
   it("writes a typed date into the form", async () => {
     const view = render(<Harness />);
     await view.user.type(screen.getByLabelText("Start date"), "2024-05-01");
-    expect(screen.getByText("2024-05-01T00:00:00.000Z")).toBeInTheDocument();
+    expect(
+      screen.getByText(new Date(2024, 4, 1).toISOString())
+    ).toBeInTheDocument();
   });
 
   it("clears the value from the clear button", async () => {

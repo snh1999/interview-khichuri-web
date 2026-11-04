@@ -62,10 +62,10 @@ const field = (p: string, label: string, text: string): string[] => {
 const scalar = (v: unknown): string => {
   if (typeof v === "string") {
     const d = parseISO(v);
-    return isValid(d) ? d.toLocaleDateString() : v;
+    return isValid(d) ? d.toISOString() : v;
   }
   if (v instanceof Date) {
-    return v.toLocaleDateString();
+    return v.toISOString();
   }
   if (typeof v === "boolean") {
     return v ? "Yes" : "No";

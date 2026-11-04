@@ -20,9 +20,9 @@ const ENGINE_ACCENT = {
   },
   browser: {
     accent:
-      "border-emerald-600/70 bg-emerald-500/10 ring-1 ring-emerald-600/20",
-    chip: "bg-emerald-500/10 text-emerald-700",
-    check: "bg-emerald-600",
+      "border-signal-success/70 bg-signal-success/10 ring-1 ring-signal-success/20",
+    chip: "bg-signal-success/10 text-signal-success-foreground",
+    check: "bg-signal-success",
   },
   auto: {
     accent:
@@ -67,7 +67,7 @@ const EngineOptionCard = ({
             disabled={disabled}
             icon={
               <CheckIcon
-                className="size-3 rounded-full text-emerald-500"
+                className="size-3 rounded-full text-signal-success"
                 weight="bold"
               />
             }

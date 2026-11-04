@@ -37,17 +37,21 @@ export const QuestionBankCard = ({
 
   return (
     <Card size="sm">
-      <CardHeader>
-        <CardTitle className="truncate text-md">{item.questions[0]}</CardTitle>
+      <CardHeader className="cursor-pointer">
+        <CardTitle className="truncate text-md" onClick={toggleExpanded}>
+          {item.questions[0]}
+        </CardTitle>
         <CardDescription className="space-x-2">
-          <Badge variant="secondary">+{item.questions.length - 1} more</Badge>
+          <Badge variant="secondary">
+            +{item.questions.length - 1} variations
+          </Badge>
           <Badge variant="outline">
             {QUESTION_BANK_CATEGORY_LABELS[item.category]}
           </Badge>
         </CardDescription>
         <CardAction className="flex items-center gap-1.5">
           <Button onClick={handleCreateNote} size="sm" type="button">
-            <PlusCircleIcon />
+            <PlusCircleIcon className="size-3" weight="bold" />
             Note
           </Button>
           <Button
@@ -55,7 +59,6 @@ export const QuestionBankCard = ({
             aria-label={expanded ? "Collapse question" : "Expand question"}
             onClick={toggleExpanded}
             size="icon"
-            type="button"
             variant="ghost"
           >
             {expanded ? <CaretUpIcon /> : <CaretDownIcon />}
@@ -68,7 +71,7 @@ export const QuestionBankCard = ({
           <CardContent className="space-y-3 pb-4">
             {item.questions.length > 1 ? (
               <ul className="list-disc space-y-1 ps-4 text-sm">
-                {item.questions.slice(1).map((question) => (
+                {item.questions.map((question) => (
                   <li key={question}>{question}</li>
                 ))}
               </ul>
