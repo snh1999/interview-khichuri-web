@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AiTransformModal } from "@/components/portfolio/sketch/AiTransformModal.tsx";
 import type { Portfolio } from "@/components/portfolio/sketch/types";

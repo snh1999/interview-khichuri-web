@@ -1,6 +1,6 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it, vi } from "vitest";
 import type { IApiKey } from "@/api/keys";
 import { AiDialog } from "@/components/common/ai/AiDialog.tsx";

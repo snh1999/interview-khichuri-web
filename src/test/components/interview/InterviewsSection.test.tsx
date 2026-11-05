@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { ISessionWithQuestions } from "@/api/sessions";
 import type { IInterview } from "@/api/sessions/interviews.ts";

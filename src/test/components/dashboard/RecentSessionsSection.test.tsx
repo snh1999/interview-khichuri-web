@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it } from "vitest";
 import type { IPrepSession } from "@/api/sessions";
 import { RecentSessionsSection } from "@/components/dashboard/RecentSessionsSection.tsx";

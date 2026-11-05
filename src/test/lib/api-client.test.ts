@@ -1,4 +1,5 @@
-import { delay, HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
+import { delay } from "msw/utils/delay";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError, api, streamPost } from "@/lib/api-client.ts";
 import { server } from "@/test/msw/server.ts";

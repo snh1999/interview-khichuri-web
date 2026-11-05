@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { IJob } from "@/api/jobs";
 import { JobPostForm } from "@/components/jobs/JobPostForm.tsx";

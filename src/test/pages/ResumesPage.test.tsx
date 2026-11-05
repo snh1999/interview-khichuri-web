@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it, vi } from "vitest";
 import type { IResume } from "@/api/resumes";
 import { Toaster } from "@/components/ui/sonner.tsx";

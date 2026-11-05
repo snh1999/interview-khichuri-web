@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it, vi } from "vitest";
 import { NoteFormDialog } from "@/components/notes/NoteFormDialog.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";

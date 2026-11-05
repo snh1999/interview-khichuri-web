@@ -1,4 +1,4 @@
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import type { IApiKey } from "@/api/keys/index.ts";
 
 const API = "*/api/v1";

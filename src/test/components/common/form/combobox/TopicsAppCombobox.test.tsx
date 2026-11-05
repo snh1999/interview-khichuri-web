@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it, vi } from "vitest";
 import { TopicsAppCombobox } from "@/components/common/form/combobox/TopicsAppCombobox.tsx";
 import { server } from "@/test/msw/server.ts";
