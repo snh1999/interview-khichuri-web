@@ -121,7 +121,7 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
         </div>
       ) : (
         <ItemGroup
-          className="overflow-hidden rounded-md bg-card"
+          className="bg-card overflow-hidden rounded-md"
           ref={listParent}
         >
           {jobs.map((job) => (

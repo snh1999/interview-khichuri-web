@@ -77,7 +77,7 @@ export const PortfolioListItem = ({ portfolio }: Readonly<IProps>) => {
   };
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-muted-foreground/25 p-3">
+    <div className="border-muted-foreground/25 flex items-center gap-3 rounded-lg border p-3">
       <button
         className="flex min-w-0 flex-1 items-center gap-3 text-left"
         onClick={handleOpen}
@@ -85,20 +85,20 @@ export const PortfolioListItem = ({ portfolio }: Readonly<IProps>) => {
       >
         <span
           aria-hidden="true"
-          className="size-5 shrink-0 rounded-md border border-border"
+          className="border-border size-5 shrink-0 rounded-md border"
           style={{ backgroundColor: portfolio.theme.primaryColor }}
         />
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-sm hover:underline">
             {portfolio.title}
           </span>
-          <span className="truncate text-muted-foreground text-xs">
+          <span className="text-muted-foreground truncate text-xs">
             Edited {formatDate(portfolio.updatedAt, "MMM d, yyyy")}
           </span>
         </span>
       </button>
 
-      <Badge className="shrink-0 text-muted-foreground" variant="outline">
+      <Badge className="text-muted-foreground shrink-0" variant="outline">
         {frameCount} {frameCount === 1 ? "frame" : "frames"}
       </Badge>
 
@@ -127,7 +127,7 @@ export const PortfolioListItem = ({ portfolio }: Readonly<IProps>) => {
             action={handleDelete}
             actionLabel="Delete portfolio"
             aria-label={`Delete ${portfolio.title}`}
-            className="w-full justify-start text-destructive"
+            className="text-destructive w-full justify-start"
             dialogDescription="This portfolio wireframe will be permanently deleted."
             dialogTitle="Delete this portfolio?"
             requireConfirmation

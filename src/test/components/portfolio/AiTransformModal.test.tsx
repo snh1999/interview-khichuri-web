@@ -14,7 +14,7 @@ import { render } from "@/test/render.tsx";
 
 const API = "*/api/v1";
 const PORTFOLIO = "p-1";
-const RE_TWO_MODULES = /Detected Wireframe Modules \(2 elements\)/;
+const RE_TWO_MODULES = /Detected Wireframe Modules \(2 elements\)/u;
 
 const envelope = (data: unknown) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });

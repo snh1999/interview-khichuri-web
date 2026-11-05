@@ -30,7 +30,7 @@ const makeInterview = (id: string, createdAt: string): IInterview => ({
 const envelope = (data: unknown) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });
 
-const CREATED_TITLE = /^Created · /;
+const CREATED_TITLE = /^Created · /u;
 
 describe("RecentInterviewsSection", () => {
   it("shows the latest incomplete interviews without delete actions", async () => {

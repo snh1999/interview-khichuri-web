@@ -42,12 +42,12 @@ export const TypographyEditor: React.FC<TypographyEditorProps> = ({
     setFontSize(size);
   };
   return (
-    <div className="space-y-3 border-border border-t pt-2">
-      <span className="font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+    <div className="border-border space-y-3 border-t pt-2">
+      <span className="text-muted-foreground text-xxs font-bold tracking-wider uppercase">
         Typography & Text
       </span>
       <Textarea
-        className="resize-none rounded-xl border-border bg-background px-2.5 py-1.5 text-foreground text-xs"
+        className="border-border bg-background text-foreground resize-none rounded-xl px-2.5 py-1.5 text-xs"
         onChange={handleTextChange}
         onFocus={handleTextFocus}
         rows={2}
@@ -100,7 +100,7 @@ export const TypographyEditor: React.FC<TypographyEditorProps> = ({
             <Button
               className={`font-mono ${
                 (activeElement as TextElement).fontSize === sz
-                  ? "bg-primary font-bold text-primary-foreground"
+                  ? "bg-primary text-primary-foreground font-bold"
                   : "bg-muted text-muted-foreground hover:text-foreground"
               }`}
               key={sz}

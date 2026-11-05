@@ -44,7 +44,7 @@ export const ProviderInfoCard = ({ provider }: IProps) => {
       </CardHeader>
 
       <CardContent className="space-y-3">
-        <ol className="list-inside list-decimal space-y-1 text-muted-foreground text-xs">
+        <ol className="text-muted-foreground list-inside list-decimal space-y-1 text-xs">
           {info.getApiKeySteps.map((step) => (
             <li key={step}>{step}</li>
           ))}
@@ -55,10 +55,10 @@ export const ProviderInfoCard = ({ provider }: IProps) => {
             <AccordionTrigger>Pros & Cons</AccordionTrigger>
             <AccordionContent>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <ul className="space-y-1 text-muted-foreground text-xs">
+                <ul className="text-muted-foreground space-y-1 text-xs">
                   {info.pros.map((pro) => (
                     <li className="flex items-start gap-1.5" key={pro}>
-                      <CheckIcon className="mt-0.5 shrink-0 text-signal-success" />
+                      <CheckIcon className="text-signal-success mt-0.5 shrink-0" />
                       <span>{pro}</span>
                     </li>
                   ))}
@@ -67,10 +67,10 @@ export const ProviderInfoCard = ({ provider }: IProps) => {
                 <ul className="space-y-1">
                   {info.cons.map((con) => (
                     <li
-                      className="flex items-start gap-1.5 text-muted-foreground text-xs"
+                      className="text-muted-foreground flex items-start gap-1.5 text-xs"
                       key={con}
                     >
-                      <XIcon className="mt-0.5 shrink-0 text-signal-danger" />
+                      <XIcon className="text-signal-danger mt-0.5 shrink-0" />
                       <span>{con}</span>
                     </li>
                   ))}

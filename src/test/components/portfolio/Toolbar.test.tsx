@@ -13,8 +13,8 @@ import { render } from "@/test/render.tsx";
 const store = () => useSketchBuilderStore.getState();
 const elements = () => store().draft?.elements ?? [];
 
-const STAMP_MENU = /Hero Introduction/;
-const ARTBOARD_MENU = /Artboard \/ Frame/;
+const STAMP_MENU = /Hero Introduction/u;
+const ARTBOARD_MENU = /Artboard \/ Frame/u;
 const portfolio = (els: CanvasElement[]): Portfolio => ({
   id: "p-toolbar",
   title: "Toolbar",

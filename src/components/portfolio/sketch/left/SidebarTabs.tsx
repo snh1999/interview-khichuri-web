@@ -16,11 +16,11 @@ export const SidebarTabs: React.FC<SidebarTabsProps> = ({
   const handleTemplatesTab = () => onTabChange("templates");
   const handleLibraryTab = () => onTabChange("library");
   return (
-    <div className="flex gap-1 border-border border-b bg-muted/20 p-1.5">
+    <div className="border-border bg-muted/20 flex gap-1 border-b p-1.5">
       <button
-        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg py-1.5 font-semibold text-xs transition-all ${
+        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition-all ${
           activeTab === "pages"
-            ? "bg-background font-bold text-foreground shadow-xs"
+            ? "bg-background text-foreground font-bold shadow-xs"
             : "text-muted-foreground hover:text-foreground"
         }`}
         onClick={handlePagesTab}
@@ -34,9 +34,9 @@ export const SidebarTabs: React.FC<SidebarTabsProps> = ({
       </button>
 
       <button
-        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg py-1.5 font-semibold text-xs transition-all ${
+        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition-all ${
           activeTab === "templates"
-            ? "bg-background font-bold text-foreground shadow-xs"
+            ? "bg-background text-foreground font-bold shadow-xs"
             : "text-muted-foreground hover:text-foreground"
         }`}
         onClick={handleTemplatesTab}
@@ -50,9 +50,9 @@ export const SidebarTabs: React.FC<SidebarTabsProps> = ({
       </button>
 
       <button
-        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg py-1.5 font-semibold text-xs transition-all ${
+        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-semibold transition-all ${
           activeTab === "library"
-            ? "bg-background font-bold text-foreground shadow-xs"
+            ? "bg-background text-foreground font-bold shadow-xs"
             : "text-muted-foreground hover:text-foreground"
         }`}
         onClick={handleLibraryTab}

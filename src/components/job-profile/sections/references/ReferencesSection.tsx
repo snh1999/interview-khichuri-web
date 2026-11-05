@@ -38,7 +38,7 @@ export const ReferencesSection = memo(({ sectionId }: Readonly<IProps>) => {
         <CardAction className="pt-2 pr-1">
           <Button
             aria-label="Add reference"
-            className="rounded-full bg-primary/50"
+            className="bg-primary/50 rounded-full"
             onClick={onAppend}
             size="icon-sm"
           >
@@ -55,7 +55,7 @@ export const ReferencesSection = memo(({ sectionId }: Readonly<IProps>) => {
           />
         ))}
         {fields.length === 0 && (
-          <p className="text-center text-muted-foreground text-xs italic">
+          <p className="text-muted-foreground text-center text-xs italic">
             No references added yet.
           </p>
         )}

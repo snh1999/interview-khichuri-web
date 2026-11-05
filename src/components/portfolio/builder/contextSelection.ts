@@ -12,7 +12,7 @@ export interface IBuilderContext {
 // Below this total size, send everything (no reason to trim a small project).
 export const BUILD_ALL_THRESHOLD = 60_000;
 
-const FILE_EXTENSION = /\.[^.]+$/;
+const FILE_EXTENSION = /\.[^.]+$/u;
 const HASH_MODULUS = 4_294_967_296;
 
 const hashContent = (content: string): string => {

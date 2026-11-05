@@ -7,10 +7,10 @@ export const CtaSection = () => (
   <section className="py-24">
     <div className="mx-auto max-w-7xl px-4 sm:px-6">
       <div className="flex flex-col items-center px-4 text-center sm:px-6">
-        <h2 className="max-w-2xl font-bold font-heading text-2xl tracking-tight sm:text-3xl">
+        <h2 className="font-heading max-w-2xl text-2xl font-bold tracking-tight sm:text-3xl">
           {CTA.heading}
         </h2>
-        <p className="mt-3 max-w-lg text-muted-foreground text-sm leading-relaxed">
+        <p className="text-muted-foreground mt-3 max-w-lg text-sm leading-relaxed">
           {CTA.sub}
         </p>
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">

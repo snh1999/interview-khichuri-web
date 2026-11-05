@@ -31,11 +31,11 @@ export const AuthLayout = ({
 }: Readonly<IProps>) => (
   <Background>
     <div className="mb-8 text-center">
-      <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10">
-        <BowlFoodIcon className="h-7 w-7 text-primary" weight="fill" />
+      <div className="border-primary/20 bg-primary/10 mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl border">
+        <BowlFoodIcon className="text-primary h-7 w-7" weight="fill" />
       </div>
-      <h1 className="font-bold text-2xl tracking-tight">Interview Khichuri</h1>
-      <p className="mt-1 text-muted-foreground/80 text-sm">
+      <h1 className="text-2xl font-bold tracking-tight">Interview Khichuri</h1>
+      <p className="text-muted-foreground/80 mt-1 text-sm">
         Many in one interview preparation
       </p>
     </div>
@@ -48,7 +48,7 @@ export const AuthLayout = ({
         </CardHeader>
       ) : null}
       {children ? <CardContent className="mt-2">{children}</CardContent> : null}
-      <CardFooter className="flex w-full flex-col space-y-4 border-none text-center text-muted-foreground">
+      <CardFooter className="text-muted-foreground flex w-full flex-col space-y-4 border-none text-center">
         {!hideOauth && (
           <>
             <div className="relative mb-6 w-full">
@@ -56,7 +56,7 @@ export const AuthLayout = ({
                 <Separator className="w-full" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
+                <span className="bg-card text-muted-foreground px-2">
                   Or continue with
                 </span>
               </div>
@@ -64,12 +64,12 @@ export const AuthLayout = ({
             <OauthSection />
           </>
         )}
-        <p className="text-center text-muted-foreground/80 text-sm">{footer}</p>
+        <p className="text-muted-foreground/80 text-center text-sm">{footer}</p>
       </CardFooter>
     </Card>
 
     {!hideFooter && (
-      <p className="mt-6 text-center text-muted-foreground text-xs">
+      <p className="text-muted-foreground mt-6 text-center text-xs">
         By continuing, you agree to our Terms of Service and Privacy Policy.
       </p>
     )}

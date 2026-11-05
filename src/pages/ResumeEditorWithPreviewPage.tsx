@@ -100,7 +100,7 @@ const ResumeEditorContent = () => {
 
   return (
     <div className="fixed inset-0 flex flex-col">
-      <header className="flex shrink-0 items-center gap-3 border-b bg-background px-6 py-3">
+      <header className="bg-background flex shrink-0 items-center gap-3 border-b px-6 py-3">
         <Label className="text-muted-foreground text-sm" htmlFor="resume-name">
           Name
         </Label>

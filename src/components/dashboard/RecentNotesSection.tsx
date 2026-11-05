@@ -25,7 +25,7 @@ export const RecentNotesSection = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-semibold text-base">Recent notes</CardTitle>
+        <CardTitle className="text-base font-semibold">Recent notes</CardTitle>
         <CardAction>
           <Button
             nativeButton={false}
@@ -45,7 +45,7 @@ export const RecentNotesSection = () => {
           <div className="flex flex-col gap-2">
             {notes.map((note) => (
               <Link
-                className="min-w-0 truncate text-md hover:text-primary"
+                className="text-md hover:text-primary min-w-0 truncate"
                 key={note.id}
                 title={note.title}
                 to={NOTES_PAGE}

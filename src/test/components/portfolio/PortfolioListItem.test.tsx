@@ -29,9 +29,9 @@ const frame = (id: string): CanvasElement =>
     zIndex: 1,
   }) as CanvasElement;
 
-const EDITED_RE = /^Edited /;
-const OPEN_MENU_RE = /Open in editor/;
-const DUPLICATE_RE = /Duplicate/;
+const EDITED_RE = /^Edited /u;
+const OPEN_MENU_RE = /Open in editor/u;
+const DUPLICATE_RE = /Duplicate/u;
 
 const LocationProbe = () => {
   const { pathname } = useLocation();

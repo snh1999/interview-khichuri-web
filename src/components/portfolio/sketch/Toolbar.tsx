@@ -291,7 +291,7 @@ export const Toolbar: React.FC = () => {
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: toolbar wrapper; the handler only stops clicks reaching the canvas beneath
     // biome-ignore lint/a11y/noStaticElementInteractions: toolbar wrapper; the handler only stops clicks reaching the canvas beneath
     <div
-      className="absolute top-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 rounded-2xl border border-border bg-card/90 p-1 text-foreground shadow-xl backdrop-blur-md"
+      className="border-border bg-card/90 text-foreground absolute top-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 rounded-2xl border p-1 shadow-xl backdrop-blur-md"
       onMouseDown={handleToolbarMouseDown}
     >
       {tools.map((t) => {
@@ -314,7 +314,7 @@ export const Toolbar: React.FC = () => {
             />
             <TooltipContent side="bottom" sideOffset={8}>
               <span>{t.label}</span>{" "}
-              <span className="font-mono text-muted-foreground">
+              <span className="text-muted-foreground font-mono">
                 [{t.shortcut}]
               </span>
             </TooltipContent>
@@ -322,7 +322,7 @@ export const Toolbar: React.FC = () => {
         );
       })}
 
-      <div className="mx-0.5 h-6 w-px bg-border" />
+      <div className="bg-border mx-0.5 h-6 w-px" />
 
       <DropdownMenu>
         <DropdownMenuTrigger
@@ -398,7 +398,7 @@ export const Toolbar: React.FC = () => {
         />
         <TooltipContent side="bottom" sideOffset={8}>
           <span>Eraser</span>{" "}
-          <span className="font-mono text-muted-foreground">[E]</span>
+          <span className="text-muted-foreground font-mono">[E]</span>
         </TooltipContent>
       </Tooltip>
     </div>

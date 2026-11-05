@@ -68,13 +68,13 @@ const FitScoreCard = ({
           )}
         >
           <span className="flex items-center justify-center gap-4">
-            <span className="font-medium text-base">{title}</span>
+            <span className="text-base font-medium">{title}</span>
             {score ? <FitCircle score={score.overall} /> : null}
           </span>
           {score ? (
             <span
               className={cn(
-                "font-semibold text-4xl",
+                "text-4xl font-semibold",
                 SCORE_TEXT_CLASS[getScoreTone(score.overall)]
               )}
             >
@@ -91,13 +91,13 @@ const FitScoreCard = ({
           <div className="grid grid-cols-2 gap-2 sm:flex-1 sm:grid-cols-4">
             {cards.map((card) => (
               <div
-                className="flex flex-col gap-1 rounded-lg border bg-muted/60 p-2"
+                className="bg-muted/60 flex flex-col gap-1 rounded-lg border p-2"
                 key={card.title}
               >
                 <span className="text-muted-foreground text-xs">
                   {card.title}
                 </span>
-                <span className="font-medium text-lg">
+                <span className="text-lg font-medium">
                   {card.score === null ? (
                     <span className="text-muted-foreground">—</span>
                   ) : (

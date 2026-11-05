@@ -5,7 +5,7 @@ import { InterviewReport } from "@/components/interview/report/InterviewReport.t
 import { archiveLocalInterviewState } from "@/lib/storage/interviewStorage";
 import { render } from "@/test/render.tsx";
 
-const EXPORT_PATTERN = /Export/;
+const EXPORT_PATTERN = /Export/u;
 
 const makeInterview = (overrides: Partial<IInterview> = {}): IInterview => ({
   id: "int-1",

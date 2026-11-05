@@ -12,7 +12,7 @@ vi.mock("@/lib/auth/auth-client", () => ({
 
 const LocationProbe = () => <p>{`path=${useLocation().pathname}`}</p>;
 
-const EXPIRED_LINK = /has expired or is no longer valid/;
+const EXPIRED_LINK = /has expired or is no longer valid/u;
 
 const fillPasswords = async (
   user: ReturnType<typeof render>["user"],

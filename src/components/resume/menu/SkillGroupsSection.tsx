@@ -38,7 +38,7 @@ export const SkillGroupsSection = ({ sectionId }: Readonly<IProps>) => {
         </CardDescription>
         <CardAction className="pt-2 pr-1">
           <Button
-            className="rounded-full bg-primary/50"
+            className="bg-primary/50 rounded-full"
             disabled={fields.length >= MAX_SKILL_GROUPS}
             onClick={addSkillGroup}
             size="icon-sm"
@@ -53,7 +53,7 @@ export const SkillGroupsSection = ({ sectionId }: Readonly<IProps>) => {
         ))}
 
         {fields.length === 0 && (
-          <p className="text-center text-muted-foreground text-xs italic">
+          <p className="text-muted-foreground text-center text-xs italic">
             No skill groups defined.
           </p>
         )}

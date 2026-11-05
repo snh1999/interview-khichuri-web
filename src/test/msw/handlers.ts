@@ -104,4 +104,21 @@ export const handlers = [
       { headers: { "Content-Type": "text/event-stream" } }
     );
   }),
+
+  http.post(`${API}/feedback`, async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return envelope(
+      {
+        createdAt: new Date().toISOString(),
+        id: "feedback-1",
+        status: null,
+        updatedAt: new Date().toISOString(),
+        userAgent: null,
+        userId: "user-1",
+        ...body,
+      },
+      201,
+      "Created"
+    );
+  }),
 ];

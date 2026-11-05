@@ -32,7 +32,7 @@ export function useTemplatePdfSettings(
   return { ...DEFAULT_PDF_SETTINGS, ...config.pdfSettings, ...overrides };
 }
 
-const OTHER_LABEL = /^(other|others)$/i;
+const OTHER_LABEL = /^(other|others)$/iu;
 
 export const toSkillList = (value?: string | null): string[] =>
   (value ?? "")

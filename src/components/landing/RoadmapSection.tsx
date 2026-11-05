@@ -13,10 +13,10 @@ export const RoadmapSection = () => (
   <section className="py-20" id="roadmap">
     <div className="mx-auto max-w-7xl px-4 sm:px-6">
       <div className="mx-auto mb-12 max-w-2xl text-center">
-        <h2 className="font-bold font-heading text-2xl tracking-tight sm:text-3xl">
+        <h2 className="font-heading text-2xl font-bold tracking-tight sm:text-3xl">
           {ROADMAP.heading}
         </h2>
-        <p className="mt-3 text-muted-foreground text-sm">{ROADMAP.sub}</p>
+        <p className="text-muted-foreground mt-3 text-sm">{ROADMAP.sub}</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -25,7 +25,7 @@ export const RoadmapSection = () => (
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <item.icon
-                  className="h-4 w-4 text-muted-foreground"
+                  className="text-muted-foreground h-4 w-4"
                   weight="duotone"
                 />
                 {item.title}

@@ -8,9 +8,9 @@ interface IScoreProps {
 const ScoreBadge = ({ label, value }: IScoreProps) => (
   <div className="flex flex-col items-center gap-1 rounded-lg border p-3">
     <span className="text-muted-foreground text-xs">{label}</span>
-    <span className="gap-2 font-semibold text-xl">
+    <span className="gap-2 text-xl font-semibold">
       {value}
-      <span className="ml-1 text-muted-foreground text-sm">%</span>
+      <span className="text-muted-foreground ml-1 text-sm">%</span>
     </span>
   </div>
 );

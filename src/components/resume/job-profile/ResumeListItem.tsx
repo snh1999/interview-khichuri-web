@@ -83,16 +83,16 @@ export const ResumeListItem = ({
   const handleFillProfile = () => onFillProfile(resume);
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-muted-foreground/25 p-3">
+    <div className="border-muted-foreground/25 flex items-center gap-3 rounded-lg border p-3">
       <button
-        className="flex min-w-0 flex-1 items-center gap-3 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="focus-visible:ring-ring flex min-w-0 flex-1 items-center gap-3 rounded-sm text-left focus-visible:ring-2 focus-visible:outline-none"
         onClick={handleView}
         type="button"
       >
         {isPdf ? (
-          <FilePdfIcon className="size-5 shrink-0 text-muted-foreground" />
+          <FilePdfIcon className="text-muted-foreground size-5 shrink-0" />
         ) : (
-          <SparkleIcon className="size-5 shrink-0 text-primary" />
+          <SparkleIcon className="text-primary size-5 shrink-0" />
         )}
         <span className="flex-1 truncate text-sm hover:underline">
           {resume.name}
@@ -102,13 +102,13 @@ export const ResumeListItem = ({
       {resume.isPrimary ? <Badge className="shrink-0">Primary</Badge> : null}
 
       {isGenerated && resume.template ? (
-        <Badge className="shrink-0 text-muted-foreground" variant="outline">
+        <Badge className="text-muted-foreground shrink-0" variant="outline">
           {resume.template}
         </Badge>
       ) : null}
 
       {isPdf ? (
-        <Badge className="shrink-0 text-muted-foreground" variant="outline">
+        <Badge className="text-muted-foreground shrink-0" variant="outline">
           PDF
         </Badge>
       ) : null}

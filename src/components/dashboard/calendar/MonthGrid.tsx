@@ -91,7 +91,7 @@ export const MonthGrid = ({
       <div className="grid grid-cols-7 border-b">
         {WEEKDAYS.map((day) => (
           <div
-            className="py-2 text-center font-medium text-muted-foreground text-xs"
+            className="text-muted-foreground py-2 text-center text-xs font-medium"
             key={day}
           >
             {day}

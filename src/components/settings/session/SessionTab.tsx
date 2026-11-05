@@ -69,7 +69,7 @@ const SessionManagement = () => {
 
       <CardContent>
         {otherSessions.length === 0 ? (
-          <div className="text-center text-muted-foreground text-sm">
+          <div className="text-muted-foreground text-center text-sm">
             No other active sessions
           </div>
         ) : (

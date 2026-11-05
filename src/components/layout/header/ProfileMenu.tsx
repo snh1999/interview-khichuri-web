@@ -42,7 +42,7 @@ const ProfileDropdown = ({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuGroup className="*:gap-2 *:px-4 *:py-2.5 *:text-md">
+        <DropdownMenuGroup className="*:text-md *:gap-2 *:px-4 *:py-2.5">
           <DropdownMenuItem onClick={navigateToProfile}>
             <UserIcon className="size-4" />
             <span>My account</span>
@@ -57,7 +57,7 @@ const ProfileDropdown = ({
 
         <DropdownMenuGroup>
           <DropdownMenuItem
-            className="gap-2 px-4 py-2.5 text-md"
+            className="text-md gap-2 px-4 py-2.5"
             onClick={logout}
             variant="destructive"
           >

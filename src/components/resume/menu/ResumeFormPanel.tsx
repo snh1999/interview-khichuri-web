@@ -60,7 +60,7 @@ export const ResumeFormPanel = ({
     <FormProvider {...form}>
       <form onSubmit={onSubmit}>
         {isDirty ? (
-          <div className="fixed right-6 bottom-6 z-50 flex gap-2 rounded-lg border bg-card p-2 shadow-lg">
+          <div className="bg-card fixed right-6 bottom-6 z-50 flex gap-2 rounded-lg border p-2 shadow-lg">
             <Button
               disabled={!isDirty || isSaving}
               onClick={onReset}

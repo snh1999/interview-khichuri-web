@@ -27,8 +27,8 @@ const LocationProbe = () => {
   return <p>{pathname}</p>;
 };
 
-const EMPTY_RE = /No portfolios yet/;
-const EDITOR_PATH_RE = /^\/portfolio\//;
+const EMPTY_RE = /No portfolios yet/u;
+const EDITOR_PATH_RE = /^\/portfolio\//u;
 
 describe("PortfolioListView", () => {
   it("shows the empty state when there are no portfolios", async () => {

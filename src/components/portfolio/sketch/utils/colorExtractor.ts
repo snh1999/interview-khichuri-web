@@ -33,7 +33,7 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } {
   const trimmed = hex.trim();
 
   if (trimmed.startsWith("rgb")) {
-    const match = trimmed.match(/\d+(\.\d+)?/g);
+    const match = trimmed.match(/\d+(\.\d+)?/gu);
     if (match && match.length >= 3) {
       return {
         r: Math.min(255, Math.max(0, Math.round(Number(match[0])))),
@@ -44,7 +44,7 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } {
   }
 
   if (trimmed.startsWith("hsl")) {
-    const match = trimmed.match(/\d+(\.\d+)?/g);
+    const match = trimmed.match(/\d+(\.\d+)?/gu);
     if (match && match.length >= 3) {
       const h = Number(match[0]) % 360;
       const s = Math.min(100, Number(match[1])) / 100;

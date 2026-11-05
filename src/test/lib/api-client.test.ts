@@ -6,7 +6,7 @@ import { server } from "@/test/msw/server.ts";
 const envelope = <T>(data: T) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });
 
-const ABORT_MESSAGE = /abort/i;
+const ABORT_MESSAGE = /abort/iu;
 
 const collect = async <T>(generator: AsyncGenerator<T>): Promise<T[]> => {
   const payloads: T[] = [];

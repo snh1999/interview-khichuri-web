@@ -37,7 +37,7 @@ export const JobSourceAndTimeline = ({
 
   return (
     <>
-      <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-muted-foreground text-xs">
+      <div className="text-muted-foreground mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-xs">
         {job.url ? (
           <span className="inline-flex items-center gap-1.5">
             <LinkSimpleIcon className="size-3.5" />
@@ -78,19 +78,19 @@ export const JobSourceAndTimeline = ({
               <div className="contents" key={t.label}>
                 <div
                   className={`flex w-full flex-col justify-center rounded-md py-0.5 text-center ${
-                    t.danger ? "max-w-100 bg-destructive/10 py-4" : "max-w-50"
+                    t.danger ? "bg-destructive/10 max-w-100 py-4" : "max-w-50"
                   }`}
                 >
                   <p className="text-muted-foreground text-xs">{t.label}</p>
                   <p
-                    className={`mt-0.5 font-medium text-sm ${t.danger ? "text-destructive" : ""}`}
+                    className={`mt-0.5 text-sm font-medium ${t.danger ? "text-destructive" : ""}`}
                   >
                     {t.value}
                   </p>
                 </div>
                 {i < timeline.length - 1 && (
                   <div className="flex items-center">
-                    <CaretRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
+                    <CaretRightIcon className="text-muted-foreground size-3.5 shrink-0" />
                   </div>
                 )}
               </div>

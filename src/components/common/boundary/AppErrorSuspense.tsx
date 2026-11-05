@@ -49,7 +49,7 @@ const ErrorFallbackCard = ({
   const navigate = useNavigate();
   const refreshPage = () => navigate(0);
   return (
-    <Card className="border border-destructive">
+    <Card className="border-destructive border">
       <CardHeader>
         <CardTitle className="text-destructive">Something went wrong</CardTitle>
         <CardDescription>{getErrorMessage(error)}</CardDescription>

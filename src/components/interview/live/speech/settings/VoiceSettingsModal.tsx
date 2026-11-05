@@ -67,7 +67,7 @@ const LogConsole = ({ logs, onClear }: Readonly<ILogConsoleProps>) => {
   return (
     <Card className="flex flex-col gap-2 pb-0">
       <CardHeader>
-        <CardTitle className="flex items-center gap-1.5 font-semibold text-md">
+        <CardTitle className="text-md flex items-center gap-1.5 font-semibold">
           <TerminalWindowIcon className="size-3.5" />
           Diagnostic Event Console
         </CardTitle>
@@ -77,7 +77,7 @@ const LogConsole = ({ logs, onClear }: Readonly<ILogConsoleProps>) => {
           </Button>
         </CardAction>
       </CardHeader>
-      <CardContent className="flex h-32 flex-col gap-1 overflow-y-auto bg-secondary/30 p-3 font-mono text-xs">
+      <CardContent className="bg-secondary/30 flex h-32 flex-col gap-1 overflow-y-auto p-3 font-mono text-xs">
         {logs.length === 0 ? (
           <span className="text-muted-foreground italic">
             No events recorded yet. Click "Speak Audio Test" to inspect.
@@ -100,7 +100,7 @@ const LogConsole = ({ logs, onClear }: Readonly<ILogConsoleProps>) => {
                 )}
                 key={log.id}
               >
-                <span className="shrink-0 select-none text-muted-foreground">
+                <span className="text-muted-foreground shrink-0 select-none">
                   {log.timestamp}
                 </span>
                 <span>{log.message}</span>
@@ -238,14 +238,14 @@ export const VoiceSettingsModal = ({
   let testBadge: ReactNode = null;
   if (testResult?.success) {
     testBadge = (
-      <span className="inline-flex items-center gap-1 rounded bg-signal-success/10 px-2 py-0.5 font-semibold text-[0.65rem] text-signal-success-foreground">
+      <span className="bg-signal-success/10 text-signal-success-foreground inline-flex items-center gap-1 rounded px-2 py-0.5 text-[0.65rem] font-semibold">
         <CheckCircleIcon className="size-3" />
         {formatLatency(testResult.latencyMs)}
       </span>
     );
   } else if (testResult) {
     testBadge = (
-      <span className="inline-flex items-center gap-1 rounded bg-destructive/10 px-2 py-0.5 font-semibold text-[0.65rem] text-destructive">
+      <span className="bg-destructive/10 text-destructive inline-flex items-center gap-1 rounded px-2 py-0.5 text-[0.65rem] font-semibold">
         <WarningCircleIcon className="size-3" />
         {`Failed: ${testResult.error ?? "unknown"}`}
       </span>
@@ -259,7 +259,7 @@ export const VoiceSettingsModal = ({
           <div className="flex items-center gap-3">
             <SpeakerHighIcon className="size-6" />
             <div className="space-y-0.5">
-              <DrawLogTitle className="font-semibold text-base">
+              <DrawLogTitle className="text-base font-semibold">
                 Voice &amp; Speech Settings
               </DrawLogTitle>
               <DrawLogDescription>
@@ -270,8 +270,8 @@ export const VoiceSettingsModal = ({
           </div>
         </DrawLogHeader>
 
-        <DrawLogBody className="flex-1 text-foreground text-sm">
-          <div className="flex items-center gap-3 rounded-xl bg-primary/20 p-4">
+        <DrawLogBody className="text-foreground flex-1 text-sm">
+          <div className="bg-primary/20 flex items-center gap-3 rounded-xl p-4">
             {summary.voicesCount === 0 ? (
               <div className="space-y-0.5">
                 <DrawLogTitle className="text-md">
@@ -318,9 +318,9 @@ export const VoiceSettingsModal = ({
         </DrawLogBody>
 
         <DrawLogFooter className="bg-muted/30 px-5 py-3.5 sm:justify-between">
-          <span className="text-[0.7rem] text-muted-foreground">
+          <span className="text-muted-foreground text-[0.7rem]">
             Active:{" "}
-            <span className="font-semibold text-foreground">
+            <span className="text-foreground font-semibold">
               {summary.activeVoiceName}
             </span>
           </span>

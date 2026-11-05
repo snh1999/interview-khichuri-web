@@ -20,7 +20,7 @@ export const ScreenshotFrame = ({
 }: Readonly<IScreenshotFrameProps>) => (
   <div
     className={cn(
-      "overflow-hidden rounded-xl bg-muted/30 ring-1 ring-foreground/10",
+      "bg-muted/30 ring-foreground/10 overflow-hidden rounded-xl ring-1",
       className
     )}
   >

@@ -87,7 +87,7 @@ const ScoreItemRow = ({ item }: { item: IScoreItem }) => {
     >
       <div className="flex items-center gap-2">
         <Icon className="size-4 shrink-0" />
-        <p className="font-semibold text-xs">{item.label}</p>
+        <p className="text-xs font-semibold">{item.label}</p>
       </div>
       {item.description ? (
         <p className="text-foreground/80 text-xs">{item.description}</p>
@@ -107,7 +107,7 @@ const ScoreDetails = ({
   return (
     <div className="space-y-1.5 px-2">
       <div className="flex items-baseline justify-end gap-2">
-        <span className={cn("font-semibold text-sm", SCORE_TEXT_CLASS[tone])}>
+        <span className={cn("text-sm font-semibold", SCORE_TEXT_CLASS[tone])}>
           {score}
         </span>
       </div>
@@ -155,7 +155,7 @@ const ScoreSectionBody = ({ section }: { section: IScoreSection }) => {
 const renderOverallLabel = (value: number) => (
   <span
     className={cn(
-      "font-semibold text-lg",
+      "text-lg font-semibold",
       SCORE_TEXT_CLASS[getScoreTone(value)]
     )}
   >
@@ -205,7 +205,7 @@ export const ScoreCard = ({
             <AccordionItem key={section.key} value={section.key}>
               <AccordionTrigger className="gap-3 px-4 py-3 hover:no-underline">
                 <span className="flex w-full items-center gap-3">
-                  <span className="font-medium text-sm">{section.title}</span>
+                  <span className="text-sm font-medium">{section.title}</span>
                   {resolvedBadge ? (
                     <Badge variant="secondary">
                       {resolvedBadge}
@@ -238,18 +238,18 @@ export const ScoreCard = ({
         <AccordionTrigger className="gap-3 rounded-xs px-4 py-3.5 hover:no-underline">
           <div className="flex min-w-0 flex-1 items-center gap-4">
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <span className="max-w-full truncate font-semibold text-base">
+              <span className="max-w-full truncate text-base font-semibold">
                 {title}
               </span>
               {subtitle ? (
-                <span className="max-w-full truncate text-muted-foreground text-sm">
+                <span className="text-muted-foreground max-w-full truncate text-sm">
                   {subtitle}
                 </span>
               ) : null}
             </div>
             <CircularProgress
               aria-label="Overall score"
-              className="shrink-0 text-primary"
+              className="text-primary shrink-0"
               progressBgClassName="text-primary/15"
               progressClassName="text-primary"
               renderLabel={renderOverallLabel}

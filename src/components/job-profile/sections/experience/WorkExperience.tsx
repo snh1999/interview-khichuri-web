@@ -41,7 +41,7 @@ export const WorkExperience = memo(({ sectionId }: Readonly<IProps>) => {
         <CardAction className="pt-2 pr-1">
           <Button
             aria-label="Add work experience"
-            className="rounded-full bg-primary/50"
+            className="bg-primary/50 rounded-full"
             onClick={onAppend}
             size="icon-sm"
           >
@@ -58,7 +58,7 @@ export const WorkExperience = memo(({ sectionId }: Readonly<IProps>) => {
           />
         ))}
         {workExpFields.length === 0 && (
-          <p className="text-center text-muted-foreground text-xs italic">
+          <p className="text-muted-foreground text-center text-xs italic">
             No work experience added yet.
           </p>
         )}

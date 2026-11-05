@@ -46,7 +46,7 @@ export const InterviewReport = ({ interview }: IProps) => {
   return (
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold text-xl">Mock Interview Report</h1>
+        <h1 className="text-xl font-semibold">Mock Interview Report</h1>
         <div className="flex items-center gap-2">
           <Badge className="tracking-wide" variant="secondary">
             {minutes}m {seconds}s
@@ -85,7 +85,7 @@ export const InterviewReport = ({ interview }: IProps) => {
           <CardContent className="space-y-4">
             {archive.items.map((item) => (
               <div
-                className="space-y-1 border-border border-l-2 pl-4"
+                className="border-border space-y-1 border-l-2 pl-4"
                 key={item.questionId}
               >
                 <p className="text-sm">
@@ -93,7 +93,7 @@ export const InterviewReport = ({ interview }: IProps) => {
                   {item.question}
                 </p>
                 <p className="text-muted-foreground text-sm">
-                  <span className="font-semibold text-foreground">A. </span>
+                  <span className="text-foreground font-semibold">A. </span>
                   {item.answer.trim() || "(no answer recorded)"}
                 </p>
                 <p className="text-muted-foreground text-xs">

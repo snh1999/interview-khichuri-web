@@ -61,7 +61,7 @@ const ProfilePage = () => {
           label: tab.label,
           indicator: hasMissing ? (
             <WarningCircleIcon
-              className="size-3 text-destructive"
+              className="text-destructive size-3"
               weight="fill"
             />
           ) : null,

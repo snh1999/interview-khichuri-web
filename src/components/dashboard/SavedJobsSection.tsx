@@ -26,7 +26,7 @@ export const SavedJobsSection = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-semibold text-base">Saved jobs</CardTitle>
+        <CardTitle className="text-base font-semibold">Saved jobs</CardTitle>
         <CardAction className="flex items-center gap-2">
           <Button aria-label="New job" onClick={openDialog} size="sm">
             <PlusCircleIcon />

@@ -31,7 +31,7 @@ const PublicResumeContent = () => {
   const pdfSettings = entry.config.pdfSettings ?? {};
 
   return (
-    <div className="min-h-screen bg-background py-8">
+    <div className="bg-background min-h-screen py-8">
       <div className="mx-auto max-w-4xl">
         <RenderProvider mode="web" settings={pdfSettings}>
           <ResumeComponent

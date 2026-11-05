@@ -4,8 +4,8 @@ import type { INote } from "@/api/notes/index.ts";
 import { NotesList } from "@/components/notes/NotesList.tsx";
 import { render } from "@/test/render.tsx";
 
-const UPDATED_LABEL = /Updated/;
-const ROW_NAME = /^Alpha note/;
+const UPDATED_LABEL = /Updated/u;
+const ROW_NAME = /^Alpha note/u;
 
 const note = (overrides: Partial<INote>): INote => ({
   id: "n-1",

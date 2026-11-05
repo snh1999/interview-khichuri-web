@@ -11,8 +11,8 @@ const CREATED_AT = "2026-01-01T00:00:00.000Z";
 
 const DESCRIPTION = "Senior frontend engineer at a fintech scaleup.";
 
-const DUPLICATE_BANNER = /already exists in Discover/i;
-const DUPLICATE_JOB_TEXT = /Duplicate Role at Globex/;
+const DUPLICATE_BANNER = /already exists in Discover/iu;
+const DUPLICATE_JOB_TEXT = /Duplicate Role at Globex/u;
 
 const editJob: IJob = {
   companyId: 11,

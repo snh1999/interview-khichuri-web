@@ -27,15 +27,15 @@ export const FrameControls: React.FC<FrameControlsProps> = ({
     }
   };
   return (
-    <div className="space-y-3 border-border border-t pt-2">
-      <div className="font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+    <div className="border-border space-y-3 border-t pt-2">
+      <div className="text-muted-foreground text-xxs font-bold tracking-wider uppercase">
         Artboard Properties
       </div>
 
       <div className="space-y-1">
         <span className="text-muted-foreground text-xs">Page Route</span>
         <Input
-          className="h-7 bg-background font-mono text-xs"
+          className="bg-background h-7 font-mono text-xs"
           onChange={handleRouteChange}
           onFocus={recordHistory}
           type="text"

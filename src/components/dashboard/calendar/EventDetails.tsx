@@ -139,7 +139,7 @@ export const EventDetails = ({ event, open, onOpenChange, onEdit }: Props) => {
               </DrawLogClose>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground text-xs">
+          <div className="text-muted-foreground flex items-center gap-2 text-xs">
             <ClockIcon />
             {isMultiDay ? (
               <span>

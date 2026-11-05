@@ -31,7 +31,7 @@ export const InlineTextEditor: React.FC<InlineTextEditorProps> = ({
     <div className="absolute z-50" style={{ left, top, width }}>
       <Textarea
         autoFocus
-        className="resize-none rounded-md border-primary bg-foreground p-1 text-background text-xs shadow-lg placeholder:text-background/50 dark:bg-foreground dark:text-background"
+        className="border-primary bg-foreground text-background placeholder:text-background/50 dark:bg-foreground dark:text-background resize-none rounded-md p-1 text-xs shadow-lg"
         onBlur={onCommit}
         onChange={handleChange}
         onKeyDown={handleKeyDown}

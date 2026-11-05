@@ -8,7 +8,7 @@ interface IValues {
   value: Date | null | undefined;
 }
 
-const PRESERVED_TIME_RE = /T\d{2}:30:00\.000Z$/;
+const PRESERVED_TIME_RE = /T\d{2}:30:00\.000Z$/u;
 
 interface IHarnessProps {
   defaultValues?: IValues;

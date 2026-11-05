@@ -36,7 +36,7 @@ const ResumePageContent = () => {
   return (
     <div className="w-full">
       <div className="mb-6">
-        <h1 className="font-semibold text-xl">Resumes &amp; Portfolio</h1>
+        <h1 className="text-xl font-semibold">Resumes &amp; Portfolio</h1>
       </div>
       <ScrollableTabs defaultTab="resume" tabs={TABS} />
       {currentTab === "portfolio" ? (

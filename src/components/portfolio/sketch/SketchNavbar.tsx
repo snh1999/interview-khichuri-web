@@ -51,7 +51,7 @@ import {
 } from "@/store/useBuilderStore";
 import type { ViewMode } from "./types";
 
-const WHITESPACE_SEPARATOR = /\s+/;
+const WHITESPACE_SEPARATOR = /\s+/u;
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: merged app header with per-tab controls; complexity acceptable at this boundary
 export const SketchNavbar: React.FC = () => {
@@ -148,7 +148,7 @@ export const SketchNavbar: React.FC = () => {
       const blobUrl = URL.createObjectURL(blob);
       const downloadAnchor = document.createElement("a");
       downloadAnchor.href = blobUrl;
-      downloadAnchor.download = `${(currentPortfolio.title || "portfolio").toLowerCase().replace(/\s+/g, "-")}-portfolio.json`;
+      downloadAnchor.download = `${(currentPortfolio.title || "portfolio").toLowerCase().replace(/\s+/gu, "-")}-portfolio.json`;
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
@@ -207,14 +207,14 @@ export const SketchNavbar: React.FC = () => {
   };
 
   return (
-    <header className="relative z-40 flex h-14 select-none items-center justify-between gap-1.5 border-border border-b bg-card/80 px-2.5 backdrop-blur-md sm:gap-3 sm:px-4">
-      <div className="flex min-w-0 max-w-[40%] shrink-0 items-center gap-1.5 sm:gap-2.5 md:max-w-[40%]">
+    <header className="border-border bg-card/80 relative z-40 flex h-14 items-center justify-between gap-1.5 border-b px-2.5 backdrop-blur-md select-none sm:gap-3 sm:px-4">
+      <div className="flex max-w-[40%] min-w-0 shrink-0 items-center gap-1.5 sm:gap-2.5 md:max-w-[40%]">
         <Tooltip>
           <TooltipTrigger
             render={
               <Link className="shrink-0" to={HOMEPAGE}>
                 <Button
-                  className="shrink-0 rounded-xl text-muted-foreground hover:text-foreground sm:h-9"
+                  className="text-muted-foreground hover:text-foreground shrink-0 rounded-xl sm:h-9"
                   size="lg"
                   variant="ghost"
                 >
@@ -227,14 +227,14 @@ export const SketchNavbar: React.FC = () => {
           <TooltipContent side="bottom">Return to Home</TooltipContent>
         </Tooltip>
 
-        <div className="hidden h-4 w-px shrink-0 bg-border sm:block" />
+        <div className="bg-border hidden h-4 w-px shrink-0 sm:block" />
 
         <Tooltip>
           <TooltipTrigger
             render={
               <Button
                 aria-label={sidebarOpen ? "Hide sidebar" : "Show sidebar"}
-                className="shrink-0 rounded-xl text-muted-foreground hover:text-foreground sm:size-9"
+                className="text-muted-foreground hover:text-foreground shrink-0 rounded-xl sm:size-9"
                 onClick={toggleSidebar}
                 size="icon-lg"
                 variant="ghost"
@@ -249,18 +249,18 @@ export const SketchNavbar: React.FC = () => {
           <TooltipContent side="bottom">{sidebarToggleLabel}</TooltipContent>
         </Tooltip>
 
-        <div className="hidden h-4 w-px shrink-0 bg-border sm:block" />
+        <div className="bg-border hidden h-4 w-px shrink-0 sm:block" />
 
         {/* Project name + badge — same across all tabs */}
         <div className="flex min-w-0 items-center gap-2">
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-primary font-bold text-primary-foreground text-xs shadow-sm">
+          <div className="bg-primary text-primary-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded text-xs font-bold shadow-sm">
             {portfolioInitials}
           </div>
           {isEditingTitle ? (
             <form className="flex items-center" onSubmit={handleTitleSubmit}>
               <Input
                 autoFocus
-                className="h-auto w-48 rounded border-primary px-2 py-0.5 font-semibold text-sm"
+                className="border-primary h-auto w-48 rounded px-2 py-0.5 text-sm font-semibold"
                 onBlur={handleTitleSubmit}
                 onChange={handleTempTitleChange}
                 value={tempTitle}
@@ -273,7 +273,7 @@ export const SketchNavbar: React.FC = () => {
               title="Click to rename project"
               variant="ghost"
             >
-              <span className="max-w-[200px] truncate font-medium text-foreground text-sm">
+              <span className="text-foreground max-w-[200px] truncate text-sm font-medium">
                 {currentPortfolio.title}
               </span>
               <PencilSimpleIcon
@@ -286,7 +286,7 @@ export const SketchNavbar: React.FC = () => {
 
         {/* Code Builder-only: Saved indicator */}
         {isPreviewTab && lastSaved ? (
-          <span className="ml-1 hidden items-center gap-1 text-muted-foreground text-xs xl:flex">
+          <span className="text-muted-foreground ml-1 hidden items-center gap-1 text-xs xl:flex">
             <CheckIcon className="text-emerald-500" size={12} /> Saved{" "}
             {lastSaved}
           </span>
@@ -294,7 +294,7 @@ export const SketchNavbar: React.FC = () => {
 
         {/* Sketch-only: Saved indicator (derived from portfolio.updatedAt) */}
         {!isPreviewTab && currentPortfolio.updatedAt ? (
-          <span className="ml-1 hidden items-center gap-1 text-muted-foreground text-xs xl:flex">
+          <span className="text-muted-foreground ml-1 hidden items-center gap-1 text-xs xl:flex">
             <CheckIcon className="text-emerald-500" size={12} /> Saved{" "}
             {formatTime(currentPortfolio.updatedAt)}
           </span>
@@ -307,9 +307,9 @@ export const SketchNavbar: React.FC = () => {
           onValueChange={handleViewModeChange}
           value={viewMode}
         >
-          <TabsList className="h-8 gap-0.5 rounded-xl border border-border/80 bg-muted/70 p-0.5 sm:h-9 sm:gap-1 sm:p-1">
+          <TabsList className="border-border/80 bg-muted/70 h-8 gap-0.5 rounded-xl border p-0.5 sm:h-9 sm:gap-1 sm:p-1">
             <TabsTrigger
-              className="flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-xs data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs sm:gap-1.5 sm:px-3"
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium data-[state=active]:shadow-xs sm:gap-1.5 sm:px-3"
               value="canvas"
             >
               <LayoutIcon
@@ -319,7 +319,7 @@ export const SketchNavbar: React.FC = () => {
               <span className="hidden sm:inline">Canvas</span>
             </TabsTrigger>
             <TabsTrigger
-              className="flex items-center gap-1 rounded-lg px-2 py-1 font-medium text-xs data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs sm:gap-1.5 sm:px-3"
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium data-[state=active]:shadow-xs sm:gap-1.5 sm:px-3"
               value="preview"
             >
               <CodeIcon
@@ -335,7 +335,7 @@ export const SketchNavbar: React.FC = () => {
 
       <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
         {viewMode === "canvas" && (
-          <div className="flex items-center gap-0.5 rounded-lg border border-border/50 bg-muted/40 p-0.5">
+          <div className="border-border/50 bg-muted/40 flex items-center gap-0.5 rounded-lg border p-0.5">
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -371,7 +371,7 @@ export const SketchNavbar: React.FC = () => {
         )}
 
         {viewMode === "canvas" && (
-          <div className="flex items-center gap-1 rounded-lg border border-border/50 bg-muted/40 px-1.5 py-0.5 text-xs">
+          <div className="border-border/50 bg-muted/40 flex items-center gap-1 rounded-lg border px-1.5 py-0.5 text-xs">
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -424,7 +424,7 @@ export const SketchNavbar: React.FC = () => {
 
         {isPreviewTab && (
           <>
-            <div className="flex rounded-lg border border-border bg-muted p-0.5">
+            <div className="border-border bg-muted flex rounded-lg border p-0.5">
               <Button
                 onClick={handleDesktopMode}
                 size="icon-sm"
@@ -458,7 +458,7 @@ export const SketchNavbar: React.FC = () => {
             </div>
 
             <Button
-              className="rounded-lg border-border bg-card shadow-xs hover:bg-accent"
+              className="border-border bg-card hover:bg-accent rounded-lg shadow-xs"
               onClick={handleExportZip}
               size="sm"
               title="Download complete runnable project as .zip file"

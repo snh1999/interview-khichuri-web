@@ -16,7 +16,7 @@ export const isHttpUrl = (value: string): boolean => {
   }
 };
 
-const HTTP_REGEX = /^[a-z][a-z0-9+.-]*:\/\//i;
+const HTTP_REGEX = /^[a-z][a-z0-9+.-]*:\/\//iu;
 export const normalizeHttpUrl = (value: string): string | null => {
   const input = value.trim();
   if (!input) {
@@ -107,8 +107,8 @@ export const stripNulls = (value: unknown): unknown => {
   return value;
 };
 
-const LOOKUP_NAME_SEPARATOR = /[._\-(),]/g;
-const LOOKUP_NAME_WHITESPACE = /\s+/g;
+const LOOKUP_NAME_SEPARATOR = /[._\-(),]/gu;
+const LOOKUP_NAME_WHITESPACE = /\s+/gu;
 
 export const normalizeLookupName = (name: string): string =>
   name
@@ -130,8 +130,8 @@ export const buildLookupNameMap = (
   return map;
 };
 
-const CAMEL_CASE_SEPARATOR = /([a-z])([A-Z])/g;
-const FIRST_CHAR = /^./;
+const CAMEL_CASE_SEPARATOR = /([a-z])([A-Z])/gu;
+const FIRST_CHAR = /^./u;
 
 export const formatSectionLabel = (key: string): string =>
   key
@@ -160,18 +160,18 @@ export const generateSafeId = (prefix = ""): string => {
 
 export function markdownToPlain(md: string): string {
   return md
-    .replace(/```[\s\S]*?```/g, "") // fenced code blocks
-    .replace(/`([^`]*)`/g, "$1") // inline code
-    .replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1") // images
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1") // links
-    .replace(/^#{1,6}\s+/gm, "") // headings
-    .replace(/^>\s?/gm, "") // blockquotes
-    .replace(/^[-*+]\s+/gm, "") // bullets
-    .replace(/^\d+\.\s+/gm, "") // numbered lists
-    .replace(/(\*\*|__)(.*?)\1/g, "$2") // bold
-    .replace(/([*_])(.*?)\1/g, "$2") // italic
-    .replace(/~~(.*?)~~/g, "$1") // strikethrough
-    .replace(/^[-*_]{3,}\s*$/gm, "") // horizontal rules
-    .replace(/\n{3,}/g, "\n\n") // extra blank lines
+    .replace(/```[\s\S]*?```/gu, "") // fenced code blocks
+    .replace(/`([^`]*)`/gu, "$1") // inline code
+    .replace(/!\[([^\]]*)\]\([^)]*\)/gu, "$1") // images
+    .replace(/\[([^\]]*)\]\([^)]*\)/gu, "$1") // links
+    .replace(/^#{1,6}\s+/gmu, "") // headings
+    .replace(/^>\s?/gmu, "") // blockquotes
+    .replace(/^[-*+]\s+/gmu, "") // bullets
+    .replace(/^\d+\.\s+/gmu, "") // numbered lists
+    .replace(/(\*\*|__)(.*?)\1/gu, "$2") // bold
+    .replace(/([*_])(.*?)\1/gu, "$2") // italic
+    .replace(/~~(.*?)~~/gu, "$1") // strikethrough
+    .replace(/^[-*_]{3,}\s*$/gmu, "") // horizontal rules
+    .replace(/\n{3,}/gu, "\n\n") // extra blank lines
     .trim();
 }

@@ -60,8 +60,8 @@ export const LooseElements: React.FC = () => {
   }
 
   return (
-    <div className="space-y-2 border-border/60 border-t pt-2">
-      <div className="px-1 font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+    <div className="border-border/60 space-y-2 border-t pt-2">
+      <div className="text-muted-foreground text-xxs px-1 font-bold tracking-wider uppercase">
         Loose Canvas Elements ({looseElements.length})
       </div>
       <div className="space-y-1">
@@ -70,9 +70,9 @@ export const LooseElements: React.FC = () => {
           return (
             // biome-ignore lint/a11y/useSemanticElements: container embeds nested interactive controls; a native button cannot wrap them
             <div
-              className={`flex cursor-pointer items-center justify-between rounded-lg border p-1.5 transition-all focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring ${
+              className={`focus-visible:ring-ring flex cursor-pointer items-center justify-between rounded-lg border p-1.5 transition-all focus-visible:ring-1 focus-visible:outline-hidden ${
                 isSelected
-                  ? "border-primary bg-primary/10 font-medium text-primary"
+                  ? "border-primary bg-primary/10 text-primary font-medium"
                   : "border-border/60 bg-muted/20 text-muted-foreground hover:text-foreground"
               }`}
               key={el.id}

@@ -319,14 +319,14 @@ export const LiveInterview = ({ interview }: { interview: IInterview }) => {
                 questionText={questionText}
               />
             ) : (
-              <div className="flex min-h-0 flex-1 items-center justify-center text-muted-foreground text-sm">
+              <div className="text-muted-foreground flex min-h-0 flex-1 items-center justify-center text-sm">
                 Avatar hidden
               </div>
             )}
             {panes.chat ? null : (
-              <div className="shrink-0 bg-background">
+              <div className="bg-background shrink-0">
                 <div className="border-border border-t px-4 py-2">
-                  <p className="font-medium text-[10px] text-muted-foreground uppercase tracking-wide">
+                  <p className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
                     Question
                   </p>
                   <p className="text-sm">{questionText}</p>

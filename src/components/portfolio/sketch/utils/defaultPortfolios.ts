@@ -442,7 +442,7 @@ export interface TProfileTokens {
   email: string;
 }
 
-const PROFILE_TOKEN_PATTERN = /\{\{(name|title|email)\}\}/g;
+const PROFILE_TOKEN_PATTERN = /\{\{(name|title|email)\}\}/gu;
 
 const PROFILE_TOKEN_FALLBACKS: TProfileTokens = {
   name: "Your Name",

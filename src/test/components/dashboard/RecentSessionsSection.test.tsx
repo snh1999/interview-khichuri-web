@@ -22,7 +22,7 @@ const makeSession = (
   experience: null,
 });
 
-const SESSION_TITLE = /^Session /;
+const SESSION_TITLE = /^Session /u;
 
 const useSessionsResponse = (sessions: IPrepSession[]) =>
   server.use(

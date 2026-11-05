@@ -25,7 +25,7 @@ const AdminPage = () => {
         Back to Home
       </LinkButton>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="font-bold text-lg">Admin Dashboard</h1>
+        <h1 className="text-lg font-bold">Admin Dashboard</h1>
         <Link to={ADMIN_LOOKUPS_PAGE}>
           <Button size="sm" variant="outline">
             <ListMagnifyingGlassIcon />

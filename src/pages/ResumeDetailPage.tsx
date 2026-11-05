@@ -99,7 +99,7 @@ const ResumeDetailContent = () => {
   return (
     <div className="w-full">
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
-        <h1 className="min-w-0 truncate font-semibold text-base sm:sr-only">
+        <h1 className="min-w-0 truncate text-base font-semibold sm:sr-only">
           {resume.name}
         </h1>
         <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
@@ -180,7 +180,7 @@ const ResumeDetailContent = () => {
                 title={resume.name}
               />
             ) : (
-              <p className="text-center text-muted-foreground italic">
+              <p className="text-muted-foreground text-center italic">
                 Review your resume on its own merits — tone, content, structure,
                 and skills. Run a review to get a score and recommendations.
               </p>

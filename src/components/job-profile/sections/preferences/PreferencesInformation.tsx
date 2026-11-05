@@ -87,7 +87,7 @@ export const PreferencesInformation = memo(
 
           <div className="grid grid-cols-1 gap-3 border-t pt-4">
             <div>
-              <p className="font-medium text-sm">Your voice (optional)</p>
+              <p className="text-sm font-medium">Your voice (optional)</p>
               <p className="text-muted-foreground text-xs">
                 Paste a cover letter or outreach email you like. AI drafts will
                 match its tone and phrasing.

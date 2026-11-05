@@ -48,7 +48,7 @@ export const DayColumn = ({
 
     {isToday(day) && (
       <div
-        className="pointer-events-none absolute right-0 left-0 z-10 h-px bg-primary"
+        className="bg-primary pointer-events-none absolute right-0 left-0 z-10 h-px"
         style={{ top: timeToY(new Date()) }}
       />
     )}
@@ -68,20 +68,20 @@ export const DayColumn = ({
     {previewStart && previewEnd ? (
       <>
         <div
-          className="pointer-events-none absolute right-1 left-1 z-30 rounded border-2 border-primary bg-primary/20"
+          className="border-primary bg-primary/20 pointer-events-none absolute right-1 left-1 z-30 rounded border-2"
           style={{
             top: timeToY(previewStart),
             height: Math.max(4, timeToY(previewEnd) - timeToY(previewStart)),
           }}
         />
         <div
-          className="pointer-events-none absolute left-1 z-40 rounded bg-primary px-1.5 py-0.5 text-primary-foreground text-xs shadow"
+          className="bg-primary text-primary-foreground pointer-events-none absolute left-1 z-40 rounded px-1.5 py-0.5 text-xs shadow"
           style={{ top: timeToY(previewStart) - 20 }}
         >
           {format(previewStart, "h:mm a")}
         </div>
         <div
-          className="pointer-events-none absolute left-1 z-40 rounded bg-primary px-1.5 py-0.5 text-primary-foreground text-xs shadow"
+          className="bg-primary text-primary-foreground pointer-events-none absolute left-1 z-40 rounded px-1.5 py-0.5 text-xs shadow"
           style={{ top: timeToY(previewEnd) + 2 }}
         >
           {format(previewEnd, "h:mm a")}
@@ -117,7 +117,7 @@ const DayChip = ({
   return (
     <button
       className={cn(
-        "absolute z-20 overflow-hidden truncate whitespace-nowrap rounded-md px-1 text-center font-medium text-xs leading-tight shadow-sm transition-opacity hover:opacity-80",
+        "absolute z-20 truncate overflow-hidden rounded-md px-1 text-center text-xs leading-tight font-medium whitespace-nowrap shadow-sm transition-opacity hover:opacity-80",
         colors.bg,
         colors.text
       )}

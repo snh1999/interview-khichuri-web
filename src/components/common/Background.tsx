@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area.tsx";
 export const Background = ({
   children,
 }: Readonly<{ children?: ReactNode }>) => (
-  <div className="relative flex h-dvh overflow-hidden bg-background/95">
+  <div className="bg-background/95 relative flex h-dvh overflow-hidden">
     <div
       className="absolute inset-0 opacity-[0.03]"
       style={{
@@ -13,13 +13,13 @@ export const Background = ({
       }}
     />
 
-    <div className="absolute top-20 left-20 hidden text-muted-foreground/30 lg:block">
+    <div className="text-muted-foreground/30 absolute top-20 left-20 hidden lg:block">
       <TerminalIcon className="h-12 w-12" weight="thin" />
     </div>
-    <div className="absolute right-20 bottom-20 hidden text-muted-foreground/30 lg:block">
+    <div className="text-muted-foreground/30 absolute right-20 bottom-20 hidden lg:block">
       <CodeIcon className="h-16 w-16" weight="thin" />
     </div>
-    <div className="absolute top-1/3 right-32 hidden rotate-12 text-muted-foreground/30 lg:block">
+    <div className="text-muted-foreground/30 absolute top-1/3 right-32 hidden rotate-12 lg:block">
       <CodeIcon className="h-10 w-10" weight="thin" />
     </div>
 

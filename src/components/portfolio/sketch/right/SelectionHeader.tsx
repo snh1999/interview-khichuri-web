@@ -27,8 +27,8 @@ export const SelectionHeader: React.FC<SelectionHeaderProps> = ({
     return Promise.resolve({ error: false });
   };
   return (
-    <div className="flex items-center justify-between border-border border-b pb-3">
-      <div className="flex items-center gap-1.5 font-bold text-muted-foreground text-xs uppercase tracking-wider">
+    <div className="border-border flex items-center justify-between border-b pb-3">
+      <div className="text-muted-foreground flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase">
         <SlidersIcon className="text-primary" size={15} />
         <span>
           {isMulti

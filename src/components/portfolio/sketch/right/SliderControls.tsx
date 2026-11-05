@@ -63,9 +63,9 @@ export const SliderControls: React.FC<SliderControlsProps> = ({
     setCornerRadius(val);
   };
   return (
-    <div className="space-y-4 border-border border-t pt-2">
+    <div className="border-border space-y-4 border-t pt-2">
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between text-muted-foreground text-xs">
+        <div className="text-muted-foreground flex items-center justify-between text-xs">
           <span>Stroke Width</span>
           <div className="flex items-center gap-1">
             {strokeWidthState.isMixed ? (
@@ -74,7 +74,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({
               </span>
             ) : null}
             <Input
-              className="h-5 w-12 rounded border-border bg-background px-1 text-right font-mono text-xs focus-visible:ring-0"
+              className="border-border bg-background h-5 w-12 rounded px-1 text-right font-mono text-xs focus-visible:ring-0"
               max={24}
               min={0}
               onChange={handleStrokeWidthChange}
@@ -86,7 +86,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({
                   : activeElement.strokeWidth || strokeWidth
               }
             />
-            <span className="font-mono text-xxs">px</span>
+            <span className="text-xxs font-mono">px</span>
           </div>
         </div>
         <Slider
@@ -105,7 +105,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({
 
       {/* Opacity (Min 0 allowed) */}
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between text-muted-foreground text-xs">
+        <div className="text-muted-foreground flex items-center justify-between text-xs">
           <span>Opacity</span>
           <div className="flex items-center gap-1">
             {opacityState.isMixed ? (
@@ -114,7 +114,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({
               </span>
             ) : null}
             <Input
-              className="h-5 w-12 rounded border-border bg-background px-1 text-right font-mono text-xs focus-visible:ring-0"
+              className="border-border bg-background h-5 w-12 rounded px-1 text-right font-mono text-xs focus-visible:ring-0"
               max={100}
               min={0}
               onChange={handleOpacityChange}
@@ -126,7 +126,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({
                   : Math.round((activeElement.opacity ?? opacity) * 100)
               }
             />
-            <span className="font-mono text-xxs">%</span>
+            <span className="text-xxs font-mono">%</span>
           </div>
         </div>
         <Slider
@@ -144,7 +144,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({
       </div>
 
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between text-muted-foreground text-xs">
+        <div className="text-muted-foreground flex items-center justify-between text-xs">
           <span>Corner Radius</span>
           <div className="flex items-center gap-1">
             {cornerRadiusState.isMixed ? (
@@ -153,7 +153,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({
               </span>
             ) : null}
             <Input
-              className="h-5 w-12 rounded border-border bg-background px-1 text-right font-mono text-xs focus-visible:ring-0"
+              className="border-border bg-background h-5 w-12 rounded px-1 text-right font-mono text-xs focus-visible:ring-0"
               max={60}
               min={0}
               onChange={handleCornerRadiusChange}
@@ -165,7 +165,7 @@ export const SliderControls: React.FC<SliderControlsProps> = ({
                   : (activeElement.cornerRadius ?? cornerRadius)
               }
             />
-            <span className="font-mono text-xxs">px</span>
+            <span className="text-xxs font-mono">px</span>
           </div>
         </div>
         <Slider

@@ -14,7 +14,7 @@ import { useSketchBuilderStore } from "@/store/sketchBuilderStore.ts";
 import { useBuilderStore } from "@/store/useBuilderStore.ts";
 import { render } from "@/test/render.tsx";
 
-const PAGE_SETUP = /page setup/i;
+const PAGE_SETUP = /page setup/iu;
 
 const store = () => useSketchBuilderStore.getState();
 const elements = () => store().draft?.elements ?? [];

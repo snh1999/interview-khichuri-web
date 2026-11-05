@@ -41,28 +41,28 @@ const GeminiVoiceOption = ({
       className={cn(
         "rounded-lg border p-2.5 text-left transition-colors",
         selected
-          ? "border-primary/60 bg-card ring-1 ring-primary/20"
+          ? "border-primary/60 bg-card ring-primary/20 ring-1"
           : "border-border bg-card hover:bg-muted"
       )}
       onClick={handleClick}
       type="button"
     >
       <span className="flex items-center justify-between gap-2">
-        <span className="font-semibold text-xs">
+        <span className="text-xs font-semibold">
           {voice.name}
-          <span className="font-normal text-muted-foreground">
+          <span className="text-muted-foreground font-normal">
             {" "}
             ({voice.gender})
           </span>
         </span>
         {selected ? (
-          <CheckIcon className="size-3.5 shrink-0 text-primary" />
+          <CheckIcon className="text-primary size-3.5 shrink-0" />
         ) : null}
       </span>
-      <span className="mt-0.5 block text-[0.7rem] text-muted-foreground">
+      <span className="text-muted-foreground mt-0.5 block text-[0.7rem]">
         {voice.description}
       </span>
-      <span className="mt-1 block font-mono text-[0.65rem] text-muted-foreground/80">
+      <span className="text-muted-foreground/80 mt-1 block font-mono text-[0.65rem]">
         Best for: {voice.bestFor}
       </span>
     </button>
@@ -101,9 +101,9 @@ const BrowserVoiceSection = ({
       : "system_default";
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border bg-primary/5 p-4">
+    <div className="border-border bg-primary/5 flex flex-col gap-3 rounded-xl border p-4">
       <div className="flex items-center justify-between">
-        <span className="font-bold text-md text-muted-foreground">
+        <span className="text-md text-muted-foreground font-bold">
           Installed browser voice
         </span>
         <div className="flex gap-2">
@@ -126,7 +126,7 @@ const BrowserVoiceSection = ({
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <span className="flex justify-between font-semibold text-xs">
+          <span className="flex justify-between text-xs font-semibold">
             <span className="text-muted-foreground">Speed / Rate</span>
             <span className="text-primary">{rate.toFixed(2)}x</span>
           </span>
@@ -139,7 +139,7 @@ const BrowserVoiceSection = ({
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <span className="flex justify-between font-semibold text-xs">
+          <span className="flex justify-between text-xs font-semibold">
             <span className="text-muted-foreground">Pitch</span>
             <span className="text-primary text-xs">{pitch.toFixed(2)}x</span>
           </span>
@@ -155,7 +155,7 @@ const BrowserVoiceSection = ({
 
       {/*TODO  change select to show label */}
       {voices.length === 0 ? (
-        <p className="rounded-lg border border-border bg-muted/40 p-3 text-[0.7rem]">
+        <p className="border-border bg-muted/40 rounded-lg border p-3 text-[0.7rem]">
           No browser voices were detected. Browser mode falls back to Google
           Cloud voice automatically, or install an English speech voice on your
           system.
@@ -253,8 +253,8 @@ export const VoiceSection = ({
 
   if (settings.engine === "google") {
     return (
-      <div className="flex flex-col gap-3 rounded-xl border border-primary/25 bg-primary/5 p-4">
-        <span className="font-bold text-md">Google voice persona</span>
+      <div className="border-primary/25 bg-primary/5 flex flex-col gap-3 rounded-xl border p-4">
+        <span className="text-md font-bold">Google voice persona</span>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {GEMINI_VOICES.map((voice) => (
             <GeminiVoiceOption

@@ -61,7 +61,7 @@ export function dateRange(
   return s || e;
 }
 
-const PROTOCOL_REGEX = /^https?:\/\//;
+const PROTOCOL_REGEX = /^https?:\/\//u;
 export function stripProtocol(url: string) {
   return url.replace(PROTOCOL_REGEX, "");
 }

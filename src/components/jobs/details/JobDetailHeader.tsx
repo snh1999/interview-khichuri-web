@@ -40,14 +40,14 @@ export const JobDetailHeader = ({ job }: { job: IJobWithTopics }) => {
     <GutterCard className="py-4" variant={variant}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-semibold text-foreground text-xl">{job.title}</p>
-          <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground text-sm">
-            <span className="inline-flex items-center gap-1 text-foreground/90">
+          <p className="text-foreground text-xl font-semibold">{job.title}</p>
+          <p className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <span className="text-foreground/90 inline-flex items-center gap-1">
               <BuildingsIcon className="size-3.5" />
               {job.companyName}
             </span>
             {job.location ? (
-              <span className="inline-flex items-center gap-1 text-muted-foreground/75">
+              <span className="text-muted-foreground/75 inline-flex items-center gap-1">
                 <MapPinIcon className="size-3.5" />
                 {job.location}
               </span>

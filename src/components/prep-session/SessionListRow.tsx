@@ -48,7 +48,7 @@ export const SessionListRow = ({
 
   return (
     <Item
-      className="rounded-sm bg-muted/60"
+      className="bg-muted/60 rounded-sm"
       onClick={navigateToPage}
       onKeyDown={handleKeyDown}
       role="button"
@@ -58,7 +58,7 @@ export const SessionListRow = ({
         <ItemTitle className="min-w-0 flex-1 truncate text-sm">
           {session.title}
         </ItemTitle>
-        <span className="flex min-w-0 items-center gap-1.5 text-muted-foreground text-xs">
+        <span className="text-muted-foreground flex min-w-0 items-center gap-1.5 text-xs">
           <BriefcaseIcon />
           <span className="truncate">{metaLabel}</span>
         </span>
@@ -72,11 +72,11 @@ export const SessionListRow = ({
           />
         )}
         {showDate ? (
-          <span className="shrink-0 font-normal text-muted-foreground text-xs">
+          <span className="text-muted-foreground shrink-0 text-xs font-normal">
             {formatSessionDate(session.createdAt)}
           </span>
         ) : null}
-        <CaretRightIcon className="size-4 shrink-0 text-muted-foreground" />
+        <CaretRightIcon className="text-muted-foreground size-4 shrink-0" />
       </ItemActions>
     </Item>
   );

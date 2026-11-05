@@ -133,7 +133,7 @@ export const UploadResume = ({
       {selectedFile && hasQuota ? (
         <Card className="h-full">
           <CardHeader className="flex items-center gap-2 pt-2 text-sm">
-            <FilePdfIcon className="size-5 shrink-0 text-muted-foreground" />
+            <FilePdfIcon className="text-muted-foreground size-5 shrink-0" />
             <span className="flex-1 truncate">{selectedFile.name}</span>
             <Button
               disabled={isUploading}
@@ -164,7 +164,7 @@ export const UploadResume = ({
       ) : (
         <Card
           aria-label="Upload resume, click or drag and drop"
-          className={`flex flex-col items-center gap-3 rounded-lg border-2 border-muted-foreground/25 border-dashed p-8 transition-colors ${
+          className={`border-muted-foreground/25 flex flex-col items-center gap-3 rounded-lg border-2 border-dashed p-8 transition-colors ${
             isDragOver ? "border-primary bg-primary/5" : ""
           }`}
           onClick={handleCardClick}
@@ -176,12 +176,12 @@ export const UploadResume = ({
           tabIndex={0}
         >
           {isUploading ? (
-            <SpinnerIcon className="size-8 animate-spin text-muted-foreground" />
+            <SpinnerIcon className="text-muted-foreground size-8 animate-spin" />
           ) : (
-            <CloudArrowUpIcon className="size-8 text-muted-foreground" />
+            <CloudArrowUpIcon className="text-muted-foreground size-8" />
           )}
           <div className="flex flex-col items-center gap-1">
-            <p className="font-medium text-sm">
+            <p className="text-sm font-medium">
               {isUploading
                 ? "Uploading..."
                 : "Click to upload or drag and drop"}
@@ -203,7 +203,7 @@ export const UploadResume = ({
       {hasQuota ? null : (
         <Card className="flex flex-col items-center gap-3">
           <CardContent className="flex min-h-40 flex-col items-center justify-center space-y-1">
-            <WarningIcon className="size-10 text-destructive" />
+            <WarningIcon className="text-destructive size-10" />
             <p className="text-destructive">
               You have already reached the limit of {MAX_RESUMES} resumes.
             </p>

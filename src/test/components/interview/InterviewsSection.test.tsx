@@ -9,7 +9,7 @@ import { render } from "@/test/render.tsx";
 
 const CREATED_AT = "2026-01-01T00:00:00.000Z";
 
-const CREATED_PATTERN = /^Created · /;
+const CREATED_PATTERN = /^Created · /u;
 
 const envelope = <T,>(data: T) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });

@@ -67,7 +67,7 @@ export const TopicFilter = () => {
               <FunnelIcon className="size-3" />
               Topics
               {selectedTopicIds.length > 0 ? (
-                <Badge className="rounded-full bg-primary/40">
+                <Badge className="bg-primary/40 rounded-full">
                   {selectedTopicIds.length}
                 </Badge>
               ) : null}

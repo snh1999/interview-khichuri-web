@@ -182,7 +182,7 @@ export const AddResume = ({ count, onSuccess }: Readonly<IProps>) => {
             </>
           ) : (
             <CardContent className="flex min-h-40 flex-col items-center justify-center italic">
-              <WarningIcon className="size-10 text-destructive" />
+              <WarningIcon className="text-destructive size-10" />
               Complete your profile to create a resume from it.
             </CardContent>
           )}

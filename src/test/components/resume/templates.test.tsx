@@ -15,12 +15,12 @@ import {
 } from "@/components/resume/templates/MbzuaiTemplate.tsx";
 import { render } from "@/test/render.tsx";
 
-const FRONTEND_RE = /Frontend Engineer/;
-const PORTFOLIO_RE = /Portfolio/;
-const HACKATHON_RE = /Hackathon/;
-const LANG_RE = /Languages:/;
-const COURSEWORK_RE = /Relevant Coursework/;
-const ENGINEER_RE = /Engineer/;
+const FRONTEND_RE = /Frontend Engineer/u;
+const PORTFOLIO_RE = /Portfolio/u;
+const HACKATHON_RE = /Hackathon/u;
+const LANG_RE = /Languages:/u;
+const COURSEWORK_RE = /Relevant Coursework/u;
+const ENGINEER_RE = /Engineer/u;
 
 const DATA = {
   activities: [

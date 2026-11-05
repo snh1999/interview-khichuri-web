@@ -44,7 +44,7 @@ export const FrameStep: React.FC<FrameStepProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
-        <div className="font-bold text-md text-muted-foreground">
+        <div className="text-md text-muted-foreground font-bold">
           Select Artboards to Transform
         </div>
         <div className="flex items-center gap-2">
@@ -71,9 +71,9 @@ export const FrameStep: React.FC<FrameStepProps> = ({
 
       {[...groups.entries()].map(([route, routeFrames], index) => (
         <div className="space-y-2" key={route}>
-          <div className="flex items-center gap-2 font-semibold text-foreground text-xs">
+          <div className="text-foreground flex items-center gap-2 text-xs font-semibold">
             <span>Page {index + 1}</span>
-            <span className="font-mono text-muted-foreground">{route}</span>
+            <span className="text-muted-foreground font-mono">{route}</span>
             {routeFrames.length > 1 && (
               <Badge>{routeFrames.length} artboards · one page</Badge>
             )}
@@ -108,7 +108,7 @@ export const FrameStep: React.FC<FrameStepProps> = ({
                       ) : (
                         <DesktopIcon className="text-primary" size={18} />
                       )}
-                      <span className="font-bold text-foreground text-sm">
+                      <span className="text-foreground text-sm font-bold">
                         {frame.title || "Untitled Frame"}
                       </span>
                     </div>
@@ -123,7 +123,7 @@ export const FrameStep: React.FC<FrameStepProps> = ({
                     </span>
                   </div>
 
-                  <div className="mt-2 flex items-center gap-2 text-muted-foreground text-xs">
+                  <div className="text-muted-foreground mt-2 flex items-center gap-2 text-xs">
                     <span>{count} components</span>
                     <span>•</span>
                     <span>{frame.route || "/"}</span>
@@ -136,8 +136,8 @@ export const FrameStep: React.FC<FrameStepProps> = ({
       ))}
 
       {activeFrames.length > 0 && (
-        <div className="mt-4 space-y-2 rounded-2xl border border-border/80 bg-muted/40 p-4">
-          <div className="flex items-center gap-2 font-semibold text-foreground text-xs">
+        <div className="border-border/80 bg-muted/40 mt-4 space-y-2 rounded-2xl border p-4">
+          <div className="text-foreground flex items-center gap-2 text-xs font-semibold">
             <StackIcon className="text-primary" size={14} />
             <span>
               Detected Wireframe Modules ({detectedElementCount} elements)

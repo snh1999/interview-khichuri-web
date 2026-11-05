@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { type ReactNode, Suspense, useMemo } from "react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, it as test } from "vitest";
 import {
   useProfile,
   useUpdateActivities,
@@ -70,7 +70,7 @@ describe("useProfile", () => {
 });
 
 describe.each(MUTATIONS)("$path", ({ dto, hook, path }) => {
-  it("sends the mutation to the expected endpoint", async () => {
+  test("sends the mutation to the expected endpoint", async () => {
     const seen: string[] = [];
     server.use(
       http.put(`${API}${path}`, ({ request }) => {

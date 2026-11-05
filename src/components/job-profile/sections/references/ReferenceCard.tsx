@@ -14,7 +14,7 @@ export const ReferenceCard = ({ index, onRemove }: Readonly<IProps>) => {
   const onRemoveClick = () => onRemove(index);
 
   return (
-    <div className="rounded-lg border border-border/60 p-3">
+    <div className="border-border/60 rounded-lg border p-3">
       <div className="flex justify-end">
         <Button
           aria-label={`Remove reference ${index + 1}`}

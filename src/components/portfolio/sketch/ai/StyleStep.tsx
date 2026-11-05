@@ -13,7 +13,7 @@ export const StyleStep: React.FC<StyleStepProps> = ({
 }) => {
   return (
     <div className="space-y-4">
-      <div className="font-bold text-md text-muted-foreground">
+      <div className="text-md text-muted-foreground font-bold">
         Choose Aesthetic Theme & Tone
       </div>
 
@@ -34,30 +34,30 @@ export const StyleStep: React.FC<StyleStepProps> = ({
             >
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-foreground text-sm">
+                  <span className="text-foreground text-sm font-bold">
                     {preset.name}
                   </span>
                   <Badge variant="secondary">{preset.badge}</Badge>
                 </div>
                 <p
-                  className="line-clamp-1 text-muted-foreground text-xs leading-relaxed"
+                  className="text-muted-foreground line-clamp-1 text-xs leading-relaxed"
                   title={preset.vibe}
                 >
                   {preset.vibe}
                 </p>
               </div>
 
-              <div className="mt-2 flex items-center gap-2 border-border/60 border-t pt-3">
+              <div className="border-border/60 mt-2 flex items-center gap-2 border-t pt-3">
                 <div className="flex items-center gap-1.5">
                   {[preset.primary, preset.accent, preset.bg].map((data) => (
                     <div
-                      className="h-5 w-5 rounded-full border border-border"
+                      className="border-border h-5 w-5 rounded-full border"
                       key={data}
                       style={{ backgroundColor: data }}
                     />
                   ))}
                 </div>
-                <span className="ml-auto text-muted-foreground text-xs">
+                <span className="text-muted-foreground ml-auto text-xs">
                   {preset.primary}
                 </span>
               </div>

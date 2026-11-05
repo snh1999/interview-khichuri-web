@@ -10,7 +10,7 @@ import { useJobsStore } from "@/store/useJobsStore.ts";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
-const FIT_CIRCLE = /profile fit [a-f]\+?/i;
+const FIT_CIRCLE = /profile fit [a-f]\+?/iu;
 
 const makeTrack = (status: TJobStatus = "saved"): ITrackedJob => ({
   id: "track-1",

@@ -35,7 +35,7 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
             <CardTitle>Notes</CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
-            <p className="wrap-break-word whitespace-pre-wrap text-sm">
+            <p className="text-sm wrap-break-word whitespace-pre-wrap">
               {notes}
             </p>
           </CardContent>
@@ -50,7 +50,7 @@ export const JobInfoSection = ({ sectionId, job }: IProps) => {
           <CardContent className="flex flex-col gap-1 pt-4">
             {links.map((link) => (
               <Button
-                className="justify-start! h-auto break-all py-0 text-sm"
+                className="h-auto justify-start! py-0 text-sm break-all"
                 key={`${link.url}-${link.label ?? ""}`}
                 render={
                   <a

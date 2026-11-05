@@ -1,8 +1,8 @@
 import { strToU8, zipSync } from "fflate";
 import type { ProjectFiles } from "@/components/portfolio/builder.types";
 
-const TAILWIND_DIRECTIVE = /@tailwind\s+(?:base|components|utilities)\b/;
-const STYLE_IMPORT_RE = /import\s+['"][^'"]*styles\.css['"]/;
+const TAILWIND_DIRECTIVE = /@tailwind\s+(?:base|components|utilities)\b/u;
+const STYLE_IMPORT_RE = /import\s+['"][^'"]*styles\.css['"]/u;
 
 /**
  * Normalizes Sandpack virtual file paths and packages everything
@@ -16,8 +16,8 @@ export function generateProjectZip(
   const safeName =
     projectName
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "") || "portfolio-project";
+      .replace(/[^a-z0-9]+/gu, "-")
+      .replace(/(^-|-$)/gu, "") || "portfolio-project";
   const zipData: Record<string, Uint8Array> = {};
 
   const packageJsonContent =
@@ -234,8 +234,8 @@ export function downloadZip(projectName: string, zipBytes: Uint8Array): void {
   const safeName =
     projectName
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "") || "portfolio-project";
+      .replace(/[^a-z0-9]+/gu, "-")
+      .replace(/(^-|-$)/gu, "") || "portfolio-project";
   const arrayBuffer = zipBytes.buffer.slice(
     zipBytes.byteOffset,
     zipBytes.byteOffset + zipBytes.byteLength

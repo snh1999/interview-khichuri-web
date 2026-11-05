@@ -8,7 +8,7 @@ import { render } from "@/test/render.tsx";
 
 const API = "*/api/v1";
 
-const NO_PROFILE_DATA = /Not enough profile\/job data to score/;
+const NO_PROFILE_DATA = /Not enough profile\/job data to score/u;
 
 const envelope = (data: unknown) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });

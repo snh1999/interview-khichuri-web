@@ -80,7 +80,7 @@ export const SessionCard = ({
           )}
         </CardAction>
       </CardHeader>
-      <CardContent className="flex justify-between text-muted-foreground">
+      <CardContent className="text-muted-foreground flex justify-between">
         <p>Created: {formatDate(session.createdAt)}</p>
         <p>Expires: {formatDate(session.expiresAt)}</p>
       </CardContent>

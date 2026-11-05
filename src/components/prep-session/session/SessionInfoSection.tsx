@@ -73,7 +73,7 @@ export const SessionInfoSection = ({ session }: IProps) => {
     <Card className="w-full">
       <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
         <div className="min-w-0">
-          <CardTitle className="wrap-break-word text-xl">
+          <CardTitle className="text-xl wrap-break-word">
             {session.title}
           </CardTitle>
           {session.jobId ? <JobDetails jobId={session.jobId} /> : null}
@@ -110,7 +110,7 @@ export const SessionInfoSection = ({ session }: IProps) => {
             ))}
           </div>
         ) : null}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground text-xs">
+        <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
           {session.experience ? (
             <span className="inline-flex items-center gap-1">
               <BriefcaseIcon className="size-3.5" />
@@ -139,7 +139,7 @@ export const SessionInfoSection = ({ session }: IProps) => {
           </p>
           {descriptionIsClipped ? (
             <Button
-              className="h-auto p-0 text-muted-foreground text-xs hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground h-auto p-0 text-xs"
               onClick={toggleExpansion}
               variant="link"
             >
@@ -165,7 +165,7 @@ const JobDetails = ({ jobId }: { jobId: string }) => {
 
   return (
     <CardDescription>
-      <Button className="p-0 text-md" onClick={openJobDetail} variant="link">
+      <Button className="text-md p-0" onClick={openJobDetail} variant="link">
         <BriefcaseIcon className="mr-1 size-3.5" />
         {job.companyName} - {job.title}
       </Button>

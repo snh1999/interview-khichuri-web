@@ -55,8 +55,8 @@ export const DayCell = ({
     >
       <span
         className={cn(
-          "flex h-6 w-6 items-center justify-center rounded-full font-medium text-xs",
-          dayIsToday && "bg-primary font-semibold text-primary-foreground",
+          "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium",
+          dayIsToday && "bg-primary text-primary-foreground font-semibold",
           !dayIsToday && "text-foreground"
         )}
       >
@@ -82,7 +82,7 @@ export const DayCell = ({
         ))}
         {hiddenCount > 0 && (
           <button
-            className="w-full truncate rounded px-1 py-0.5 text-left text-muted-foreground text-xs hover:bg-muted"
+            className="text-muted-foreground hover:bg-muted w-full truncate rounded px-1 py-0.5 text-left text-xs"
             // biome-ignore lint/performance/noJsxPropsBind: <>
             onClick={() => onCustomEventClick(events, day)}
             onPointerDown={stopPointerPropagation}

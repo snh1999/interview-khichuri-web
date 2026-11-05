@@ -59,7 +59,7 @@ const SALARY_BONUS_MAX = 5;
 
 const SALARY_PENALTY_MAX = 20;
 
-const LOCATION_SPLIT = /[^a-z]+/;
+const LOCATION_SPLIT = /[^a-z]+/u;
 
 const MIN_LOCATION_TOKEN = 4;
 
@@ -69,34 +69,34 @@ const MIN_LOCATION_TOKEN = 4;
 // Multi-word qualifier+rank titles (associate director) sit before the bare
 // qualifier so the rank wins the tie at index 0.
 const SENIORITY_MARKERS: ReadonlyArray<readonly [RegExp, TLevel]> = [
-  [/\bchief\b/i, "executive"],
-  [/\bvice\s+president\b/i, "executive"],
-  [/\bvp\b/i, "executive"],
-  [/\bdirector\b/i, "executive"],
-  [/\bhead\s+of\b/i, "executive"],
-  [/\bassociate\s+director\b/i, "executive"],
-  [/\bprincipal\b/i, "lead"],
-  [/\bstaff\b/i, "lead"],
-  [/\blead\b/i, "lead"],
-  [/\bsenior\b/i, "senior"],
-  [/\bsr\.?\b/i, "senior"],
-  [/\bl6\b/i, "senior"],
-  [/\bmid-level\b/i, "mid"],
-  [/\bmid\b/i, "mid"],
-  [/\bii\b/i, "mid"],
-  [/\bl3\b/i, "mid"],
-  [/\bl4\b/i, "mid"],
-  [/\bl5\b/i, "mid"],
-  [/\bentry-level\b/i, "junior"],
-  [/\bentry\b/i, "junior"],
-  [/\bassociate\b/i, "junior"],
-  [/\bjunior\b/i, "junior"],
-  [/\bl1\b/i, "junior"],
-  [/\bl2\b/i, "junior"],
-  [/\binternship\b/i, "junior"],
-  [/\bintern\b/i, "junior"],
-  [/\btrainee\b/i, "junior"],
-  [/\bco-op\b/i, "junior"],
+  [/\bchief\b/iu, "executive"],
+  [/\bvice\s+president\b/iu, "executive"],
+  [/\bvp\b/iu, "executive"],
+  [/\bdirector\b/iu, "executive"],
+  [/\bhead\s+of\b/iu, "executive"],
+  [/\bassociate\s+director\b/iu, "executive"],
+  [/\bprincipal\b/iu, "lead"],
+  [/\bstaff\b/iu, "lead"],
+  [/\blead\b/iu, "lead"],
+  [/\bsenior\b/iu, "senior"],
+  [/\bsr\.?\b/iu, "senior"],
+  [/\bl6\b/iu, "senior"],
+  [/\bmid-level\b/iu, "mid"],
+  [/\bmid\b/iu, "mid"],
+  [/\bii\b/iu, "mid"],
+  [/\bl3\b/iu, "mid"],
+  [/\bl4\b/iu, "mid"],
+  [/\bl5\b/iu, "mid"],
+  [/\bentry-level\b/iu, "junior"],
+  [/\bentry\b/iu, "junior"],
+  [/\bassociate\b/iu, "junior"],
+  [/\bjunior\b/iu, "junior"],
+  [/\bl1\b/iu, "junior"],
+  [/\bl2\b/iu, "junior"],
+  [/\binternship\b/iu, "junior"],
+  [/\bintern\b/iu, "junior"],
+  [/\btrainee\b/iu, "junior"],
+  [/\bco-op\b/iu, "junior"],
 ];
 
 const bandScore = (d: number): number => {

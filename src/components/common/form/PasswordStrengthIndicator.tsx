@@ -105,11 +105,11 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
         <LevelComponent score={score} />
       </div>
 
-      <div className="flex items-center justify-between text-md">
-        <span className="font-medium text-foreground">{level.label}</span>
+      <div className="text-md flex items-center justify-between">
+        <span className="text-foreground font-medium">{level.label}</span>
         <span className="text-muted-foreground">
           Cracks in{" "}
-          <span className="font-medium text-foreground">{throttled}</span>{" "}
+          <span className="text-foreground font-medium">{throttled}</span>{" "}
           {showFast ? (
             <span className="opacity-60"> (as fast as {noThrottle})</span>
           ) : null}

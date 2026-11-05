@@ -6,7 +6,7 @@ import { LookupCombobox } from "@/components/common/form/combobox/LookupCombobox
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
-const CREATE_CUSTOM_RE = /Create "Custom"/;
+const CREATE_CUSTOM_RE = /Create "Custom"/u;
 
 const useTopicLookups = () =>
   server.use(

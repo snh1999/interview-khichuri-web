@@ -31,13 +31,13 @@ const cardInformation: Record<TVerificationState, ICardInformation> = {
     title: "Email verified",
     description: "Your account is active. Redirecting to your dashboard…",
     icon: (
-      <CheckCircleIcon className="h-6 w-6 text-signal-success" weight="fill" />
+      <CheckCircleIcon className="text-signal-success h-6 w-6" weight="fill" />
     ),
   },
   error: {
     title: "Verification failed",
     description: "",
-    icon: <XCircleIcon className="h-6 w-6 text-destructive" weight="fill" />,
+    icon: <XCircleIcon className="text-destructive h-6 w-6" weight="fill" />,
   },
 } as const;
 

@@ -15,7 +15,7 @@ import {
 
 const PORTFOLIO = "p1";
 
-const MESSAGE_ID_RE = /^msg/;
+const MESSAGE_ID_RE = /^msg/u;
 
 const project = (): BuilderProject =>
   useBuilderStore.getState().projects[PORTFOLIO];

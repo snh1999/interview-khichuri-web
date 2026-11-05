@@ -66,7 +66,7 @@ const NotesContent = () => {
   return (
     <div className="flex flex-1 flex-col">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-semibold text-xl">Notes</h1>
+        <h1 className="text-xl font-semibold">Notes</h1>
         <Button onClick={openCreateDialog} variant="outline">
           <PlusCircleIcon className="size-3" weight="bold" />
           New Note
@@ -78,7 +78,7 @@ const NotesContent = () => {
         onValueChange={handleTabChange}
         value={currentTab}
       >
-        <TabsList className="w-full bg-card" variant="line">
+        <TabsList className="bg-card w-full" variant="line">
           <TabsTrigger value="notes">
             <NotePencilIcon />
             <span>My Notes</span>

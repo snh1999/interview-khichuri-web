@@ -38,7 +38,7 @@ export const QuestionBankCard = ({
   return (
     <Card size="sm">
       <CardHeader className="cursor-pointer">
-        <CardTitle className="truncate text-md" onClick={toggleExpanded}>
+        <CardTitle className="text-md truncate" onClick={toggleExpanded}>
           {item.questions[0]}
         </CardTitle>
         <CardDescription className="space-x-2">

@@ -6,9 +6,9 @@ export interface MixedState {
   value?: string | number;
 }
 
-const HEX6_REGEX = /^#[0-9a-fA-F]{6}$/i;
-const HEX8_REGEX = /^#[0-9a-fA-F]{8}$/i;
-const HEX3_REGEX = /^#[0-9a-fA-F]{3}$/i;
+const HEX6_REGEX = /^#[0-9a-fA-F]{6}$/iu;
+const HEX8_REGEX = /^#[0-9a-fA-F]{8}$/iu;
+const HEX3_REGEX = /^#[0-9a-fA-F]{3}$/iu;
 
 const FONT_CSS_NAME: Record<string, string> = {
   arimo: "Arimo",

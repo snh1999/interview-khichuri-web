@@ -24,7 +24,7 @@ const QUESTION: IQuestion = {
   updatedAt: "2024-01-01",
 };
 
-const BUTTON_RE_NAME = /pin/i;
+const BUTTON_RE_NAME = /pin/iu;
 
 const renderCard = (
   props: Partial<Parameters<typeof QuestionCard>[0]> = {}

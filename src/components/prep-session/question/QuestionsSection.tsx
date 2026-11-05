@@ -301,13 +301,13 @@ export const QuestionsSection = ({ session, sectionId }: IProps) => {
           {questions.length > 0 ? (
             <div className="flex flex-wrap items-center gap-2">
               <Input
-                className="min-w-35 flex-1 text-md"
+                className="text-md min-w-35 flex-1"
                 onChange={handleSearchChange}
                 placeholder="Search question text..."
                 value={search}
               />
               <ToggleGroup
-                className="*:rounded-full *:aria-pressed:border-primary *:aria-pressed:bg-primary! *:aria-pressed:text-primary-foreground"
+                className="*:aria-pressed:border-primary *:aria-pressed:bg-primary! *:aria-pressed:text-primary-foreground *:rounded-full"
                 onValueChange={handleFilterChange}
                 value={[filter]}
                 variant="outline"

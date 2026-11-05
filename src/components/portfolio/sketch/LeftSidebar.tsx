@@ -10,7 +10,7 @@ export const LeftSidebar: React.FC = () => {
   const goToPages = useCallback(() => setActiveTab("pages"), []);
 
   return (
-    <aside className="z-20 flex h-full w-68 shrink-0 select-none flex-col border-border border-r bg-card sm:w-76">
+    <aside className="border-border bg-card z-20 flex h-full w-68 shrink-0 flex-col border-r select-none sm:w-76">
       <SidebarTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       {activeTab === "pages" && <PagesTab />}

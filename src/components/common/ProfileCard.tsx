@@ -38,15 +38,15 @@ export const ProfileCard = ({
       <div className="relative">
         {avatar}
         {isCompact ? (
-          <span className="absolute right-0 bottom-0 block size-2 rounded-full bg-signal-success ring-2 ring-card" />
+          <span className="bg-signal-success ring-card absolute right-0 bottom-0 block size-2 rounded-full ring-2" />
         ) : null}
       </div>
       <div className="flex flex-1 flex-col items-start">
         <span
           className={
             isCompact
-              ? "font-semibold text-foreground text-lg"
-              : "font-bold text-2xl text-foreground"
+              ? "text-foreground text-lg font-semibold"
+              : "text-foreground text-2xl font-bold"
           }
         >
           {user.name}
@@ -54,7 +54,7 @@ export const ProfileCard = ({
         <span
           className={
             isCompact
-              ? "text-base text-muted-foreground"
+              ? "text-muted-foreground text-base"
               : "text-muted-foreground text-xs"
           }
         >

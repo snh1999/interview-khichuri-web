@@ -12,10 +12,10 @@ import { useSketchBuilderStore } from "@/store/sketchBuilderStore.ts";
 import { render } from "@/test/render.tsx";
 
 const PORTFOLIO = "p-1";
-const PAGE_SETUP = /page setup/i;
-const SAVE_CLOSE = /save & close/i;
-const ATTACH_INSPIRATION = /attach inspiration/i;
-const IDB_URL = /^idb:\/\//;
+const PAGE_SETUP = /page setup/iu;
+const SAVE_CLOSE = /save & close/iu;
+const ATTACH_INSPIRATION = /attach inspiration/iu;
+const IDB_URL = /^idb:\/\//u;
 
 const frame = (
   overrides: Partial<FrameElement> & { id: string }

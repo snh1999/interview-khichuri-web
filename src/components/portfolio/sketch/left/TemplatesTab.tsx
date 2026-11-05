@@ -70,40 +70,40 @@ export const TemplatesTab: React.FC<TemplatesTabProps> = ({
   return (
     <div className="flex-1 space-y-3 overflow-y-auto p-3 text-xs">
       <div className="flex items-center justify-between px-1">
-        <span className="font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+        <span className="text-muted-foreground text-xxs font-bold tracking-wider uppercase">
           Ready-to-Use Templates ({PORTFOLIO_PAGE_TEMPLATES.length})
         </span>
       </div>
 
-      <p className="px-1 text-muted-foreground text-xs">
+      <p className="text-muted-foreground px-1 text-xs">
         Insert pre-built portfolio artboard pages directly into your canvas:
       </p>
 
       <div className="space-y-2.5">
         {PORTFOLIO_PAGE_TEMPLATES.map((tpl) => (
           <div
-            className="group space-y-2 rounded-xl border border-border/80 bg-muted/20 p-3 transition-all hover:border-primary/50 hover:bg-muted/40"
+            className="group border-border/80 bg-muted/20 hover:border-primary/50 hover:bg-muted/40 space-y-2 rounded-xl border p-3 transition-all"
             key={tpl.id}
           >
             <div className="flex items-start justify-between gap-2">
               <div>
-                <div className="font-bold text-foreground transition-colors group-hover:text-primary">
+                <div className="text-foreground group-hover:text-primary font-bold transition-colors">
                   {tpl.title}
                 </div>
-                <div className="font-medium text-primary text-xxs">
+                <div className="text-primary text-xxs font-medium">
                   {tpl.role}
                 </div>
               </div>
-              <span className="shrink-0 rounded border border-border bg-background px-1.5 py-0.5 font-mono text-muted-foreground text-xxs">
+              <span className="border-border bg-background text-muted-foreground text-xxs shrink-0 rounded border px-1.5 py-0.5 font-mono">
                 {tpl.badge}
               </span>
             </div>
 
-            <p className="line-clamp-2 text-muted-foreground text-xxs leading-relaxed">
+            <p className="text-muted-foreground text-xxs line-clamp-2 leading-relaxed">
               {tpl.description}
             </p>
 
-            <div className="flex items-center justify-between gap-2 border-border/50 border-t pt-1">
+            <div className="border-border/50 flex items-center justify-between gap-2 border-t pt-1">
               <span className="text-muted-foreground text-xxs italic">
                 Theme:{" "}
                 {DEFAULT_THEMES.find((t) => t.id === tpl.themeId)?.name ||

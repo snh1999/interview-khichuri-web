@@ -60,7 +60,7 @@ export const NotesList = ({
         </Empty>
       ) : (
         <ItemGroup
-          className="gap-0 divide-y divide-border overflow-hidden rounded-md bg-card"
+          className="divide-border bg-card gap-0 divide-y overflow-hidden rounded-md"
           ref={listParent}
         >
           {notes.map((note) => (
@@ -97,7 +97,7 @@ const NoteListItem = ({
 
   return (
     <Item
-      className="rounded-none hover:bg-muted/50"
+      className="hover:bg-muted/50 rounded-none"
       onClick={handleSelect}
       onKeyDown={handleKeyDown}
       role="button"
@@ -109,12 +109,12 @@ const NoteListItem = ({
         </ItemTitle>
 
         {noteDetails ? (
-          <p className="line-clamp-1 text-muted-foreground text-xs">
+          <p className="text-muted-foreground line-clamp-1 text-xs">
             {noteDetails}
           </p>
         ) : null}
 
-        <span className="flex min-w-0 flex-wrap items-center gap-2 text-muted-foreground text-xs">
+        <span className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-2 text-xs">
           <span className="flex items-center gap-1.5">
             <ClockIcon className="size-3.5 shrink-0" />
             Updated {format(note.updatedAt, "dd MMM, yyyy")}

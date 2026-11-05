@@ -12,7 +12,7 @@ const DATA: IItem[] = [
   { id: 2, name: "Vue" },
 ];
 
-const CREATE_ANGULAR_RE = /Create "Angular"/;
+const CREATE_ANGULAR_RE = /Create "Angular"/u;
 
 const toOption = (item: IItem) => ({ label: item.name, value: item.id });
 

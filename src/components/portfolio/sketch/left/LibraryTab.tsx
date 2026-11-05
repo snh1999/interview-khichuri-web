@@ -78,7 +78,7 @@ export const LibraryTab: React.FC = () => {
 
   return (
     <div className="flex-1 space-y-4 overflow-y-auto p-3 text-xs">
-      <div className="px-1 font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+      <div className="text-muted-foreground text-xxs px-1 font-bold tracking-wider uppercase">
         Click to Insert Component
       </div>
 
@@ -134,27 +134,27 @@ export const LibraryTab: React.FC = () => {
           },
         ].map((item) => (
           <Button
-            className="group justify-between rounded-xl border-border/80 bg-muted/20 p-2.5 text-left hover:border-primary/50 hover:bg-muted/60"
+            className="group border-border/80 bg-muted/20 hover:border-primary/50 hover:bg-muted/60 justify-between rounded-xl p-2.5 text-left"
             key={item.type}
             // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped stamp template
             onClick={() => handleAddStampQuick(item.type)}
             variant="ghost"
           >
             <div className="flex min-w-0 items-center gap-2.5">
-              <div className="rounded-lg border border-border bg-background p-2 text-primary transition-transform group-hover:scale-105">
+              <div className="border-border bg-background text-primary rounded-lg border p-2 transition-transform group-hover:scale-105">
                 {item.icon}
               </div>
               <div>
-                <div className="font-semibold text-foreground">
+                <div className="text-foreground font-semibold">
                   {item.label}
                 </div>
-                <div className="truncate text-muted-foreground text-xxs">
+                <div className="text-muted-foreground text-xxs truncate">
                   {item.desc}
                 </div>
               </div>
             </div>
             <PlusIcon
-              className="text-muted-foreground transition-colors group-hover:text-primary"
+              className="text-muted-foreground group-hover:text-primary transition-colors"
               size={14}
             />
           </Button>

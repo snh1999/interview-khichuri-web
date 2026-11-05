@@ -114,7 +114,7 @@ describe("generateProjectZip", () => {
       })
     );
     expect(
-      already["src/main.jsx"].match(/import '\.\/styles\.css';/g)
+      already["src/main.jsx"].match(/import '\.\/styles\.css';/gu)
     ).toHaveLength(1);
   });
 
@@ -154,7 +154,7 @@ describe("generateProjectZip", () => {
       })
     );
     expect(
-      alreadyLinked["index.html"].match(/src="\/src\/main.jsx"/g)
+      alreadyLinked["index.html"].match(/src="\/src\/main.jsx"/gu)
     ).toHaveLength(1);
   });
 

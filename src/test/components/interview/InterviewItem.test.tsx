@@ -6,10 +6,10 @@ import { Toaster } from "@/components/ui/sonner.tsx";
 import { setLocalInterviewState } from "@/lib/storage/interviewStorage";
 import { render } from "@/test/render.tsx";
 
-const CREATED_PATTERN = /^Created · /;
-const IN_PROGRESS_PATTERN = /^In progress · /;
-const COMPLETED_PATTERN = /^Completed · /;
-const SCORE_SUFFIX_PATTERN = /%$/;
+const CREATED_PATTERN = /^Created · /u;
+const IN_PROGRESS_PATTERN = /^In progress · /u;
+const COMPLETED_PATTERN = /^Completed · /u;
+const SCORE_SUFFIX_PATTERN = /%$/u;
 
 const makeInterview = (overrides: Partial<IInterview> = {}): IInterview => ({
   id: "int-1",

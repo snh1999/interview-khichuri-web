@@ -17,9 +17,9 @@ import {
 import { generateSafeId } from "@/lib/utils";
 import { downloadZip, generateProjectZip } from "@/lib/zipExporter";
 
-const CAPITALIZED_NAME_REGEX = /^[A-Z]/;
+const CAPITALIZED_NAME_REGEX = /^[A-Z]/u;
 const LOCAL_STORAGE_KEY = "ai_site_builder_project_data";
-const APPLIED_EDIT_REGEX = /^(created|updated|deleted)\s+(.+)$/;
+const APPLIED_EDIT_REGEX = /^(created|updated|deleted)\s+(.+)$/u;
 
 type TAppliedOp = "created" | "updated" | "deleted";
 
@@ -364,7 +364,7 @@ export const useBuilderStore = create<BuilderState>()(
             normalizedPath.split("/").pop()?.split(".")[0] || "Component";
           const capitalizedName =
             fileNameWithoutExt.charAt(0).toUpperCase() +
-            fileNameWithoutExt.slice(1).replace(/[^a-zA-Z0-9]/g, "");
+            fileNameWithoutExt.slice(1).replace(/[^a-zA-Z0-9]/gu, "");
 
           if (
             normalizedPath.endsWith(".jsx") ||
