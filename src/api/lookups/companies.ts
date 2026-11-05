@@ -23,7 +23,7 @@ export const useCompany = (id: number) =>
 
 export const useCompanies = () =>
   useSuspenseQuery({
-    queryFn: async () => await api.get<ICompany[]>("/company"),
+    queryFn: async () => await api.get<ICompany[]>("/company?sort=name:asc"),
     queryKey: queryKeys.lookups.companies,
     staleTime: 1000 * 60 * 30,
   });

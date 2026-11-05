@@ -3,6 +3,8 @@ import { Navigate, Outlet, Route, Routes } from "react-router";
 import {
   ACCOUNT_VERIFICATION_PAGE,
   ADMIN_PAGE,
+  COMPANIES_PAGE,
+  COMPANY_DETAIL_PAGE,
   CONFIRM_LOGIN_PAGE,
   EMAIL_REDIRECT_PAGE,
   FORGOT_PASSWORD_PAGE,
@@ -36,6 +38,8 @@ import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage.tsx";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage.tsx";
 import VerifyEmailPage from "@/pages/auth/VerifyEmailpage.tsx";
+import { CompaniesPage } from "@/pages/CompaniesPage.tsx";
+import { CompanyDetailPage } from "@/pages/CompanyDetailPage.tsx";
 import { DashboardPage } from "@/pages/DashboardPage.tsx";
 import { EmptyPage } from "@/pages/EmptyPage.tsx";
 import { JobDetailPage } from "@/pages/JobDetailPage.tsx";
@@ -127,6 +131,8 @@ const App = () => {
           <Route element={<DashboardPage />} path={HOMEPAGE} />
           <Route element={<JobDetailPage />} path={JOB_DETAIL_PAGE} />
           <Route element={<JobsPage />} path={JOBS_PAGE} />
+          <Route element={<CompaniesPage />} path={COMPANIES_PAGE} />
+          <Route element={<CompanyDetailPage />} path={COMPANY_DETAIL_PAGE} />
           <Route element={<SessionsPage />} path={SESSIONS_PAGE} />
           <Route element={<SessionDetailPage />} path={SESSION_DETAIL_PAGE} />
           <Route element={<NotesPage />} path={NOTES_PAGE} />

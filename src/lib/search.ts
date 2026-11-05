@@ -114,6 +114,29 @@ export const createJobSearch = <T extends IJob>(jobs: readonly T[]) =>
     preset: "content",
   });
 
+interface ICompanySearchDoc<T> {
+  id: string;
+  name: string;
+  aliases: string;
+  company: T;
+}
+
+export const createCompanySearch = <
+  T extends { id: number; name: string; aliases?: string[] | null },
+>(
+  companies: readonly T[]
+) =>
+  createSearch<ICompanySearchDoc<T>, "name" | "aliases">(
+    companies.map((company) => ({
+      id: String(company.id),
+      name: company.name,
+      aliases: (company.aliases ?? []).join(" "),
+      company,
+    })),
+    ["name", "aliases"],
+    { limit: companies.length, preset: "content" }
+  );
+
 // TODO(search-job-labels): index the job label (e.g. "Role name @ company") in the session search.
 // Expected format: resolve labels through a global job lookup map (like useLookupMap)
 // then add `jobLabel` to the document below and index `"jobLabel"` in the fields list.

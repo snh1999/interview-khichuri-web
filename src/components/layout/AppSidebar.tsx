@@ -1,7 +1,7 @@
 import {
   BriefcaseIcon,
+  BuildingsIcon,
   GearIcon,
-  HouseIcon,
   LightbulbFilamentIcon,
   NotebookIcon,
   PresentationChartIcon,
@@ -9,6 +9,7 @@ import {
 } from "@phosphor-icons/react";
 import { Link, useLocation } from "react-router";
 import {
+  COMPANIES_PAGE,
   HOMEPAGE,
   JOBS_PAGE,
   NOTES_PAGE,
@@ -31,6 +32,7 @@ const SIDEBAR_MENU = [
   { name: "Dashboard", icon: PresentationChartIcon, url: HOMEPAGE },
   { name: "Jobs", icon: BriefcaseIcon, url: JOBS_PAGE },
   { name: "Preparation", icon: LightbulbFilamentIcon, url: SESSIONS_PAGE },
+  { name: "Companies", icon: BuildingsIcon, url: COMPANIES_PAGE },
   { name: "Notes", icon: NotebookIcon, url: NOTES_PAGE },
   { name: "Profile", icon: ReadCvLogoIcon, url: PROFILE_PAGE },
   {
@@ -44,27 +46,15 @@ const SIDEBAR_MENU = [
 export const AppSidebar = () => {
   const { pathname } = useLocation();
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar className="top-12 h-auto" collapsible="icon">
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu className="pt-5 text-foreground/80">
-              <SidebarMenuItem>
-                <SidebarMenuButton render={<Link to="/" />}>
-                  <HouseIcon />
-                  <span>Khichuri Home</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="text-muted-foreground">
               {SIDEBAR_MENU.map((item) => (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton
-                    className="py-5 text-md"
+                    className="text-md py-5"
                     isActive={pathname === item.url}
                     render={<Link to={item.url} />}
                   >
