@@ -147,6 +147,45 @@ export const useGetJobs = (sort: TJobSortKey = "default") =>
     gcTime: Number.POSITIVE_INFINITY,
   });
 
+interface IDiscoverJobsParams {
+  search?: string;
+  sort?: TJobSortKey;
+  page?: number;
+  limit?: number;
+}
+
+export const useDiscoverJobs = (params: IDiscoverJobsParams = {}) =>
+  useSuspenseQuery({
+    queryFn: async () => {
+      const { search, sort = "default", page, limit } = params;
+      const query = new URLSearchParams(
+        Object.entries({
+          search: search?.trim(),
+          sort: JOB_SORT_QUERY[sort],
+          page: page?.toString(),
+          limit: limit?.toString(),
+        }).filter(([, v]) => v) as [string, string][]
+      ).toString();
+
+      return await api.get<IJob[]>(`/jobs/discover${query && `?${query}`}`);
+    },
+    queryKey: queryKeys.jobs.discover(params as Record<string, unknown>),
+  });
+
+export const useCompanyJobs = (
+  companyId: number,
+  sort: TJobSortKey = "default"
+) => {
+  const sortQuery = JOB_SORT_QUERY[sort];
+  return useSuspenseQuery({
+    queryFn: async () =>
+      await api.get<IJob[]>(
+        `/company/${companyId}/jobs${sortQuery ? `?sort=${sortQuery}` : ""}`
+      ),
+    queryKey: queryKeys.jobs.companyJobs(companyId, { sort }),
+  });
+};
+
 export const useCreateJob = () =>
   useMutation({
     mutationFn: async (dto: ICreateJobDto) =>

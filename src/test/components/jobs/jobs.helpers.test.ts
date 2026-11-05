@@ -7,10 +7,10 @@ import {
 import {
   getDateInfo,
   parseJobLinks,
-  readFiltersFromParams,
   STATUS_LABEL,
   STATUS_OPTIONS,
 } from "@/components/jobs/jobs.helpers.ts";
+import { readFiltersFromParams } from "@/components/jobs/jobs.hooks.ts";
 import { formatDate } from "@/lib/date.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
 

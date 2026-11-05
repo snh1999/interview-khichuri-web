@@ -126,6 +126,10 @@ export const queryKeys = {
     listWithFilter: (filters?: Record<string, unknown>) =>
       [...queryKeys.jobs.list, filters] as const,
     detail: (id: string) => [...queryKeys.jobs.all, "detail", id] as const,
+    discover: (filters?: Record<string, unknown>) =>
+      [...queryKeys.jobs.all, "discover", filters] as const,
+    companyJobs: (companyId: number, filters?: Record<string, unknown>) =>
+      [...queryKeys.jobs.all, "company", companyId, filters] as const,
     detailsAndList: (id: string) =>
       [queryKeys.jobs.list, queryKeys.jobs.detail(id)] as const,
   },
@@ -135,6 +139,7 @@ export const queryKeys = {
       [...queryKeys.keys.all, "list", filters] as const,
   },
   lookups: {
+    company: (id: number) => ["lookups", "company", id] as const,
     categories: ["lookups", "categories"] as const,
     industries: ["lookups", "industries"] as const,
     roles: ["lookups", "roles"] as const,

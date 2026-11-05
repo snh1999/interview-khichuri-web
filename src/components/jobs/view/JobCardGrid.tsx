@@ -6,8 +6,8 @@ import {
   getDateInfo,
   JOB_STATUS_VARIANT,
   STATUS_LABEL,
-  useNavigateToJob,
 } from "@/components/jobs/jobs.helpers";
+import { useNavigateToJob } from "@/components/jobs/jobs.hooks";
 import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import { isUrgent } from "@/lib/utils";
@@ -31,10 +31,10 @@ export const JobCardGrid = ({ job, fit }: Readonly<IProps>) => {
     <GutterCard className="pt-3" onClick={handleClick} variant={variant}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate font-semibold text-foreground text-md leading-tight">
+          <p className="text-foreground text-md truncate leading-tight font-semibold">
             {job.title}
           </p>
-          <p className="mt-0.5 truncate text-muted-foreground text-sm">
+          <p className="text-muted-foreground mt-0.5 truncate text-sm">
             {job.companyName}
             {job.location ? ` · ${job.location}` : ""}
           </p>

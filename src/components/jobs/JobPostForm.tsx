@@ -17,11 +17,8 @@ import {
   REMOTE_PREFERENCES,
 } from "@/components/job-profile/profile.data.ts";
 import { useJobPostForm } from "@/components/jobs/JobPostForm.helpers";
-import {
-  parseJobLinks,
-  STATUS_OPTIONS,
-  useNavigateToJob,
-} from "@/components/jobs/jobs.helpers.ts";
+import { parseJobLinks, STATUS_OPTIONS } from "@/components/jobs/jobs.helpers";
+import { useNavigateToJob } from "@/components/jobs/jobs.hooks";
 import { Button } from "@/components/ui/button";
 import { AsyncButton } from "@/components/ui/button/AsyncButton";
 import {
@@ -135,7 +132,7 @@ export const JobPostForm = ({
         <form onSubmit={onSubmit}>
           <DrawLogBody>
             {matchedJob ? (
-              <div className="flex flex-col gap-2 rounded-md border bg-muted/40 p-3 text-sm">
+              <div className="bg-muted/40 flex flex-col gap-2 rounded-md border p-3 text-sm">
                 <p>
                   This job already exists in Discover:{" "}
                   <span className="font-medium">

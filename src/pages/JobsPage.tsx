@@ -1,25 +1,30 @@
 import { PlusCircleIcon, XIcon } from "@phosphor-icons/react";
-import { Suspense, useEffect, useMemo, useState } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
-import { useSearchParams } from "react-router";
-import { toast } from "sonner";
+import { Suspense, useMemo } from "react";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
 import { ViewToggle } from "@/components/common/ViewToggle.tsx";
+import { DiscoverTab } from "@/components/jobs/DiscoverTab.tsx";
+import { CompanyFilter } from "@/components/jobs/filters/CompanyFilter.tsx";
 import { JobsDateFilter } from "@/components/jobs/filters/JobsDateFilter";
 import { JobsSearchInput } from "@/components/jobs/filters/JobsSearchInput.tsx";
 import {
+  DISCOVER_SORT_OPTIONS,
+  isDiscoverSort,
+  JOB_SORT_OPTIONS,
   JobsSortMenu,
-  useJobSort,
 } from "@/components/jobs/filters/JobsSortMenu.tsx";
 import { JobsStatusSelect } from "@/components/jobs/filters/JobsStatusSelect.tsx";
 import { resolveDateFilters } from "@/components/jobs/filters/jobDatePresets";
 import { JobPostForm } from "@/components/jobs/JobPostForm";
-import { readFiltersFromParams } from "@/components/jobs/jobs.helpers.ts";
+import { useJobPage } from "@/components/jobs/jobs.hooks";
 import { JobPageContent } from "@/components/jobs/view/JobPageContent.tsx";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTabs } from "@/hooks/useTabs.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
+
+type TJobsTab = "tracked" | "discover";
 
 export const JobsPage = () => (
   <AppErrorSuspense fallback={JobsPageSkeleton}>
@@ -28,83 +33,60 @@ export const JobsPage = () => (
 );
 
 const JobsContent = () => {
-  const { search, status, dateType, datePreset, dateFrom, dateTo, resetAll } =
-    useJobsStore();
+  const {
+    search,
+    status,
+    dateType,
+    datePreset,
+    dateFrom,
+    dateTo,
+    resetAll,
+    sort: currentSort,
+  } = useJobsStore();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { currentSort } = useJobSort();
+  const {
+    initial,
+    dialogOpen,
+    openCreate,
+    handleSuccess,
+    handleDialogOpenChange,
+    hasDiscoverFilters,
+    clearDiscoverFilters,
+    handleCompanyChange,
+    activeCompanyId,
+  } = useJobPage();
 
-  useEffect(() => {
-    readFiltersFromParams(searchParams);
-    const next = new URLSearchParams();
-    const view = searchParams.get("view");
-    if (view) {
-      next.set("view", view);
-    }
-    if (next.toString() !== searchParams.toString()) {
-      setSearchParams(next, { replace: true });
-    }
-  }, [searchParams, setSearchParams]);
+  const { currentTab, handleTabChange } = useTabs("tracked");
+  const tab: TJobsTab = currentTab === "discover" ? "discover" : "tracked";
 
   const dateFilters = useMemo(
     () => resolveDateFilters({ dateType, datePreset, dateFrom, dateTo }),
     [dateType, datePreset, dateFrom, dateTo]
   );
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [initialDescription, setInitialDescription] = useState("");
+  const hasTrackedFilters = search || status || dateFilters.length > 0;
 
-  const openCreate = () => {
-    setInitialDescription("");
-    setDialogOpen(true);
-  };
-
-  const handlePasteShortcut = async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      setInitialDescription(text);
-      setDialogOpen(true);
-    } catch {
-      toast.error("Failed to read clipboard");
-    }
-  };
-
-  useHotkeys(
-    "ctrl+v, meta+v",
-    () => handlePasteShortcut(),
-    { enabled: !dialogOpen },
-    [dialogOpen, handlePasteShortcut]
-  );
-
-  const handleSuccess = () => {
-    setDialogOpen(false);
-    setInitialDescription("");
-  };
-
-  const handleDialogOpenChange = (open: boolean) => {
-    setDialogOpen(open);
-    if (!open) {
-      setInitialDescription("");
-    }
-  };
-
-  const hasFilters = search || status || dateFilters.length > 0;
+  const isTrackedTab = tab === "tracked";
+  const sort =
+    isTrackedTab || isDiscoverSort(currentSort) ? currentSort : "default";
+  const hasFilters = isTrackedTab ? hasTrackedFilters : hasDiscoverFilters;
+  const handleClearFilters = isTrackedTab ? resetAll : clearDiscoverFilters;
 
   return (
-    <div className="flex w-full flex-1 flex-col">
+    <Tabs onValueChange={handleTabChange} value={tab}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="font-semibold text-xl">Jobs</h1>
+        <div className="flex flex-wrap items-center gap-4">
+          <TabsList>
+            <TabsTrigger value="tracked">Tracked</TabsTrigger>
+            <TabsTrigger value="discover">Discover</TabsTrigger>
+          </TabsList>
+        </div>
         <div className="flex flex-wrap items-center justify-end gap-2">
-          {hasFilters ? (
-            <Button onClick={resetAll} variant="outline">
-              <XIcon className="size-3" weight="bold" />
-              Filters
-            </Button>
-          ) : null}
-          <JobsDateFilter />
-          <JobsSortMenu />
+          <JobsSortMenu
+            options={isTrackedTab ? JOB_SORT_OPTIONS : DISCOVER_SORT_OPTIONS}
+          />
           <ViewToggle />
-          <Button onClick={openCreate} variant="outline">
+          <Button onClick={openCreate}>
             <PlusCircleIcon className="size-3" weight="bold" />
             New Job
           </Button>
@@ -113,20 +95,48 @@ const JobsContent = () => {
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <JobsSearchInput />
-        <JobsStatusSelect />
+        {isTrackedTab ? (
+          <>
+            <JobsDateFilter />
+            <JobsStatusSelect />
+          </>
+        ) : (
+          <CompanyFilter
+            onChange={handleCompanyChange}
+            value={activeCompanyId}
+          />
+        )}
+        {hasFilters ? (
+          <Button
+            className="text-destructive"
+            onClick={handleClearFilters}
+            variant="outline"
+          >
+            <XIcon className="size-3" weight="bold" />
+          </Button>
+        ) : null}
       </div>
 
-      <Suspense fallback={<JobsListSkeleton />}>
-        <JobPageContent currentSort={currentSort} onCreate={openCreate} />
-      </Suspense>
+      <TabsContent value="tracked">
+        <Suspense fallback={<JobsListSkeleton />}>
+          <JobPageContent currentSort={currentSort} onCreate={openCreate} />
+        </Suspense>
+      </TabsContent>
+
+      <TabsContent value="discover">
+        <Suspense fallback={<JobsListSkeleton />}>
+          <DiscoverTab companyId={activeCompanyId} sort={sort} />
+        </Suspense>
+      </TabsContent>
 
       <JobPostForm
-        initialDescription={initialDescription}
+        initialDescription={initial.description}
+        initialUrl={initial.url}
         onOpenChange={handleDialogOpenChange}
         onSuccess={handleSuccess}
         open={dialogOpen}
       />
-    </div>
+    </Tabs>
   );
 };
 

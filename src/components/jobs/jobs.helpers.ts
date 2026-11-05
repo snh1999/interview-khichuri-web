@@ -1,16 +1,6 @@
-import { generatePath, useNavigate } from "react-router";
-import type { TJobStatus } from "@/api/jobs";
-import { type IJob, JOB_STATUS } from "@/api/jobs";
-import { JOB_DETAIL_PAGE } from "@/app.constants.ts";
-import {
-  DATE_TYPE_SELECTIONS,
-  getDatePreset,
-  type TJobDatePresetKey,
-  type TJobDateTypeSelection,
-} from "@/components/jobs/filters/jobDatePresets.ts";
+import type { IJob, TJobStatus } from "@/api/jobs";
 import { formatDate } from "@/lib/date.ts";
 import { daysUntil, isHttpUrl } from "@/lib/utils.ts";
-import { useJobsStore } from "@/store/useJobsStore.ts";
 
 export const STATUS_LABEL: Record<TJobStatus, string> = {
   saved: "Saved",
@@ -46,11 +36,6 @@ export interface IJobLink {
   url: string;
   label: string | null;
 }
-
-export const useNavigateToJob = (jobId: string) => {
-  const navigate = useNavigate();
-  return () => navigate(generatePath(JOB_DETAIL_PAGE, { jobId }));
-};
 
 /** `links` is stored as stringified `[{url, label}]`. */
 export const parseJobLinks = (links?: string | null): IJobLink[] => {
@@ -99,44 +84,4 @@ export const getDateInfo = (job: IJob): string => {
   }
 
   return `Created: ${formatDate(job.createdAt)}`;
-};
-
-const isJobStatus = (value: string | null): value is TJobStatus =>
-  typeof value === "string" && JOB_STATUS.some((status) => status === value);
-
-const isDateTypeSelection = (
-  value: string | null
-): value is TJobDateTypeSelection =>
-  typeof value === "string" &&
-  DATE_TYPE_SELECTIONS.some((type) => type === value);
-
-const isPresetKey = (value: string | null): value is TJobDatePresetKey =>
-  getDatePreset(value) !== undefined;
-
-export const parseCompanyIdParam = (value: string | null) => {
-  if (value === null) {
-    return null;
-  }
-  const companyId = Number(value);
-  return Number.isInteger(companyId) && companyId > 0 ? companyId : null;
-};
-
-export const readFiltersFromParams = (params: URLSearchParams) => {
-  const { setCompanyId, setStatus, setDateChange } = useJobsStore.getState();
-
-  const statusParam = params.get("status");
-  if (isJobStatus(statusParam)) {
-    setStatus(statusParam);
-  }
-
-  const companyId = parseCompanyIdParam(params.get("companyId"));
-  if (companyId !== null) {
-    setCompanyId(companyId);
-  }
-
-  const presetParam = params.get("datePreset");
-  const typeParam = params.get("dateType");
-  if (isPresetKey(presetParam) && isDateTypeSelection(typeParam)) {
-    setDateChange({ kind: "preset", type: typeParam, key: presetParam });
-  }
 };
