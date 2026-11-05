@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog.tsx";
 
-type TDiscardType = "job" | "session" | "note" | "key";
+type TDiscardType = "job" | "session" | "note" | "key" | "feedback";
 
 interface IProps {
   open: boolean;

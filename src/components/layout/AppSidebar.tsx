@@ -1,5 +1,6 @@
 import {
   BriefcaseIcon,
+  BugIcon,
   BuildingsIcon,
   GearIcon,
   LightbulbFilamentIcon,
@@ -18,9 +19,11 @@ import {
   SESSIONS_PAGE,
   SETTINGS_PAGE,
 } from "@/app.constants.ts";
+import { FeedbackDialog } from "@/components/feedback/FeedbackDialog.tsx";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
@@ -67,6 +70,20 @@ export const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu className="text-muted-foreground">
+          <SidebarMenuItem>
+            <FeedbackDialog
+              trigger={
+                <SidebarMenuButton className="text-md py-5">
+                  <BugIcon />
+                  <span>Report a bug</span>
+                </SidebarMenuButton>
+              }
+            />
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 };

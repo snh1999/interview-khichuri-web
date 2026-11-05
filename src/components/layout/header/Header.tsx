@@ -1,4 +1,5 @@
 import { ProfileCard } from "@/components/common/ProfileCard.tsx";
+import { FeedbackDialog } from "@/components/feedback/FeedbackDialog.tsx";
 import { HeaderBreadcrumb } from "@/components/layout/header/HeaderBreadcrumb.tsx";
 import ProfileMenu from "@/components/layout/header/ProfileMenu.tsx";
 import { ThemePicker } from "@/components/theme/ThemePicker.tsx";
@@ -12,7 +13,7 @@ export const Header = () => {
   const userName = session?.user.name ?? "User";
 
   return (
-    <header className="top-0 z-50 mx-auto flex h-12 w-full items-center justify-between gap-6 border-b bg-card px-4 py-2 sm:px-6">
+    <header className="bg-card top-0 z-50 mx-auto flex h-12 w-full items-center justify-between gap-6 border-b px-4 py-2 sm:px-6">
       <div className="flex items-center gap-4">
         <SidebarTrigger className="[&_svg]:size-5!" />
         <Separator
@@ -22,6 +23,7 @@ export const Header = () => {
         <HeaderBreadcrumb />
       </div>
       <div className="flex items-center gap-1.5">
+        <FeedbackDialog />
         <ThemePicker />
         <ProfileMenu
           trigger={
