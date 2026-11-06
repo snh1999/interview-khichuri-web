@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 export const JOB_STATUS = [
   "applied",
@@ -226,13 +226,27 @@ export const useFavoriteToggle = (id: string, isFavorite: boolean) => {
   };
 };
 
-export const useTrackJob = () =>
-  useMutation({
+export const useTrackJob = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: async (id: string) => await api.post<IJob>(`/jobs/${id}/track`),
+    onSuccess: (trackedJob) => {
+      // Patch cached lists instead of invalidating: updates every discover/company card immediately.
+      queryClient.setQueriesData<IJob[]>(
+        {
+          predicate: ({ queryKey }) =>
+            queryKey[0] === "jobs" &&
+            (queryKey[1] === "discover" || queryKey[1] === "company"),
+        },
+        (jobs) =>
+          jobs?.map((job) => (job.id === trackedJob.id ? trackedJob : job))
+      );
+    },
     meta: {
       invalidates: (id: string) => queryKeys.jobs.detailsAndList(id),
     },
   });
+};
 
 export const useMatchJobByUrl = () =>
   useMutation({
