@@ -127,7 +127,9 @@ const AdminFeedbackPage = lazy(() =>
   }))
 );
 
-const LookupsPage = lazy(() => import("@/pages/admin/LookupsPage.tsx"));
+const AdminLookupsPage = lazy(
+  () => import("@/pages/admin/AdminLookupsPage.tsx")
+);
 
 const PortfolioEditorPage = lazy(() =>
   import("@/pages/PortfolioEditorPage.tsx").then((m) => ({
@@ -182,7 +184,7 @@ const App = () => {
             />
             <Route element={<AdminJobsPage />} path={ADMIN_JOBS_PAGE} />
             <Route element={<AdminFeedbackPage />} path={ADMIN_FEEDBACK_PAGE} />
-            <Route element={<LookupsPage />} path={ADMIN_LOOKUPS_PAGE} />
+            <Route element={<AdminLookupsPage />} path={ADMIN_LOOKUPS_PAGE} />
           </Route>
         </Route>
 

@@ -1,9 +1,3 @@
-import { type IJob, useTrackedJobIds, useTrackJob } from "@/api/jobs";
-import { COMPANY_DETAIL_PAGE, JOB_DETAIL_PAGE } from "@/app.constants.ts";
-import { Button } from "@/components/ui/button.tsx";
-import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
-import { formatDate } from "@/lib/date";
-import { isHttpUrl } from "@/lib/utils";
 import {
   ArrowSquareOutIcon,
   CheckIcon,
@@ -11,6 +5,12 @@ import {
 } from "@phosphor-icons/react";
 import { generatePath, Link } from "react-router";
 import { toast } from "sonner";
+import { type IJob, useTrackedJobIds, useTrackJob } from "@/api/jobs";
+import { COMPANY_DETAIL_PAGE, JOB_DETAIL_PAGE } from "@/app.constants.ts";
+import { Button } from "@/components/ui/button.tsx";
+import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
+import { formatDate } from "@/lib/date";
+import { isHttpUrl } from "@/lib/utils";
 
 export const JobDiscoveryCard = ({ job }: Readonly<{ job: IJob }>) => {
   const trackJob = useTrackJob();

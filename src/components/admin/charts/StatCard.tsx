@@ -21,15 +21,15 @@ export const StatCard = ({
 }: Readonly<IProps>) => (
   <Card>
     <CardHeader className="flex flex-row items-center justify-between gap-2">
-      <CardTitle className="font-normal text-muted-foreground text-sm">
+      <CardTitle className="text-muted-foreground text-sm font-normal">
         {title}
       </CardTitle>
       {StatIcon ? (
-        <StatIcon aria-hidden className="size-4 text-muted-foreground" />
+        <StatIcon aria-hidden className="text-muted-foreground size-4" />
       ) : null}
     </CardHeader>
     <CardContent>
-      <p className="font-heading font-semibold text-2xl tabular-nums">
+      <p className="font-heading text-2xl font-semibold tabular-nums">
         {value}
       </p>
       {description ? (

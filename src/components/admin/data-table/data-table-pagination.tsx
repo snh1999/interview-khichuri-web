@@ -36,7 +36,7 @@ export const DataTablePagination = <TData extends RowData>({
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <div className="flex items-center gap-2 text-muted-foreground text-xs">
+      <div className="text-muted-foreground flex items-center gap-2 text-xs">
         <span>
           Showing {from}–{to} of {rowCount}
         </span>

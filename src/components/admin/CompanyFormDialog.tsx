@@ -79,9 +79,7 @@ const toPayload = (data: ICompanyFormData): ICompanyInput => {
   };
 
   const dossier = data.researchDossier.trim();
-  if (dossier) {
-    payload.researchDossier = JSON.parse(dossier);
-  }
+  payload.researchDossier = dossier ? JSON.parse(dossier) : null;
 
   return payload;
 };

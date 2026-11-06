@@ -128,6 +128,7 @@ export const FailedJobsSection = () => {
 
       <DescriptionDialog
         job={descriptionTarget}
+        key={descriptionTarget?.id ?? "none"}
         onOpenChange={(open) => {
           if (!open) {
             setDescriptionTarget(null);

@@ -53,6 +53,12 @@ export const DataTableToolbar = ({
     setSearchText(event.target.value);
   };
 
+  const handleReset = () => {
+    setSearchText("");
+    lastEmitted.current = "";
+    onReset?.();
+  };
+
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div className="flex flex-wrap items-center gap-2">
@@ -67,7 +73,7 @@ export const DataTableToolbar = ({
         ) : null}
         {children}
         {onReset ? (
-          <Button onClick={onReset} size="sm" variant="ghost">
+          <Button onClick={handleReset} size="sm" variant="ghost">
             <XIcon data-icon="inline-start" />
             Reset
           </Button>

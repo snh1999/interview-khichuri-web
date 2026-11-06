@@ -6,14 +6,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTabs } from "@/hooks/useTabs";
 
-const LookupsPage = () => {
+const AdminLookupsPage = () => {
   const { currentTab, handleTabChange } = useTabs("roles");
 
   return (
     <div>
       <AppErrorSuspense fallback={LookupsPageSkeleton}>
         <Tabs onValueChange={handleTabChange} value={currentTab}>
-          <TabsList className="mb-6 w-full" variant="line">
+          <TabsList className="mb-6 w-full">
             <TabsTrigger value="roles">Roles</TabsTrigger>
             <TabsTrigger value="topics">Topics</TabsTrigger>
             <TabsTrigger value="industries">Industries</TabsTrigger>
@@ -57,4 +57,4 @@ const LookupsPageSkeleton = () => (
   </SkeletonCard>
 );
 
-export default LookupsPage;
+export default AdminLookupsPage;

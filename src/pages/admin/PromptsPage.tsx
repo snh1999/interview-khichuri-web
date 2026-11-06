@@ -114,7 +114,7 @@ const baseColumns: ColumnDef<typeof adminTableFeatures, IPrompt>[] = [
     enableSorting: false,
     header: "Owner",
     cell: ({ row }) => (
-      <span className="font-mono text-muted-foreground text-xs">
+      <span className="text-muted-foreground font-mono text-xs">
         {row.original.userId ?? "System"}
       </span>
     ),
@@ -187,7 +187,7 @@ const PromptsPageContent = () => {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="font-heading font-semibold text-xl">Prompts</h1>
+        <h1 className="font-heading text-xl font-semibold">Prompts</h1>
         <p className="text-muted-foreground text-sm">
           Browse and moderate prompt library entries.
         </p>

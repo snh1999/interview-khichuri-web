@@ -177,7 +177,7 @@ const UsersPageContent = () => {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="font-heading font-semibold text-xl">Users</h1>
+        <h1 className="font-heading text-xl font-semibold">Users</h1>
         <p className="text-muted-foreground text-sm">
           Manage user accounts, roles, and permissions.
         </p>

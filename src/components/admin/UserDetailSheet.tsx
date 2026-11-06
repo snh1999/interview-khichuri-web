@@ -48,7 +48,7 @@ const Section = ({
   children: ReactNode;
 }) => (
   <section className="flex flex-col gap-2">
-    <h3 className="font-heading font-medium text-sm">{title}</h3>
+    <h3 className="font-heading text-sm font-medium">{title}</h3>
     {children}
   </section>
 );
@@ -56,7 +56,7 @@ const Section = ({
 const Field = ({ label, children }: { label: string; children: ReactNode }) => (
   <div className="flex items-start justify-between gap-4 text-xs">
     <span className="text-muted-foreground">{label}</span>
-    <span className="max-w-[70%] break-words text-right">{children}</span>
+    <span className="max-w-[70%] text-right break-words">{children}</span>
   </div>
 );
 
@@ -113,7 +113,7 @@ const ActivitySection = ({ counts }: { counts: IAdminUserCounts }) => (
       {COUNT_LABELS.map(([key, label]) => (
         <div className="rounded-md border p-2 text-xs" key={key}>
           <div className="text-muted-foreground">{label}</div>
-          <div className="font-heading font-medium text-sm">{counts[key]}</div>
+          <div className="font-heading text-sm font-medium">{counts[key]}</div>
         </div>
       ))}
     </div>

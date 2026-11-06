@@ -156,6 +156,7 @@ export const LookupManager = ({ schema, data, isPending }: IProps) => {
           <AddEditDialogContent
             description={`Create a new ${singular} entry.`}
             isSubmitting={isCreating}
+            key={addOpen ? "add-open" : "add-closed"}
             onSubmit={handleCreate}
             submitLabel="Create"
             title={`Add ${singular}`}
@@ -244,6 +245,7 @@ export const LookupManager = ({ schema, data, isPending }: IProps) => {
           initialApproved={editEntry?.isApproved ?? false}
           initialName={editEntry?.name}
           isSubmitting={isUpdating}
+          key={editEntry?.id ?? "edit-none"}
           onSubmit={handleEditDialogSubmit}
           showApproved
           submitLabel="Save"

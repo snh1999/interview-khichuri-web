@@ -116,20 +116,34 @@ export const useCreateCompany = () =>
   useMutation({
     mutationFn: async (data: ICompanyInput) =>
       await api.post<IAdminCompany>("/company", data),
-    meta: { invalidates: [queryKeys.admin.companies()] },
+    meta: {
+      invalidates: [queryKeys.admin.companies(), queryKeys.lookups.companies],
+    },
   });
 
 export const useUpdateCompany = () =>
   useMutation({
     mutationFn: async ({ id, ...data }: IUpdateCompanyInput) =>
       await api.patch<IAdminCompany>(`/company/${id}`, data),
-    meta: { invalidates: [queryKeys.admin.companies()] },
+    meta: {
+      invalidates: ({ id }: IUpdateCompanyInput) => [
+        queryKeys.admin.companies(),
+        queryKeys.lookups.companies,
+        queryKeys.lookups.company(id),
+      ],
+    },
   });
 
 export const useDeleteCompany = () =>
   useMutation({
     mutationFn: async (id: number) => await api.delete<void>(`/company/${id}`),
-    meta: { invalidates: [queryKeys.admin.companies()] },
+    meta: {
+      invalidates: (id: number) => [
+        queryKeys.admin.companies(),
+        queryKeys.lookups.companies,
+        queryKeys.lookups.company(id),
+      ],
+    },
   });
 
 export const useCrawlCompany = () =>
@@ -177,7 +191,11 @@ export const useRetryFailedJob = () =>
     mutationFn: async (id: string) =>
       await api.post<IAdminJob>(`/jobs/admin/${id}/retry`),
     meta: {
-      invalidates: [queryKeys.admin.failedJobs, queryKeys.jobs.all],
+      invalidates: [
+        queryKeys.admin.failedJobs,
+        queryKeys.admin.jobs(),
+        queryKeys.jobs.all,
+      ],
     },
   });
 
@@ -207,7 +225,11 @@ export const useSetJobDescription = () =>
         description,
       }),
     meta: {
-      invalidates: [queryKeys.admin.failedJobs, queryKeys.jobs.all],
+      invalidates: [
+        queryKeys.admin.failedJobs,
+        queryKeys.admin.jobs(),
+        queryKeys.jobs.all,
+      ],
     },
   });
 

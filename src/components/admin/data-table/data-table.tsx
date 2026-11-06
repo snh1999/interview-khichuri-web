@@ -162,7 +162,7 @@ export const DataTable = <TData extends RowData>({
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
-                  {row.getAllCells().map((cell) => (
+                  {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       <table.FlexRender cell={cell} />
                     </TableCell>
@@ -172,7 +172,7 @@ export const DataTable = <TData extends RowData>({
             ) : (
               <TableRow>
                 <TableCell
-                  className="h-24 text-center text-muted-foreground"
+                  className="text-muted-foreground h-24 text-center"
                   colSpan={table.getVisibleLeafColumns().length}
                 >
                   {emptyMessage}

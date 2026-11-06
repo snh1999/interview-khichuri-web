@@ -117,7 +117,9 @@ export const queryKeys = {
     user: (id: string) =>
       [...queryKeys.admin.all, "users", "detail", id] as const,
     prompts: (options?: Record<string, unknown>) =>
-      [...queryKeys.admin.all, "prompts", options] as const,
+      options
+        ? ([...queryKeys.admin.all, "prompts", options] as const)
+        : ([...queryKeys.admin.all, "prompts"] as const),
     companies: (options?: Record<string, unknown>) =>
       options
         ? ([...queryKeys.admin.all, "companies", options] as const)
@@ -127,7 +129,9 @@ export const queryKeys = {
         ? ([...queryKeys.admin.all, "jobs", options] as const)
         : ([...queryKeys.admin.all, "jobs"] as const),
     feedback: (options?: Record<string, unknown>) =>
-      [...queryKeys.admin.all, "feedback", options] as const,
+      options
+        ? ([...queryKeys.admin.all, "feedback", options] as const)
+        : ([...queryKeys.admin.all, "feedback"] as const),
     get failedJobs() {
       return [...queryKeys.admin.all, "failed-jobs"] as const;
     },
