@@ -1,24 +1,25 @@
-import { PencilLineIcon, PlusIcon, TrashIcon } from "@phosphor-icons/react";
-import type { ColumnDef, ColumnVisibilityState } from "@tanstack/react-table";
-import { type ChangeEvent, type FormEvent, useMemo, useState } from "react";
+/** biome-ignore-all lint/performance/noJsxPropsBind: handlers need row data */
+import {
+  ArrowSquareOutIcon,
+  DotsThreeIcon,
+  PencilLineIcon,
+  PlusIcon,
+  TrashIcon,
+  WarningIcon,
+} from "@phosphor-icons/react";
+import Avatar from "boring-avatars";
+import { formatDistanceToNow } from "date-fns";
+import { useDeferredValue, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import {
-  type IAdminCompaniesQuery,
-  type ICompanyInput,
+  type IAdminCompany,
   useAdminCompanies,
-  useAdminCreateCompany,
-  useAdminDeleteCompany,
-  useAdminUpdateCompany,
+  useCrawlCompany,
+  useDeleteCompany,
 } from "@/api/admin/companies";
-import type { ICompany } from "@/api/resumes";
-import {
-  type adminTableFeatures,
-  DataTable,
-  DataTableSkeleton,
-} from "@/components/admin/data-table/data-table.tsx";
-import { DataTableColumnHeader } from "@/components/admin/data-table/data-table-column-header.tsx";
-import { useDataTableUrlState } from "@/components/admin/data-table/use-data-table-url-state.ts";
-import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense.tsx";
+import { JOBS_PAGE } from "@/app.constants.ts";
+import { CompanyFormDialog } from "@/components/admin/CompanyFormDialog.tsx";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,350 +29,394 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog.tsx";
-import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
+import { Badge } from "@/components/ui/badge.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog.tsx";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu.tsx";
 import { Input } from "@/components/ui/input.tsx";
-import { Label } from "@/components/ui/label.tsx";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table.tsx";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
+import { ApiError } from "@/lib/api-client";
 import { formatDate } from "@/lib/date";
+import { createCompanySearch } from "@/lib/search.ts";
+import { isHttpUrl } from "@/lib/utils";
 
-const EMPTY_COMPANIES: ICompany[] = [];
+const COLUMN_COUNT = 4;
+const ATS_BOARD_ID_PATTERN = /^[a-zA-Z0-9_-]+$/u;
 
-const CompanyDeleteAction = ({ company }: { company: ICompany }) => {
-  const [open, setOpen] = useState(false);
-  const { isPending, mutate } = useAdminDeleteCompany();
+const timeAgo = (date: string | Date | undefined) =>
+  date ? formatDistanceToNow(new Date(date), { addSuffix: true }) : "";
 
-  const handleDelete = () => {
-    mutate(company.id, {
+const sourceProblem = (company: IAdminCompany): string | null => {
+  if (!company.provider) {
+    return "Set a provider before crawling";
+  }
+  if (company.provider === "scrape") {
+    return company.careerPageUrl?.trim()
+      ? null
+      : "Add a career page URL before crawling";
+  }
+  return ATS_BOARD_ID_PATTERN.test(company.atsBoardId ?? "")
+    ? null
+    : "Add a valid ATS board id before crawling";
+};
+
+export const CompaniesPage = () => {
+  const [search, setSearch] = useState("");
+  const [formOpen, setFormOpen] = useState(false);
+  const [editCompany, setEditCompany] = useState<IAdminCompany | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<IAdminCompany | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const { data: companies = [], isPending } = useAdminCompanies();
+  const { mutate: deleteCompany, isPending: isDeleting } = useDeleteCompany();
+
+  const searchIndex = useMemo(
+    () => createCompanySearch(companies),
+    [companies]
+  );
+  const deferredSearch = useDeferredValue(search);
+  const filteredCompanies = useMemo(() => {
+    const query = deferredSearch.trim();
+    return query.length === 0
+      ? companies
+      : searchIndex.search(query).map((result) => result.doc.company);
+  }, [companies, searchIndex, deferredSearch]);
+
+  const openCreate = () => {
+    setEditCompany(null);
+    setFormOpen(true);
+  };
+
+  const openEdit = (company: IAdminCompany) => {
+    setEditCompany(company);
+    setFormOpen(true);
+  };
+
+  const handleFormOpenChange = (open: boolean) => {
+    setFormOpen(open);
+    if (!open) {
+      setEditCompany(null);
+    }
+  };
+
+  const confirmDelete = () => {
+    if (!deleteTarget) {
+      return;
+    }
+
+    deleteCompany(deleteTarget.id, {
       onSuccess: () => {
-        setOpen(false);
+        setDeleteTarget(null);
+        setDeleteError(null);
         toast.success("Company deleted");
+      },
+      onError: (error) => {
+        const details =
+          error instanceof ApiError && error.statusCode === 409
+            ? (error.details as { trackedUserCount?: number } | null)
+            : null;
+        setDeleteError(
+          details?.trackedUserCount
+            ? `${details.trackedUserCount} users track jobs from this company.`
+            : error.message
+        );
       },
     });
   };
 
-  return (
-    <AlertDialog onOpenChange={setOpen} open={open}>
-      <AlertDialogTrigger
-        render={
-          <Button aria-label="Delete company" size="icon-sm" variant="ghost">
-            <TrashIcon />
-          </Button>
-        }
-      />
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            Delete &ldquo;{company.name}&rdquo;?
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction disabled={isPending} onClick={handleDelete}>
-            Delete
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-};
-
-const baseColumns: ColumnDef<typeof adminTableFeatures, ICompany>[] = [
-  {
-    accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
-    cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
-  },
-  {
-    accessorKey: "aliases",
-    enableSorting: false,
-    header: "Aliases",
-    cell: ({ row }) => row.original.aliases?.join(", ") || "—",
-  },
-  {
-    accessorKey: "careerPageUrl",
-    enableSorting: false,
-    header: "Career page",
-    cell: ({ row }) =>
-      row.original.careerPageUrl ? (
-        <a
-          className="text-primary underline-offset-4 hover:underline"
-          href={row.original.careerPageUrl}
-          rel="noreferrer"
-          target="_blank"
-        >
-          {row.original.careerPageUrl}
-        </a>
-      ) : (
-        "—"
-      ),
-  },
-  {
-    accessorKey: "createdAt",
-    enableSorting: false,
-    header: "Created",
-    cell: ({ row }) =>
-      row.original.createdAt ? formatDate(row.original.createdAt) : "—",
-  },
-];
-
-interface ICompanyFormDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  company?: ICompany;
-}
-
-const CompanyFormDialog = ({
-  open,
-  onOpenChange,
-  company,
-}: ICompanyFormDialogProps) => {
-  const [name, setName] = useState(company?.name ?? "");
-  const [aliases, setAliases] = useState(company?.aliases?.join(", ") ?? "");
-  const [careerPageUrl, setCareerPageUrl] = useState(
-    company?.careerPageUrl ?? ""
-  );
-  const { isPending: isCreating, mutate: createCompany } =
-    useAdminCreateCompany();
-  const { isPending: isUpdating, mutate: updateCompany } =
-    useAdminUpdateCompany();
-
-  const isEditing = Boolean(company);
-  const isPending = isCreating || isUpdating;
-
-  const handleName = (event: ChangeEvent<HTMLInputElement>) =>
-    setName(event.target.value);
-  const handleAliases = (event: ChangeEvent<HTMLInputElement>) =>
-    setAliases(event.target.value);
-  const handleCareerPage = (event: ChangeEvent<HTMLInputElement>) =>
-    setCareerPageUrl(event.target.value);
-
-  const handleCancel = () => onOpenChange(false);
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const dto: ICompanyInput = {
-      name: name.trim(),
-      aliases: aliases
-        .split(",")
-        .map((alias) => alias.trim())
-        .filter(Boolean),
-      careerPageUrl: careerPageUrl.trim() || null,
-    };
-    const options = {
-      onSuccess: () => {
-        onOpenChange(false);
-        toast.success(isEditing ? "Company updated" : "Company created");
-      },
-    };
-
-    if (company) {
-      updateCompany({ ...dto, id: company.id }, options);
-    } else {
-      createCompany(dto, options);
+  const renderCompanyRows = () => {
+    if (isPending) {
+      return (
+        <TableRow>
+          <TableCell colSpan={COLUMN_COUNT}>Loading companies...</TableCell>
+        </TableRow>
+      );
     }
+
+    if (filteredCompanies.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={COLUMN_COUNT}>No companies found.</TableCell>
+        </TableRow>
+      );
+    }
+
+    return filteredCompanies.map((company) => (
+      <CompanyRow
+        company={company}
+        key={company.id}
+        onDelete={() => {
+          setDeleteError(null);
+          setDeleteTarget(company);
+        }}
+        onEdit={() => openEdit(company)}
+      />
+    ));
   };
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {isEditing ? "Edit company" : "Create company"}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Update this company entry."
-              : "Add a company to the shared directory."}
-          </DialogDescription>
-        </DialogHeader>
-
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="company-name">Name</Label>
-            <Input
-              id="company-name"
-              onChange={handleName}
-              placeholder="Company name"
-              value={name}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="company-aliases">Aliases</Label>
-            <Input
-              id="company-aliases"
-              onChange={handleAliases}
-              placeholder="Comma separated"
-              value={aliases}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="company-career-page">Career page URL</Label>
-            <Input
-              id="company-career-page"
-              onChange={handleCareerPage}
-              placeholder="https://example.com/careers"
-              type="url"
-              value={careerPageUrl}
-            />
-          </div>
-
-          <DialogFooter>
-            <Button onClick={handleCancel} type="button" variant="outline">
-              Cancel
-            </Button>
-            <AsyncButton
-              disabled={!name.trim()}
-              isLoading={isPending}
-              type="submit"
-            >
-              {isEditing ? "Save" : "Create"}
-            </AsyncButton>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
-export const CompaniesPage = () => (
-  <AppErrorSuspense fallback={DataTableSkeleton}>
-    <CompaniesPageContent />
-  </AppErrorSuspense>
-);
-
-const CompaniesPageContent = () => {
-  const {
-    filters,
-    pagination,
-    sorting,
-    columnFilters,
-    setPagination,
-    setSorting,
-    setColumnFilters,
-    setFilter,
-    reset,
-  } = useDataTableUrlState({ defaultSort: "name:asc" });
-  const [columnVisibility, setColumnVisibility] =
-    useState<ColumnVisibilityState>({});
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editing, setEditing] = useState<ICompany | undefined>();
-
-  const [firstSort] = sorting;
-  const query: IAdminCompaniesQuery = {
-    limit: pagination.pageSize,
-    name: filters.name,
-    page: pagination.pageIndex + 1,
-    sort: firstSort
-      ? `${firstSort.id}:${firstSort.desc ? "desc" : "asc"}`
-      : undefined,
-  };
-  const { data, isPending } = useAdminCompanies(query);
-
-  const companies = data ?? EMPTY_COMPANIES;
-  // ponytail: /company returns no total; estimate one extra page when full.
-  const rowCount =
-    pagination.pageIndex * pagination.pageSize +
-    companies.length +
-    (companies.length === pagination.pageSize ? 1 : 0);
-
-  const columns = useMemo<ColumnDef<typeof adminTableFeatures, ICompany>[]>(
-    () => [
-      ...baseColumns,
-      {
-        id: "actions",
-        enableHiding: false,
-        enableSorting: false,
-        header: "",
-        cell: ({ row }) => (
-          <div className="flex justify-end gap-1">
-            <Button
-              aria-label="Edit company"
-              // biome-ignore lint/performance/noJsxPropsBind: row callback
-              onClick={() => {
-                setEditing(row.original);
-                setDialogOpen(true);
-              }}
-              size="icon-sm"
-              variant="ghost"
-            >
-              <PencilLineIcon />
-            </Button>
-            <CompanyDeleteAction company={row.original} />
-          </div>
-        ),
-      },
-    ],
-    []
-  );
-
-  const openCreate = () => {
-    setEditing(undefined);
-    setDialogOpen(true);
-  };
-
-  return (
-    <div className="flex flex-col gap-4">
+    <div className="space-y-6">
       <div>
-        <h1 className="font-heading font-semibold text-xl">Companies</h1>
+        <h1 className="font-heading text-xl font-semibold">Companies</h1>
         <p className="text-muted-foreground text-sm">
-          Manage the shared company directory.
+          Manage companies, providers and crawl settings.
         </p>
       </div>
 
-      {isPending ? (
-        <DataTableSkeleton />
-      ) : (
-        <DataTable
-          columnFilters={columnFilters}
-          columns={columns}
-          columnVisibility={columnVisibility}
-          data={companies}
-          emptyMessage="No companies found."
-          onColumnFiltersChange={setColumnFilters}
-          onColumnVisibilityChange={setColumnVisibility}
-          onPaginationChange={setPagination}
-          onReset={reset}
-          onSortingChange={setSorting}
-          pagination={pagination}
-          rowCount={rowCount}
-          search={{
-            value: filters.name ?? "",
-            onChange: (value) => setFilter("name", value),
-            placeholder: "Search companies",
-          }}
-          sorting={sorting}
-          toolbar={
-            <Button onClick={openCreate} size="sm">
-              <PlusIcon />
-              New company
-            </Button>
-          }
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Input
+          className="max-w-sm"
+          onChange={(event) => setSearch(event.target.value)}
+          placeholder="Search companies"
+          value={search}
         />
-      )}
+        <Button onClick={openCreate}>
+          <PlusIcon />
+          New company
+        </Button>
+      </div>
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Company</TableHead>
+            <TableHead>Source</TableHead>
+            <TableHead>Last crawl</TableHead>
+            <TableHead />
+          </TableRow>
+        </TableHeader>
+        <TableBody>{renderCompanyRows()}</TableBody>
+      </Table>
 
       <CompanyFormDialog
-        company={editing}
-        key={editing?.id ?? "create"}
-        onOpenChange={setDialogOpen}
-        open={dialogOpen}
+        company={editCompany}
+        onOpenChange={handleFormOpenChange}
+        open={formOpen}
       />
+
+      <AlertDialog
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeleteTarget(null);
+            setDeleteError(null);
+          }
+        }}
+        open={deleteTarget !== null}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete company?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget?.name} and its untracked jobs will be removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {deleteError ? (
+            <p className="text-destructive text-xs">{deleteError}</p>
+          ) : null}
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isDeleting}
+              onClick={confirmDelete}
+              variant="destructive"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
+  );
+};
+
+const CompanySource = ({ company }: Readonly<{ company: IAdminCompany }>) => {
+  if (!company.provider) {
+    return (
+      <Badge className="text-muted-foreground" variant="outline">
+        None
+      </Badge>
+    );
+  }
+
+  const renderValue = () => {
+    if (company.provider !== "scrape") {
+      return (
+        <span className="font-mono text-xs">{company.atsBoardId ?? "—"}</span>
+      );
+    }
+
+    if (!(company.careerPageUrl && isHttpUrl(company.careerPageUrl))) {
+      return <span className="text-muted-foreground text-xs">No URL</span>;
+    }
+
+    return (
+      <a
+        className="inline-flex max-w-64 items-center gap-1 text-xs underline"
+        href={company.careerPageUrl}
+        rel="noopener noreferrer"
+        target="_blank"
+        title={company.careerPageUrl}
+      >
+        <span className="truncate">{company.careerPageUrl}</span>
+        <ArrowSquareOutIcon className="shrink-0" />
+      </a>
+    );
+  };
+
+  return (
+    <div className="flex flex-col items-start gap-1">
+      <Badge className="capitalize" variant="secondary">
+        {company.provider}
+      </Badge>
+      {renderValue()}
+    </div>
+  );
+};
+const CompanyRow = ({
+  company,
+  onDelete,
+  onEdit,
+}: Readonly<{
+  company: IAdminCompany;
+  onDelete: () => void;
+  onEdit: () => void;
+}>) => {
+  const navigate = useNavigate();
+  const { mutate: crawlCompany, isPending: isCrawling } = useCrawlCompany();
+  const problem = sourceProblem(company);
+
+  const crawl = () => {
+    const id = toast.loading(`Crawling ${company.name}…`);
+    crawlCompany(company.id, {
+      onSuccess: () =>
+        toast.success(`Crawl finished for ${company.name}`, { id }),
+      onError: () => toast.dismiss(id),
+    });
+  };
+
+  return (
+    <TableRow>
+      <TableCell>
+        <div className="flex items-center gap-2.5">
+          <div className="relative shrink-0">
+            {company.crawlError ? (
+              // TODO: show crawl errors inline in the row instead of tooltip-only.
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <div className="bg-destructive/15 text-destructive flex size-6 items-center justify-center rounded-md" />
+                  }
+                >
+                  <WarningIcon weight="fill" />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-sm break-words">
+                  {company.crawlError}
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <div
+                className={`size-6 overflow-hidden rounded-md [&>svg]:block ${
+                  company.enabled ? "" : "opacity-40 grayscale"
+                }`}
+              >
+                <Avatar name={company.name} size={24} square variant="marble" />
+              </div>
+            )}
+          </div>
+
+          <div className="min-w-0">
+            <span className="text-md block">{company.name}</span>
+            {company.aliases?.length ? (
+              <span className="text-muted-foreground block text-xs">
+                {company.aliases.join(", ")}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </TableCell>
+
+      <TableCell>
+        <CompanySource company={company} />
+      </TableCell>
+
+      <TableCell>
+        <span
+          className="block text-xs"
+          title={company.crawledAt ? formatDate(company.crawledAt) : undefined}
+        >
+          {company.crawledAt ? timeAgo(company.crawledAt) : "Never"}
+        </span>
+        <span
+          className="text-muted-foreground block text-xs"
+          title={formatDate(company.createdAt)}
+        >
+          Added {timeAgo(company.createdAt)}
+        </span>
+      </TableCell>
+
+      <TableCell>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                aria-label={`Actions for ${company.name}`}
+                size="icon"
+                variant="ghost"
+              >
+                <DotsThreeIcon />
+              </Button>
+            }
+          />
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={onEdit}>
+              <PencilLineIcon />
+              Edit
+            </DropdownMenuItem>
+            {problem ? (
+              <DropdownMenuItem onClick={onEdit}>
+                <WarningIcon />
+                Fix source
+              </DropdownMenuItem>
+            ) : null}
+            <DropdownMenuItem
+              disabled={isCrawling || Boolean(problem)}
+              onClick={crawl}
+              title={problem ?? undefined}
+            >
+              Crawl now
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                navigate(`${JOBS_PAGE}?companyId=${company.id}&tab=discover`)
+              }
+            >
+              View jobs
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onDelete} variant="destructive">
+              <TrashIcon />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
   );
 };
