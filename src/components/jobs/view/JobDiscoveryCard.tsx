@@ -5,7 +5,7 @@ import {
 } from "@phosphor-icons/react";
 import { generatePath, Link } from "react-router";
 import { toast } from "sonner";
-import { type IJob, useTrackJob } from "@/api/jobs";
+import { type IJob, useTrackedJobIds, useTrackJob } from "@/api/jobs";
 import { COMPANY_DETAIL_PAGE, JOB_DETAIL_PAGE } from "@/app.constants.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { GutterCard } from "@/components/ui/custom/GutterCard.tsx";
@@ -14,6 +14,8 @@ import { isHttpUrl } from "@/lib/utils";
 
 export const JobDiscoveryCard = ({ job }: Readonly<{ job: IJob }>) => {
   const trackJob = useTrackJob();
+  const trackedJobIds = useTrackedJobIds();
+  const isTracked = trackedJobIds.has(job.id) || trackJob.isSuccess;
   const companyPath = job.companyId
     ? generatePath(COMPANY_DETAIL_PAGE, { companyId: String(job.companyId) })
     : null;
@@ -77,13 +79,13 @@ export const JobDiscoveryCard = ({ job }: Readonly<{ job: IJob }>) => {
           <span />
         )}
         <Button
-          disabled={trackJob.isPending}
+          disabled={isTracked || trackJob.isPending}
           onClick={handleTrack}
           size="sm"
           variant="outline"
         >
           <CheckIcon className="size-3.5" weight="bold" />
-          Track
+          {isTracked ? "Tracked" : "Track"}
         </Button>
       </div>
     </GutterCard>

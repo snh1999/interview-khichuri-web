@@ -19,30 +19,24 @@ const job: IJob = {
   url: "https://acme.test/jobs/1",
 };
 
-describe("JobDiscoveryCard", () => {
-  it("shows a job returned with a track as already tracked", () => {
-    render(
-      <JobDiscoveryCard
-        job={{
-          ...job,
-          track: {
-            createdAt: "2026-01-01T00:00:00.000Z",
-            id: "track-1",
-            isFavorite: false,
-            jobId: job.id,
-            status: "saved",
-            updatedAt: "2026-01-01T00:00:00.000Z",
-          },
-        }}
-      />
-    );
+const envelope = (data: unknown) =>
+  HttpResponse.json({ data, message: "OK", statusCode: 200 });
 
-    expect(screen.getByRole("button", { name: "Tracked" })).toBeDisabled();
+describe("JobDiscoveryCard", () => {
+  it("shows a job from the tracked list as already tracked", async () => {
+    server.use(http.get("*/api/v1/jobs", () => envelope([job])));
+
+    render(<JobDiscoveryCard job={job} />);
+
+    expect(
+      await screen.findByRole("button", { name: "Tracked" })
+    ).toBeDisabled();
   });
 
   it("links the company and tracks the job", async () => {
     const tracked: string[] = [];
     server.use(
+      http.get("*/api/v1/jobs", () => envelope([])),
       http.post("*/api/v1/jobs/:id/track", ({ params }) => {
         tracked.push(String(params.id));
         return HttpResponse.json({
@@ -55,16 +49,15 @@ describe("JobDiscoveryCard", () => {
 
     const { user } = render(<JobDiscoveryCard job={job} />);
 
-    expect(screen.getByRole("link", { name: "Acme" })).toHaveAttribute(
+    expect(await screen.findByRole("link", { name: "Acme" })).toHaveAttribute(
       "href",
       "/companies/11"
     );
-    expect(screen.getByRole("link", { name: "View posting" })).toHaveAttribute(
-      "href",
-      job.url
-    );
+    expect(
+      await screen.findByRole("link", { name: "View posting" })
+    ).toHaveAttribute("href", job.url);
 
-    await user.click(screen.getByRole("button", { name: "Track" }));
+    await user.click(await screen.findByRole("button", { name: "Track" }));
 
     await waitFor(() => {
       expect(tracked).toEqual(["job-1"]);

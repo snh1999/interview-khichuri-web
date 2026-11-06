@@ -42,7 +42,8 @@ describe("CompanyDetailPage", () => {
           name: "Acme",
         })
       ),
-      http.get(`${API}/company/11/jobs`, () => envelope([job]))
+      http.get(`${API}/company/11/jobs`, () => envelope([job])),
+      http.get(`${API}/jobs`, () => envelope([]))
     );
 
     renderPage();

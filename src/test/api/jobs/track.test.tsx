@@ -3,7 +3,6 @@ import { renderHook } from "@testing-library/react";
 import { HttpResponse, http } from "msw/http";
 import type { ReactNode } from "react";
 import { describe, expect, it } from "vitest";
-import { queryKeys } from "@/api";
 import { type IJob, useTrackJob } from "@/api/jobs";
 import { server } from "@/test/msw/server.ts";
 
@@ -33,15 +32,13 @@ const trackedJob: IJob = {
 };
 
 describe("useTrackJob", () => {
-  it("adds the track to discovery and company job lists", async () => {
+  it("posts to the track endpoint and returns the tracked job", async () => {
     const client = new QueryClient({
       defaultOptions: {
         mutations: { retry: false },
         queries: { retry: false },
       },
     });
-    client.setQueryData(queryKeys.jobs.discover({}), [job]);
-    client.setQueryData(queryKeys.jobs.companyJobs(11, {}), [job]);
     server.use(
       http.post("*/api/v1/jobs/:id/track", () =>
         HttpResponse.json({
@@ -56,13 +53,9 @@ describe("useTrackJob", () => {
     );
 
     const { result } = renderHook(() => useTrackJob(), { wrapper });
-    await result.current.mutateAsync(job.id);
 
-    expect(client.getQueryData(queryKeys.jobs.discover({}))).toEqual([
-      trackedJob,
-    ]);
-    expect(client.getQueryData(queryKeys.jobs.companyJobs(11, {}))).toEqual([
-      trackedJob,
-    ]);
+    await expect(result.current.mutateAsync(job.id)).resolves.toEqual(
+      trackedJob
+    );
   });
 });

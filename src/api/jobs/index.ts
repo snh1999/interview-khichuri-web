@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client";
 
@@ -146,6 +147,11 @@ export const useGetJobs = (sort: TJobSortKey = "default") =>
     staleTime: Number.POSITIVE_INFINITY,
     gcTime: Number.POSITIVE_INFINITY,
   });
+
+export const useTrackedJobIds = () => {
+  const { data: jobs } = useGetJobs();
+  return useMemo(() => new Set(jobs.map((job) => job.id)), [jobs]);
+};
 
 interface IDiscoverJobsParams {
   search?: string;

@@ -23,12 +23,19 @@ export interface IApiError {
 export class ApiError extends Error {
   statusCode: number;
   errors?: IApiError[];
+  details?: unknown;
 
-  constructor(statusCode: number, message: string, errors?: IApiError[]) {
+  constructor(
+    statusCode: number,
+    message: string,
+    errors?: IApiError[],
+    details?: unknown
+  ) {
     super(message);
     this.name = "ApiError";
     this.statusCode = statusCode;
     this.errors = errors;
+    this.details = details;
   }
 }
 
@@ -81,7 +88,7 @@ const request = async <T>(
         body !== null && "errors" in body
           ? (body.errors as IApiError[])
           : undefined;
-      throw new ApiError(response.status, message, errors);
+      throw new ApiError(response.status, message, errors, body);
     }
 
     if (body === null) {

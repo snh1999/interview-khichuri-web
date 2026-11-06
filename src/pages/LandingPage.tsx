@@ -9,9 +9,9 @@ import { Navbar } from "@/components/landing/Navbar.tsx";
 import { RoadmapSection } from "@/components/landing/RoadmapSection.tsx";
 
 export const LandingPage = () => (
-  <div className="min-h-dvh bg-background">
+  <div className="bg-background min-h-dvh">
     <a
-      className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:ring-1 focus:ring-foreground/10"
+      className="focus:bg-background focus:ring-foreground/10 sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:rounded-md focus:px-3 focus:py-2 focus:text-sm focus:ring-1"
       href="#main"
     >
       Skip to content

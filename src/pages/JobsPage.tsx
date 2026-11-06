@@ -85,7 +85,7 @@ const JobsContent = () => {
           <JobsSortMenu
             options={isTrackedTab ? JOB_SORT_OPTIONS : DISCOVER_SORT_OPTIONS}
           />
-          <ViewToggle />
+          {isTrackedTab ? <ViewToggle /> : null}
           <Button onClick={openCreate}>
             <PlusCircleIcon className="size-3" weight="bold" />
             New Job

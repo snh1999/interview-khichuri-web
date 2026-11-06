@@ -79,13 +79,22 @@ export const FeedbackDialog = ({
   const close = () => setOpen(false);
   const { form, isLoading, onSubmit } = useFeedbackForm(pathname, close);
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen || isLoading) {
+      setOpen(nextOpen);
+      return;
+    }
+    form.reset();
+    setOpen(false);
+  };
+
   const feedbackType = form.watch("type");
 
   return (
     <FormDrawLogAlert
       isDirty={form.formState.isDirty}
       isLoading={isLoading}
-      onOpenChange={setOpen}
+      onOpenChange={handleOpenChange}
       open={open}
       type="feedback"
     >
