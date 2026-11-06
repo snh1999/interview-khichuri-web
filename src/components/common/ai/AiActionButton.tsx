@@ -8,6 +8,7 @@ import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
 import { useAIProvider } from "@/components/common/ai/ai.hook.ts";
 import { AppErrorSuspense } from "@/components/common/boundary/AppErrorSuspense";
 import { SplitButton } from "@/components/ui/button/SplitButton";
+import { ApiError } from "@/lib/api-client.ts";
 import { copyText } from "@/lib/clipboard.ts";
 import { useAppStore } from "@/store/appStore.ts";
 
@@ -32,6 +33,24 @@ interface IProps
   viewTarget?: To;
   hideTarget?: boolean;
 }
+
+const isActionableApiError = (error: unknown): error is ApiError => {
+  if (!(error instanceof ApiError) || error.statusCode === 401) {
+    return false;
+  }
+  return (
+    (error.statusCode >= 400 && error.statusCode < 500) ||
+    error.statusCode === 503 ||
+    error.statusCode === 504
+  );
+};
+
+const getErrorMessage = (error: unknown, fallback?: string): string => {
+  if (isActionableApiError(error) && error.message.trim()) {
+    return error.message;
+  }
+  return fallback ?? "Something went wrong. Please try again.";
+};
 
 export const AiActionButton = (props: Readonly<IProps>) => (
   <AppErrorSuspense>
@@ -90,11 +109,7 @@ const AiActionButtonContent = ({
             },
       });
     } catch (error) {
-      toast.error(
-        toastErrorMessage ??
-          (error instanceof Error ? error.message : "Something went wrong"),
-        { id }
-      );
+      toast.error(getErrorMessage(error, toastErrorMessage), { id });
     }
   };
 

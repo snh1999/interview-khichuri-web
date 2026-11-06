@@ -2,7 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import { HttpResponse, http } from "msw/http";
 import { Route, Routes } from "react-router";
 import { describe, expect, it } from "vitest";
-import type { ICompany } from "@/api/resumes";
+import type { ICompany } from "@/api/lookups";
 import { CompaniesPage } from "@/pages/CompaniesPage.tsx";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";

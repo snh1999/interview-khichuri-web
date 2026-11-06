@@ -2,7 +2,13 @@ import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router";
 import {
   ACCOUNT_VERIFICATION_PAGE,
+  ADMIN_COMPANIES_PAGE,
+  ADMIN_FEEDBACK_PAGE,
+  ADMIN_JOBS_PAGE,
+  ADMIN_LOOKUPS_PAGE,
   ADMIN_PAGE,
+  ADMIN_PROMPTS_PAGE,
+  ADMIN_USERS_PAGE,
   COMPANIES_PAGE,
   COMPANY_DETAIL_PAGE,
   CONFIRM_LOGIN_PAGE,
@@ -27,10 +33,10 @@ import {
   SESSIONS_PAGE,
   SETTINGS_PAGE,
 } from "@/app.constants.ts";
+import { AdminGuard } from "@/components/admin/AdminGuard.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { useLocalDataOnLogin } from "@/hooks/useLocalDataOnLogin.ts";
 import { useSession } from "@/lib/auth/auth-client.ts";
-import AdminPage from "@/pages/admin/AdminPage.tsx";
 import ConfirmLoginPage from "@/pages/auth/ConfirmLogin.tsx";
 import EmailRedirectPage from "@/pages/auth/EmailRedirectPage.tsx";
 import ForgotPasswordPage from "@/pages/auth/FogotPasswordPage.tsx";
@@ -83,6 +89,48 @@ const ResumesPage = lazy(() =>
 
 const JobProfilePage = lazy(() => import("@/pages/JobProfilePage.tsx"));
 
+const AdminLayout = lazy(() =>
+  import("@/pages/admin/AdminLayout.tsx").then((m) => ({
+    default: m.AdminLayout,
+  }))
+);
+
+const AdminOverviewPage = lazy(() =>
+  import("@/pages/admin/AdminOverviewPage.tsx").then((m) => ({
+    default: m.AdminOverviewPage,
+  }))
+);
+
+const AdminPromptsPage = lazy(() =>
+  import("@/pages/admin/PromptsPage.tsx").then((m) => ({
+    default: m.PromptsPage,
+  }))
+);
+
+const AdminCompaniesPage = lazy(() =>
+  import("@/pages/admin/CompaniesPage.tsx").then((m) => ({
+    default: m.CompaniesPage,
+  }))
+);
+
+const AdminJobsPage = lazy(() => import("@/pages/admin/AdminJobsPage.tsx"));
+
+const UsersPage = lazy(() =>
+  import("@/pages/admin/UsersPage.tsx").then((m) => ({
+    default: m.UsersPage,
+  }))
+);
+
+const AdminFeedbackPage = lazy(() =>
+  import("@/pages/admin/FeedbackPage.tsx").then((m) => ({
+    default: m.FeedbackPage,
+  }))
+);
+
+const AdminLookupsPage = lazy(
+  () => import("@/pages/admin/AdminLookupsPage.tsx")
+);
+
 const PortfolioEditorPage = lazy(() =>
   import("@/pages/PortfolioEditorPage.tsx").then((m) => ({
     default: m.PortfolioEditorPage,
@@ -125,7 +173,20 @@ const App = () => {
       <Route
         element={session ? <Outlet /> : <Navigate replace to={LOGIN_PAGE} />}
       >
-        <Route element={<AdminPage />} path={ADMIN_PAGE} />
+        <Route element={<AdminGuard />}>
+          <Route element={<AdminLayout />}>
+            <Route element={<AdminOverviewPage />} path={ADMIN_PAGE} />
+            <Route element={<UsersPage />} path={ADMIN_USERS_PAGE} />
+            <Route element={<AdminPromptsPage />} path={ADMIN_PROMPTS_PAGE} />
+            <Route
+              element={<AdminCompaniesPage />}
+              path={ADMIN_COMPANIES_PAGE}
+            />
+            <Route element={<AdminJobsPage />} path={ADMIN_JOBS_PAGE} />
+            <Route element={<AdminFeedbackPage />} path={ADMIN_FEEDBACK_PAGE} />
+            <Route element={<AdminLookupsPage />} path={ADMIN_LOOKUPS_PAGE} />
+          </Route>
+        </Route>
 
         <Route element={<SidebarLayout />}>
           <Route element={<DashboardPage />} path={HOMEPAGE} />

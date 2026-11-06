@@ -65,7 +65,7 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
   };
   const handleRevokeSession = () => revokeUserSession(user.id);
   const handleUnban = () => unbanUser(user.id);
-  const handleBan = () => banUser(user.id);
+  const handleBan = () => banUser({ userId: user.id });
   const handleRemove = () => removeUser(user.id);
 
   return (
