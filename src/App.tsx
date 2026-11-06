@@ -2,7 +2,13 @@ import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router";
 import {
   ACCOUNT_VERIFICATION_PAGE,
+  ADMIN_COMPANIES_PAGE,
+  ADMIN_FEEDBACK_PAGE,
+  ADMIN_JOBS_PAGE,
+  ADMIN_LOOKUPS_PAGE,
   ADMIN_PAGE,
+  ADMIN_PROMPTS_PAGE,
+  ADMIN_USERS_PAGE,
   COMPANIES_PAGE,
   COMPANY_DETAIL_PAGE,
   CONFIRM_LOGIN_PAGE,
@@ -107,9 +113,17 @@ const AdminCompaniesPage = lazy(() =>
   }))
 );
 
+const AdminJobsPage = lazy(() => import("@/pages/admin/AdminJobsPage.tsx"));
+
 const UsersPage = lazy(() =>
   import("@/pages/admin/UsersPage.tsx").then((m) => ({
     default: m.UsersPage,
+  }))
+);
+
+const AdminFeedbackPage = lazy(() =>
+  import("@/pages/admin/FeedbackPage.tsx").then((m) => ({
+    default: m.FeedbackPage,
   }))
 );
 
@@ -157,13 +171,18 @@ const App = () => {
       <Route
         element={session ? <Outlet /> : <Navigate replace to={LOGIN_PAGE} />}
       >
-        <Route element={<AdminGuard />} path={ADMIN_PAGE}>
+        <Route element={<AdminGuard />}>
           <Route element={<AdminLayout />}>
-            <Route element={<AdminOverviewPage />} index />
-            <Route element={<UsersPage />} path="users" />
-            <Route element={<AdminPromptsPage />} path="prompts" />
-            <Route element={<AdminCompaniesPage />} path="companies" />
-            <Route element={<LookupsPage />} path="lookups" />
+            <Route element={<AdminOverviewPage />} path={ADMIN_PAGE} />
+            <Route element={<UsersPage />} path={ADMIN_USERS_PAGE} />
+            <Route element={<AdminPromptsPage />} path={ADMIN_PROMPTS_PAGE} />
+            <Route
+              element={<AdminCompaniesPage />}
+              path={ADMIN_COMPANIES_PAGE}
+            />
+            <Route element={<AdminJobsPage />} path={ADMIN_JOBS_PAGE} />
+            <Route element={<AdminFeedbackPage />} path={ADMIN_FEEDBACK_PAGE} />
+            <Route element={<LookupsPage />} path={ADMIN_LOOKUPS_PAGE} />
           </Route>
         </Route>
 
