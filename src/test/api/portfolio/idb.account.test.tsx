@@ -3,6 +3,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { type ReactNode, useMemo } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { apiClient, queryKeys } from "@/api";
+import {
+  useCreatePortfolio,
+  useDeletePortfolio,
+  useDuplicatePortfolio,
+  useImportPortfolio,
+} from "@/api/portfolio/idb";
+import { cleanupOrphanAssetImages } from "@/lib/storage/imageStorageDb";
+import { getPortfolios, setActiveUserId } from "@/lib/storage/portfolioDb";
 
 // Resolvers for the mocked, manually-settled storage calls.
 const { pendingGets, pendingLists, pendingPuts } = vi.hoisted(() => ({
@@ -57,16 +66,6 @@ vi.mock("@/lib/storage/imageStorageDb", async (importOriginal) => {
     await importOriginal<typeof import("@/lib/storage/imageStorageDb")>();
   return { ...actual, cleanupOrphanAssetImages: vi.fn(async () => undefined) };
 });
-
-import { apiClient, queryKeys } from "@/api";
-import {
-  useCreatePortfolio,
-  useDeletePortfolio,
-  useDuplicatePortfolio,
-  useImportPortfolio,
-} from "@/api/portfolio/idb";
-import { cleanupOrphanAssetImages } from "@/lib/storage/imageStorageDb";
-import { getPortfolios, setActiveUserId } from "@/lib/storage/portfolioDb";
 
 const wrapper = ({ children }: { children: ReactNode }) => {
   const client = useMemo(

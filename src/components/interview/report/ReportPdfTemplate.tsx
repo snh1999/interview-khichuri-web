@@ -40,7 +40,7 @@ const formatDuration = (seconds: number | null | undefined) => {
 const NUMBERED_LIST_RE = /^\d+\.\s/u;
 
 const renderInline = (text: string): ReactNode =>
-  text.split(/(\*\*[^*]+\*\*|`[^`]+`)/gu).map((part, index) => {
+  text.split(/(?<inline>\*\*[^*]+\*\*|`[^`]+`)/gu).map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return (
         <PdfText key={index.toString()} style={{ fontWeight: "bold" }}>

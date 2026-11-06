@@ -19,7 +19,7 @@ import { downloadZip, generateProjectZip } from "@/lib/zipExporter";
 
 const CAPITALIZED_NAME_REGEX = /^[A-Z]/u;
 const LOCAL_STORAGE_KEY = "ai_site_builder_project_data";
-const APPLIED_EDIT_REGEX = /^(created|updated|deleted)\s+(.+)$/u;
+const APPLIED_EDIT_REGEX = /^(?<op>created|updated|deleted)\s+(?<path>.+)$/u;
 
 type TAppliedOp = "created" | "updated" | "deleted";
 

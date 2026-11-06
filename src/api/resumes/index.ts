@@ -1,6 +1,3 @@
-// biome-ignore lint/performance/noBarrelFile: <>
-export * from "./idb.ts";
-
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { apiClient, queryKeys } from "@/api";
 import type {
@@ -12,6 +9,9 @@ import {
   deleteAtsScoresByResumeId,
   deleteStandaloneReview,
 } from "@/lib/storage/indexdb.ts";
+
+// biome-ignore lint/performance/noBarrelFile: <>
+export * from "./idb.ts";
 
 export interface IUploadResponse {
   success: boolean;

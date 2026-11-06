@@ -106,11 +106,11 @@ const EventListItem = ({ event }: IProps) => {
     <Item className={`${colors.bg}`}>
       <ItemContent className="min-w-0">
         <ItemTitle className="w-full truncate">{view.title}</ItemTitle>
-        {view.subtitle !== undefined && (
+        {view.subtitle ? (
           <p className="text-muted-foreground truncate text-xs">
             {view.subtitle}
           </p>
-        )}
+        ) : null}
       </ItemContent>
       <ItemActions className="gap-1">
         {isCustom ? (

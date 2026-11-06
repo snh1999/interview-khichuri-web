@@ -15,6 +15,12 @@ interface IHarnessProps {
   withTime?: boolean;
 }
 
+const InvalidHarness = () => {
+  const form = useForm<IValues>({ defaultValues: { value: null } });
+  form.setError("value", { type: "manual", message: "Date is required" });
+  return <FormDatePicker form={form} name="value" placeholder="Pick a date" />;
+};
+
 const Harness = ({ defaultValues, withTime }: IHarnessProps) => {
   const form = useForm<IValues>({ defaultValues });
   const current = form.watch("value");
@@ -80,13 +86,6 @@ describe("FormDatePicker", () => {
   });
 
   it("shows a validation error when the field is invalid", () => {
-    const InvalidHarness = () => {
-      const form = useForm<IValues>({ defaultValues: { value: null } });
-      form.setError("value", { type: "manual", message: "Date is required" });
-      return (
-        <FormDatePicker form={form} name="value" placeholder="Pick a date" />
-      );
-    };
     render(<InvalidHarness />);
     expect(screen.getByText("Date is required")).toBeInTheDocument();
   });

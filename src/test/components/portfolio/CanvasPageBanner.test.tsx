@@ -51,17 +51,17 @@ const seed = (elements: FrameElement[]) => {
   });
 };
 
+beforeEach(() => {
+  Element.prototype.scrollIntoView = vi.fn();
+  useSketchBuilderStore.setState(useSketchBuilderStore.getInitialState(), true);
+});
+
 afterEach(() => {
   useSketchBuilderStore.setState({
     draft: null,
     viewMode: "canvas",
   });
   vi.restoreAllMocks();
-});
-
-beforeEach(() => {
-  Element.prototype.scrollIntoView = vi.fn();
-  useSketchBuilderStore.setState(useSketchBuilderStore.getInitialState(), true);
 });
 
 const savedFrame = (id: string): FrameElement | undefined =>

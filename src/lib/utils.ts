@@ -130,12 +130,12 @@ export const buildLookupNameMap = (
   return map;
 };
 
-const CAMEL_CASE_SEPARATOR = /([a-z])([A-Z])/gu;
+const CAMEL_CASE_SEPARATOR = /(?<lower>[a-z])(?<upper>[A-Z])/gu;
 const FIRST_CHAR = /^./u;
 
 export const formatSectionLabel = (key: string): string =>
   key
-    .replace(CAMEL_CASE_SEPARATOR, "$1 $2")
+    .replace(CAMEL_CASE_SEPARATOR, "$<lower> $<upper>")
     .replace(FIRST_CHAR, (char) => char.toUpperCase());
 
 export const capitalizeFirst = (value: string): string =>
@@ -161,16 +161,16 @@ export const generateSafeId = (prefix = ""): string => {
 export function markdownToPlain(md: string): string {
   return md
     .replace(/```[\s\S]*?```/gu, "") // fenced code blocks
-    .replace(/`([^`]*)`/gu, "$1") // inline code
-    .replace(/!\[([^\]]*)\]\([^)]*\)/gu, "$1") // images
-    .replace(/\[([^\]]*)\]\([^)]*\)/gu, "$1") // links
+    .replace(/`(?<code>[^`]*)`/gu, "$<code>") // inline code
+    .replace(/!\[(?<alt>[^\]]*)\]\([^)]*\)/gu, "$<alt>") // images
+    .replace(/\[(?<text>[^\]]*)\]\([^)]*\)/gu, "$<text>") // links
     .replace(/^#{1,6}\s+/gmu, "") // headings
     .replace(/^>\s?/gmu, "") // blockquotes
     .replace(/^[-*+]\s+/gmu, "") // bullets
     .replace(/^\d+\.\s+/gmu, "") // numbered lists
-    .replace(/(\*\*|__)(.*?)\1/gu, "$2") // bold
-    .replace(/([*_])(.*?)\1/gu, "$2") // italic
-    .replace(/~~(.*?)~~/gu, "$1") // strikethrough
+    .replace(/(?<marker>\*\*|__)(?<content>.*?)\k<marker>/gu, "$<content>") // bold
+    .replace(/(?<marker>[*_])(?<content>.*?)\k<marker>/gu, "$<content>") // italic
+    .replace(/~~(?<content>.*?)~~/gu, "$<content>") // strikethrough
     .replace(/^[-*_]{3,}\s*$/gmu, "") // horizontal rules
     .replace(/\n{3,}/gu, "\n\n") // extra blank lines
     .trim();

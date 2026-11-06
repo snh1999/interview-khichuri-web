@@ -200,9 +200,9 @@ const loadSettings = (): ISpeechSettings => {
 const stripMarkdownForSpeech = (text: string): string =>
   text
     .replace(/```[\s\S]*?```/gu, "Code snippet omitted. ")
-    .replace(/`([^`]*)`/gu, "$1 ")
+    .replace(/`(?<code>[^`]*)`/gu, "$<code> ")
     .replace(/[*_~#>|]/gu, " ")
-    .replace(/\[([^\]]*)\]\([^)"]*\)/gu, "$1 ")
+    .replace(/\[(?<text>[^\]]*)\]\([^)"]*\)/gu, "$<text> ")
     .replace(/\s+/gu, " ")
     .trim();
 

@@ -2,7 +2,7 @@ import { type ComponentProps, lazy, Suspense } from "react";
 
 const HighlightedCode = lazy(() => import("./HighlightedCode"));
 
-const LANGUAGE_REGEX = /language-(\w+)/u;
+const LANGUAGE_REGEX = /language-(?<language>\w+)/u;
 const TRAILING_NEWLINE_REGEX = /\n$/u;
 
 export function CodeBlock({ className, children }: ComponentProps<"code">) {

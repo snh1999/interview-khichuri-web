@@ -29,7 +29,7 @@ const RESOURCE_SEGMENT_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const formatSegment = (segment: string) =>
-  segment.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  segment.replace(/-/gu, " ").replace(/\b\w/gu, (c) => c.toUpperCase());
 
 export const HeaderBreadcrumb = () => {
   const { pathname, search } = useLocation();

@@ -32,6 +32,7 @@ export function useTemplatePdfSettings(
   return { ...DEFAULT_PDF_SETTINGS, ...config.pdfSettings, ...overrides };
 }
 
+// biome-ignore lint/style/useNamedCaptureGroup: wrapper group only enforces the alternation; a name would be misleading
 const OTHER_LABEL = /^(other|others)$/iu;
 
 export const toSkillList = (value?: string | null): string[] =>

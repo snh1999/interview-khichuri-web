@@ -225,7 +225,7 @@ describe("StyleStep", () => {
 
     for (const preset of STYLE_PRESETS) {
       expect(
-        screen.getByRole("button", { name: new RegExp(preset.name) })
+        screen.getByRole("button", { name: new RegExp(preset.name, "u") })
       ).toBeInTheDocument();
     }
   });

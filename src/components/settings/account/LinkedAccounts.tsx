@@ -77,7 +77,7 @@ const LinkedAccounts = () => {
           <div className="grid gap-3">
             {SUPPORTED_OAUTH_PROVIDERS.filter(
               (provider) =>
-                !nonCredentialAccounts.find(
+                !nonCredentialAccounts.some(
                   (acc) => acc.providerId === provider
                 )
             ).map((provider) => (
