@@ -11,13 +11,6 @@ const LookupsPage = () => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="font-heading font-semibold text-xl">Lookups</h1>
-        <p className="text-muted-foreground text-sm">
-          Manage roles, topics, and industries.
-        </p>
-      </div>
-
       <AppErrorSuspense fallback={LookupsPageSkeleton}>
         <Tabs onValueChange={handleTabChange} value={currentTab}>
           <TabsList className="mb-6 w-full" variant="line">

@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog.tsx";
+import { ActionButton } from "@/components/ui/button/ActionButton.tsx";
 import { AsyncButton } from "@/components/ui/button/AsyncButton.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
@@ -45,6 +46,7 @@ import { Label } from "@/components/ui/label.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 
 type TDialogMode = "ban" | "password" | null;
+type TConfirmAction = "impersonate" | "revoke" | "role";
 
 interface IProps {
   user: IAdminUser;
@@ -63,6 +65,9 @@ export const UserActions = ({ user, isSelf, onViewDetails }: IProps) => {
   const verifyEmail = useVerifyUserEmail();
 
   const [mode, setMode] = useState<TDialogMode>(null);
+  const [confirmAction, setConfirmAction] = useState<TConfirmAction | null>(
+    null
+  );
   const [reason, setReason] = useState("");
   const [days, setDays] = useState("");
   const [password, setNewPassword] = useState("");
@@ -72,35 +77,72 @@ export const UserActions = ({ user, isSelf, onViewDetails }: IProps) => {
       ban: () => setMode("ban"),
       daysChange: (event: ChangeEvent<HTMLInputElement>) =>
         setDays(event.target.value),
-      impersonate: () => impersonateUser.mutate(user.id),
+      impersonate: () => setConfirmAction("impersonate"),
       password: () => setMode("password"),
       passwordChange: (event: ChangeEvent<HTMLInputElement>) =>
         setNewPassword(event.target.value),
       reasonChange: (event: ChangeEvent<HTMLTextAreaElement>) =>
         setReason(event.target.value),
       remove: () => removeUser.mutate(user.id),
-      revoke: () => revokeSessions.mutate(user.id),
-      role: () =>
-        setRole.mutate({
-          userId: user.id,
-          role: user.role === "admin" ? "user" : "admin",
-        }),
+      revoke: () => setConfirmAction("revoke"),
+      role: () => setConfirmAction("role"),
       unban: () => unbanUser.mutate(user.id),
       verify: () => verifyEmail.mutate(user.id),
       viewDetails: () => onViewDetails(user.id),
     }),
-    [
-      impersonateUser,
-      onViewDetails,
-      removeUser,
-      revokeSessions,
-      setRole,
-      unbanUser,
-      user.id,
-      user.role,
-      verifyEmail,
-    ]
+    [onViewDetails, removeUser, unbanUser, user.id, verifyEmail]
   );
+
+  const confirmActions = {
+    impersonate: async () => {
+      await impersonateUser.mutateAsync(user.id);
+      return "Impersonating user";
+    },
+    revoke: async () => {
+      await revokeSessions.mutateAsync(user.id);
+      return "Sessions revoked";
+    },
+    role: async () => {
+      await setRole.mutateAsync({
+        userId: user.id,
+        role: user.role === "admin" ? "user" : "admin",
+      });
+      return "Role updated";
+    },
+  };
+
+  const runConfirmedAction = async () => {
+    if (!confirmAction) {
+      return { error: false };
+    }
+    const message = await confirmActions[confirmAction]();
+    setConfirmAction(null);
+    return { error: false, message };
+  };
+
+  const confirmCopy = {
+    impersonate: {
+      title: "Impersonate this user?",
+      description: `You will be signed in as ${user.name}.`,
+      label: "Impersonate",
+    },
+    revoke: {
+      title: "Revoke all sessions?",
+      description: `Sign ${user.name} out of every active session.`,
+      label: "Revoke",
+    },
+    role: {
+      title: "Change user role?",
+      description: `Change ${user.name}'s account role.`,
+      label: user.role === "admin" ? "Make user" : "Make admin",
+    },
+  }[confirmAction ?? "impersonate"];
+
+  const closeConfirm = (open: boolean) => {
+    if (!open) {
+      setConfirmAction(null);
+    }
+  };
 
   const closeDialog = (open: boolean) => {
     if (!open) {
@@ -209,6 +251,23 @@ export const UserActions = ({ user, isSelf, onViewDetails }: IProps) => {
             >
               Delete
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog onOpenChange={closeConfirm} open={confirmAction !== null}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{confirmCopy.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmCopy.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <ActionButton action={runConfirmedAction}>
+              {confirmCopy.label}
+            </ActionButton>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -106,8 +106,12 @@ export const queryKeys = {
     },
     sessions: (options?: Record<string, unknown>) =>
       [...queryKeys.admin.all, "sessions", options] as const,
-    stats: ["admin", "stats"] as const,
-    health: ["admin", "health"] as const,
+    get stats() {
+      return [...queryKeys.admin.all, "stats"] as const;
+    },
+    get health() {
+      return [...queryKeys.admin.all, "health"] as const;
+    },
     users: (options?: Record<string, unknown>) =>
       [...queryKeys.admin.all, "users", options] as const,
     user: (id: string) =>
@@ -115,7 +119,21 @@ export const queryKeys = {
     prompts: (options?: Record<string, unknown>) =>
       [...queryKeys.admin.all, "prompts", options] as const,
     companies: (options?: Record<string, unknown>) =>
-      [...queryKeys.admin.all, "companies", options] as const,
+      options
+        ? ([...queryKeys.admin.all, "companies", options] as const)
+        : ([...queryKeys.admin.all, "companies"] as const),
+    jobs: (options?: Record<string, unknown>) =>
+      options
+        ? ([...queryKeys.admin.all, "jobs", options] as const)
+        : ([...queryKeys.admin.all, "jobs"] as const),
+    feedback: (options?: Record<string, unknown>) =>
+      [...queryKeys.admin.all, "feedback", options] as const,
+    get failedJobs() {
+      return [...queryKeys.admin.all, "failed-jobs"] as const;
+    },
+    get aiStatus() {
+      return [...queryKeys.admin.all, "ai-status"] as const;
+    },
   },
   auth: {
     accounts: ["account"] as const,

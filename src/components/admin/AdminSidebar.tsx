@@ -1,6 +1,7 @@
 import {
   ArrowLeftIcon,
   BuildingsIcon,
+  ChatCircleTextIcon,
   ListMagnifyingGlassIcon,
   NotebookIcon,
   SquaresFourIcon,
@@ -9,6 +10,7 @@ import {
 import { Link, useLocation } from "react-router";
 import {
   ADMIN_COMPANIES_PAGE,
+  ADMIN_FEEDBACK_PAGE,
   ADMIN_LOOKUPS_PAGE,
   ADMIN_PAGE,
   ADMIN_PROMPTS_PAGE,
@@ -31,6 +33,7 @@ const ADMIN_MENU = [
   { name: "Lookups", icon: ListMagnifyingGlassIcon, url: ADMIN_LOOKUPS_PAGE },
   { name: "Prompts", icon: NotebookIcon, url: ADMIN_PROMPTS_PAGE },
   { name: "Companies", icon: BuildingsIcon, url: ADMIN_COMPANIES_PAGE },
+  { name: "Feedback", icon: ChatCircleTextIcon, url: ADMIN_FEEDBACK_PAGE },
 ] as const;
 
 const isActivePath = (pathname: string, url: string) =>
@@ -40,15 +43,15 @@ export const AdminSidebar = () => {
   const { pathname } = useLocation();
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar className="top-12 h-auto" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="pt-5 text-muted-foreground">
+            <SidebarMenu className="text-muted-foreground pt-5">
               {ADMIN_MENU.map((item) => (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton
-                    className="py-5 text-md"
+                    className="text-md py-5"
                     isActive={isActivePath(pathname, item.url)}
                     render={<Link to={item.url} />}
                     tooltip={item.name}
@@ -67,7 +70,7 @@ export const AdminSidebar = () => {
             <SidebarMenu className="text-muted-foreground">
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  className="py-5 text-md"
+                  className="text-md py-5"
                   render={<Link to={HOMEPAGE} />}
                   tooltip="Back to app"
                 >
