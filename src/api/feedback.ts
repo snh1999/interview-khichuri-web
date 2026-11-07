@@ -1,7 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api-client.ts";
 
-export const FEEDBACK_REPORT_TYPES = ["bug", "feedback"] as const;
+export const FEEDBACK_REPORT_TYPES = [
+  "bug",
+  "feedback",
+  "company_request",
+] as const;
 export type TFeedbackReportType = (typeof FEEDBACK_REPORT_TYPES)[number];
 
 export interface ICreateFeedbackInput {

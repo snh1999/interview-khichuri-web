@@ -1,8 +1,13 @@
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client.ts";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 
-export const FEEDBACK_TYPES = ["bug", "visit"] as const;
+export const FEEDBACK_TYPES = [
+  "bug",
+  "feedback",
+  "company_request",
+  "visit",
+] as const;
 export type TFeedbackType = (typeof FEEDBACK_TYPES)[number];
 
 export const FEEDBACK_STATUSES = ["new", "triaged", "resolved"] as const;
@@ -17,6 +22,9 @@ export const FEEDBACK_STATUS_OPTIONS = [
 
 export const FEEDBACK_TYPE_LABELS: Record<TFeedbackType, string> = {
   bug: "Bug",
+  feedback: "General feedback",
+  // biome-ignore lint/style/useNamingConvention: feedback type is snake_case on the API
+  company_request: "Company request",
   visit: "Visit",
 };
 

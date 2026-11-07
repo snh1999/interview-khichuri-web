@@ -1,3 +1,4 @@
+import { BuildingsIcon } from "@phosphor-icons/react";
 import {
   type ChangeEvent,
   useCallback,
@@ -11,6 +12,8 @@ import { SkeletonCard } from "@/components/common/boundary/SkeletonCard";
 import { useViewToggle, ViewToggle } from "@/components/common/ViewToggle.tsx";
 import { CompanyCardGrid } from "@/components/company/CompanyCardGrid.tsx";
 import { CompanyListRow } from "@/components/company/CompanyListRow.tsx";
+import { FeedbackDialog } from "@/components/feedback/FeedbackDialog.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import {
   Empty,
   EmptyDescription,
@@ -22,6 +25,13 @@ import { ItemGroup } from "@/components/ui/item.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useStrictSafeAutoAnimate } from "@/hooks/useStrictSafeAutoAnimate.ts";
 import { createCompanySearch } from "@/lib/search.ts";
+
+const COMPANY_REQUEST_TEMPLATE = [
+  "Company name: ",
+  "Career page: ",
+  "Website: ",
+  "Anything else: ",
+].join("\n");
 
 export const CompaniesPage = () => {
   const [search, setSearch] = useState("");
@@ -35,7 +45,20 @@ export const CompaniesPage = () => {
       <div className="flex w-full flex-1 flex-col">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-xl font-semibold">Companies</h1>
-          <ViewToggle />
+          <div className="flex items-center gap-2">
+            <FeedbackDialog
+              hideType
+              initialMessage={COMPANY_REQUEST_TEMPLATE}
+              initialType="company_request"
+              trigger={
+                <Button variant="secondary">
+                  <BuildingsIcon data-icon="inline-start" />
+                  Request a company
+                </Button>
+              }
+            />
+            <ViewToggle />
+          </div>
         </div>
 
         <div className="mb-4 flex flex-wrap items-center gap-2">
