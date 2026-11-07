@@ -1,17 +1,15 @@
 import {
   AppWindowIcon,
-  ArticleIcon,
-  CalendarDotsIcon,
-  CodeIcon,
+  BriefcaseIcon,
   GithubLogoIcon,
   KeyIcon,
+  LightbulbFilamentIcon,
   MagnifyingGlassIcon,
   ReadCvLogoIcon,
   ShieldCheckIcon,
   SparkleIcon,
   TargetIcon,
   TerminalWindowIcon,
-  VideoCameraIcon,
   WaveformIcon,
 } from "@phosphor-icons/react";
 
@@ -35,10 +33,10 @@ export const HERO = {
   sub: "A resume builder and reviewer, a board of every role you have applied to, a calendar of the dates you are working to — and a mock interview that listens to how you actually answer.",
   trust: ["No shared AI pool", "Keys encrypted at rest", "Open source"],
   image: {
-    alt: "Interview Khichuri dashboard showing active jobs, upcoming interviews, and mock interview score progress",
-    height: 957,
+    alt: "Interview Khichuri dashboard with job stats, a month calendar, and recent sessions",
+    height: 970,
     src: "/screenshots/1-dashboard.png",
-    width: 1860,
+    width: 1868,
   },
 } as const;
 
@@ -48,67 +46,65 @@ export const FEATURES = {
   items: [
     {
       description:
-        "The interviewer avatar watches and hears you, waits for you to finish, then asks a sharper follow-up because of how you answered. Audio streams in, scored feedback streams back out.",
-      icon: VideoCameraIcon,
-      title: "A real interview feel, not a QnA form",
+        "Discover roles, track every application through eight statuses, and keep each company's open jobs in the same directory — instead of a spreadsheet, five tabs, and a notes app.",
+      icon: BriefcaseIcon,
+      title: "Track the whole search in one place",
     },
     {
       description:
-        "Bring a key from OpenAI or Google and pick the model yourself. The app has no shared inference budget to ration, and no dark patterns built around one.",
+        "Run the live mock, read the scored debrief, check the resume against the job, and drill weak spots from the question bank — all against the same tracked role.",
+      icon: LightbulbFilamentIcon,
+      title: "Prep without leaving the tab",
+    },
+    {
+      description:
+        "Bring a key from OpenAI, Google, or any OpenAI-compatible provider and pick the model yourself. Keys are encrypted at rest, your data stays in your account, and the code is open source — no shared inference budget or subscription.",
       icon: KeyIcon,
-      title: "You choose the model and bring your key",
-    },
-    {
-      description:
-        "Every role, session, question, and note lives in one workspace with your own account.",
-      icon: CodeIcon,
-      title: "Built as one free tool",
+      title: "Your key, your model, your data",
     },
   ],
 } as const;
 
-// Ordered so no two interview-flavoured dives sit next to each other, and job
-// tracking lands at 02 — it is one of the three shipped pillars and had no place
-// in the tour at all, sitting in the capability band with schedule and settings.
-// The 01 -> 06 arc is a balance, not a story: read as a sequence it jumps around,
-// and that is the trade for the first two screens no longer being all interview.
+// The order tells the job-search arc: find and track the role,
+// look up the company, check the resume, run the mock, read the debrief,
+// drill the weak spots, then build the resume and the portfolio.
 export const DEEP_DIVES = [
   {
     description:
-      "A live mock with camera preview, a lip-synced avatar, and speech-to-text running over streaming connections. The interviewer stays quiet until you stop talking, then generates the next question from the transcript so far.",
+      "Paste a job description or URL and the role, company, and requirements come back structured. Browse Discover for roles from public sources and track one in a click, then move it through eight statuses from saved to offer or withdrawn — with salary, remote policy, and deadline attached to the role rather than in a spreadsheet.",
     features: [
-      "Camera and microphone preview before you begin",
-      "Avatar speaks questions aloud; TTS is streamed",
-      "Follow-ups generated from your previous answer",
-      "Question flow timed so you are never cut off mid-thought",
+      "Role and requirements pulled out of a pasted description or URL",
+      "Discover public jobs and track one without retyping it",
+      "Tracked and Discover tabs on one page",
+      "Eight statuses, from saved through offer or withdrawn",
     ],
     image: {
-      alt: "Live mock interview screen with camera preview, AI avatar, and a running transcript",
-      height: 957,
-      src: "/screenshots/2-interview.png",
-      width: 1860,
-    },
-    number: "01",
-    subtitle: "Live mock interview",
-    title: "It waits for you to finish",
-  },
-  {
-    description:
-      "Paste a job description and the role, company, and requirements come back structured. Score it against your resume, move it through saved, applied, and scheduled, and keep the salary, remote policy, and deadline attached to the role rather than in a spreadsheet.",
-    features: [
-      "Role and requirements pulled out of the pasted description",
-      "Match score against your resume, with missing skills named",
-      "Saved, applied, and scheduled on one board",
-    ],
-    image: {
-      alt: "Job tracking board with saved, applied, and scheduled jobs",
-      height: 947,
+      alt: "Jobs page with tracked and discover tabs, status filters, and a list of applications",
+      height: 966,
       src: "/screenshots/6-jobs-grid.png",
       width: 1865,
     },
-    number: "02",
+    number: "01",
     subtitle: "Job tracker",
     title: "Every application, on one board",
+  },
+  {
+    description:
+      "Every company you are targeting in one directory, with its open jobs attached. Search the full list, open a company to see what it is hiring for, and request a new one when something is missing.",
+    features: [
+      "Search every company in one directory",
+      "Open a company to see its open jobs",
+      "Request a new company when one is missing",
+    ],
+    image: {
+      alt: "Companies directory with search and a list of companies",
+      height: 968,
+      src: "/screenshots/11-company-page.png",
+      width: 1875,
+    },
+    number: "02",
+    subtitle: "Company directory",
+    title: "Know who you are applying to",
   },
   {
     description:
@@ -120,14 +116,33 @@ export const DEEP_DIVES = [
       "Suggestions tied to the role, not generic advice",
     ],
     image: {
-      alt: "ATS resume review screen comparing a resume against a job description",
-      height: 952,
+      alt: "ATS resume review comparing a resume against a job description",
+      height: 888,
       src: "/screenshots/4-ats-review.png",
-      width: 1853,
+      width: 1571,
     },
     number: "03",
     subtitle: "ATS resume review",
     title: "Check the resume against the job",
+  },
+  {
+    description:
+      "A live mock with camera preview, a lip-synced avatar, and speech-to-text running over streaming connections. The interviewer stays quiet until you stop talking, then generates the next question from the transcript so far.",
+    features: [
+      "Camera and microphone preview before you begin",
+      "Avatar speaks questions aloud; TTS is streamed",
+      "Follow-ups generated from your previous answer",
+      "Question flow timed so you are never cut off mid-thought",
+    ],
+    image: {
+      alt: "Live mock interview screen with camera preview, AI avatar, and a running transcript",
+      height: 966,
+      src: "/screenshots/2-interview.png",
+      width: 1865,
+    },
+    number: "04",
+    subtitle: "Live mock interview",
+    title: "It waits for you to finish",
   },
   {
     description:
@@ -144,9 +159,27 @@ export const DEEP_DIVES = [
       src: "/screenshots/3-interview-report.png",
       width: 1579,
     },
-    number: "04",
+    number: "05",
     subtitle: "Scored debrief",
     title: "You leave with a report, not a score",
+  },
+  {
+    description:
+      "A question bank organised by category, sitting next to your notes. Search the whole bank, save a question as a note, write your answer, and favorite the ones you want to revisit before the next interview.",
+    features: [
+      "Search the full bank or filter by category",
+      "Turn any question into a note and draft your answer there",
+      "Favorite the notes you want to revisit",
+    ],
+    image: {
+      alt: "Question bank with search, category filters, and a note action for each question",
+      height: 496,
+      src: "/screenshots/7-question-bank.png",
+      width: 1592,
+    },
+    number: "06",
+    subtitle: "Notes and question bank",
+    title: "Drill the weak spots",
   },
   {
     description:
@@ -164,57 +197,45 @@ export const DEEP_DIVES = [
       src: "/screenshots/5-resume-editor.png",
       width: 1853,
     },
-    number: "05",
+    number: "07",
     subtitle: "Resume builder",
     title: "Write it once, publish it anywhere",
   },
   {
     description:
-      "A question bank organised by category and topic, filtered to the role you are actually targeting. Save a question, write an answer, pin it for review, and reuse it in a later session.",
+      "A canvas for sketching the portfolio before you build it. Wireframe desktop, tablet, and mobile frames, collect inspiration in a moodboard, then generate a portfolio from the sketch. Still experimental, so expect rough edges.",
     features: [
-      "Filter by role, experience level, and topic",
-      "Draft answers saved per question",
-      "Pin the ones you keep getting wrong",
+      "Canvas with desktop, tablet, and mobile frames",
+      "Layers, templates, and a component library",
+      "Generate a portfolio from the sketch",
     ],
     image: {
-      alt: "Question bank listing interview questions by category and topic",
-      height: 496,
-      src: "/screenshots/7-question-bank.png",
-      width: 1592,
+      alt: "Portfolio builder canvas with artboard frames, layers, and a mobile preview",
+      height: 968,
+      src: "/screenshots/9-portfolio-bulider-canvas.png",
+      width: 1875,
     },
-    number: "06",
-    subtitle: "Practice and question bank",
-    title: "Drill the weak spots",
+    number: "08",
+    subtitle: "Portfolio builder",
+    title: "Sketch it before you build it",
   },
 ] as const;
 
 export const CAPABILITY_BAND = {
   heading: "The rest of the workspace",
-  sub: "The parts you touch between interviews: when things are due, whether the last month actually improved, and which key is doing the work.",
+  sub: "The parts you touch between interviews: whether the last month actually improved, and which key is doing the work.",
   items: [
     {
       description:
-        "A month calendar for interviews and deadlines, with your own events layered on top of the dates pulled from each job.",
-      icon: CalendarDotsIcon,
-      image: {
-        alt: "Monthly schedule calendar showing interviews, deadlines, and custom events",
-        height: 952,
-        src: "/screenshots/9-schedule.png",
-        width: 1853,
-      },
-      title: "Schedule",
-    },
-    {
-      description:
-        "Every mock you have run, with scores, and a trend line so you can see whether the last month actually improved.",
+        "Every prep session you have started, filtered by job and topic, with the mocks you have run attached.",
       icon: WaveformIcon,
       image: {
-        alt: "Prep session history with mock interview scores",
-        height: 952,
+        alt: "Preparation sessions list with job, topic, and experience filters",
+        height: 966,
         src: "/screenshots/10-sessions.png",
-        width: 1853,
+        width: 1865,
       },
-      title: "Session history",
+      title: "Preparation sessions",
     },
     {
       description:
@@ -232,23 +253,37 @@ export const CAPABILITY_BAND = {
 } as const;
 
 export const ROADMAP = {
-  heading: "Not built yet",
-  sub: "Listed here rather than on the features list, because none of it works end to end yet. Order roughly follows what gets built next.",
+  heading: "Roadmap",
+  sub: "Statuses are honest: beta means deployed but still rough around the edges, alpha means usable but incomplete.",
   // TODO(snh1999): move items up into FEATURES/DEEP_DIVES as each one ships.
   items: [
     {
       description:
-        "Customize and share your prompts. Get a pastable prompt for Gemini, Claude, Kimi, ChatGPT, and others without an API key.",
-      icon: ArticleIcon,
-      label: "Alpha",
-      title: "Prompt Library",
+        "A canvas for wireframes, moodboards, and inspiration images. Deployed as an experimental beta while the generation flow is still being finished.",
+      icon: ReadCvLogoIcon,
+      label: "Beta",
+      title: "Portfolio Builder",
     },
     {
       description:
-        "A Portfolio builder from In app Sketch, Inspiration Image and Prompt- all designed and planned by you. Under testing.",
-      icon: ReadCvLogoIcon,
+        "Paste a job URL and have the role, company, and requirements pulled in for you instead of typed out.",
+      icon: MagnifyingGlassIcon,
       label: "Alpha",
-      title: "Portfolio Builder",
+      title: "Fetch a job from a URL",
+    },
+    {
+      description:
+        "Given a company and a role, find relevant information from available sources so your answers are informed.",
+      icon: TargetIcon,
+      label: "Alpha",
+      title: "Company research",
+    },
+    {
+      description:
+        "Fetch jobs from different API sources and company websites. Score every job in your board against your resume and rank them.",
+      icon: SparkleIcon,
+      label: "Alpha",
+      title: "Job Board with match scoring",
     },
     {
       description:
@@ -256,27 +291,6 @@ export const ROADMAP = {
       icon: AppWindowIcon,
       label: "Next",
       title: "Desktop app",
-    },
-    {
-      description:
-        "Paste a job URL and have the role, company, and requirements pulled in for you instead of typed out.",
-      icon: MagnifyingGlassIcon,
-      label: "Planned",
-      title: "Fetch a job from a URL",
-    },
-    {
-      description:
-        "Given a company and a role, find relevant information from available sources so your answers are informed.",
-      icon: TargetIcon,
-      label: "Planned",
-      title: "Company research",
-    },
-    {
-      description:
-        "Fetch Jobs from different API sources and Company website. Score every job in your board against your resume and rank them.",
-      icon: SparkleIcon,
-      label: "Planned",
-      title: "Job Board with match scoring",
     },
     {
       description:
@@ -314,8 +328,8 @@ export const DECISIONS = {
     },
     {
       answer:
-        "Seven providers, two SDKs, one service. These are the providers I could find with decent free-tier, as I do not have the means to test paid providers and tiers. Google is the odd one out; the other six are OpenAI-compatible and only need a different `baseURL`. The catch is that the abstraction is a config table plus a ternary copied at each call site, not a real interface, and one service has to reach into another to avoid a dependency cycle — there is a comment in the source explaining exactly that. ",
-      question: "Why support seven AI providers?",
+        "Eight provider options, two SDKs, one service. These are the providers I could find with decent free-tier, as I do not have the means to test paid providers and tiers. Google is the odd one out; the rest speak the OpenAI API and only need a different `baseURL`, or a custom endpoint for anything else. The catch is that the abstraction is a config table plus a ternary copied at each call site, not a real interface, and one service has to reach into another to avoid a dependency cycle — there is a comment in the source explaining exactly that. ",
+      question: "Why support eight AI providers?",
     },
     {
       answer:
@@ -353,7 +367,7 @@ export const DECISIONS = {
 
 export const CTA = {
   heading: "Bring your own key and see how it feels",
-  sub: "No card, no shared inference budget, no sales call. Sign up, paste an OpenAI or Google key, and everything above opens against your own account — start wherever the search is stuck.",
+  sub: "No card, no shared inference budget, no sales call. Sign up, paste a key from OpenAI, Google, or any OpenAI-compatible provider, and everything above opens against your own account — start wherever the search is stuck.",
   primary: { href: REGISTER_PAGE, label: "Start prepping" },
   secondary: { href: LOGIN_PAGE, label: "I already have one" },
 } as const;

@@ -9,6 +9,13 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 
+const LABEL_VARIANTS: Record<string, "default" | "outline" | "secondary"> = {
+  alpha: "secondary",
+  beta: "default",
+  next: "default",
+  planned: "outline",
+};
+
 export const RoadmapSection = () => (
   <section className="py-20" id="roadmap">
     <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -31,16 +38,7 @@ export const RoadmapSection = () => (
                 {item.title}
               </CardTitle>
               <CardAction>
-                <Badge
-                  variant={
-                    item.label === "Next"
-                      ? "default"
-                      : // biome-ignore lint/style/noNestedTernary: <>
-                        item.label === "Alpha"
-                        ? "secondary"
-                        : "outline"
-                  }
-                >
+                <Badge variant={LABEL_VARIANTS[item.label.toLowerCase()]}>
                   {item.label}
                 </Badge>
               </CardAction>

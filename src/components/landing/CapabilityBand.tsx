@@ -13,7 +13,7 @@ export const CapabilityBand = () => (
         </p>
       </div>
 
-      <div className="grid gap-10 lg:grid-cols-3">
+      <div className="grid gap-10 lg:grid-cols-2">
         {CAPABILITY_BAND.items.map((item) => (
           <div className="flex flex-col" key={item.title}>
             <ScreenshotFrame screenshot={item.image} />
