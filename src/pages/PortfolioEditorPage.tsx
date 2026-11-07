@@ -45,5 +45,9 @@ export const PortfolioEditorPage = () => {
     return <Spinner />;
   }
 
-  return <PortfolioSketchPage />;
+  return (
+    <div className="fixed inset-x-0 top-12 bottom-0 z-40 flex flex-col">
+      <PortfolioSketchPage />
+    </div>
+  );
 };

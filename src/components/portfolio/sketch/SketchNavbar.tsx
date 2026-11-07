@@ -308,20 +308,14 @@ export const SketchNavbar: React.FC = () => {
           value={viewMode}
         >
           <TabsList className="border-border/80 bg-muted/70 h-8 gap-0.5 rounded-xl border p-0.5 sm:h-9 sm:gap-1 sm:p-1">
-            <TabsTrigger
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium data-[state=active]:shadow-xs sm:gap-1.5 sm:px-3"
-              value="canvas"
-            >
+            <TabsTrigger className="text-md!" value="canvas">
               <LayoutIcon
                 size={14}
                 weight={viewMode === "canvas" ? "fill" : "regular"}
               />
               <span className="hidden sm:inline">Canvas</span>
             </TabsTrigger>
-            <TabsTrigger
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium data-[state=active]:shadow-xs sm:gap-1.5 sm:px-3"
-              value="preview"
-            >
+            <TabsTrigger className="text-md!" value="preview">
               <CodeIcon
                 className="text-primary"
                 size={14}

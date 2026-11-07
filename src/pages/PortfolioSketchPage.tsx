@@ -38,7 +38,7 @@ export const PortfolioSketchPage: React.FC = () => {
 
   return (
     <AppErrorSuspense>
-      <div className="bg-background text-foreground flex h-screen w-screen flex-col overflow-hidden select-none">
+      <div className="bg-background text-foreground flex min-h-0 w-full flex-1 flex-col overflow-hidden select-none">
         <SketchNavbar />
 
         <div className="relative flex flex-1 overflow-hidden">
