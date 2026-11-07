@@ -47,7 +47,9 @@ const isBlank = (v: unknown) =>
   v === null || v === undefined || (typeof v === "string" && !v.trim());
 
 const toLabel = (key: string) => {
-  const s = key.replace(/([a-z0-9])([A-Z])/g, "$1 $2").toLowerCase();
+  const s = key
+    .replace(/(?<lower>[a-z0-9])(?<upper>[A-Z])/gu, "$<lower> $<upper>")
+    .toLowerCase();
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 

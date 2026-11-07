@@ -68,7 +68,7 @@ export const TimeGrid = ({
     <div className="flex flex-col overflow-hidden rounded-md border">
       <div className="calendar-scrollbar max-h-[70vh] overflow-y-auto">
         {hasStickyHeader ? (
-          <div className="sticky top-0 z-40 bg-card">
+          <div className="bg-card sticky top-0 z-40">
             {header}
             <AllDayRow
               allDayEvents={allDayRowEvents}
@@ -83,7 +83,7 @@ export const TimeGrid = ({
           <div className="w-16 shrink-0 border-r">
             {HOURS.map((h) => (
               <div
-                className="flex items-start justify-end pr-2 text-muted-foreground text-xs"
+                className="text-muted-foreground flex items-start justify-end pr-2 text-xs"
                 key={h}
                 style={{ height: HOUR_HEIGHT_PX }}
               >
@@ -103,7 +103,7 @@ export const TimeGrid = ({
           >
             {drag && drag.startDayIndex !== drag.currentDayIndex && (
               <div className="pointer-events-none absolute inset-x-0 top-1 z-40 flex justify-center">
-                <span className="rounded bg-primary px-2 py-1 text-primary-foreground text-xs shadow">
+                <span className="bg-primary text-primary-foreground rounded px-2 py-1 text-xs shadow">
                   {format(
                     days[Math.min(drag.startDayIndex, drag.currentDayIndex)],
                     "MMM d"

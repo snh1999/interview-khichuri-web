@@ -14,7 +14,7 @@ import {
 import { PORTFOLIO_PAGE_TEMPLATES } from "@/components/portfolio/sketch/utils/portfolioTemplates.ts";
 import { STAMP_DEFINITIONS } from "@/components/portfolio/sketch/utils/stampConstants.ts";
 
-const ID_PATTERN = /^hero-[a-z0-9]+$/;
+const ID_PATTERN = /^hero-[a-z0-9]+$/u;
 
 const textOf = (elements: CanvasElement[]): string =>
   elements

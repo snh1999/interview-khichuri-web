@@ -3,6 +3,7 @@ import type { IJob } from "@/api/jobs";
 import type { IPrepSession } from "@/api/sessions";
 import { QUESTION_BANK } from "@/lib/questions/question-bank.ts";
 import {
+  createCompanySearch,
   createJobSearch,
   createQuestionBankSearch,
   createSearch,
@@ -123,6 +124,17 @@ describe("search factories", () => {
 
     expect(search.search("frontend").map((r) => r.id)).toEqual(["job-1"]);
     expect(search.search("globex").map((r) => r.id)).toEqual(["job-2"]);
+  });
+
+  it("searches companies by name and aliases with prefix matching", () => {
+    const search = createCompanySearch([
+      { id: 1, name: "Acme", aliases: ["Acme Corp"] },
+      { id: 2, name: "Globex", aliases: null },
+    ]);
+
+    expect(search.search("acm").map((r) => r.doc.company.id)).toEqual([1]);
+    expect(search.search("corp").map((r) => r.doc.company.id)).toEqual([1]);
+    expect(search.search("glo").map((r) => r.doc.company.id)).toEqual([2]);
   });
 
   it("searches sessions by title, description, and resolved role", () => {

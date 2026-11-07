@@ -1,4 +1,5 @@
-import { delay, HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
+import { delay } from "msw/utils/delay";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError, api, streamPost } from "@/lib/api-client.ts";
 import { server } from "@/test/msw/server.ts";
@@ -6,7 +7,7 @@ import { server } from "@/test/msw/server.ts";
 const envelope = <T>(data: T) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });
 
-const ABORT_MESSAGE = /abort/i;
+const ABORT_MESSAGE = /abort/iu;
 
 const collect = async <T>(generator: AsyncGenerator<T>): Promise<T[]> => {
   const payloads: T[] = [];

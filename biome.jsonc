@@ -55,6 +55,20 @@
             ]
           }
         }
+      },
+      "suspicious": {
+        "useBaseline": {
+          "level": "error",
+          "options": {
+            "allowProperties": [
+              "accent-color",
+              "margin-trim",
+              "scrollbar-color",
+              "scrollbar-width"
+            ],
+            "allowSelectors": ["marker"]
+          }
+        }
       }
     }
   },

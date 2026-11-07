@@ -5,8 +5,9 @@ import {
   SandpackProvider,
   useSandpack,
 } from "@codesandbox/sandpack-react";
-import { FileCodeIcon, LockIcon, XIcon } from "@phosphor-icons/react";
+import { CopyIcon, FileCodeIcon, LockIcon, XIcon } from "@phosphor-icons/react";
 import React from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button.tsx";
 import { sanitizeSandpackFiles } from "@/lib/sandpack.ts";
 import { useBuilderProject, useBuilderStore } from "@/store/useBuilderStore";
@@ -76,6 +77,44 @@ const SandpackStoreSync: React.FC = () => {
   return null;
 };
 
+const SandpackErrorCopy: React.FC = () => {
+  const { sandpack } = useSandpack();
+  const { error } = sandpack;
+
+  if (!error) {
+    return null;
+  }
+
+  const location = error.path
+    ? `${error.path}${error.line ? `:${error.line}${error.column ? `:${error.column}` : ""}` : ""}`
+    : "";
+  const text = [error.title, location, error.message]
+    .filter(Boolean)
+    .join("\n");
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Sandpack error copied");
+    } catch {
+      toast.error("Could not copy the error");
+    }
+  };
+
+  return (
+    <Button
+      className="absolute top-3 right-3 z-20 shadow-sm"
+      onClick={handleCopy}
+      size="sm"
+      type="button"
+      variant="outline"
+    >
+      <CopyIcon className="size-3" weight="bold" />
+      Copy error
+    </Button>
+  );
+};
+
 export const Workspace: React.FC = () => {
   const { files, activeFile, openFiles, viewMode, deviceMode } =
     useBuilderProject();
@@ -109,7 +148,7 @@ export const Workspace: React.FC = () => {
   const isPreviewVisible = viewMode === "preview" || viewMode === "split";
 
   return (
-    <main className="flex h-full flex-1 flex-col overflow-hidden bg-background">
+    <main className="bg-background flex h-full flex-1 flex-col overflow-hidden">
       <SandpackProvider
         className="flex h-full flex-1 flex-col"
         customSetup={{
@@ -132,15 +171,15 @@ export const Workspace: React.FC = () => {
         theme="light"
       >
         <SandpackStoreSync />
-        <div className="flex h-full w-full flex-1 overflow-hidden">
+        <div className="relative flex h-full w-full flex-1 overflow-hidden">
           {isEditorVisible ? (
             <div
-              className={`flex h-full flex-col border-border border-r bg-card ${
+              className={`border-border bg-card flex h-full min-w-0 flex-col overflow-hidden border-r ${
                 viewMode === "split" ? "w-1/2" : "w-full"
               }`}
             >
               {openFiles.length > 0 && (
-                <div className="no-scrollbar flex shrink-0 items-center overflow-x-auto border-border border-b bg-muted">
+                <div className="no-scrollbar border-border bg-muted flex shrink-0 items-center overflow-x-auto border-b">
                   {openFiles.map((filePath) => {
                     const isActive = activeFile === filePath;
                     const isConfigFile =
@@ -149,9 +188,9 @@ export const Workspace: React.FC = () => {
                       filePath.endsWith("index.html");
                     return (
                       <div
-                        className={`flex select-none items-center gap-2 border-border border-r px-3 py-2 text-xs transition ${
+                        className={`border-border flex items-center gap-2 border-r px-3 py-2 text-xs transition select-none ${
                           isActive
-                            ? "border-t-2 border-t-primary bg-card font-medium text-foreground"
+                            ? "border-t-primary bg-card text-foreground border-t-2 font-medium"
                             : "text-muted-foreground hover:bg-accent hover:text-foreground"
                         }`}
                         key={filePath}
@@ -207,14 +246,14 @@ export const Workspace: React.FC = () => {
                   (activeFile.endsWith("package.json") ||
                     activeFile.endsWith("vite.config.js") ||
                     activeFile.endsWith("index.html")) && (
-                    <div className="z-10 flex items-center justify-between border-border border-b bg-muted/80 px-3 py-1 text-muted-foreground text-xs">
+                    <div className="border-border bg-muted/80 text-muted-foreground z-10 flex items-center justify-between border-b px-3 py-1 text-xs">
                       <span className="flex items-center gap-1.5 font-sans">
                         <LockIcon className="text-muted-foreground" size={12} />
                         <span>
                           Project system configuration (read-only reference)
                         </span>
                       </span>
-                      <span className="font-mono text-muted-foreground text-xxs">
+                      <span className="text-muted-foreground text-xxs font-mono">
                         Included in exported .zip
                       </span>
                     </div>
@@ -240,7 +279,7 @@ export const Workspace: React.FC = () => {
 
           {isPreviewVisible ? (
             <div
-              className={`relative flex h-full flex-col items-center justify-center overflow-hidden bg-muted p-2 ${
+              className={`bg-muted relative flex h-full min-w-0 flex-col items-center justify-center overflow-hidden p-2 ${
                 viewMode === "split" ? "w-1/2" : "w-full"
               }`}
             >
@@ -259,6 +298,7 @@ export const Workspace: React.FC = () => {
             </div>
           ) : null}
         </div>
+        <SandpackErrorCopy />
       </SandpackProvider>
     </main>
   );

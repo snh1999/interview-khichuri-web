@@ -24,7 +24,7 @@ export const AllDayRow = ({
       className="grid border-b"
       style={{ gridTemplateColumns: `4rem repeat(${days.length}, 1fr)` }}
     >
-      <div className="border-r p-1 text-muted-foreground text-xs">All day</div>
+      <div className="text-muted-foreground border-r p-1 text-xs">All day</div>
       {days.map((day) => (
         <div
           className="flex min-w-0 flex-col gap-0.5 border-r p-1 last:border-r-0"

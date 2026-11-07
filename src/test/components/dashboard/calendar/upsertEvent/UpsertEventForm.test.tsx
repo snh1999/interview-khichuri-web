@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { afterEach, describe, expect, it } from "vitest";
 import type { TCustomEvent } from "@/components/dashboard/calendar/calendar.types.ts";
 import { UpsertEventForm } from "@/components/dashboard/calendar/upsertEvent/UpsertEventForm.tsx";

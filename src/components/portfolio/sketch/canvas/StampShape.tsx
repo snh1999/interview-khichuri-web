@@ -58,7 +58,7 @@ export const StampShape: React.FC<StampShapeProps> = ({ el, isSelected }) => {
         y={el.y}
       />
       <foreignObject height={el.height} width={el.width} x={el.x} y={el.y}>
-        <div className="flex h-full w-full select-none flex-col justify-between overflow-hidden p-3 text-xs">
+        <div className="flex h-full w-full flex-col justify-between overflow-hidden p-3 text-xs select-none">
           <div className="flex items-center justify-between gap-1">
             <div
               className={`flex items-center gap-1.5 truncate font-bold ${labelColor}`}

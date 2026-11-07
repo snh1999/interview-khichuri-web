@@ -80,7 +80,7 @@ export const ResetPasswordForm = ({ token }: Readonly<{ token: string }>) => {
   if (isTokenInvalid) {
     return (
       <Alert className="px-4 py-3 text-center">
-        <AlertTitle className="pb-2 font-bold text-destructive text-lg">
+        <AlertTitle className="text-destructive pb-2 text-lg font-bold">
           Link expired
         </AlertTitle>
         <AlertDescription className="space-y-3">

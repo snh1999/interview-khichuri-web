@@ -14,7 +14,7 @@ const SidebarlessHeader = () => {
   const goBack = useCallback(() => navigate(-1), [navigate]);
 
   return (
-    <header className="top-0 z-50 mx-auto flex h-12 w-full items-center gap-1 border-b bg-card px-4 py-2 sm:px-6">
+    <header className="bg-card top-0 z-50 mx-auto flex h-12 w-full items-center gap-1 border-b px-4 py-2 sm:px-6">
       <Button
         aria-label="Go back"
         onClick={goBack}
@@ -45,14 +45,14 @@ export const SidebarLayout = ({
     <SidebarProvider>
       <div className="flex h-dvh w-full flex-col overflow-hidden">
         <a
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:ring-2 focus:ring-ring"
+          className="focus:bg-background focus:ring-ring sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:px-3 focus:py-2 focus:text-sm focus:ring-2"
           href="#main-content"
         >
           Skip to content
         </a>
         {hideSidebar ? <SidebarlessHeader /> : <Header />}
 
-        {/* h-full important for right-scrollbar, min-h-0 important for horizontal sidebar*/}
+        {/* h-full important for right-scrollbar, min-h-0 important for horizontal sidebar */}
         <ScrollArea className="h-full min-h-0 w-full flex-1 rounded-md border">
           {/* min-h-full ensuring footer is at the bottom */}
           <div className="flex min-h-full">

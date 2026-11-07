@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { useLocation } from "react-router";
 import { describe, expect, it } from "vitest";
 import { AddResume } from "@/components/resume/job-profile/AddResume.tsx";

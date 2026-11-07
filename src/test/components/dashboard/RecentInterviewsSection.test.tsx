@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it } from "vitest";
 import type { IInterview } from "@/api/sessions/interviews.ts";
 import { RecentInterviewsSection } from "@/components/dashboard/RecentInterviewsSection.tsx";
@@ -30,7 +30,7 @@ const makeInterview = (id: string, createdAt: string): IInterview => ({
 const envelope = (data: unknown) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });
 
-const CREATED_TITLE = /^Created · /;
+const CREATED_TITLE = /^Created · /u;
 
 describe("RecentInterviewsSection", () => {
   it("shows the latest incomplete interviews without delete actions", async () => {

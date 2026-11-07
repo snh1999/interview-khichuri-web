@@ -104,7 +104,7 @@ export const PortfolioListView = () => {
             ))}
           </div>
         ) : (
-          <div className="rounded-lg border border-dashed bg-muted/20 p-8 text-center">
+          <div className="bg-muted/20 rounded-lg border border-dashed p-8 text-center">
             <p className="text-muted-foreground text-sm">
               No portfolios yet. Create your first wireframe to get started.
             </p>

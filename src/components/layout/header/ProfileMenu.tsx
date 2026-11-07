@@ -1,7 +1,13 @@
-import { GearIcon, SignOutIcon, UserIcon } from "@phosphor-icons/react";
+import {
+  GearIcon,
+  ShieldCheckIcon,
+  SignOutIcon,
+  UserIcon,
+} from "@phosphor-icons/react";
 import type { ReactElement } from "react";
 import { useNavigate } from "react-router";
-import { PROFILE_PAGE, SETTINGS_PAGE } from "@/app.constants.ts";
+import { useGetPermission } from "@/api/auth/admin.ts";
+import { ADMIN_PAGE, PROFILE_PAGE, SETTINGS_PAGE } from "@/app.constants.ts";
 import { ProfileCard } from "@/components/common/ProfileCard.tsx";
 import {
   DropdownMenu,
@@ -28,7 +34,13 @@ const ProfileDropdown = ({
   const navigate = useNavigate();
   const navigateToProfile = () => navigate(PROFILE_PAGE);
   const navigateToSettings = () => navigate(SETTINGS_PAGE);
+  const navigateToAdmin = () => navigate(ADMIN_PAGE);
   const logout = () => signOut();
+
+  const { data: permission } = useGetPermission({
+    permissions: { user: ["list"] },
+  });
+  const isAdmin = permission?.success === true;
 
   return (
     <DropdownMenu defaultOpen={defaultOpen}>
@@ -42,7 +54,7 @@ const ProfileDropdown = ({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuGroup className="*:gap-2 *:px-4 *:py-2.5 *:text-md">
+        <DropdownMenuGroup className="*:text-md *:gap-2 *:px-4 *:py-2.5">
           <DropdownMenuItem onClick={navigateToProfile}>
             <UserIcon className="size-4" />
             <span>My account</span>
@@ -51,13 +63,19 @@ const ProfileDropdown = ({
             <GearIcon className="size-4" />
             <span>Settings</span>
           </DropdownMenuItem>
+          {isAdmin ? (
+            <DropdownMenuItem onClick={navigateToAdmin}>
+              <ShieldCheckIcon className="size-4" />
+              <span>Admin</span>
+            </DropdownMenuItem>
+          ) : null}
         </DropdownMenuGroup>
 
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
           <DropdownMenuItem
-            className="gap-2 px-4 py-2.5 text-md"
+            className="text-md gap-2 px-4 py-2.5"
             onClick={logout}
             variant="destructive"
           >

@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it, vi } from "vitest";
 import type { IResume } from "@/api/resumes";
 import { Toaster } from "@/components/ui/sonner.tsx";
@@ -8,13 +8,13 @@ import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
 const API = "*/api/v1";
-const ACTIONS_FOR = /Actions for Backend Resume/;
-const FILL_PROFILE = /Fill profile/;
-const SET_PRIMARY = /Set as primary/;
-const OPEN_PUBLIC_PAGE = /Open public page/;
-const OVERRIDE = /Override/;
-const ACCEPT_ALL = /Accept All/;
-const APPLY = /Apply/;
+const ACTIONS_FOR = /Actions for Backend Resume/u;
+const FILL_PROFILE = /Fill profile/u;
+const SET_PRIMARY = /Set as primary/u;
+const OPEN_PUBLIC_PAGE = /Open public page/u;
+const OVERRIDE = /Override/u;
+const ACCEPT_ALL = /Accept All/u;
+const APPLY = /Apply/u;
 
 const envelope = (data: unknown) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });

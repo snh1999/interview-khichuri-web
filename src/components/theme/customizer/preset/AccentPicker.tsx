@@ -16,7 +16,7 @@ export const AccentPicker = () => {
 
   return (
     <div>
-      <div className="mb-1 pl-1 font-semibold text-sm">Accent</div>
+      <div className="mb-1 pl-1 text-sm font-semibold">Accent</div>
       <div className="grid grid-cols-3 gap-2">
         <AccentCard
           isActive={activeAccentId === null}
@@ -69,7 +69,7 @@ const AccentCard = ({
 
     <div
       className={`h-3.5 w-3.5 shrink-0 rounded-xs ${
-        primary ? "" : "border border-muted-foreground/30 border-dashed"
+        primary ? "" : "border-muted-foreground/30 border border-dashed"
       }`}
       style={{
         backgroundColor: primary ? oklchStringToHex(primary) : "",

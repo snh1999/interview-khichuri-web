@@ -42,17 +42,6 @@ export interface TAtsScore {
   tailoringNotes: string;
 }
 
-export interface ICompany {
-  id: number;
-  name: string;
-  aliases?: string[] | null;
-  links?: { type: string; url: string }[] | null;
-  careerPageUrl?: string | null;
-  researchDossier?: unknown;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 interface IScoreResumeDto {
   jobId: string;
   resumeId: string;

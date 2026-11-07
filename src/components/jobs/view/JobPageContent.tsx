@@ -90,29 +90,31 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
   const [gridParent] = useStrictSafeAutoAnimate();
   const [listParent] = useStrictSafeAutoAnimate();
 
+  if (jobs.length === 0) {
+    return (
+      <Empty fullHeight>
+        <EmptyHeader>
+          <EmptyTitle>No jobs found</EmptyTitle>
+          <EmptyDescription>
+            {hasFilters
+              ? "Try adjusting your filters."
+              : "Add your first job posting to get started. Press Ctrl+v to paste from clipboard."}
+          </EmptyDescription>
+        </EmptyHeader>
+        {hasFilters ? null : (
+          <EmptyContent>
+            <Button onClick={onCreate} type="button">
+              <PlusCircleIcon className="size-3" weight="bold" />
+              New Job
+            </Button>
+          </EmptyContent>
+        )}
+      </Empty>
+    );
+  }
+
   return (
     <>
-      {jobs.length === 0 ? (
-        <Empty fullHeight>
-          <EmptyHeader>
-            <EmptyTitle>No jobs found</EmptyTitle>
-            <EmptyDescription>
-              {hasFilters
-                ? "Try adjusting your filters."
-                : "Add your first job posting to get started. Press Ctrl+v to paste from clipboard."}
-            </EmptyDescription>
-          </EmptyHeader>
-          {hasFilters ? null : (
-            <EmptyContent>
-              <Button onClick={onCreate} type="button">
-                <PlusCircleIcon className="size-3" weight="bold" />
-                New Job
-              </Button>
-            </EmptyContent>
-          )}
-        </Empty>
-      ) : null}
-
       {currentView === "grid" ? (
         <div className="grid gap-2.5 sm:grid-cols-2" ref={gridParent}>
           {jobs.map((job) => (
@@ -121,7 +123,7 @@ export const JobPageContent = ({ currentSort, onCreate }: Readonly<IProps>) => {
         </div>
       ) : (
         <ItemGroup
-          className="overflow-hidden rounded-md bg-card"
+          className="bg-card overflow-hidden rounded-md"
           ref={listParent}
         >
           {jobs.map((job) => (

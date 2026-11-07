@@ -18,7 +18,7 @@ export const PresetSwatch = ({
   ];
 
   return (
-    <div className="flex h-3.5 w-16 overflow-hidden border-border">
+    <div className="border-border flex h-3.5 w-16 overflow-hidden">
       {swatchVars.map((value) => (
         <div
           className="flex-1"

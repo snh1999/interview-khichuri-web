@@ -121,7 +121,7 @@ export const SessionPageContent = ({ search = "", onNewSession }: IProps) => {
   if (currentView === "list") {
     return (
       <ItemGroup
-        className="overflow-hidden rounded-sm bg-card"
+        className="bg-card overflow-hidden rounded-sm"
         ref={listParent}
       >
         {filteredSessions.map((session) => (

@@ -85,9 +85,9 @@ export const InterviewItem = ({ interview, onDelete }: IProps) => {
         })}
       >
         <div className="min-w-0">
-          <p className="font-medium text-foreground text-sm">{title}</p>
+          <p className="text-foreground text-sm font-medium">{title}</p>
           {subtitle ? (
-            <p className="mt-1 font-mono text-muted-foreground text-xs">
+            <p className="text-muted-foreground mt-1 font-mono text-xs">
               {subtitle}
             </p>
           ) : null}
@@ -95,7 +95,7 @@ export const InterviewItem = ({ interview, onDelete }: IProps) => {
         {isCompleted && (
           <p
             className={cn(
-              "shrink-0 font-semibold text-[18px]",
+              "shrink-0 text-[18px] font-semibold",
               SCORE_TIER_TEXT[SCORE_TIER(score)]
             )}
           >

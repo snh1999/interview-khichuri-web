@@ -63,7 +63,7 @@ export const EventDrawlog = () => {
             <EventListItem event={event} key={event.id} />
           ))}
           {events.length === 0 && (
-            <p className="p-2 text-center text-muted-foreground text-sm">
+            <p className="text-muted-foreground p-2 text-center text-sm">
               No events
             </p>
           )}
@@ -106,11 +106,11 @@ const EventListItem = ({ event }: IProps) => {
     <Item className={`${colors.bg}`}>
       <ItemContent className="min-w-0">
         <ItemTitle className="w-full truncate">{view.title}</ItemTitle>
-        {view.subtitle !== undefined && (
-          <p className="truncate text-muted-foreground text-xs">
+        {view.subtitle ? (
+          <p className="text-muted-foreground truncate text-xs">
             {view.subtitle}
           </p>
-        )}
+        ) : null}
       </ItemContent>
       <ItemActions className="gap-1">
         {isCustom ? (

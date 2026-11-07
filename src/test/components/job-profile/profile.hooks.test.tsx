@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { type ReactNode, Suspense, useMemo } from "react";
 import { describe, expect, it } from "vitest";
 import { getUseJobProfileForm } from "@/components/job-profile/profile.hooks.ts";
@@ -88,11 +88,14 @@ describe("getUseJobProfileForm", () => {
     ).toHaveLength(0);
     expect(result.current.form.getValues("personal.firstName")).toBe("Grace");
 
+    expect(calls.slice().sort()).toEqual(["personal", "workExperience"]);
+    calls.length = 0;
+
     await act(async () => {
       await result.current.onSubmit();
     });
 
-    expect(calls).toEqual(["personal", "workExperience", "personal"]);
+    expect(calls).toEqual(["personal"]);
   });
 
   it("resolves known lookup names and skips unknown ones", async () => {

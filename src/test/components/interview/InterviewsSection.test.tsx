@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { ISessionWithQuestions } from "@/api/sessions";
 import type { IInterview } from "@/api/sessions/interviews.ts";
@@ -9,7 +9,7 @@ import { render } from "@/test/render.tsx";
 
 const CREATED_AT = "2026-01-01T00:00:00.000Z";
 
-const CREATED_PATTERN = /^Created · /;
+const CREATED_PATTERN = /^Created · /u;
 
 const envelope = <T,>(data: T) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });

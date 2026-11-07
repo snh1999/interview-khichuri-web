@@ -80,7 +80,7 @@ export const InterviewPdfExport = ({
         <DrawLogBody className="space-y-2 px-3">
           {SECTION_OPTIONS.map((option) => (
             <Label
-              className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 font-normal text-sm"
+              className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm font-normal"
               key={option.key}
             >
               <Checkbox

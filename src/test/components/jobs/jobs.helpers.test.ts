@@ -7,10 +7,10 @@ import {
 import {
   getDateInfo,
   parseJobLinks,
-  readFiltersFromParams,
   STATUS_LABEL,
   STATUS_OPTIONS,
 } from "@/components/jobs/jobs.helpers.ts";
+import { readFiltersFromParams } from "@/components/jobs/jobs.hooks.ts";
 import { formatDate } from "@/lib/date.ts";
 import { useJobsStore } from "@/store/useJobsStore.ts";
 
@@ -128,6 +128,43 @@ describe("jobPostSchema URLs", () => {
     expect(
       jobPostSchema.safeParse({ ...base, links: [{ value: "" }] }).success
     ).toBe(true);
+  });
+});
+
+describe("jobPostSchema cross-field validation", () => {
+  const base = {
+    companyName: "Acme",
+    description: "A sufficiently long job description.",
+    status: "saved" as const,
+    title: "Frontend",
+    topicIds: [],
+  };
+
+  it("rejects a deadline on or after the interview date", () => {
+    const interviewDate = new Date("2026-02-01");
+    const result = jobPostSchema.safeParse({
+      ...base,
+      deadline: interviewDate,
+      interviewDate,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result).toMatchObject({
+      error: { issues: [{ path: ["deadline"] }] },
+    });
+  });
+
+  it("rejects a minimum salary above the maximum", () => {
+    const result = jobPostSchema.safeParse({
+      ...base,
+      salaryLower: 120_000,
+      salaryUpper: 90_000,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result).toMatchObject({
+      error: { issues: [{ path: ["salaryLower"] }] },
+    });
   });
 });
 

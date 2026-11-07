@@ -1,6 +1,6 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it, vi } from "vitest";
 import type { IApiKey } from "@/api/keys";
 import { AiDialog } from "@/components/common/ai/AiDialog.tsx";
@@ -8,7 +8,7 @@ import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
 const API = "*/api/v1";
-const PRIORITIES_RE = /Your priorities/;
+const PRIORITIES_RE = /Your priorities/u;
 
 const envelope = (data: unknown) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });
@@ -27,8 +27,8 @@ const key = (provider: IApiKey["provider"]): IApiKey => ({
 const withProviders = () =>
   server.use(http.get(`${API}/ai/api-keys`, () => envelope([key("openai")])));
 
-const NO_PROVIDERS_RE = /No AI providers available/;
-const DEFAULT_RE = /Runs on your default provider/;
+const NO_PROVIDERS_RE = /No AI providers available/u;
+const DEFAULT_RE = /Runs on your default provider/u;
 
 describe("AiDialog", () => {
   it("prompts the user to add a key when none exist", async () => {

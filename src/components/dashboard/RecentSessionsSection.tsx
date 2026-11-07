@@ -33,7 +33,7 @@ export const RecentSessionsSection = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-semibold text-base">
+        <CardTitle className="text-base font-semibold">
           Recent sessions
         </CardTitle>
         <CardAction className="flex items-center gap-2">

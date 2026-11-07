@@ -12,13 +12,13 @@ export const HeroSection = () => (
         {HERO.badge}
       </Badge>
 
-      <h1 className="max-w-4xl font-bold font-heading text-4xl leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+      <h1 className="font-heading max-w-4xl text-4xl leading-[1.05] font-bold tracking-tight sm:text-5xl md:text-6xl">
         {HERO.headline[0]}
         <br />
         <span className="text-muted-foreground">{HERO.headline[1]}</span>
       </h1>
 
-      <p className="mx-auto mt-6 max-w-2xl text-muted-foreground text-sm leading-relaxed sm:text-base">
+      <p className="text-muted-foreground mx-auto mt-6 max-w-2xl text-sm leading-relaxed sm:text-base">
         {HERO.sub}
       </p>
 
@@ -46,11 +46,11 @@ export const HeroSection = () => (
       <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
         {HERO.trust.map((item) => (
           <li
-            className="flex items-center gap-1.5 text-muted-foreground text-xs"
+            className="text-muted-foreground flex items-center gap-1.5 text-xs"
             key={item}
           >
             <CheckCircleIcon
-              className="h-3.5 w-3.5 shrink-0 text-signal-success-foreground"
+              className="text-signal-success-foreground h-3.5 w-3.5 shrink-0"
               weight="fill"
             />
             {item}

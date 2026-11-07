@@ -31,9 +31,9 @@ const SettingsPage = () => {
 
   return (
     <div className="w-full">
-      <h1 className="mb-4 font-semibold text-xl sm:sr-only">Settings</h1>
+      <h1 className="mb-4 text-xl font-semibold sm:sr-only">Settings</h1>
 
-      <Card className="mb-2 bg-background">
+      <Card className="bg-background mb-2">
         <CardHeader className="flex items-center space-x-4">
           <ProfileCard />
         </CardHeader>

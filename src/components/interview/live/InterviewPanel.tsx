@@ -49,7 +49,7 @@ export const InterviewPanel = ({
   const backLink = (
     <Link
       aria-label="Back to session"
-      className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
+      className="text-muted-foreground hover:bg-accent hover:text-foreground inline-flex size-7 shrink-0 items-center justify-center rounded-md"
       title="Back to session"
       to={generatePath(SESSION_DETAIL_PAGE, { sessionId })}
     >
@@ -94,10 +94,10 @@ export const InterviewPanel = ({
   );
 
   const header = (
-    <header className="flex items-center justify-between gap-2 border-border border-b px-3 py-2">
+    <header className="border-border flex items-center justify-between gap-2 border-b px-3 py-2">
       <div className="flex min-w-0 items-center gap-2">
         {backLink}
-        <p className="min-w-0 truncate font-medium text-xs">{sessionTitle}</p>
+        <p className="min-w-0 truncate text-xs font-medium">{sessionTitle}</p>
       </div>
       <div className="flex shrink-0 items-center gap-1">
         <div className="pr-2">
@@ -142,7 +142,7 @@ export const InterviewPanel = ({
   if (!(panes.camera || panes.avatar)) {
     return (
       <div className="flex h-full min-h-0 w-full overflow-hidden">
-        <div className="flex min-w-14 shrink-0 flex-col items-center gap-1 border-border border-r bg-muted/40 py-2">
+        <div className="border-border bg-muted/40 flex min-w-14 shrink-0 flex-col items-center gap-1 border-r py-2">
           {backLink}
           <div className="my-1 p-1">
             <QuestionClock
@@ -168,7 +168,7 @@ export const InterviewPanel = ({
           {stage}
         </div>
         {panes.chat ? (
-          <div className="flex min-h-0 flex-[1.2] flex-col overflow-hidden border-border border-t">
+          <div className="border-border flex min-h-0 flex-[1.2] flex-col overflow-hidden border-t">
             {chatPane}
           </div>
         ) : null}
@@ -193,7 +193,7 @@ export const InterviewPanel = ({
           <>
             <ResizableHandle
               aria-label="Resize camera panel"
-              className="w-1 bg-border hover:bg-primary/40"
+              className="bg-border hover:bg-primary/40 w-1"
             />
             <ResizablePanel minSize={MIN_CHAT_WIDTH}>{chatPane}</ResizablePanel>
           </>

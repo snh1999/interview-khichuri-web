@@ -73,7 +73,7 @@ export const FrameTree: React.FC = () => {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between px-1">
-        <span className="font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+        <span className="text-muted-foreground text-xxs font-bold tracking-wider uppercase">
           Artboard Frames ({frameElements.length})
         </span>
       </div>
@@ -99,7 +99,7 @@ export const FrameTree: React.FC = () => {
               <div className="flex items-center justify-between gap-1">
                 {/** biome-ignore lint/a11y/useSemanticElements: container embeds nested interactive controls; a native button cannot wrap them */}
                 <div
-                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded-md py-0.5 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                  className="focus-visible:ring-ring flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded-md py-0.5 focus-visible:ring-1 focus-visible:outline-hidden"
                   // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped element
                   onClick={(e) => {
                     if (e.shiftKey) {
@@ -122,16 +122,16 @@ export const FrameTree: React.FC = () => {
                 >
                   {frame.preset === "mobile" ? (
                     <DeviceMobileIcon
-                      className="shrink-0 text-primary"
+                      className="text-primary shrink-0"
                       size={14}
                     />
                   ) : (
-                    <DesktopIcon className="shrink-0 text-primary" size={14} />
+                    <DesktopIcon className="text-primary shrink-0" size={14} />
                   )}
-                  <span className="truncate font-semibold text-foreground">
+                  <span className="text-foreground truncate font-semibold">
                     {frame.title || "Untitled Frame"}
                   </span>
-                  <span className="rounded bg-muted px-1.5 py-0.2 font-mono text-muted-foreground text-xxs">
+                  <span className="bg-muted py-0.2 text-muted-foreground text-xxs rounded px-1.5 font-mono">
                     {frame.route || "/"}
                   </span>
                 </div>
@@ -210,7 +210,7 @@ export const FrameTree: React.FC = () => {
               </div>
 
               {frameChildren.length > 0 && (
-                <div className="mt-2 space-y-1 border-border/80 border-l-2 pl-2.5">
+                <div className="border-border/80 mt-2 space-y-1 border-l-2 pl-2.5">
                   {frameChildren.map((child) => {
                     const isChildSelected = selectedSet.has(child.id);
                     const childLocked = childInheritsLock(frame, child);
@@ -218,9 +218,9 @@ export const FrameTree: React.FC = () => {
                     return (
                       // biome-ignore lint/a11y/useSemanticElements: container embeds nested interactive controls; a native button cannot wrap them
                       <div
-                        className={`group flex cursor-pointer items-center justify-between rounded-md p-1 text-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring ${
+                        className={`group focus-visible:ring-ring flex cursor-pointer items-center justify-between rounded-md p-1 text-xs focus-visible:ring-1 focus-visible:outline-hidden ${
                           isChildSelected
-                            ? "bg-primary/10 font-medium text-primary"
+                            ? "bg-primary/10 text-primary font-medium"
                             : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
                         }`}
                         key={child.id}

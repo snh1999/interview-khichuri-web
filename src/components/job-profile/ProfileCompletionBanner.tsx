@@ -29,9 +29,9 @@ export const ProfileCompletionBanner = ({ data }: Readonly<IProps>) => {
 
   if (percent === 100) {
     return (
-      <div className="flex items-center justify-between gap-2 py-3 font-semibold text-sm">
+      <div className="flex items-center justify-between gap-2 py-3 text-sm font-semibold">
         <span className="text-lg">Profile</span>
-        <CheckCircleIcon className="size-7 text-signal-success" weight="fill" />
+        <CheckCircleIcon className="text-signal-success size-7" weight="fill" />
       </div>
     );
   }
@@ -41,7 +41,7 @@ export const ProfileCompletionBanner = ({ data }: Readonly<IProps>) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <WarningCircleIcon
-            className="size-5 text-destructive"
+            className="text-destructive size-5"
             weight="fill"
           />
           Profile needs attention
@@ -63,7 +63,7 @@ export const ProfileCompletionBanner = ({ data }: Readonly<IProps>) => {
       <CardFooter className="flex flex-wrap items-center gap-1.5">
         {missingFields.map((field) => (
           <Badge
-            className="rounded-sm border border-destructive/30 font-medium text-destructive text-xxs"
+            className="border-destructive/30 text-destructive text-xxs rounded-sm border font-medium"
             key={field}
             variant="outline"
           >

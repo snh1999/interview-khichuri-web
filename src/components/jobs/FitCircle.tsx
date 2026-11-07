@@ -20,7 +20,7 @@ export const FitCircle = ({ score }: { score: number }) => {
   return (
     <CircularProgress
       className={cn("shrink-0", SCORE_TEXT_CLASS[tone])}
-      labelClassName={cn("font-semibold text-[10px]", SCORE_TEXT_CLASS[tone])}
+      labelClassName={cn("text-[10px] font-semibold", SCORE_TEXT_CLASS[tone])}
       progressBgClassName={TRACK_CLASS[tone]}
       progressClassName={SCORE_TEXT_CLASS[tone]}
       renderLabel={gradeFrom}

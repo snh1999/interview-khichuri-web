@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { Route, Routes } from "react-router";
 import { describe, expect, it } from "vitest";
 import type { IJob } from "@/api/jobs";

@@ -82,48 +82,48 @@ export const AddFramePresets: React.FC = () => {
   const handleAddCardFrame = () => handleAddFramePreset("card");
 
   return (
-    <div className="space-y-2 rounded-xl border border-primary/20 bg-primary/5 p-2.5">
+    <div className="border-primary/20 bg-primary/5 space-y-2 rounded-xl border p-2.5">
       <div className="flex items-center justify-between">
-        <span className="font-bold text-primary text-xxs uppercase tracking-wider">
+        <span className="text-primary text-xxs font-bold tracking-wider uppercase">
           + Add Artboard Frame
         </span>
         <span className="text-muted-foreground text-xxs">Presets</span>
       </div>
       <div className="grid grid-cols-2 gap-1.5">
         <Button
-          className="justify-start rounded-lg bg-background hover:bg-muted"
+          className="bg-background hover:bg-muted justify-start rounded-lg"
           onClick={handleAddDesktopFrame}
           size="lg"
           variant="outline"
         >
-          <DesktopIcon className="mr-1 shrink-0 text-primary" size={13} />
+          <DesktopIcon className="text-primary mr-1 shrink-0" size={13} />
           <span className="truncate">Desktop (1040)</span>
         </Button>
         <Button
-          className="justify-start rounded-lg bg-background hover:bg-muted"
+          className="bg-background hover:bg-muted justify-start rounded-lg"
           onClick={handleAddMobileFrame}
           size="lg"
           variant="outline"
         >
-          <DeviceMobileIcon className="mr-1 shrink-0 text-primary" size={13} />
+          <DeviceMobileIcon className="text-primary mr-1 shrink-0" size={13} />
           <span className="truncate">Mobile (375)</span>
         </Button>
         <Button
-          className="justify-start rounded-lg bg-background hover:bg-muted"
+          className="bg-background hover:bg-muted justify-start rounded-lg"
           onClick={handleAddTabletFrame}
           size="lg"
           variant="outline"
         >
-          <DeviceTabletIcon className="mr-1 shrink-0 text-primary" size={13} />
+          <DeviceTabletIcon className="text-primary mr-1 shrink-0" size={13} />
           <span className="truncate">Tablet (768)</span>
         </Button>
         <Button
-          className="justify-start rounded-lg bg-background hover:bg-muted"
+          className="bg-background hover:bg-muted justify-start rounded-lg"
           onClick={handleAddCardFrame}
           size="lg"
           variant="outline"
         >
-          <CreditCardIcon className="mr-1 shrink-0 text-primary" size={13} />
+          <CreditCardIcon className="text-primary mr-1 shrink-0" size={13} />
           <span className="truncate">Modal / Card</span>
         </Button>
       </div>

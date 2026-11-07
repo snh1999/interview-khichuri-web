@@ -10,7 +10,7 @@ import {
 import { deleteUser } from "@/lib/auth/auth-client.ts";
 
 export const ProfileDangerZone = () => (
-  <Card className="border border-destructive">
+  <Card className="border-destructive border">
     <CardHeader>
       <CardTitle className="text-destructive">Danger Zone</CardTitle>
       <CardDescription className="text-sm">
@@ -24,7 +24,7 @@ export const ProfileDangerZone = () => (
         <li>Check your email for a confirmation link.</li>
         <li>Open the link to confirm deletion.</li>
       </ol>
-      <p className="whitespace-normal pt-4 text-destructive">
+      <p className="text-destructive pt-4 whitespace-normal">
         Note: Once confirmed, your profile, preferences, and all saved data will
         be erased permanently.
       </p>

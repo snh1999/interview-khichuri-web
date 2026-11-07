@@ -38,7 +38,7 @@ export const PortfolioSketchPage: React.FC = () => {
 
   return (
     <AppErrorSuspense>
-      <div className="flex h-screen w-screen select-none flex-col overflow-hidden bg-background text-foreground">
+      <div className="bg-background text-foreground flex min-h-0 w-full flex-1 flex-col overflow-hidden select-none">
         <SketchNavbar />
 
         <div className="relative flex flex-1 overflow-hidden">
@@ -56,7 +56,7 @@ export const PortfolioSketchPage: React.FC = () => {
             <div className="h-full flex-1 overflow-hidden">
               <Suspense
                 fallback={
-                  <div className="flex h-full w-full items-center justify-center bg-background text-foreground">
+                  <div className="bg-background text-foreground flex h-full w-full items-center justify-center">
                     <Spinner />
                   </div>
                 }

@@ -49,7 +49,7 @@ export const PresetRow = ({
         onSave={onRename}
       >
         <Button
-          className="flex-1 justify-between text-muted-foreground hover:no-underline"
+          className="text-muted-foreground flex-1 justify-between hover:no-underline"
           onClick={onLoad}
           size="sm"
           variant="link"

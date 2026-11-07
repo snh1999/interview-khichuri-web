@@ -11,11 +11,7 @@
     --typeset-size: 1em;
     --typeset-leading: 1.75;
     --typeset-flow: 1.25em;
-  }
-}
 
-@layer components {
-  .typeset {
     font-family: var(--typeset-font-body);
     font-size: calc(var(--typeset-size) * 1.125);
     line-height: var(--typeset-leading);
@@ -450,14 +446,14 @@
 
   /* First child adds no space above. Last so it wins ties. */
   .typeset
-  > :where(:first-child):not(
-    :where(
-      .not-typeset,
-      [data-not-typeset],
-      .not-typeset *,
-      [data-not-typeset] *
-    )
-  ),
+    > :where(:first-child):not(
+      :where(
+        .not-typeset,
+        [data-not-typeset],
+        .not-typeset *,
+        [data-not-typeset] *
+      )
+    ),
   .typeset
     > :where(:first-child)
     > :where(:first-child):not(

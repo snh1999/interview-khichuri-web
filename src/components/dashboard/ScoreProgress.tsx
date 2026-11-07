@@ -155,7 +155,7 @@ export const ScoreProgress = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-semibold text-base">
+        <CardTitle className="text-base font-semibold">
           Score progress
         </CardTitle>
         {points.length === 0 ? (
@@ -191,7 +191,7 @@ export const ScoreProgress = ({
             <div className="relative min-h-20 flex-1" ref={ref}>
               <ScoreSparkline points={points} size={{ width, height }} />
             </div>
-            <p className="mt-2 flex items-center gap-1.5 font-mono text-muted-foreground text-xs">
+            <p className="text-muted-foreground mt-2 flex items-center gap-1.5 font-mono text-xs">
               last {points.length} mock interviews
               {lastScore && tier ? (
                 <span className={cn("font-medium", TIER_TEXT_CLASS[tier])}>

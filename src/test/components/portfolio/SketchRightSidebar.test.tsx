@@ -28,7 +28,7 @@ import { useSketchBuilderStore } from "@/store/sketchBuilderStore";
 import { useBuilderStore } from "@/store/useBuilderStore";
 import { render } from "@/test/render";
 
-const ADD_THIS_PAGE = /Add This Page/;
+const ADD_THIS_PAGE = /Add This Page/u;
 
 const makePortfolio = (elements: CanvasElement[] = []): Portfolio => ({
   id: "portfolio-test",

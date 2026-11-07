@@ -3,11 +3,8 @@ import { cn } from "cn";
 import { type IJobWithTrack, useFavoriteToggle } from "@/api/jobs";
 import { FavoriteButton } from "@/components/common/FavoriteButton.tsx";
 import { FitCircle } from "@/components/jobs/FitCircle.tsx";
-import {
-  getDateInfo,
-  STATUS_LABEL,
-  useNavigateToJob,
-} from "@/components/jobs/jobs.helpers";
+import { getDateInfo, STATUS_LABEL } from "@/components/jobs/jobs.helpers";
+import { useNavigateToJob } from "@/components/jobs/jobs.hooks";
 import { Button } from "@/components/ui/button.tsx";
 import { StatusBadge } from "@/components/ui/custom/StatusBadge.tsx";
 import {
@@ -39,7 +36,7 @@ export const JobListRow = ({
 
   return (
     <Item
-      className="rounded-sm bg-muted/60"
+      className="bg-muted/60 rounded-sm"
       render={
         <Button className="h-auto" onClick={handleClick} variant="ghost" />
       }
@@ -49,7 +46,7 @@ export const JobListRow = ({
           {job.title}
         </ItemTitle>
 
-        <span className="flex min-w-0 flex-wrap items-center gap-2 text-muted-foreground text-xs">
+        <span className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-2 text-xs">
           <span className="flex min-w-0 flex-row items-center gap-1.5">
             <BriefcaseIcon className="size-3.5 shrink-0" />
             <span className="truncate">{job.companyName}</span>
@@ -75,7 +72,7 @@ export const JobListRow = ({
         )}
         <StatusBadge label={STATUS_LABEL[track.status]} status={track.status} />
 
-        <CaretRightIcon className="size-4 shrink-0 text-muted-foreground" />
+        <CaretRightIcon className="text-muted-foreground size-4 shrink-0" />
       </ItemActions>
     </Item>
   );

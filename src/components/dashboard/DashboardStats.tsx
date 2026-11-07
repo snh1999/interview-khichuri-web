@@ -20,8 +20,8 @@ const SCORE_TIER_CLASS: Record<ScoreTier, string> = {
 
 const StatCard = ({ label, value, colorClass }: Readonly<StatCardProps>) => (
   <Card className="gap-0.5 p-3.5">
-    <p className="font-mono text-muted-foreground text-xs">{label}</p>
-    <p className={cn("mt-1 font-semibold text-2xl", colorClass)}>{value}</p>
+    <p className="text-muted-foreground font-mono text-xs">{label}</p>
+    <p className={cn("mt-1 text-2xl font-semibold", colorClass)}>{value}</p>
   </Card>
 );
 

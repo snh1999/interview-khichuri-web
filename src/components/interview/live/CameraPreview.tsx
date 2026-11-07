@@ -93,7 +93,7 @@ export const CameraPreview = memo(
             ref={videoRef}
           />
           {!isOn && <UserIcon className="h-8 w-8 text-neutral-600" />}
-          <span className="absolute bottom-2 left-2 rounded bg-black/40 px-1.5 py-0.5 text-neutral-300 text-xs">
+          <span className="absolute bottom-2 left-2 rounded bg-black/40 px-1.5 py-0.5 text-xs text-neutral-300">
             You
           </span>
           <Button
@@ -113,10 +113,10 @@ export const CameraPreview = memo(
           </Button>
           {error.length > 0 && (
             <div
-              className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-muted px-4"
+              className="bg-muted absolute inset-0 flex flex-col items-center justify-center gap-2 px-4"
               role="alert"
             >
-              <p className="rounded px-2 py-1 text-center text-destructive text-xs">
+              <p className="text-destructive rounded px-2 py-1 text-center text-xs">
                 Camera unavailable. Check your browser's camera permission, then
                 try again.
               </p>

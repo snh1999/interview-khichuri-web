@@ -1012,7 +1012,7 @@ export const Canvas: React.FC = () => {
     // biome-ignore lint/a11y/noNoninteractiveElementInteractions: raw pointer surface or wrapper containing nested controls; no semantic HTML equivalent
     // biome-ignore lint/a11y/noStaticElementInteractions: raw pointer surface or wrapper containing nested controls; no semantic HTML equivalent
     <div
-      className={`relative h-full w-full select-none overflow-hidden bg-muted/30 ${getCursorClass()}`}
+      className={`bg-muted/30 relative h-full w-full overflow-hidden select-none ${getCursorClass()}`}
       onAuxClick={handlePreventAuxClick}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}

@@ -3,22 +3,22 @@ import { Link } from "react-router";
 import { FOOTER, SOCIAL_LINKS } from "@/components/landing/landing.copy.ts";
 
 export const FooterSection = () => (
-  <footer className="border-border/50 border-t bg-muted/20 py-14">
+  <footer className="border-border/50 bg-muted/20 border-t py-14">
     <div className="mx-auto max-w-7xl px-4 sm:px-6">
       <div className="flex flex-col gap-10 md:flex-row md:justify-between">
         <div className="max-w-xs">
           <Link className="flex items-center gap-2" to="/">
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
+            <span className="bg-primary/10 ring-primary/20 inline-flex h-7 w-7 items-center justify-center rounded-lg ring-1">
               <BowlFoodIcon
-                className="h-3.5 w-3.5 text-primary"
+                className="text-primary h-3.5 w-3.5"
                 weight="fill"
               />
             </span>
-            <span className="font-heading font-medium text-sm tracking-tight">
+            <span className="font-heading text-sm font-medium tracking-tight">
               Interview Khichuri
             </span>
           </Link>
-          <p className="mt-3 text-muted-foreground text-xs leading-relaxed">
+          <p className="text-muted-foreground mt-3 text-xs leading-relaxed">
             {FOOTER.tagline}
           </p>
         </div>
@@ -26,7 +26,7 @@ export const FooterSection = () => (
         <div className="flex flex-wrap gap-10 sm:gap-16">
           {FOOTER.columns.map((column) => (
             <div key={column.heading}>
-              <h3 className="font-medium text-xs">{column.heading}</h3>
+              <h3 className="text-xs font-medium">{column.heading}</h3>
               <ul className="mt-3 space-y-2">
                 {column.links.map((link) => {
                   const content = (
@@ -42,7 +42,7 @@ export const FooterSection = () => (
                     <li key={link.href}>
                       {"external" in link && link.external ? (
                         <a
-                          className="flex items-center gap-1.5 text-muted-foreground text-xs transition-colors hover:text-foreground"
+                          className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-xs transition-colors"
                           href={link.href}
                           rel="noreferrer"
                           target="_blank"
@@ -51,7 +51,7 @@ export const FooterSection = () => (
                         </a>
                       ) : (
                         <a
-                          className="text-muted-foreground text-xs transition-colors hover:text-foreground"
+                          className="text-muted-foreground hover:text-foreground text-xs transition-colors"
                           href={link.href}
                         >
                           {link.label}
@@ -66,7 +66,7 @@ export const FooterSection = () => (
         </div>
       </div>
 
-      <div className="mt-12 flex flex-col-reverse items-center gap-4 border-border/50 border-t pt-6 sm:flex-row sm:justify-between">
+      <div className="border-border/50 mt-12 flex flex-col-reverse items-center gap-4 border-t pt-6 sm:flex-row sm:justify-between">
         <p className="text-muted-foreground text-xs">
           Built by{" "}
           <a
@@ -84,7 +84,7 @@ export const FooterSection = () => (
             <li key={link.href}>
               <a
                 aria-label={link.label}
-                className="text-muted-foreground transition-colors hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground transition-colors"
                 href={link.href}
                 rel="noreferrer"
                 target="_blank"

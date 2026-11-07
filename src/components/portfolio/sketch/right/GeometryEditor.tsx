@@ -83,18 +83,18 @@ export const GeometryEditor: React.FC<GeometryEditorProps> = ({
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <span className="font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+        <span className="text-muted-foreground text-xxs font-bold tracking-wider uppercase">
           Geometry (px)
         </span>
         {!!isMulti && (
-          <span className="font-medium text-[9px] text-amber-500">
+          <span className="text-[9px] font-medium text-amber-500">
             Batch editing {selectedElements.length} items
           </span>
         )}
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <div className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-2 py-1">
-          <span className="font-mono text-muted-foreground text-xxs">X</span>
+        <div className="border-border bg-background flex items-center gap-1.5 rounded-lg border px-2 py-1">
+          <span className="text-muted-foreground text-xxs font-mono">X</span>
           <Input
             className="h-auto w-full border-0 bg-transparent px-0 font-mono text-xs focus-visible:ring-0"
             onChange={handleXChange}
@@ -102,8 +102,8 @@ export const GeometryEditor: React.FC<GeometryEditorProps> = ({
             value={Math.round(activeElement.x)}
           />
         </div>
-        <div className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-2 py-1">
-          <span className="font-mono text-muted-foreground text-xxs">Y</span>
+        <div className="border-border bg-background flex items-center gap-1.5 rounded-lg border px-2 py-1">
+          <span className="text-muted-foreground text-xxs font-mono">Y</span>
           <Input
             className="h-auto w-full border-0 bg-transparent px-0 font-mono text-xs focus-visible:ring-0"
             onChange={handleYChange}
@@ -111,8 +111,8 @@ export const GeometryEditor: React.FC<GeometryEditorProps> = ({
             value={Math.round(activeElement.y)}
           />
         </div>
-        <div className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-2 py-1">
-          <span className="font-mono text-muted-foreground text-xxs">W</span>
+        <div className="border-border bg-background flex items-center gap-1.5 rounded-lg border px-2 py-1">
+          <span className="text-muted-foreground text-xxs font-mono">W</span>
           <Input
             className="h-auto w-full border-0 bg-transparent px-0 font-mono text-xs focus-visible:ring-0"
             onChange={handleWidthChange}
@@ -120,8 +120,8 @@ export const GeometryEditor: React.FC<GeometryEditorProps> = ({
             value={Math.round(activeElement.width)}
           />
         </div>
-        <div className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-2 py-1">
-          <span className="font-mono text-muted-foreground text-xxs">H</span>
+        <div className="border-border bg-background flex items-center gap-1.5 rounded-lg border px-2 py-1">
+          <span className="text-muted-foreground text-xxs font-mono">H</span>
           <Input
             className="h-auto w-full border-0 bg-transparent px-0 font-mono text-xs focus-visible:ring-0"
             onChange={handleHeightChange}

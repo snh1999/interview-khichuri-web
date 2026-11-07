@@ -12,8 +12,8 @@ const portfolio = () => ({
   id: "p1",
 });
 
-const ALPHA_RE = /Alpha/;
-const CODE_BUILDER_RE = /Code Builder/;
+const ALPHA_RE = /Alpha/u;
+const CODE_BUILDER_RE = /Code Builder/u;
 
 beforeEach(() => {
   useSketchBuilderStore.setState(useSketchBuilderStore.getInitialState(), true);

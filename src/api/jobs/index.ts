@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { queryKeys } from "@/api";
+import { useMemo } from "react";
+import { apiClient, queryKeys } from "@/api";
 import { api } from "@/lib/api-client";
 
 export const JOB_STATUS = [
@@ -147,6 +148,50 @@ export const useGetJobs = (sort: TJobSortKey = "default") =>
     gcTime: Number.POSITIVE_INFINITY,
   });
 
+export const useTrackedJobIds = () => {
+  const { data: jobs } = useGetJobs();
+  return useMemo(() => new Set(jobs.map((job) => job.id)), [jobs]);
+};
+
+interface IDiscoverJobsParams {
+  search?: string;
+  sort?: TJobSortKey;
+  page?: number;
+  limit?: number;
+}
+
+export const useDiscoverJobs = (params: IDiscoverJobsParams = {}) =>
+  useSuspenseQuery({
+    queryFn: async () => {
+      const { search, sort = "default", page, limit } = params;
+      const query = new URLSearchParams(
+        Object.entries({
+          search: search?.trim(),
+          sort: JOB_SORT_QUERY[sort],
+          page: page?.toString(),
+          limit: limit?.toString(),
+        }).filter(([, v]) => v) as [string, string][]
+      ).toString();
+
+      return await api.get<IJob[]>(`/jobs/discover${query && `?${query}`}`);
+    },
+    queryKey: queryKeys.jobs.discover(params as Record<string, unknown>),
+  });
+
+export const useCompanyJobs = (
+  companyId: number,
+  sort: TJobSortKey = "default"
+) => {
+  const sortQuery = JOB_SORT_QUERY[sort];
+  return useSuspenseQuery({
+    queryFn: async () =>
+      await api.get<IJob[]>(
+        `/company/${companyId}/jobs${sortQuery ? `?sort=${sortQuery}` : ""}`
+      ),
+    queryKey: queryKeys.jobs.companyJobs(companyId, { sort }),
+  });
+};
+
 export const useCreateJob = () =>
   useMutation({
     mutationFn: async (dto: ICreateJobDto) =>
@@ -181,13 +226,26 @@ export const useFavoriteToggle = (id: string, isFavorite: boolean) => {
   };
 };
 
-export const useTrackJob = () =>
-  useMutation({
+export const useTrackJob = () => {
+  return useMutation({
     mutationFn: async (id: string) => await api.post<IJob>(`/jobs/${id}/track`),
+    onSuccess: (trackedJob) => {
+      // Patch cached lists instead of invalidating: updates every discover/company card immediately.
+      apiClient.setQueriesData<IJob[]>(
+        {
+          predicate: ({ queryKey }) =>
+            queryKey[0] === "jobs" &&
+            (queryKey[1] === "discover" || queryKey[1] === "company"),
+        },
+        (jobs) =>
+          jobs?.map((job) => (job.id === trackedJob.id ? trackedJob : job))
+      );
+    },
     meta: {
       invalidates: (id: string) => queryKeys.jobs.detailsAndList(id),
     },
   });
+};
 
 export const useMatchJobByUrl = () =>
   useMutation({

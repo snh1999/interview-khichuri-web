@@ -53,10 +53,10 @@ const SidebarTabBar: React.FC<ISidebarTabBarProps> = ({
   onFiles,
   onToggleCodePane,
 }) => (
-  <div className="flex h-11 shrink-0 items-center justify-between gap-1.5 border-border border-b bg-card px-2">
-    <div className="flex flex-1 rounded-lg border border-border bg-muted p-0.5">
+  <div className="border-border bg-card flex h-11 shrink-0 items-center justify-between gap-1.5 border-b px-2">
+    <div className="border-border bg-muted flex flex-1 rounded-lg border p-0.5">
       <button
-        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md py-1 font-medium text-xs transition ${
+        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition ${
           tab === "chat"
             ? "bg-card text-foreground shadow-xs"
             : "text-muted-foreground hover:text-foreground"
@@ -72,7 +72,7 @@ const SidebarTabBar: React.FC<ISidebarTabBarProps> = ({
         <span>AI Chat</span>
       </button>
       <button
-        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md py-1 font-medium text-xs transition ${
+        className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition ${
           tab === "files"
             ? "bg-card text-foreground shadow-xs"
             : "text-muted-foreground hover:text-foreground"
@@ -299,7 +299,7 @@ export const Sidebar: React.FC = () => {
     ) {
       return (
         <FileJsIcon
-          className="shrink-0 text-signal-warning"
+          className="text-signal-warning shrink-0"
           size={15}
           weight="fill"
         />
@@ -308,14 +308,14 @@ export const Sidebar: React.FC = () => {
     if (filename.endsWith(".css")) {
       return (
         <FileCssIcon
-          className="shrink-0 text-muted-foreground"
+          className="text-muted-foreground shrink-0"
           size={15}
           weight="fill"
         />
       );
     }
     return (
-      <FileCodeIcon className="shrink-0 text-muted-foreground" size={15} />
+      <FileCodeIcon className="text-muted-foreground shrink-0" size={15} />
     );
   };
 
@@ -348,7 +348,7 @@ export const Sidebar: React.FC = () => {
   }
 
   return (
-    <aside className="z-20 flex h-full w-80 shrink-0 select-none flex-col border-border border-r bg-muted md:w-88">
+    <aside className="border-border bg-muted z-20 flex h-full w-80 shrink-0 flex-col border-r select-none md:w-88">
       <SidebarTabBar
         fileCount={Object.keys(files).length}
         isCodePaneOpen={isCodePaneOpen}
@@ -359,9 +359,9 @@ export const Sidebar: React.FC = () => {
       />
 
       {sidebarTab === "files" && (
-        <div className="flex flex-1 flex-col overflow-hidden bg-card">
-          <div className="flex items-center justify-between border-border border-b bg-muted/50 p-2.5">
-            <span className="font-bold text-muted-foreground text-xs uppercase tracking-wider">
+        <div className="bg-card flex flex-1 flex-col overflow-hidden">
+          <div className="border-border bg-muted/50 flex items-center justify-between border-b p-2.5">
+            <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
               Project Explorer
             </span>
 
@@ -379,12 +379,12 @@ export const Sidebar: React.FC = () => {
           </div>
 
           {isCreatingFile ? (
-            <div className="border-border border-b bg-primary/5 p-3">
+            <div className="border-border bg-primary/5 border-b p-3">
               <form className="space-y-2" onSubmit={handleCreateFileSubmit}>
                 <div className="flex items-center gap-1.5">
-                  <FileCodeIcon className="shrink-0 text-primary" size={16} />
+                  <FileCodeIcon className="text-primary shrink-0" size={16} />
                   <Input
-                    className="flex-1 rounded-md border-border bg-card px-2.5 py-1 text-foreground text-xs"
+                    className="border-border bg-card text-foreground flex-1 rounded-md px-2.5 py-1 text-xs"
                     onChange={handleNewFileNameChange}
                     placeholder="e.g. /components/Card.jsx"
                     ref={newFileInputRef}
@@ -393,7 +393,7 @@ export const Sidebar: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1 text-muted-foreground text-xxs">
+                  <div className="text-muted-foreground text-xxs flex items-center gap-1">
                     <span>Quick:</span>
                     {[".jsx", ".js", ".css", ".json"].map((ext) => (
                       <Button
@@ -449,7 +449,7 @@ export const Sidebar: React.FC = () => {
 
           <div className="flex-1 space-y-3 overflow-y-auto p-2">
             <div>
-              <div className="flex items-center justify-between px-2 py-1 font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+              <div className="text-muted-foreground text-xxs flex items-center justify-between px-2 py-1 font-bold tracking-wider uppercase">
                 <span>
                   Source Files (
                   {
@@ -483,12 +483,12 @@ export const Sidebar: React.FC = () => {
                     if (isEditing) {
                       return (
                         <div
-                          className="flex items-center gap-1.5 rounded-md bg-muted p-1.5"
+                          className="bg-muted flex items-center gap-1.5 rounded-md p-1.5"
                           key={filePath}
                         >
                           <Input
                             autoFocus
-                            className="flex-1 rounded border-border bg-card px-2 py-1 font-mono text-xs"
+                            className="border-border bg-card flex-1 rounded px-2 py-1 font-mono text-xs"
                             onChange={handleEditingFileNameChange}
                             // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped file path
                             onKeyDown={(e) => {
@@ -528,8 +528,8 @@ export const Sidebar: React.FC = () => {
                       <div
                         className={`group flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs transition ${
                           isActive
-                            ? "border border-border/80 bg-muted font-semibold text-foreground shadow-2xs"
-                            : "border border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+                            ? "border-border/80 bg-muted text-foreground border font-semibold shadow-2xs"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent"
                         }`}
                         key={filePath}
                       >
@@ -547,14 +547,14 @@ export const Sidebar: React.FC = () => {
 
                         <div className="flex shrink-0 items-center gap-1">
                           {isActive && (
-                            <span className="rounded border border-primary/30 bg-primary/10 px-1.5 py-0.2 font-medium font-mono text-primary text-xxs">
+                            <span className="border-primary/30 bg-primary/10 py-0.2 text-primary text-xxs rounded border px-1.5 font-mono font-medium">
                               active
                             </span>
                           )}
 
                           <div className="ml-1 hidden items-center gap-0.5 group-hover:flex">
                             <Button
-                              className="text-muted-foreground transition hover:bg-accent hover:text-foreground"
+                              className="text-muted-foreground hover:bg-accent hover:text-foreground transition"
                               // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped file path
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -570,7 +570,7 @@ export const Sidebar: React.FC = () => {
                             {!isRequiredEntry && (
                               <>
                                 <Button
-                                  className="text-muted-foreground transition hover:bg-accent hover:text-foreground"
+                                  className="text-muted-foreground hover:bg-accent hover:text-foreground transition"
                                   // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped file path
                                   onClick={(e) =>
                                     handleStartRename(e, filePath)
@@ -587,7 +587,7 @@ export const Sidebar: React.FC = () => {
                                     deleteFile(filePath);
                                     return Promise.resolve({ error: false });
                                   }}
-                                  className="rounded p-1 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+                                  className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive rounded p-1 transition"
                                   dialogDescription={`This will permanently delete "${filePath}". This action cannot be undone.`}
                                   dialogTitle="Delete File"
                                   onClick={handleStopPropagation}
@@ -609,7 +609,7 @@ export const Sidebar: React.FC = () => {
 
             <div className="border-border border-t pt-2">
               <button
-                className="flex w-full cursor-pointer items-center justify-between rounded px-2 py-1 font-bold text-muted-foreground text-xxs uppercase tracking-wider transition hover:bg-muted/60 hover:text-foreground"
+                className="text-muted-foreground text-xxs hover:bg-muted/60 hover:text-foreground flex w-full cursor-pointer items-center justify-between rounded px-2 py-1 font-bold tracking-wider uppercase transition"
                 onClick={handleToggleConfigSection}
                 type="button"
               >
@@ -621,7 +621,7 @@ export const Sidebar: React.FC = () => {
                   )}
                   <span>Project Setup & Config</span>
                 </div>
-                <span className="rounded border border-border bg-muted px-1.5 py-0.5 font-normal text-[9px] text-muted-foreground lowercase">
+                <span className="border-border bg-muted text-muted-foreground rounded border px-1.5 py-0.5 text-[9px] font-normal lowercase">
                   {showConfigSection ? "hide" : "view"}
                 </span>
               </button>
@@ -641,8 +641,8 @@ export const Sidebar: React.FC = () => {
                         <button
                           className={`group flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition ${
                             isActive
-                              ? "border border-border/80 bg-muted font-semibold text-foreground shadow-2xs"
-                              : "border border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+                              ? "border-border/80 bg-muted text-foreground border font-semibold shadow-2xs"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent"
                           }`}
                           key={filePath}
                           // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped file path
@@ -658,12 +658,12 @@ export const Sidebar: React.FC = () => {
 
                           <div className="flex shrink-0 items-center gap-1.5">
                             {isActive && (
-                              <span className="rounded border border-primary/30 bg-primary/10 px-1.5 py-0.2 font-medium font-mono text-primary text-xxs">
+                              <span className="border-primary/30 bg-primary/10 py-0.2 text-primary text-xxs rounded border px-1.5 font-mono font-medium">
                                 active
                               </span>
                             )}
                             <span
-                              className="flex items-center gap-1 rounded border border-border/60 bg-muted px-1.5 py-0.5 text-muted-foreground text-xxs"
+                              className="border-border/60 bg-muted text-muted-foreground text-xxs flex items-center gap-1 rounded border px-1.5 py-0.5"
                               title="Project configuration file (read-only)"
                             >
                               <LockIcon size={10} />
@@ -678,7 +678,7 @@ export const Sidebar: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center border-border border-t bg-muted p-2.5 text-muted-foreground text-xs">
+          <div className="border-border bg-muted text-muted-foreground flex items-center border-t p-2.5 text-xs">
             <span>{Object.keys(files).length} files in project</span>
           </div>
         </div>
@@ -688,7 +688,7 @@ export const Sidebar: React.FC = () => {
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="flex-1 space-y-4 overflow-y-auto p-4">
             <div className="space-y-1.5">
-              <div className="flex items-center gap-1 px-1 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+              <div className="text-muted-foreground flex items-center gap-1 px-1 text-xs font-semibold tracking-wider uppercase">
                 <LightningIcon
                   className="text-signal-warning"
                   size={13}
@@ -699,7 +699,7 @@ export const Sidebar: React.FC = () => {
               <div className="flex flex-wrap gap-1.5">
                 {quickPrompts.map((item) => (
                   <Button
-                    className="rounded-lg hover:border-primary/40 hover:bg-primary/5"
+                    className="hover:border-primary/40 hover:bg-primary/5 rounded-lg"
                     disabled={isGenerating}
                     key={item.label}
                     // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped quick prompt
@@ -715,7 +715,7 @@ export const Sidebar: React.FC = () => {
               </div>
             </div>
 
-            <div className="my-2 h-px bg-border" />
+            <div className="bg-border my-2 h-px" />
 
             {messages.map((msg) => (
               <div
@@ -724,7 +724,7 @@ export const Sidebar: React.FC = () => {
                 }`}
                 key={msg.id}
               >
-                <div className="mb-1 flex items-center gap-1.5 px-1 text-muted-foreground text-xs">
+                <div className="text-muted-foreground mb-1 flex items-center gap-1.5 px-1 text-xs">
                   {msg.sender === "user" ? (
                     <>
                       <span>You</span>
@@ -734,7 +734,7 @@ export const Sidebar: React.FC = () => {
                   ) : (
                     <>
                       <RobotIcon className="text-primary" size={13} />
-                      <span className="font-medium text-muted-foreground">
+                      <span className="text-muted-foreground font-medium">
                         AI Assistant
                       </span>
                       <span>•</span>
@@ -746,20 +746,20 @@ export const Sidebar: React.FC = () => {
                 <div
                   className={`max-w-[90%] rounded-xl p-3.5 text-xs leading-relaxed sm:text-[13px] ${
                     msg.sender === "user"
-                      ? "rounded-br-xs bg-primary text-primary-foreground"
-                      : "rounded-bl-xs border border-border bg-card text-foreground shadow-2xs"
+                      ? "bg-primary text-primary-foreground rounded-br-xs"
+                      : "border-border bg-card text-foreground rounded-bl-xs border shadow-2xs"
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{msg.content}</p>
 
                   {msg.filesModified && msg.filesModified.length > 0 && (
-                    <div className="mt-2.5 flex flex-wrap items-center gap-1.5 border-border border-t pt-2">
+                    <div className="border-border mt-2.5 flex flex-wrap items-center gap-1.5 border-t pt-2">
                       <span className="text-muted-foreground text-xxs">
                         Created / Updated:
                       </span>
                       {msg.filesModified.map((f) => (
                         <Button
-                          className="rounded border-primary/30 bg-primary/10 font-mono text-primary hover:bg-primary/20"
+                          className="border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 rounded font-mono"
                           key={f}
                           // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped file path
                           onClick={() => openFile(f)}
@@ -775,13 +775,13 @@ export const Sidebar: React.FC = () => {
                   )}
 
                   {msg.missingFiles && msg.missingFiles.length > 0 && (
-                    <div className="mt-2.5 flex flex-wrap items-center gap-1.5 border-border border-t pt-2">
-                      <span className="font-medium text-signal-warning-foreground text-xxs">
+                    <div className="border-border mt-2.5 flex flex-wrap items-center gap-1.5 border-t pt-2">
+                      <span className="text-signal-warning-foreground text-xxs font-medium">
                         Missing:
                       </span>
                       {msg.missingFiles.map((f) => (
                         <span
-                          className="rounded border border-signal-warning/40 bg-signal-warning/10 px-1.5 py-0.5 font-mono text-signal-warning-foreground text-xxs"
+                          className="border-signal-warning/40 bg-signal-warning/10 text-signal-warning-foreground text-xxs rounded border px-1.5 py-0.5 font-mono"
                           key={f}
                         >
                           {f}
@@ -810,10 +810,10 @@ export const Sidebar: React.FC = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="shrink-0 border-border border-t bg-card p-3">
+          <div className="border-border bg-card shrink-0 border-t p-3">
             <div className="relative flex flex-col">
               <Textarea
-                className="resize-none rounded-lg border-border p-3 pr-10 text-foreground text-xs"
+                className="border-border text-foreground resize-none rounded-lg p-3 pr-10 text-xs"
                 disabled={isGenerating}
                 onChange={handleInputPromptChange}
                 onKeyDown={handleKeyDown}
@@ -825,7 +825,7 @@ export const Sidebar: React.FC = () => {
               <div className="mt-2 flex items-center justify-between">
                 <span className="text-muted-foreground text-xs">
                   Press{" "}
-                  <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-xxs">
+                  <kbd className="border-border bg-muted text-xxs rounded border px-1 py-0.5">
                     Enter
                   </kbd>{" "}
                   to generate

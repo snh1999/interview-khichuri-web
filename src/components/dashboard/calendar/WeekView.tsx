@@ -39,7 +39,7 @@ export const WeekView = ({
                 <div className="text-muted-foreground text-xs">
                   {format(d, "EEE")}
                 </div>
-                <div className="font-medium text-sm">{format(d, "d")}</div>
+                <div className="text-sm font-medium">{format(d, "d")}</div>
               </div>
             ))}
           </div>

@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it } from "vitest";
 import type { IPrepSession } from "@/api/sessions";
 import { RecentSessionsSection } from "@/components/dashboard/RecentSessionsSection.tsx";
@@ -22,7 +22,7 @@ const makeSession = (
   experience: null,
 });
 
-const SESSION_TITLE = /^Session /;
+const SESSION_TITLE = /^Session /u;
 
 const useSessionsResponse = (sessions: IPrepSession[]) =>
   server.use(

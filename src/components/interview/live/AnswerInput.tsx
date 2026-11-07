@@ -37,15 +37,15 @@ export const AnswerInput = ({
     <div
       className={cn(
         floating
-          ? "shrink-0 rounded-xl border border-border bg-background p-4 shadow-xl"
-          : "shrink-0 border-border border-t bg-background p-4",
+          ? "border-border bg-background shrink-0 rounded-xl border p-4 shadow-xl"
+          : "border-border bg-background shrink-0 border-t p-4",
         className
       )}
     >
       <div className="flex items-end gap-3">
         <Textarea
           aria-label="Your answer"
-          className="min-h-0 flex-1 resize-none bg-background"
+          className="bg-background min-h-0 flex-1 resize-none"
           id="interview-answer"
           onChange={onAnswerChange}
           onKeyDown={handleKeyDown}

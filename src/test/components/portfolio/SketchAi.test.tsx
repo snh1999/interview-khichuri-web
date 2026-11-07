@@ -11,13 +11,13 @@ import type {
 } from "@/components/portfolio/sketch/types";
 import { render } from "@/test/render";
 
-const RE_HOME_MOBILE = /Home Mobile/;
-const RE_TWO_COMPONENTS = /2 components/;
-const RE_HOME_DESKTOP = /Home Desktop/;
-const RE_MODULES = /Detected Wireframe Modules/;
-const RE_THREE_MODULES = /Detected Wireframe Modules \(3 elements\)/;
-const RE_WARM_SUNSET = /Warm Sunset & Terracotta/;
-const RE_HEX_COLOR = /^#/;
+const RE_HOME_MOBILE = /Home Mobile/u;
+const RE_TWO_COMPONENTS = /2 components/u;
+const RE_HOME_DESKTOP = /Home Desktop/u;
+const RE_MODULES = /Detected Wireframe Modules/u;
+const RE_THREE_MODULES = /Detected Wireframe Modules \(3 elements\)/u;
+const RE_WARM_SUNSET = /Warm Sunset & Terracotta/u;
+const RE_HEX_COLOR = /^#/u;
 
 const frame = (overrides: Partial<FrameElement> = {}): FrameElement => ({
   id: "f1",
@@ -225,7 +225,7 @@ describe("StyleStep", () => {
 
     for (const preset of STYLE_PRESETS) {
       expect(
-        screen.getByRole("button", { name: new RegExp(preset.name) })
+        screen.getByRole("button", { name: new RegExp(preset.name, "u") })
       ).toBeInTheDocument();
     }
   });

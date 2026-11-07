@@ -303,7 +303,7 @@ export const AppCombobox = <D,>(props: TAppComboboxProps<D>) => {
             showTrigger={!isCreating}
           >
             {isCreating ? (
-              <SpinnerGapIcon className="mr-2 size-3.5 animate-spin text-muted-foreground" />
+              <SpinnerGapIcon className="text-muted-foreground mr-2 size-3.5 animate-spin" />
             ) : null}
           </ComboboxInput>
         )}

@@ -24,7 +24,7 @@ export const OauthSection = () => {
           />
           {provider.name}
           {lastMethod === provider.id && (
-            <span className="absolute -top-4 -right-8 rounded-full bg-primary px-1.5 py-0.5 font-medium text-[9px] text-primary-foreground shadow-xs">
+            <span className="bg-primary text-primary-foreground absolute -top-4 -right-8 rounded-full px-1.5 py-0.5 text-[9px] font-medium shadow-xs">
               Last
             </span>
           )}

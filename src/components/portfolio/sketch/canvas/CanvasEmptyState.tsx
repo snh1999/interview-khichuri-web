@@ -35,15 +35,15 @@ export const CanvasEmptyState: React.FC<CanvasEmptyStateProps> = ({
 
   return (
     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-      <div className="pointer-events-auto max-w-sm space-y-4 rounded-2xl border border-border bg-card p-6 text-center shadow-xl backdrop-blur-md">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+      <div className="border-border bg-card pointer-events-auto max-w-sm space-y-4 rounded-2xl border p-6 text-center shadow-xl backdrop-blur-md">
+        <div className="bg-primary/10 text-primary mx-auto flex h-12 w-12 items-center justify-center rounded-xl">
           <BrowsersIcon size={24} weight="duotone" />
         </div>
         <div>
-          <h3 className="font-semibold text-foreground text-sm">
+          <h3 className="text-foreground text-sm font-semibold">
             Canvas is Empty
           </h3>
-          <p className="mt-1 text-muted-foreground text-xs">
+          <p className="text-muted-foreground mt-1 text-xs">
             Add an artboard frame or select a tool above to start sketching your
             portfolio layout.
           </p>

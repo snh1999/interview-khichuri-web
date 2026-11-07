@@ -45,7 +45,7 @@ const SessionDetailContent = () => {
       <SessionInfoSection session={session} />
 
       <Tabs onValueChange={handleTabValueChange} value={currentTab}>
-        <TabsList className="w-full bg-card py-0" variant="line">
+        <TabsList className="bg-card w-full py-0" variant="line">
           {TABS.map((tab) => (
             <TabsTrigger key={tab.key} value={tab.key}>
               <tab.icon className="size-4" />

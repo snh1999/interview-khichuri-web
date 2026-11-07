@@ -61,9 +61,9 @@ export const ATSReviewCard = ({
             )}
           </div>
           {score.missingKeywords.length > 0 ? (
-            <div className="space-y-2 border-border border-t pt-3">
+            <div className="border-border space-y-2 border-t pt-3">
               <div className="flex items-center justify-between">
-                <h4 className="font-medium text-muted-foreground text-xs">
+                <h4 className="text-muted-foreground text-xs font-medium">
                   Missing
                 </h4>
                 <span className="text-muted-foreground text-xs">
@@ -113,7 +113,7 @@ export const ATSReviewCard = ({
       defaultOpen={false}
       footer={
         onRegenerate ? (
-          <div className="flex justify-end border-border border-t pt-4">
+          <div className="border-border flex justify-end border-t pt-4">
             <div className="flex items-center gap-3">
               <span className="text-muted-foreground text-xs">
                 {isCached

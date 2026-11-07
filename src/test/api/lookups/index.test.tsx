@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { type ReactNode, Suspense, useMemo } from "react";
 import { describe, expect, it } from "vitest";
 import {
@@ -65,12 +65,17 @@ describe("lookup queries", () => {
     await waitFor(() => expect(result.current.data).toEqual([]));
   });
 
-  it("fetches companies", async () => {
+  it("fetches companies sorted by name", async () => {
+    let sort: string | null = null;
     server.use(
-      http.get(`${API}/company`, () => envelope([{ id: "c-1", name: "Acme" }]))
+      http.get(`${API}/company`, ({ request }) => {
+        sort = new URL(request.url).searchParams.get("sort");
+        return envelope([{ id: "c-1", name: "Acme" }]);
+      })
     );
     const { result } = renderHook(() => useCompanies(), { wrapper });
     await waitFor(() => expect(result.current.data).toHaveLength(1));
+    expect(sort).toBe("name:asc");
   });
 });
 

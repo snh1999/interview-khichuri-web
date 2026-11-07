@@ -14,7 +14,7 @@ export const AiModalEmptyState: React.FC<AiModalEmptyStateProps> = ({
       <DesktopIcon size={24} />
     </div>
     <div className="space-y-1">
-      <h3 className="font-bold text-foreground text-sm">
+      <h3 className="text-foreground text-sm font-bold">
         No Artboards on Canvas
       </h3>
       <p className="text-muted-foreground text-xs leading-relaxed">

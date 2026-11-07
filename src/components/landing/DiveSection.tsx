@@ -39,21 +39,21 @@ export const DiveSection = ({
           <div className="flex-1">
             <div className="mb-3 flex items-center gap-2.5">
               <Badge variant="outline">{dive.number}</Badge>
-              <p className="font-medium text-muted-foreground text-xs uppercase tracking-widest">
+              <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
                 {dive.subtitle}
               </p>
             </div>
-            <h2 className="font-bold font-heading text-2xl tracking-tight sm:text-3xl">
+            <h2 className="font-heading text-2xl font-bold tracking-tight sm:text-3xl">
               {dive.title}
             </h2>
-            <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+            <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
               {dive.description}
             </p>
             <ul className="mt-6 space-y-2.5">
               {dive.features.map((feature) => (
                 <li className="flex items-start gap-2.5" key={feature}>
                   <CheckCircleIcon
-                    className="mt-0.5 h-4 w-4 shrink-0 text-signal-success-foreground"
+                    className="text-signal-success-foreground mt-0.5 h-4 w-4 shrink-0"
                     weight="fill"
                   />
                   <span className="text-xs leading-relaxed">{feature}</span>

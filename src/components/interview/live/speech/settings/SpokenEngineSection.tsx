@@ -55,19 +55,19 @@ const EngineOptionCard = ({
     <Card
       className={cn(
         "flex h-full w-full flex-col transition-colors *:text-xs",
-        selected ? "border-2 border-primary bg-primary/10" : "hover:bg-muted",
+        selected ? "border-primary bg-primary/10 border-2" : "hover:bg-muted",
         disabled && "cursor-not-allowed opacity-50"
       )}
       size="sm"
     >
       <CardHeader>
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="font-semibold text-md">{title}</CardTitle>
+          <CardTitle className="text-md font-semibold">{title}</CardTitle>
           <RadioGroupItem
             disabled={disabled}
             icon={
               <CheckIcon
-                className="size-3 rounded-full text-signal-success"
+                className="text-signal-success size-3 rounded-full"
                 weight="bold"
               />
             }
@@ -80,11 +80,11 @@ const EngineOptionCard = ({
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="text-[0.7rem] text-muted-foreground leading-snug">
+      <CardContent className="text-muted-foreground text-[0.7rem] leading-snug">
         {description}
       </CardContent>
       {hint === undefined ? null : (
-        <CardFooter className="text-center text-muted-foreground italic">
+        <CardFooter className="text-muted-foreground text-center italic">
           {hint}
         </CardFooter>
       )}
@@ -111,7 +111,7 @@ export const SpokenEngineSection = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="font-bold text-base">Select spoken voice engine</span>
+      <span className="text-base font-bold">Select spoken voice engine</span>
       <RadioGroup
         className="grid grid-cols-1 gap-3 sm:grid-cols-3"
         onValueChange={handleToggle}

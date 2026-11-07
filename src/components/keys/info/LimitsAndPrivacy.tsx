@@ -36,12 +36,12 @@ const LimitBadge = ({
 
   return (
     <div className="flex items-baseline justify-between gap-2 pt-2">
-      <span className="font-medium text-foreground text-sm tabular-nums">
+      <span className="text-foreground text-sm font-medium tabular-nums">
         {label ? (
-          <span className="pr-2 text-muted-foreground text-xs">{label}</span>
+          <span className="text-muted-foreground pr-2 text-xs">{label}</span>
         ) : null}
         {formatNumber(value)}
-        <span className="ml-1 text-muted-foreground text-xs">{unit}</span>
+        <span className="text-muted-foreground ml-1 text-xs">{unit}</span>
       </span>
     </div>
   );
@@ -58,15 +58,15 @@ export const LimitsAndPrivacy = ({
       <AccordionItem value="limits-privacy">
         <AccordionTrigger>Limits & Privacy</AccordionTrigger>
         <AccordionContent>
-          <div className="pt-1 text-muted-foreground *:space-y-2">
-            <div className="pb-4 text-muted-foreground text-xs">
-              <div className="font-medium text-foreground">Privacy:</div>{" "}
+          <div className="text-muted-foreground pt-1 *:space-y-2">
+            <div className="text-muted-foreground pb-4 text-xs">
+              <div className="text-foreground font-medium">Privacy:</div>{" "}
               <p className="text-md">{info.privacyNote}</p>
             </div>
-            <span className="mb-2 pt-2 font-medium text-foreground">
+            <span className="text-foreground mb-2 pt-2 font-medium">
               Free tier:
             </span>{" "}
-            <ul className="space-y-1 pt-2 text-muted-foreground text-xs">
+            <ul className="text-muted-foreground space-y-1 pt-2 text-xs">
               {freeTier.map((freeInfo) => (
                 <li className="flex items-start gap-1" key={freeInfo}>
                   - <span>{freeInfo}</span>
@@ -93,7 +93,7 @@ export const LimitsAndPrivacy = ({
               )}
             </div>
             {limitInfo.notes ? (
-              <p className="text-center text-muted-foreground text-xxs italic">
+              <p className="text-muted-foreground text-xxs text-center italic">
                 {limitInfo.notes}
               </p>
             ) : null}

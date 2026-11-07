@@ -23,13 +23,13 @@ const withFiles = (files: Record<string, string>) =>
     activeFile: "/App.js",
   });
 
-const FILES_1_RE = /Files \(1\)/;
-const FILES_2_RE = /Files \(2\)/;
-const FILES_4_RE = /Files \(4\)/;
-const NEW_FILE_RE = /New File/;
-const CONFIG_RE = /Project Setup & Config/;
-const CARD_RE = /Card.jsx/;
-const PROMPT_RE = /Ask AI to write code/;
+const FILES_1_RE = /Files \(1\)/u;
+const FILES_2_RE = /Files \(2\)/u;
+const FILES_4_RE = /Files \(4\)/u;
+const NEW_FILE_RE = /New File/u;
+const CONFIG_RE = /Project Setup & Config/u;
+const CARD_RE = /Card.jsx/u;
+const PROMPT_RE = /Ask AI to write code/u;
 
 const waitForApiKeys = async (queryClient: QueryClient) => {
   await waitFor(() =>

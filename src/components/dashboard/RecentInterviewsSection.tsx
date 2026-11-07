@@ -26,7 +26,7 @@ export const RecentInterviewsSection = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-semibold text-base">
+        <CardTitle className="text-base font-semibold">
           Recent interviews
         </CardTitle>
         <CardAction>

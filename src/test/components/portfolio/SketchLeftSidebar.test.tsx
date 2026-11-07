@@ -22,10 +22,10 @@ import { useBuilderStore } from "@/store/useBuilderStore.ts";
 import { render } from "@/test/render.tsx";
 
 const PORTFOLIO_ID = "p-1";
-const READY_TEMPLATES = /Ready-to-Use Templates \(6\)/;
-const INSERT_PAGE = /Insert Page/;
-const NAVIGATION_BAR = /Navigation Bar/;
-const HERO_BIO = /Hero Bio/;
+const READY_TEMPLATES = /Ready-to-Use Templates \(6\)/u;
+const INSERT_PAGE = /Insert Page/u;
+const NAVIGATION_BAR = /Navigation Bar/u;
+const HERO_BIO = /Hero Bio/u;
 
 const basePortfolio = (elements: CanvasElement[]): Portfolio => ({
   id: PORTFOLIO_ID,

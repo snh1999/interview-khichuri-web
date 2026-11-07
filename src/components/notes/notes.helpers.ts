@@ -140,7 +140,7 @@ export const noteDetailsPlain = (
   maxLength = 140
 ): string => {
   const text = markdownToPlain(details ?? "")
-    .replace(/\s+/g, " ")
+    .replace(/\s+/gu, " ")
     .trim();
 
   return text.length > maxLength

@@ -68,7 +68,7 @@ const KeysCard = () => {
             {Array.from(grouped.entries()).map(([provider, keys]) => (
               <div className="space-y-3" key={provider}>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex gap-2 pt-3 text-md">
+                  <CardTitle className="text-md flex gap-2 pt-3">
                     {PROVIDER_LABELS[provider as TApiKeyProvider]}
                     {defaultAiProvider?.provider === provider ? (
                       <>
@@ -77,7 +77,7 @@ const KeysCard = () => {
                           className="text-signal-success"
                           weight="fill"
                         />
-                        <span className="font-normal text-muted-foreground text-xs">
+                        <span className="text-muted-foreground text-xs font-normal">
                           Default on this device
                         </span>
                       </>

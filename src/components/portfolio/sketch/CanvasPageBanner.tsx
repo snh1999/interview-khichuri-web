@@ -241,24 +241,24 @@ export const CanvasPageBanner: React.FC<CanvasPageBannerProps> = ({
         // biome-ignore lint/a11y/noNoninteractiveElementInteractions: raw pointer surface or wrapper containing nested controls; no semantic HTML equivalent
         // biome-ignore lint/a11y/useKeyWithClickEvents: raw pointer surface or wrapper containing nested controls; no semantic HTML equivalent
         <form
-          className="w-95 space-y-3 rounded-2xl border border-primary/80 bg-card p-4 text-foreground shadow-2xl backdrop-blur-xl sm:w-105"
+          className="border-primary/80 bg-card text-foreground w-95 space-y-3 rounded-2xl border p-4 shadow-2xl backdrop-blur-xl sm:w-105"
           onClick={handleStopPropagation}
           onSubmit={onSubmit}
         >
-          <div className="flex items-center justify-between border-border border-b pb-2">
+          <div className="border-border flex items-center justify-between border-b pb-2">
             <div className="flex items-center gap-2">
-              <span className="flex items-center text-muted-foreground">
+              <span className="text-muted-foreground flex items-center">
                 {frame.isHome ? (
                   <HouseIcon className="text-primary" size={16} weight="bold" />
                 ) : (
                   <FileTextIcon size={16} />
                 )}
               </span>
-              <span className="font-bold text-primary text-xs uppercase tracking-wider">
+              <span className="text-primary text-xs font-bold tracking-wider uppercase">
                 Page Artboard Setup
               </span>
               {frame.isHome ? (
-                <span className="rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 font-bold text-[9px] text-primary">
+                <span className="border-primary/20 bg-primary/10 text-primary rounded border px-1.5 py-0.5 text-[9px] font-bold">
                   Home (/)
                 </span>
               ) : null}
@@ -277,13 +277,13 @@ export const CanvasPageBanner: React.FC<CanvasPageBannerProps> = ({
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <div className="space-y-1">
               <Label
-                className="font-bold text-muted-foreground text-xxs uppercase tracking-wider"
+                className="text-muted-foreground text-xxs font-bold tracking-wider uppercase"
                 htmlFor={`frame-title-${frame.id}`}
               >
                 Page Title
               </Label>
               <Input
-                className="h-7 bg-background text-xs"
+                className="bg-background h-7 text-xs"
                 id={`frame-title-${frame.id}`}
                 placeholder="e.g. Case Study: Nova AI"
                 type="text"
@@ -292,13 +292,13 @@ export const CanvasPageBanner: React.FC<CanvasPageBannerProps> = ({
             </div>
             <div className="space-y-1">
               <Label
-                className="font-bold text-muted-foreground text-xxs uppercase tracking-wider"
+                className="text-muted-foreground text-xxs font-bold tracking-wider uppercase"
                 htmlFor={`frame-route-${frame.id}`}
               >
                 Route Path
               </Label>
               <Input
-                className="h-7 bg-background font-mono text-xs"
+                className="bg-background h-7 font-mono text-xs"
                 id={`frame-route-${frame.id}`}
                 placeholder="e.g. /projects/nova-ai"
                 type="text"
@@ -310,13 +310,13 @@ export const CanvasPageBanner: React.FC<CanvasPageBannerProps> = ({
           <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-3">
             <div className="space-y-1 sm:col-span-2">
               <Label
-                className="font-bold text-muted-foreground text-xxs uppercase tracking-wider"
+                className="text-muted-foreground text-xxs font-bold tracking-wider uppercase"
                 htmlFor={`frame-goal-${frame.id}`}
               >
                 Page Goal / Vibe Hint
               </Label>
               <Input
-                className="h-7 bg-background text-xs"
+                className="bg-background h-7 text-xs"
                 id={`frame-goal-${frame.id}`}
                 placeholder="e.g. Highlight technical depth & live metrics"
                 type="text"
@@ -325,7 +325,7 @@ export const CanvasPageBanner: React.FC<CanvasPageBannerProps> = ({
             </div>
             <div className="space-y-1">
               <Label
-                className="font-bold text-muted-foreground text-xxs uppercase tracking-wider"
+                className="text-muted-foreground text-xxs font-bold tracking-wider uppercase"
                 htmlFor={`frame-parent-${frame.id}`}
               >
                 Parent Page
@@ -356,9 +356,9 @@ export const CanvasPageBanner: React.FC<CanvasPageBannerProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-between border-border border-t pt-2">
+          <div className="border-border flex items-center justify-between border-t pt-2">
             <div className="flex items-center gap-2">
-              <Label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-muted px-2.5 py-1 font-medium text-foreground text-xs transition-colors hover:bg-accent">
+              <Label className="bg-muted text-foreground hover:bg-accent inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-colors">
                 {frame.inspirationImageUrl ? (
                   <UploadSimpleIcon size={13} />
                 ) : (
@@ -402,23 +402,23 @@ export const CanvasPageBanner: React.FC<CanvasPageBannerProps> = ({
         <div
           className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-1.5 shadow-md backdrop-blur-md transition-all ${
             isSelected
-              ? "border-primary bg-card text-foreground ring-2 ring-primary/20"
+              ? "border-primary bg-card text-foreground ring-primary/20 ring-2"
               : "border-border bg-card text-foreground hover:border-primary/50"
           }`}
           onClick={handleSelectFrame}
         >
           <div className="flex min-w-0 items-center gap-2">
-            <span className="flex items-center text-muted-foreground">
+            <span className="text-muted-foreground flex items-center">
               {frame.isHome ? (
                 <HouseIcon className="text-primary" size={14} weight="bold" />
               ) : (
                 <FileTextIcon size={14} />
               )}
             </span>
-            <span className="max-w-35 truncate rounded px-1.5 py-0.5 font-bold text-foreground text-xs sm:max-w-50">
+            <span className="text-foreground max-w-35 truncate rounded px-1.5 py-0.5 text-xs font-bold sm:max-w-50">
               {frame.title || "Untitled Page"}
             </span>
-            <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-muted-foreground text-xxs">
+            <span className="bg-muted text-muted-foreground text-xxs rounded px-1.5 py-0.5 font-mono">
               {frame.route || "/"}
             </span>
           </div>

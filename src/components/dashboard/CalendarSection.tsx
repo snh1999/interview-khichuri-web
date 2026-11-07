@@ -103,7 +103,7 @@ const ScheduleContent = () => {
 
   return (
     <div className="w-full">
-      <div className="rounded-lg border bg-card p-6">
+      <div className="bg-card rounded-lg border p-6">
         <CalendarHeader />
 
         <div className="mt-4">{renderView()}</div>

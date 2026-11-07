@@ -3,16 +3,16 @@
 // has nothing to resolve and makes Sandpack's postcss compiler crash the
 // preview (`path.isAbsolute(null)`). The API strips these on generation; this
 // cleans portfolio files saved before that, at the sandbox boundary.
-const CSS_EXTENSION = /\.css$/;
+const CSS_EXTENSION = /\.css$/u;
 const TAILWIND_CSS_DIRECTIVE =
-  /^[ \t]*@(?:import\s+["']tailwindcss(?:\/[^"']*)?["']|tailwind\s+(?:base|components|utilities))\s*;?[ \t]*$/gm;
+  /^[ \t]*@(?:import\s+["']tailwindcss(?:\/[^"']*)?["']|tailwind\s+(?:base|components|utilities))\s*;?[ \t]*$/gmu;
 
 export const stripTailwindDirectives = (css: string): string =>
   css.search(TAILWIND_CSS_DIRECTIVE) === -1
     ? css
     : css
         .replace(TAILWIND_CSS_DIRECTIVE, "")
-        .replace(/\n{3,}/g, "\n\n")
+        .replace(/\n{3,}/gu, "\n\n")
         .trim();
 
 export const sanitizeSandpackFiles = (

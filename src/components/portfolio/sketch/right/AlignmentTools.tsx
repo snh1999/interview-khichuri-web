@@ -27,10 +27,10 @@ export const AlignmentTools: React.FC = () => {
   const handleAlignBottom = () => alignSelectedElements("bottom");
   return (
     <div className="space-y-1.5">
-      <span className="font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+      <span className="text-muted-foreground text-xxs font-bold tracking-wider uppercase">
         Align Selection
       </span>
-      <div className="flex items-center gap-1 rounded-xl border border-border/70 bg-muted/40 p-1">
+      <div className="border-border/70 bg-muted/40 flex items-center gap-1 rounded-xl border p-1">
         <Tooltip>
           <TooltipTrigger
             render={
@@ -68,7 +68,7 @@ export const AlignmentTools: React.FC = () => {
           <TooltipContent>Align Right</TooltipContent>
         </Tooltip>
 
-        <div className="mx-1 h-4 w-px bg-border" />
+        <div className="bg-border mx-1 h-4 w-px" />
 
         <Tooltip>
           <TooltipTrigger

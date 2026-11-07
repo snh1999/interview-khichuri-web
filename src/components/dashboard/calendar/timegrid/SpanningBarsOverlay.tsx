@@ -35,7 +35,7 @@ export const SpanningBarsOverlay = ({
         return (
           <button
             className={cn(
-              "pointer-events-auto absolute overflow-hidden truncate whitespace-nowrap rounded-md px-1 text-center font-medium text-xs leading-tight shadow-sm transition-opacity hover:opacity-80",
+              "pointer-events-auto absolute truncate overflow-hidden rounded-md px-1 text-center text-xs leading-tight font-medium whitespace-nowrap shadow-sm transition-opacity hover:opacity-80",
               colors.bg,
               colors.text
             )}

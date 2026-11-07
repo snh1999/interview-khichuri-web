@@ -18,19 +18,19 @@ vi.mock("@react-pdf/renderer", () => ({
   View: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
-const DURATION_RE = /Duration: 2m 5s/;
-const OVERALL_RE = /Overall: 42\/100/;
-const PROBLEM_RE = /Problem solving: 0\/100/;
-const TITLE_RE = /Title/;
-const SECTION_RE = /Section/;
-const SUB_RE = /Sub/;
-const DEEP_RE = /Deep/;
-const BULLET_RE = /bullet/;
-const FIRST_RE = /first/;
-const QUOTED_RE = /quoted/;
-const STRENGTH_RE = /Clear communication/;
-const IMPROVEMENT_RE = /Slow delivery/;
-const ZERO_DURATION_RE = /Duration: 0m 0s/;
+const DURATION_RE = /Duration: 2m 5s/u;
+const OVERALL_RE = /Overall: 42\/100/u;
+const PROBLEM_RE = /Problem solving: 0\/100/u;
+const TITLE_RE = /Title/u;
+const SECTION_RE = /Section/u;
+const SUB_RE = /Sub/u;
+const DEEP_RE = /Deep/u;
+const BULLET_RE = /bullet/u;
+const FIRST_RE = /first/u;
+const QUOTED_RE = /quoted/u;
+const STRENGTH_RE = /Clear communication/u;
+const IMPROVEMENT_RE = /Slow delivery/u;
+const ZERO_DURATION_RE = /Duration: 0m 0s/u;
 
 const ALL_SECTIONS: TSectionKey[] = [
   "scores",

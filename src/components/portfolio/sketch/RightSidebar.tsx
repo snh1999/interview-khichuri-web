@@ -40,7 +40,7 @@ export const RightSidebar: React.FC = () => {
   }
 
   return (
-    <aside className="z-20 flex h-full w-64 select-none flex-col justify-between overflow-y-auto border-border border-l bg-card p-4 text-foreground text-xs sm:w-72">
+    <aside className="border-border bg-card text-foreground z-20 flex h-full w-64 flex-col justify-between overflow-y-auto border-l p-4 text-xs select-none sm:w-72">
       <div className="space-y-5">
         <SelectionHeader
           activeElement={activeElement}
@@ -51,7 +51,7 @@ export const RightSidebar: React.FC = () => {
         {/* Locked notice: every editor below is disabled while the selection
             (or its owning frame) is locked. */}
         {isLocked ? (
-          <div className="flex items-center gap-1.5 rounded-md bg-amber-500/10 px-2 py-1.5 font-medium text-amber-600 text-xxs">
+          <div className="text-xxs flex items-center gap-1.5 rounded-md bg-amber-500/10 px-2 py-1.5 font-medium text-amber-600">
             <LockSimpleIcon size={12} weight="bold" />
             <span>
               Locked — unlock this {isFrame ? "page" : "element"} to edit

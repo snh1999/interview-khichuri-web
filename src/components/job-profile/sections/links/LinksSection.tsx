@@ -44,7 +44,7 @@ export const LinksSection = memo(({ sectionId }: Readonly<IProps>) => {
         <CardAction className="pt-2 pr-1">
           <Button
             aria-label="Add link"
-            className="rounded-full bg-primary/50"
+            className="bg-primary/50 rounded-full"
             onClick={onAppend}
             size="icon-sm"
           >
@@ -75,7 +75,7 @@ export const LinksSection = memo(({ sectionId }: Readonly<IProps>) => {
           </div>
         ))}
         {linkFields.length === 0 && (
-          <p className="text-center text-muted-foreground text-xs italic">
+          <p className="text-muted-foreground text-center text-xs italic">
             No links added yet.
           </p>
         )}

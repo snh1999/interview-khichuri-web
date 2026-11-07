@@ -43,9 +43,9 @@ export function ResumeSettingsMenu({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 rounded-lg border bg-background px-3 py-2">
+    <div className="bg-background flex flex-wrap items-center gap-1.5 rounded-lg border px-3 py-2">
       <div className="flex items-center gap-1">
-        <span className="font-medium text-muted-foreground text-xs leading-none">
+        <span className="text-muted-foreground text-xs leading-none font-medium">
           Template
         </span>
         <TemplatePicker
@@ -74,7 +74,7 @@ export function ResumeSettingsMenu({
       <Separator className="mx-1 h-5" orientation="vertical" />
 
       <div className="flex items-center gap-1">
-        <span className="font-medium text-muted-foreground text-xs leading-none">
+        <span className="text-muted-foreground text-xs leading-none font-medium">
           Font
         </span>
         <Select
@@ -107,7 +107,7 @@ export function ResumeSettingsMenu({
       </div>
 
       <div className="flex items-center gap-1">
-        <span className="font-medium text-muted-foreground text-xs leading-none">
+        <span className="text-muted-foreground text-xs leading-none font-medium">
           Size
         </span>
         <Select
@@ -129,7 +129,7 @@ export function ResumeSettingsMenu({
       </div>
 
       <div className="flex items-center gap-1">
-        <span className="font-medium text-muted-foreground text-xs leading-none">
+        <span className="text-muted-foreground text-xs leading-none font-medium">
           Line
         </span>
         <Select
@@ -154,7 +154,7 @@ export function ResumeSettingsMenu({
       </div>
 
       <div className="flex items-center gap-1">
-        <span className="font-medium text-muted-foreground text-xs leading-none">
+        <span className="text-muted-foreground text-xs leading-none font-medium">
           Pad
         </span>
         <Select
@@ -180,7 +180,7 @@ export function ResumeSettingsMenu({
       </div>
 
       {mode === "pdf" && (
-        <span className="mt-1 basis-full text-muted-foreground text-xs">
+        <span className="text-muted-foreground mt-1 basis-full text-xs">
           PDF mode static — edits won&apos;t update live.
         </span>
       )}

@@ -1,4 +1,4 @@
-import { type Score, zxcvbn, zxcvbnOptions } from "@zxcvbn-ts/core";
+import { type Score, ZxcvbnFactory } from "@zxcvbn-ts/core";
 import { adjacencyGraphs, dictionary } from "@zxcvbn-ts/language-common";
 
 import { useMemo } from "react";
@@ -59,7 +59,7 @@ const translations = {
   },
 } as const;
 
-zxcvbnOptions.setOptions({
+const zxcvbn = new ZxcvbnFactory({
   dictionary,
   translations,
   graphs: adjacencyGraphs,
@@ -82,7 +82,7 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
     if (!password) {
       return null;
     }
-    return zxcvbn(password);
+    return zxcvbn.check(password);
   }, [password]);
 
   if (!(result && password)) {
@@ -91,12 +91,12 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
 
   const { score } = result;
   const level = LEVELS[score];
-  const times = result.crackTimesDisplay;
+  const times = result.crackTimes;
   const { warning } = result.feedback;
   const { suggestions } = result.feedback;
 
-  const throttled = times.onlineThrottling100PerHour;
-  const noThrottle = times.offlineSlowHashing1e4PerSecond;
+  const throttled = times.onlineThrottlingXPerHour.display;
+  const noThrottle = times.offlineSlowHashingXPerSecond.display;
   const showFast = noThrottle !== throttled;
 
   return (
@@ -105,11 +105,11 @@ export const PasswordStrengthIndicator = ({ password }: Readonly<IProps>) => {
         <LevelComponent score={score} />
       </div>
 
-      <div className="flex items-center justify-between text-md">
-        <span className="font-medium text-foreground">{level.label}</span>
+      <div className="text-md flex items-center justify-between">
+        <span className="text-foreground font-medium">{level.label}</span>
         <span className="text-muted-foreground">
           Cracks in{" "}
-          <span className="font-medium text-foreground">{throttled}</span>{" "}
+          <span className="text-foreground font-medium">{throttled}</span>{" "}
           {showFast ? (
             <span className="opacity-60"> (as fast as {noThrottle})</span>
           ) : null}

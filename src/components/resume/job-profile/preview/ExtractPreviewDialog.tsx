@@ -245,11 +245,11 @@ const SkillAdditions = ({ names }: { names: IExtractedLookupEntries }) => {
 
   return (
     <div className="space-y-1 py-2">
-      <h2 className="font-bold text-sm">Skills (added on apply)</h2>
-      <div className="space-y-1 overflow-hidden rounded-md border bg-muted/50 px-3 py-2 text-xs">
+      <h2 className="text-sm font-bold">Skills (added on apply)</h2>
+      <div className="bg-muted/50 space-y-1 overflow-hidden rounded-md border px-3 py-2 text-xs">
         {groups.map((group) => (
           <p key={group.label}>
-            <span className="font-medium text-muted-foreground">
+            <span className="text-muted-foreground font-medium">
               {group.label}:
             </span>{" "}
             {group.values.join(", ")}

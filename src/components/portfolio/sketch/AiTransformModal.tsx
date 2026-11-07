@@ -327,7 +327,7 @@ export const AiTransformModal: React.FC<AiTransformModalProps> = ({
           selectedPresetId={selectedPresetId}
         />
 
-        <div className="font-bold text-md text-muted-foreground">
+        <div className="text-md text-muted-foreground font-bold">
           Model Selection & Instructions
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { type ChangeEvent, type FormEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

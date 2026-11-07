@@ -1,5 +1,5 @@
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { IJob } from "@/api/jobs";
 import type { IResume, TAtsCategory } from "@/api/resumes";
@@ -15,9 +15,9 @@ import { render } from "@/test/render.tsx";
 
 const CREATED_AT = "2026-01-01T00:00:00.000Z";
 
-const PICK_PROMPT_PATTERN = /Select a job and a resume/;
-const SAVED_CARD_PATTERN = /Main resume/;
-const FILTERED_EMPTY_PATTERN = /No saved scores for this selection yet/;
+const PICK_PROMPT_PATTERN = /Select a job and a resume/u;
+const SAVED_CARD_PATTERN = /Main resume/u;
+const FILTERED_EMPTY_PATTERN = /No saved scores for this selection yet/u;
 
 const envelope = <T,>(data: T) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });

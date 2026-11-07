@@ -1,7 +1,9 @@
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
-import type { ICompany } from "@/api/resumes";
 import { api } from "@/lib/api-client";
+
+// biome-ignore lint/performance/noBarrelFile: <separate file for code organization>
+export * from "./companies.ts";
 
 export type TLookupSchema = "categories" | "roles" | "topics" | "industries";
 
@@ -60,13 +62,7 @@ export const useUpdateLookup = (schema: TLookupSchema) =>
 
 export const useDeleteLookup = (schema: TLookupSchema) =>
   useMutation({
+    meta: { invalidates: queryKeys.lookups[schema] },
     mutationFn: async (id: number) =>
       await api.delete(`/lookups/${schema}/${id}`),
-  });
-
-export const useCompanies = () =>
-  useSuspenseQuery({
-    queryFn: async () => await api.get<ICompany[]>("/company"),
-    queryKey: queryKeys.lookups.companies,
-    staleTime: 1000 * 60 * 30,
   });

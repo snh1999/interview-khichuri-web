@@ -101,7 +101,7 @@ export const AppPagination = ({
                   onClick={previousPage}
                 />
               </PaginationItem>
-              <PaginationItem className="flex items-center px-2 text-muted-foreground text-sm">
+              <PaginationItem className="text-muted-foreground flex items-center px-2 text-sm">
                 <Select
                   items={pageOptions}
                   onValueChange={onPageChange}

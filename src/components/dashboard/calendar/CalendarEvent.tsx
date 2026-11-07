@@ -39,7 +39,7 @@ export const CalendarEvent = ({
   return (
     <button
       className={cn(
-        "flex w-full min-w-0 items-center gap-1 overflow-hidden whitespace-nowrap rounded-md px-1.5 py-1 font-medium text-xs leading-tight shadow-sm transition-opacity hover:opacity-80",
+        "flex w-full min-w-0 items-center gap-1 overflow-hidden rounded-md px-1.5 py-1 text-xs leading-tight font-medium whitespace-nowrap shadow-sm transition-opacity hover:opacity-80",
         colors.bg,
         colors.text
       )}

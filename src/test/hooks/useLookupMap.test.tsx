@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { screen } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { beforeEach, describe, expect, it } from "vitest";
 import { queryKeys } from "@/api";
 import type { ILookupEntry } from "@/api/lookups";

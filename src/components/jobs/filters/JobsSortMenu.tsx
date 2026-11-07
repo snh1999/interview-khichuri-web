@@ -33,20 +33,11 @@ export const DISCOVER_SORT_OPTIONS: readonly IJobSortOption[] =
 export const isDiscoverSort = (sort: TJobSortKey) =>
   DISCOVER_SORT_OPTIONS.some((option) => option.value === sort);
 
-export const useJobSort = (): {
-  currentSort: TJobSortKey;
-  handleSortChange: (value: TJobSortKey) => void;
-} => {
-  const currentSort = useJobsStore((state) => state.sort);
-  const handleSortChange = useJobsStore((state) => state.setSort);
-
-  return { currentSort, handleSortChange };
-};
-
 export const JobsSortMenu = ({
   options = JOB_SORT_OPTIONS,
 }: Readonly<{ options?: readonly IJobSortOption[] }>) => {
-  const { currentSort, handleSortChange } = useJobSort();
+  const currentSort = useJobsStore((state) => state.sort);
+  const handleSortChange = useJobsStore((state) => state.setSort);
   const label =
     options.find((option) => option.value === currentSort)?.label ?? "Sort";
 

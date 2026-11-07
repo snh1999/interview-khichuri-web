@@ -12,10 +12,10 @@ import { useSketchBuilderStore } from "@/store/sketchBuilderStore.ts";
 import { render } from "@/test/render.tsx";
 
 const PORTFOLIO = "p-1";
-const PAGE_SETUP = /page setup/i;
-const SAVE_CLOSE = /save & close/i;
-const ATTACH_INSPIRATION = /attach inspiration/i;
-const IDB_URL = /^idb:\/\//;
+const PAGE_SETUP = /page setup/iu;
+const SAVE_CLOSE = /save & close/iu;
+const ATTACH_INSPIRATION = /attach inspiration/iu;
+const IDB_URL = /^idb:\/\//u;
 
 const frame = (
   overrides: Partial<FrameElement> & { id: string }
@@ -51,17 +51,17 @@ const seed = (elements: FrameElement[]) => {
   });
 };
 
+beforeEach(() => {
+  Element.prototype.scrollIntoView = vi.fn();
+  useSketchBuilderStore.setState(useSketchBuilderStore.getInitialState(), true);
+});
+
 afterEach(() => {
   useSketchBuilderStore.setState({
     draft: null,
     viewMode: "canvas",
   });
   vi.restoreAllMocks();
-});
-
-beforeEach(() => {
-  Element.prototype.scrollIntoView = vi.fn();
-  useSketchBuilderStore.setState(useSketchBuilderStore.getInitialState(), true);
 });
 
 const savedFrame = (id: string): FrameElement | undefined =>
@@ -169,7 +169,11 @@ describe("CanvasPageBanner", () => {
 
     const { user } = render(<CanvasPageBanner frame={beta} />);
     await user.click(screen.getByRole("button", { name: PAGE_SETUP }));
-    await user.click(screen.getByRole("combobox"));
+    const combo = screen.getByRole("combobox");
+    await user.click(combo);
+    await waitFor(() => {
+      expect(combo).toHaveAttribute("aria-expanded", "true");
+    });
     await user.click(await screen.findByText("Alpha (/a)"));
     await user.click(screen.getByRole("button", { name: SAVE_CLOSE }));
 

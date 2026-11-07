@@ -12,7 +12,7 @@ import { RefetchIndicator } from "@/components/common/RefetchIndicator.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
 import App from "./App.tsx";
 
-const root = document.getElementById("root");
+const root = document.querySelector("#root");
 
 if (!root) {
   throw new Error("root is missing");

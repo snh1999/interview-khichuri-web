@@ -71,7 +71,7 @@ export const FormInput = <T extends FieldValues>({
         {StartComponent ? (
           <InputGroupAddon
             align="inline-start"
-            className="mx-1 text-muted-foreground/50"
+            className="text-muted-foreground/50 mx-1"
           >
             {StartComponent}
           </InputGroupAddon>

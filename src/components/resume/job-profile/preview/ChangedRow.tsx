@@ -39,12 +39,12 @@ export const ChangedRow = ({ row, pick, edited, onSelect, onEdit }: IProps) => {
 
         <div className="flex shrink-0 items-center gap-1.5">
           {isModified ? (
-            <Badge className="px-1 text-xxs" variant="outline">
+            <Badge className="text-xxs px-1" variant="outline">
               <EraserIcon /> Modified
             </Badge>
             // biome-ignore lint/style/noNestedTernary: <>
           ) : accepted ? (
-            <Badge className="px-1 text-xxs">
+            <Badge className="text-xxs px-1">
               <ChecksIcon /> Accepted
             </Badge>
           ) : null}

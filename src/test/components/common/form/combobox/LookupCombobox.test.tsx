@@ -1,12 +1,12 @@
 import { screen, within } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { useForm } from "react-hook-form";
 import { describe, expect, it } from "vitest";
 import { LookupCombobox } from "@/components/common/form/combobox/LookupCombobox.tsx";
 import { server } from "@/test/msw/server.ts";
 import { render } from "@/test/render.tsx";
 
-const CREATE_CUSTOM_RE = /Create "Custom"/;
+const CREATE_CUSTOM_RE = /Create "Custom"/u;
 
 const useTopicLookups = () =>
   server.use(

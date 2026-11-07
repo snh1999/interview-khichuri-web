@@ -69,9 +69,9 @@ export const ColorControls: React.FC<ColorControlsProps> = ({
     setFillColor(`${swatch}22`);
   };
   return (
-    <div className="space-y-3 border-border border-t pt-2">
+    <div className="border-border space-y-3 border-t pt-2">
       <div className="flex items-center justify-between">
-        <span className="font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+        <span className="text-muted-foreground text-xxs font-bold tracking-wider uppercase">
           Stroke & Fill Colors
         </span>
         {strokeColorState.isMixed || fillColorState.isMixed ? (
@@ -82,13 +82,13 @@ export const ColorControls: React.FC<ColorControlsProps> = ({
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        <div className="space-y-1 rounded-xl border border-border bg-muted/30 p-2">
+        <div className="border-border bg-muted/30 space-y-1 rounded-xl border p-2">
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground text-xs">Stroke</span>
             <Button
-              className={`rounded border text-xxs ${
+              className={`text-xxs rounded border ${
                 activeElement.strokeColor === "transparent"
-                  ? "border-destructive/30 bg-destructive/20 font-bold text-destructive"
+                  ? "border-destructive/30 bg-destructive/20 text-destructive font-bold"
                   : "border-border bg-background text-muted-foreground hover:text-foreground"
               }`}
               onClick={handleToggleStroke}
@@ -98,7 +98,7 @@ export const ColorControls: React.FC<ColorControlsProps> = ({
             </Button>
           </div>
           <div className="flex items-center justify-between pt-1">
-            <span className="font-mono text-muted-foreground text-xxs">
+            <span className="text-muted-foreground text-xxs font-mono">
               {formatColorState(
                 strokeColorState.isMixed,
                 activeElement.strokeColor
@@ -118,13 +118,13 @@ export const ColorControls: React.FC<ColorControlsProps> = ({
           </div>
         </div>
 
-        <div className="space-y-1 rounded-xl border border-border bg-muted/30 p-2">
+        <div className="border-border bg-muted/30 space-y-1 rounded-xl border p-2">
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground text-xs">Fill</span>
             <Button
-              className={`rounded border text-xxs ${
+              className={`text-xxs rounded border ${
                 activeElement.fillColor === "transparent"
-                  ? "border-destructive/30 bg-destructive/20 font-bold text-destructive"
+                  ? "border-destructive/30 bg-destructive/20 text-destructive font-bold"
                   : "border-border bg-background text-muted-foreground hover:text-foreground"
               }`}
               onClick={handleToggleFill}
@@ -134,7 +134,7 @@ export const ColorControls: React.FC<ColorControlsProps> = ({
             </Button>
           </div>
           <div className="flex items-center justify-between pt-1">
-            <span className="font-mono text-muted-foreground text-xxs">
+            <span className="text-muted-foreground text-xxs font-mono">
               {formatColorState(
                 fillColorState.isMixed,
                 activeElement.fillColor
@@ -158,7 +158,7 @@ export const ColorControls: React.FC<ColorControlsProps> = ({
       <div className="grid grid-cols-6 gap-1 pt-1">
         {themeSwatches.slice(0, 12).map((c) => (
           <Button
-            className="rounded-md border border-border/80 hover:scale-110"
+            className="border-border/80 rounded-md border hover:scale-110"
             key={c}
             // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped swatch color
             onClick={() => applySwatch(c)}

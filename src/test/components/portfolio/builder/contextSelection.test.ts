@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { selectBuilderContext } from "@/components/portfolio/builder/contextSelection";
 
-const HASH_PATTERN = /^[0-9a-f]{8}$/;
+const HASH_PATTERN = /^[0-9a-f]{8}$/u;
 
 describe("selectBuilderContext", () => {
   it("sends the whole project and a full manifest when it is small", () => {

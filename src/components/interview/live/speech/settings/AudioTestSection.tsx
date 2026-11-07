@@ -59,9 +59,9 @@ export const AudioTestSection = ({
   onTestHardware,
   onResetDefaults,
 }: Readonly<IAudioTestSectionProps>) => (
-  <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+  <div className="border-border bg-card flex flex-col gap-3 rounded-xl border p-4">
     <div className="flex items-center justify-between gap-2">
-      <span className="flex items-center gap-2 font-bold text-md">
+      <span className="text-md flex items-center gap-2 font-bold">
         <span
           className={cn(
             "size-2 animate-pulse rounded-full",

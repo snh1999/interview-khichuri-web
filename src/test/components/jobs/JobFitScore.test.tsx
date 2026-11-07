@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it } from "vitest";
 import type { IJob } from "@/api/jobs";
 import { JobFitScore } from "@/components/jobs/details/JobFitScore.tsx";
@@ -8,7 +8,7 @@ import { render } from "@/test/render.tsx";
 
 const API = "*/api/v1";
 
-const NO_PROFILE_DATA = /Not enough profile\/job data to score/;
+const NO_PROFILE_DATA = /Not enough profile\/job data to score/u;
 
 const envelope = (data: unknown) =>
   HttpResponse.json({ data, message: "OK", statusCode: 200 });

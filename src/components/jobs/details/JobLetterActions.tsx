@@ -129,7 +129,7 @@ export const JobLetterActions = ({ job }: Readonly<{ job: IJob }>) => {
         <DropdownMenuContent align="end" className="w-56 p-2">
           <div className="flex flex-col gap-1">
             <AiActionButton
-              className="w-full hover:bg-primary/30"
+              className="hover:bg-primary/30 w-full"
               description={`Tailored cover letter for ${job.title} @ ${job.companyName}.`}
               execute={handleDraftCoverLetter}
               executeLabel="Cover Letter"
@@ -148,7 +148,7 @@ export const JobLetterActions = ({ job }: Readonly<{ job: IJob }>) => {
             <Separator />
 
             <AiActionButton
-              className="w-full hover:bg-primary/30"
+              className="hover:bg-primary/30 w-full"
               description={`Short outreach email for ${job.title} @ ${job.companyName}.`}
               execute={handleDraftOutreachEmail}
               executeLabel="Outreach"
@@ -167,7 +167,7 @@ export const JobLetterActions = ({ job }: Readonly<{ job: IJob }>) => {
             <Separator />
 
             <AiActionButton
-              className="w-full hover:bg-primary/30"
+              className="hover:bg-primary/30 w-full"
               description={`Short LinkedIn message for ${job.title} @ ${job.companyName}.`}
               execute={handleDraftLinkedInDm}
               executeLabel="LinkedIn DM"

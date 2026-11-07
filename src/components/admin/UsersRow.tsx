@@ -65,7 +65,7 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
   };
   const handleRevokeSession = () => revokeUserSession(user.id);
   const handleUnban = () => unbanUser(user.id);
-  const handleBan = () => banUser(user.id);
+  const handleBan = () => banUser({ userId: user.id });
   const handleRemove = () => removeUser(user.id);
 
   return (
@@ -75,7 +75,7 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
           <div
             className={cn(
               user.banned && "text-destructive",
-              "mb-1 flex items-center gap-5 font-medium text-sm"
+              "mb-1 flex items-center gap-5 text-sm font-medium"
             )}
           >
             {user.name}
@@ -85,7 +85,7 @@ export const UserRow = ({ user }: Readonly<IProps>) => {
         </div>
       </TableCell>
       <TableCell>
-        <div className="not-empty:mt-2 flex items-center gap-2">
+        <div className="flex items-center gap-2 not-empty:mt-2">
           {user.emailVerified ? (
             <Badge variant={user.role === "admin" ? "default" : "secondary"}>
               {user.role}

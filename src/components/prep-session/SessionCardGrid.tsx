@@ -42,7 +42,7 @@ export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
   return (
     <GutterCard onClick={navigateToPage} variant={variant}>
       <div className="flex items-start justify-between gap-2">
-        <p className="text font-semibold text-foreground leading-tight">
+        <p className="text text-foreground leading-tight font-semibold">
           {session.title || session.description}
         </p>
         <FavoriteButton
@@ -51,8 +51,8 @@ export const SessionCardGrid = ({ session, jobLabel }: Readonly<IProps>) => {
           onToggle={handleToggleFavorite}
         />
       </div>
-      <p className="mt-1 truncate text-muted-foreground text-sm">{metaLabel}</p>
-      <div className="mt-2.5 flex justify-between font-mono text-muted-foreground text-xs">
+      <p className="text-muted-foreground mt-1 truncate text-sm">{metaLabel}</p>
+      <div className="text-muted-foreground mt-2.5 flex justify-between font-mono text-xs">
         <span>{session.experience ? `${session.experience}` : ""}</span>
         <span>Created: {formatSessionDate(session.createdAt)}</span>
       </div>

@@ -24,8 +24,8 @@ export const Section = ({
   if (rows.length === 0) {
     return (
       <div className="space-y-1">
-        <h4 className="font-medium text-muted-foreground text-sm">{title}</h4>
-        <div className="rounded-md bg-muted/50 p-3 text-muted-foreground text-xs">
+        <h4 className="text-muted-foreground text-sm font-medium">{title}</h4>
+        <div className="bg-muted/50 text-muted-foreground rounded-md p-3 text-xs">
           {emptyHint ?? "No data"}
         </div>
       </div>
@@ -34,8 +34,8 @@ export const Section = ({
 
   return (
     <div className="space-y-1 py-2">
-      <h2 className="font-bold text-sm">{title}</h2>
-      <div className="overflow-hidden rounded-md border bg-muted/50 text-xs *:py-2 *:text-xs">
+      <h2 className="text-sm font-bold">{title}</h2>
+      <div className="bg-muted/50 overflow-hidden rounded-md border text-xs *:py-2 *:text-xs">
         {rows.map((row) =>
           row.changed ? (
             <ChangedRow

@@ -16,10 +16,10 @@ export const RightSidebarEmpty: React.FC<RightSidebarEmptyProps> = ({
   const setFillColor = useSketchBuilderStore((s) => s.setFillColor);
 
   return (
-    <aside className="z-20 flex h-full w-64 select-none flex-col justify-between overflow-y-auto border-border border-l bg-card p-4 text-muted-foreground text-xs sm:w-72">
+    <aside className="border-border bg-card text-muted-foreground z-20 flex h-full w-64 flex-col justify-between overflow-y-auto border-l p-4 text-xs select-none sm:w-72">
       <div className="space-y-6">
         <div>
-          <div className="mb-2 font-bold text-foreground text-xs uppercase tracking-wider">
+          <div className="text-foreground mb-2 text-xs font-bold tracking-wider uppercase">
             Inspector & Styles
           </div>
           <p className="text-muted-foreground leading-relaxed">
@@ -28,12 +28,12 @@ export const RightSidebarEmpty: React.FC<RightSidebarEmptyProps> = ({
           </p>
         </div>
 
-        <div className="space-y-3 rounded-2xl border border-border bg-muted/20 p-3.5">
+        <div className="border-border bg-muted/20 space-y-3 rounded-2xl border p-3.5">
           <div className="flex items-center justify-between">
-            <span className="font-bold text-foreground text-xs">
+            <span className="text-foreground text-xs font-bold">
               Active Palette
             </span>
-            <span className="font-mono text-muted-foreground text-xxs">
+            <span className="text-muted-foreground text-xxs font-mono">
               {themeName || "Custom"}
             </span>
           </div>
@@ -41,7 +41,7 @@ export const RightSidebarEmpty: React.FC<RightSidebarEmptyProps> = ({
           <div className="grid grid-cols-5 gap-1.5">
             {themeSwatches.slice(0, 10).map((color) => (
               <Button
-                className="rounded-lg border border-border/80 shadow-xs hover:scale-110"
+                className="border-border/80 rounded-lg border shadow-xs hover:scale-110"
                 key={color}
                 // biome-ignore lint/performance/noJsxPropsBind: inline handler closes over the mapped swatch color
                 onClick={() => {

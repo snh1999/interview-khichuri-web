@@ -1,4 +1,4 @@
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import type { IApiKey } from "@/api/keys/index.ts";
 
 const API = "*/api/v1";
@@ -102,6 +102,23 @@ export const handlers = [
     return new HttpResponse(
       frames.map((frame) => `data: ${JSON.stringify(frame)}\n\n`).join(""),
       { headers: { "Content-Type": "text/event-stream" } }
+    );
+  }),
+
+  http.post(`${API}/feedback`, async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return envelope(
+      {
+        createdAt: new Date().toISOString(),
+        id: "feedback-1",
+        status: null,
+        updatedAt: new Date().toISOString(),
+        userAgent: null,
+        userId: "user-1",
+        ...body,
+      },
+      201,
+      "Created"
     );
   }),
 ];

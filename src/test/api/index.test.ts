@@ -11,7 +11,37 @@ describe("queryKeys", () => {
       "sessions",
       { a: 1 },
     ]);
-    expect(queryKeys.admin.users()).toEqual(["admin", "users", undefined]);
+    expect(queryKeys.admin.users()).toEqual(["admin", "users"]);
+  });
+
+  it("uses bare prefixes for admin lists without filters", () => {
+    expect(queryKeys.admin.companies()).toEqual(["admin", "companies"]);
+    expect(queryKeys.admin.jobs()).toEqual(["admin", "jobs"]);
+    expect(queryKeys.admin.prompts()).toEqual(["admin", "prompts"]);
+    expect(queryKeys.admin.feedback()).toEqual(["admin", "feedback"]);
+  });
+
+  it("keeps filter objects in admin list keys", () => {
+    expect(queryKeys.admin.companies({ page: 1 })).toEqual([
+      "admin",
+      "companies",
+      { page: 1 },
+    ]);
+    expect(queryKeys.admin.jobs({ state: "failed" })).toEqual([
+      "admin",
+      "jobs",
+      { state: "failed" },
+    ]);
+    expect(queryKeys.admin.prompts({ search: "go" })).toEqual([
+      "admin",
+      "prompts",
+      { search: "go" },
+    ]);
+    expect(queryKeys.admin.feedback({ status: "open" })).toEqual([
+      "admin",
+      "feedback",
+      { status: "open" },
+    ]);
   });
 
   it("builds auth and calendar keys", () => {

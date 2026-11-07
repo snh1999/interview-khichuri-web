@@ -67,23 +67,16 @@ Object.defineProperty(document, "fonts", {
   writable: true,
 });
 
-vi.stubGlobal(
-  "ResizeObserver",
-  class {
-    observe() {
-      /* jsdom no-op */
-    }
-    unobserve() {
-      /* jsdom no-op */
-    }
-    disconnect() {
-      /* jsdom no-op */
-    }
-  }
-);
+vi.stubGlobal("ResizeObserver", function ResizeObserverStub() {
+  return {
+    disconnect: () => undefined,
+    observe: () => undefined,
+    unobserve: () => undefined,
+  };
+});
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
+  server.listen({ onUnhandledFrame: "error" });
 });
 
 afterEach(() => {

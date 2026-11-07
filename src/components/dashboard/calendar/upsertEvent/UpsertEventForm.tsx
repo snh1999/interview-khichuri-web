@@ -64,7 +64,7 @@ const ColorSwatch = ({
       aria-pressed={selected}
       className={cn(
         "flex size-6 items-center justify-center rounded-full transition-shadow",
-        selected && "ring-2 ring-ring ring-offset-2 ring-offset-background"
+        selected && "ring-ring ring-offset-background ring-2 ring-offset-2"
       )}
       onClick={handleClick}
       title={title}
@@ -159,7 +159,7 @@ export const UpsertEventForm = () => {
 
             {isMultiDay ? null : (
               <div className="flex flex-col gap-1.5">
-                <span className="font-medium text-sm">Quick duration</span>
+                <span className="text-sm font-medium">Quick duration</span>
                 <div className="flex flex-wrap gap-1.5">
                   {DURATION_PRESETS.map((p) => (
                     <PresetButton
@@ -182,7 +182,7 @@ export const UpsertEventForm = () => {
             )}
 
             <div className="flex flex-col gap-1.5">
-              <span className="font-medium text-sm">Color</span>
+              <span className="text-sm font-medium">Color</span>
               <div className="flex flex-wrap gap-1.5">
                 <ColorSwatch
                   ariaLabel="Default color"

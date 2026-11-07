@@ -180,7 +180,7 @@ const AiDialogContent = ({
 
         <DrawLogBody>
           {hasProviders ? (
-            <div className="space-y-3 *:text-muted-foreground *:text-sm">
+            <div className="*:text-muted-foreground space-y-3 *:text-sm">
               <div className="space-y-3">{children}</div>
               {useSavedDefaults ? (
                 <p className="text-muted-foreground text-sm">

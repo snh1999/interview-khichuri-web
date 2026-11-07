@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { describe, expect, it } from "vitest";
 import KeysSection from "@/components/keys/KeysSection.tsx";
 import { mockApiKey } from "@/test/msw/handlers.ts";

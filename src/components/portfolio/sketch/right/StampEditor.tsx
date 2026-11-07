@@ -16,12 +16,12 @@ export const StampEditor: React.FC<StampEditorProps> = ({ activeElement }) => {
     updateElement(activeElement.id, { sublabel: e.target.value });
   const handleFocus = () => recordHistory();
   return (
-    <div className="space-y-2 border-border border-t pt-2">
-      <span className="font-bold text-muted-foreground text-xxs uppercase tracking-wider">
+    <div className="border-border space-y-2 border-t pt-2">
+      <span className="text-muted-foreground text-xxs font-bold tracking-wider uppercase">
         Component Content
       </span>
       <Input
-        className="h-7 bg-background text-xs"
+        className="bg-background h-7 text-xs"
         onChange={handleLabelChange}
         onFocus={handleFocus}
         placeholder="Header / Title"
@@ -29,7 +29,7 @@ export const StampEditor: React.FC<StampEditorProps> = ({ activeElement }) => {
         value={(activeElement as StampElement).label || ""}
       />
       <Input
-        className="h-7 bg-background text-xs"
+        className="bg-background h-7 text-xs"
         onChange={handleSublabelChange}
         onFocus={handleFocus}
         placeholder="Subtext / Details"

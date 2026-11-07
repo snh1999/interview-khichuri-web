@@ -1,5 +1,5 @@
 import { screen, waitFor } from "@testing-library/react";
-import { HttpResponse, http } from "msw";
+import { HttpResponse, http } from "msw/http";
 import { Route, Routes } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 import type { IQuestion } from "@/api/sessions";
@@ -24,7 +24,7 @@ const QUESTION: IQuestion = {
   updatedAt: "2024-01-01",
 };
 
-const BUTTON_RE_NAME = /pin/i;
+const BUTTON_RE_NAME = /pin/iu;
 
 const renderCard = (
   props: Partial<Parameters<typeof QuestionCard>[0]> = {}

@@ -13,7 +13,7 @@ vi.mock("@/lib/auth/auth-client", () => ({
 
 const LocationProbe = () => <p>{`path=${useLocation().pathname}`}</p>;
 
-const SEND_LINK = /Send Link/;
+const SEND_LINK = /Send Link/u;
 
 describe("ForgotPasswordForm", () => {
   beforeEach(() => {

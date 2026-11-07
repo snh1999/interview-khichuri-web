@@ -15,6 +15,11 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
     testTimeout: 15_000,
+    server: {
+      deps: {
+        inline: ["@uiw/react-md-editor", "@uiw/react-markdown-preview"],
+      },
+    },
     coverage: {
       exclude: [
         "coverage/**",

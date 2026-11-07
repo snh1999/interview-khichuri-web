@@ -199,14 +199,14 @@ const loadSettings = (): ISpeechSettings => {
 
 const stripMarkdownForSpeech = (text: string): string =>
   text
-    .replace(/```[\s\S]*?```/g, "Code snippet omitted. ")
-    .replace(/`([^`]*)`/g, "$1 ")
-    .replace(/[*_~#>|]/g, " ")
-    .replace(/\[([^\]]*)\]\([^)"]*\)/g, "$1 ")
-    .replace(/\s+/g, " ")
+    .replace(/```[\s\S]*?```/gu, "Code snippet omitted. ")
+    .replace(/`(?<code>[^`]*)`/gu, "$<code> ")
+    .replace(/[*_~#>|]/gu, " ")
+    .replace(/\[(?<text>[^\]]*)\]\([^)"]*\)/gu, "$<text> ")
+    .replace(/\s+/gu, " ")
     .trim();
 
-const SENTENCE_SPLIT_REGEX = /(?<=[.!?¡¿…。！？])\s+/;
+const SENTENCE_SPLIT_REGEX = /(?<=[.!?¡¿…。！？])\s+/u;
 
 const splitSpeechText = (text: string, maxLength: number): string[] => {
   const normalized = text.trim();

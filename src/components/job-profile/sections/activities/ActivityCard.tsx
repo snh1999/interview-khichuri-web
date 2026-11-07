@@ -28,7 +28,7 @@ export const ActivityCard = ({ index, onRemove }: Readonly<IProps>) => {
   }, [form, endDateName, isCurrent]);
 
   return (
-    <div className="rounded-lg border border-border/60 p-3">
+    <div className="border-border/60 rounded-lg border p-3">
       <div className="flex justify-end">
         <Button
           aria-label={`Remove activity ${index + 1}`}

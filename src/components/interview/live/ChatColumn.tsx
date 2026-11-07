@@ -34,15 +34,15 @@ export const ChatColumn = ({
       >
         <Message align="left">
           <div className="flex items-start gap-3">
-            <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
-              <RobotIcon className="size-4 text-primary" />
+            <div className="bg-primary/10 mt-1 flex size-8 shrink-0 items-center justify-center rounded-full">
+              <RobotIcon className="text-primary size-4" />
             </div>
             <div className="flex flex-col gap-2">
               <Bubble className="text-md" variant="assistant">
                 {question?.questionText}
               </Bubble>
               {question?.notes ? (
-                <p className="pl-2 text-muted-foreground text-xs italic">
+                <p className="text-muted-foreground pl-2 text-xs italic">
                   Hint: {question.notes}
                 </p>
               ) : null}
@@ -53,13 +53,13 @@ export const ChatColumn = ({
         {streamingFollowUps ? (
           <Message align="left">
             <div className="flex items-start gap-3">
-              <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                <RobotIcon className="size-4 text-primary" />
+              <div className="bg-primary/10 mt-1 flex size-8 shrink-0 items-center justify-center rounded-full">
+                <RobotIcon className="text-primary size-4" />
               </div>
               <div className="flex flex-col gap-2">
                 {liveFollowUps.length === 0 ? (
                   <Bubble className="text-md" variant="assistant">
-                    <span className="flex items-center gap-2 text-muted-foreground">
+                    <span className="text-muted-foreground flex items-center gap-2">
                       <Spinner />
                       Preparing follow-ups…
                     </span>
@@ -76,7 +76,7 @@ export const ChatColumn = ({
                       index === liveFollowUps.length - 1 ? (
                         <span
                           aria-hidden="true"
-                          className="ml-1 inline-block h-4 w-0.5 animate-pulse rounded-full bg-primary align-middle"
+                          className="bg-primary ml-1 inline-block h-4 w-0.5 animate-pulse rounded-full align-middle"
                         />
                       ) : null}
                     </Bubble>
