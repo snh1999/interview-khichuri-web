@@ -78,4 +78,20 @@ describe("CompaniesPage", () => {
       )
     ).toBeInTheDocument();
   });
+
+  it("opens a prefilled company request from the header", async () => {
+    server.use(http.get(`${API}/company`, () => envelope([])));
+
+    const { user } = renderPage();
+    await screen.findByText("No companies yet");
+
+    await user.click(screen.getByRole("button", { name: "Request a company" }));
+
+    expect(
+      await screen.findByRole("heading", { name: "Request a company" })
+    ).toBeInTheDocument();
+    expect(
+      (screen.getByLabelText("Message") as HTMLTextAreaElement).value
+    ).toContain("Company name:");
+  });
 });

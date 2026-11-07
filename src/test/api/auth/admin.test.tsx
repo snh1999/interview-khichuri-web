@@ -125,9 +125,7 @@ describe("admin user mutation invalidation", () => {
     });
 
     const keys = resolvedKeys(client, { userId: "u1", banReason: "spam" });
-    expect(keys).toContainEqual(
-      queryKeys.admin.users(activeFilters as Record<string, unknown>)
-    );
+    expect(keys).toContainEqual(queryKeys.admin.users());
     expect(keys).toContainEqual(queryKeys.admin.user("u1"));
   });
 
@@ -152,9 +150,7 @@ describe("admin user mutation invalidation", () => {
       sessionToken: "token",
       userId: "u1",
     });
-    expect(keys).toContainEqual(
-      queryKeys.admin.users(activeFilters as Record<string, unknown>)
-    );
+    expect(keys).toContainEqual(queryKeys.admin.users());
     expect(keys).toContainEqual(queryKeys.admin.user("u1"));
     expect(keys).toContainEqual(queryKeys.admin.sessions({ userId: "u1" }));
   });
@@ -174,9 +170,7 @@ describe("admin user mutation invalidation", () => {
     });
 
     const keys = resolvedKeys(client, { role: "admin", userId: "u1" });
-    expect(keys).toContainEqual(
-      queryKeys.admin.users(activeFilters as Record<string, unknown>)
-    );
+    expect(keys).toContainEqual(queryKeys.admin.users());
     expect(keys).toContainEqual(queryKeys.admin.user("u1"));
   });
 });

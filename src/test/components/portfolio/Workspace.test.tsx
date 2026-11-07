@@ -11,12 +11,24 @@ const sandpackFiles = vi.hoisted(() => ({
   current: {} as Record<string, { code: string }>,
 }));
 
+const sandpackError = vi.hoisted(() => ({
+  current: null as null | {
+    column?: number;
+    line?: number;
+    message: string;
+    path?: string;
+    title?: string;
+  },
+}));
+
 vi.mock("@codesandbox/sandpack-react", () => ({
   SandpackCodeEditor: () => null,
   SandpackLayout: (props: { children?: ReactNode }) => props.children,
   SandpackPreview: () => null,
   SandpackProvider: (props: { children?: ReactNode }) => props.children,
-  useSandpack: () => ({ sandpack: { files: sandpackFiles.current } }),
+  useSandpack: () => ({
+    sandpack: { error: sandpackError.current, files: sandpackFiles.current },
+  }),
 }));
 
 const seed = (overrides: Partial<ReturnType<typeof createEmptyProject>>) => {
@@ -30,6 +42,7 @@ const seed = (overrides: Partial<ReturnType<typeof createEmptyProject>>) => {
 beforeEach(() => {
   useBuilderStore.setState(useBuilderStore.getInitialState(), true);
   sandpackFiles.current = {};
+  sandpackError.current = null;
   vi.useRealTimers();
 });
 
@@ -94,6 +107,29 @@ describe("Workspace", () => {
     render(<Workspace />);
 
     expect(screen.queryByTitle("Read-only project configuration")).toBeNull();
+  });
+
+  it("copies the sandpack error when the copy button is clicked", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    sandpackError.current = {
+      column: 5,
+      line: 3,
+      message: "Unexpected token",
+      path: "/App.js",
+      title: "SyntaxError",
+    };
+    seed({ viewMode: "preview" });
+
+    const { user } = render(<Workspace />);
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    });
+    await user.click(screen.getByRole("button", { name: "Copy error" }));
+
+    expect(writeText).toHaveBeenCalledWith(
+      "SyntaxError\n/App.js:3:5\nUnexpected token"
+    );
   });
 
   it("flushes a pending sandbox edit when the workspace unmounts", () => {

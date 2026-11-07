@@ -1,6 +1,6 @@
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/api";
 import { api } from "@/lib/api-client.ts";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 
 export const FEEDBACK_TYPES = [
   "bug",

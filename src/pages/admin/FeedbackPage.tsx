@@ -9,6 +9,7 @@ import {
   FEEDBACK_TYPES,
   type IAdminFeedback,
   type IAdminFeedbackQuery,
+  type TFeedbackType,
   useAdminDeleteFeedback,
   useAdminFeedback,
   useAdminUpdateFeedbackStatus,
@@ -148,7 +149,7 @@ const baseColumns: ColumnDef<typeof adminTableFeatures, IAdminFeedback>[] = [
     ),
     cell: ({ row }) => (
       <Badge variant={row.original.type === "bug" ? "default" : "secondary"}>
-        {FEEDBACK_TYPE_LABELS[row.original.type as "bug" | "visit"] ??
+        {FEEDBACK_TYPE_LABELS[row.original.type as TFeedbackType] ??
           row.original.type}
       </Badge>
     ),

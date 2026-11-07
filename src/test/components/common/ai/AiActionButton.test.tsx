@@ -1,6 +1,7 @@
 import { screen, waitFor } from "@testing-library/react";
 import { HttpResponse, http } from "msw/http";
 import { Link, Route, Routes, useLocation } from "react-router";
+import { toast } from "sonner";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AiActionButton } from "@/components/common/ai/AiActionButton.tsx";
 import { Toaster } from "@/components/ui/sonner.tsx";
@@ -29,8 +30,12 @@ const withProvider = (provider = "openai") =>
     http.get(`${API}/ai/api-keys`, () => envelope([{ ...apiKey, provider }]))
   );
 
-afterEach(() => {
+afterEach(async () => {
   useAppStore.setState({ skipAiDialog: false });
+  // Sonner removes dismissed toasts on a 200ms timer. Let it fire while the
+  // Toaster is still mounted so no timer outlives the test environment.
+  toast.dismiss();
+  await new Promise((resolve) => setTimeout(resolve, 250));
 });
 
 const LocationProbe = () => {

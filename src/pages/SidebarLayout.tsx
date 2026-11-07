@@ -52,7 +52,7 @@ export const SidebarLayout = ({
         </a>
         {hideSidebar ? <SidebarlessHeader /> : <Header />}
 
-        {/* h-full important for right-scrollbar, min-h-0 important for horizontal sidebar*/}
+        {/* h-full important for right-scrollbar, min-h-0 important for horizontal sidebar */}
         <ScrollArea className="h-full min-h-0 w-full flex-1 rounded-md border">
           {/* min-h-full ensuring footer is at the bottom */}
           <div className="flex min-h-full">

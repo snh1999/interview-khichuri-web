@@ -169,7 +169,11 @@ describe("CanvasPageBanner", () => {
 
     const { user } = render(<CanvasPageBanner frame={beta} />);
     await user.click(screen.getByRole("button", { name: PAGE_SETUP }));
-    await user.click(screen.getByRole("combobox"));
+    const combo = screen.getByRole("combobox");
+    await user.click(combo);
+    await waitFor(() => {
+      expect(combo).toHaveAttribute("aria-expanded", "true");
+    });
     await user.click(await screen.findByText("Alpha (/a)"));
     await user.click(screen.getByRole("button", { name: SAVE_CLOSE }));
 

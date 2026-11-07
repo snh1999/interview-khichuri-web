@@ -71,4 +71,46 @@ describe("FeedbackDialog", () => {
       expect(screen.queryByLabelText("Message")).not.toBeInTheDocument();
     });
   });
+
+  it("hides the type and posts a prefilled company request", async () => {
+    let captured: Record<string, unknown> | null = null;
+    server.use(
+      http.post("*/api/v1/feedback", async ({ request }) => {
+        captured = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(
+          {
+            data: { ...captured, id: "feedback-2" },
+            message: "Created",
+            statusCode: 201,
+          },
+          { status: 201 }
+        );
+      })
+    );
+    const { user } = render(
+      <FeedbackDialog
+        hideType
+        initialMessage="Company name: Acme"
+        initialType="company_request"
+      />,
+      { route: "/companies" }
+    );
+
+    await openDialog(user);
+
+    expect(
+      screen.queryByRole("combobox", { name: "Type" })
+    ).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Message")).toHaveValue("Company name: Acme");
+
+    await user.click(screen.getByRole("button", { name: "Send" }));
+
+    await waitFor(() => {
+      expect(captured).toMatchObject({
+        message: "Company name: Acme",
+        route: "/companies",
+        type: "company_request",
+      });
+    });
+  });
 });

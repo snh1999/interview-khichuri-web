@@ -73,7 +73,7 @@ const JobsContent = () => {
   const handleClearFilters = isTrackedTab ? resetAll : clearDiscoverFilters;
 
   return (
-    <Tabs onValueChange={handleTabChange} value={tab}>
+    <Tabs className="flex-1" onValueChange={handleTabChange} value={tab}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-4">
           <TabsList>
@@ -117,13 +117,13 @@ const JobsContent = () => {
         ) : null}
       </div>
 
-      <TabsContent value="tracked">
+      <TabsContent className="flex flex-col" value="tracked">
         <Suspense fallback={<JobsListSkeleton />}>
           <JobPageContent currentSort={currentSort} onCreate={openCreate} />
         </Suspense>
       </TabsContent>
 
-      <TabsContent value="discover">
+      <TabsContent className="flex flex-col" value="discover">
         <Suspense fallback={<JobsListSkeleton />}>
           <DiscoverTab companyId={activeCompanyId} sort={sort} />
         </Suspense>

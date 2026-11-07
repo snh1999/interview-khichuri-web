@@ -11,7 +11,7 @@ describe("queryKeys", () => {
       "sessions",
       { a: 1 },
     ]);
-    expect(queryKeys.admin.users()).toEqual(["admin", "users", undefined]);
+    expect(queryKeys.admin.users()).toEqual(["admin", "users"]);
   });
 
   it("uses bare prefixes for admin lists without filters", () => {

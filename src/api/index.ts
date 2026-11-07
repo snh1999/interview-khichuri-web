@@ -113,7 +113,9 @@ export const queryKeys = {
       return [...queryKeys.admin.all, "health"] as const;
     },
     users: (options?: Record<string, unknown>) =>
-      [...queryKeys.admin.all, "users", options] as const,
+      options
+        ? ([...queryKeys.admin.all, "users", options] as const)
+        : ([...queryKeys.admin.all, "users"] as const),
     user: (id: string) =>
       [...queryKeys.admin.all, "users", "detail", id] as const,
     prompts: (options?: Record<string, unknown>) =>

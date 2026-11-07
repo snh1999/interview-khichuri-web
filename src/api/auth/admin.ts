@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { queryKeys } from "@/api";
-import { useAdminUsersQueryParams } from "@/api/admin";
 import { HOMEPAGE } from "@/app.constants.ts";
 import {
   authAdmin,
@@ -19,15 +18,13 @@ export const useGetPermission = (options: TPermissionOptions) =>
       await unwrapBetterAuth(authAdmin.hasPermission(options)),
   });
 
-const useAdminUserInvalidation = () => {
-  const filters = useAdminUsersQueryParams();
-
+function useAdminUserInvalidation() {
   return (userId: string, extra: readonly unknown[] = []) => [
-    queryKeys.admin.users(filters as Record<string, unknown>),
+    queryKeys.admin.users(),
     queryKeys.admin.user(userId),
     ...extra,
   ];
-};
+}
 
 const throwIfError = (error: { message?: string } | null, fallback: string) => {
   if (error) {
